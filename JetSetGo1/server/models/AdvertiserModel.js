@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const advertiserSchema = new Schema({
   username: {
     type: String,
+    ref: 'GuestModel',
     required: true,
     trim: true,
     maxLength: 20,

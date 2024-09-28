@@ -10,6 +10,9 @@ const advertiserRoutes = require('./routes/advertiserRoutes');
 const sellerRoutes = require('./routes/sellerRoutes'); 
 const tourGuideRoutes = require('./routes/tourGuideRoutes'); 
 const activityRoutes = require('./routes/activityRoutes'); // we  may not use here
+const adminRoutes = require('./routes/adminRoutes');
+const touristRoutes = require('./routes/touristRoutes');
+
 //express app
 const app = express()
 
@@ -30,6 +33,8 @@ app.use('/api/users', guestRoutes);
 app.use('/api/advertisers', advertiserRoutes);
 app.use('/api/sellers', sellerRoutes);
 app.use('/api/tour-guides', tourGuideRoutes);
+app.use('/api/tourist', touristRoutes);
+app.use('/api/admin', adminRoutes);
 
 
 
