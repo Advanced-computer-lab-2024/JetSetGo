@@ -10,6 +10,7 @@ const advertiserRoutes = require('./routes/advertiserRoutes');
 const sellerRoutes = require('./routes/sellerRoutes'); 
 const tourGuideRoutes = require('./routes/tourGuideRoutes'); 
 const activityRoutes = require('./routes/activityRoutes'); // we  may not use here
+const itineraryRoutes = require('./routes/itineraryRoutes');
 //express app
 const app = express()
 
@@ -20,8 +21,13 @@ app.use(cors()); // Enable CORS for all routes (saw it in a vid)
 
 app.use((req,res,next)=>{
     console.log(req.path,req.method)
-    next()
+    next()  
 })
+
+app.get('/', (req, res) => {
+  res.send('Welcome to the Home Page');
+});
+
 
 
 
@@ -30,6 +36,8 @@ app.use('/api/users', guestRoutes);
 app.use('/api/advertisers', advertiserRoutes);
 app.use('/api/sellers', sellerRoutes);
 app.use('/api/tour-guides', tourGuideRoutes);
+app.use('/api/activity', activityRoutes);
+app.use('/api/itinerary', itineraryRoutes);
 
 
 

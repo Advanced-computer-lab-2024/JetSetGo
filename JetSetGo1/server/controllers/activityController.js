@@ -47,4 +47,22 @@ const getActivities = async (req, res) => {
   }
 };
 
-module.exports = { createActivity, updateActivity, deleteActivity, getActivities };
+const sortActivityByPrice = async (req, res) => {
+  try {
+    const sortedActivityByPrice = await Activity.find().sort({price_range: 1});
+    res.status(200).json(sortedActivityByPrice);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+const sortActivityByRating = async (req, res) => {
+  try {
+    const sortedActivityByRating = await Activity.find().sort({rating: 1});
+    res.status(200).json(sortedActivityByRating);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+module.exports = { createActivity, updateActivity, deleteActivity, getActivities, sortActivityByPrice, sortActivityByRating };
