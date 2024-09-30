@@ -7,6 +7,10 @@ const activitySchema = new Schema({
     ref: "Advertiser",
     required: true,
   },
+  name:{
+    type: String,
+    required: true,
+  },
   date: {
     type: Date,
     required: true,
@@ -37,6 +41,9 @@ const activitySchema = new Schema({
     type: Boolean,
     default: true,
   },
+  rating:{
+    type: Number,
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Activity", activitySchema);
