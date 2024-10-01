@@ -49,7 +49,7 @@ const getActivities = async (req, res) => {
 
 const sortActivityByPrice = async (req, res) => {
   try {
-    const sortedActivityByPrice = await Activity.find().sort({price_range: 1});
+    const sortedActivityByPrice = await Activity.find().sort({price: 1});
     res.status(200).json(sortedActivityByPrice);
   } catch (err) {
     res.status(400).json({ error: err.message });
