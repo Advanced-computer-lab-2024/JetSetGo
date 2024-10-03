@@ -1,5 +1,16 @@
 const Itinerary = require('../models/ItineraryModel');
 
+const createItinerary = async (req, res) => {
+  const { price, date, rating, language } = req.body;
+
+  try {
+    const newItinerary = await Itinerary.create({price, date, rating, language });
+    res.status(201).json(newItinerary);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
 const getItineraries = async (req, res) => {
     try {
       const itinerary = await Itinerary.find();
@@ -27,4 +38,4 @@ const sortItineraryByRating = async (req, res) => {
     }
   };
 
-module.exports = {getItineraries, sortItineraryByPrice, sortItineraryByRating };
+module.exports = {createItinerary, getItineraries, sortItineraryByPrice, sortItineraryByRating };

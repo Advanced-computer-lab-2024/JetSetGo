@@ -2,10 +2,10 @@ const Activity = require('../models/AdvertiserActivityModel');
 
 // Create Activity
 const createActivity = async (req, res) => {
-  const { date, time, location, price, category, tags, special_discounts, booking_open } = req.body;
+  const {advertiser_id, name, date, time, location, price, category, tags, special_discounts, is_booking_open, rating } = req.body;
 
   try {
-    const newActivity = await Activity.create({ date, time, location, price, category, tags, special_discounts, booking_open });
+    const newActivity = await Activity.create({advertiser_id, name, date, time, location, price, category, tags, special_discounts, is_booking_open, rating });
     res.status(201).json(newActivity);
   } catch (err) {
     res.status(400).json({ error: err.message });
