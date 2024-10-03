@@ -5,6 +5,6 @@ const router = express.Router();
 //Admin deletion or add
 
 router.post('/add/:id', addAdmin);
-router.delete('/delete/:id', deleteAccount);
+router.delete('/delete/:modelName/:id', deleteAccount);
 
 module.exports = router;

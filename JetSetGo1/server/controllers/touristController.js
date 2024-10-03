@@ -7,7 +7,7 @@ const updateInfo = async (req, res) => {
   const updates = req.body;
 
   try {
-    const updatedInfo = await Tourist.findById(id, updates, { new: true });
+    const updatedInfo = await Tourist.findByIdAndUpdate(id, updates, { new: true });
     res.status(200).json(updatedInfo);
   } catch (err) {
     res.status(400).json({ error: err.message });

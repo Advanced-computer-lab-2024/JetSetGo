@@ -1,8 +1,8 @@
 //EF93SkpGhRJ9gcfz
 
 require('dotenv').config() // For the env variables ..... then we will use process.env......
-const express = require('express')
-const mongoose = require('mongoose')
+const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
 // Import routes
 const guestRoutes = require('./routes/guestRoutes'); 
@@ -14,17 +14,18 @@ const adminRoutes = require('./routes/adminRoutes');
 const touristRoutes = require('./routes/touristRoutes');
 
 //express app
-const app = express()
+const app = express();
 
 
 //middleware
-app.use(express.json()) // what this does is that it allows us to access the body of the request
+app.use(express.json()); // what this does is that it allows us to access the body of the request
 app.use(cors()); // Enable CORS for all routes (saw it in a vid)
 
+//Logging Middleware
 app.use((req,res,next)=>{
     console.log(req.path,req.method)
-    next()
-})
+    next();
+});
 
 
 
@@ -48,6 +49,6 @@ app.listen(process.env.PORT,() =>{
 })
 .catch((error)=>{
     console.log(error)
-})
+});
 
 

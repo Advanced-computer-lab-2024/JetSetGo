@@ -6,7 +6,6 @@ const TouristSchema = new Schema({
     username: {
         type: String,
         required: true,
-        ref: 'GuestModel',
         trim: true,
         maxLength: 20,
       },
