@@ -1,8 +1,7 @@
 const ItineraryModel = require('../models/ItineraryModel');
 
-  //Read My Itineraries
-
-  const showMyItineraries = async(req,res) => {
+//Read My Itineraries
+const showMyItineraries = async(req,res) => {
    
 
     const guideId = req.query.guideId;

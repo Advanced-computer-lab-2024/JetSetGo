@@ -1,9 +1,8 @@
 const Activity = require('../models/AdvertiserActivityModel');
 
   
-  //Read my Activities
-3
-  const showMyActivities = async(req,res) => {
+//Read my Activities
+const showMyActivities = async(req,res) => {
    
 
     const AdvId = req.query.AdvId;

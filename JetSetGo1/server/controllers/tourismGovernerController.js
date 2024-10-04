@@ -7,8 +7,6 @@ const HistoricalLocation = require('../models/HistoricalLocationModel')
 
 
 // Create Museum
-
-
 const createMuseum = async (req, res) => {
   const {name, description, location, openingHours, ticketPrices, pictures, /*tags, category,*/ governor } = req.body;
 
@@ -45,8 +43,6 @@ const updateMuseum = async (req, res) => {
   }
 };
 
-
-
 //Delete Museum
 const deleteMuseum = async (req, res) => {
   const { id } = req.params;
@@ -64,9 +60,9 @@ const deleteMuseum = async (req, res) => {
   }
 };
 
+
+
 // Create Historical Location
-
-
 const createHistoricalLocation = async (req, res) => {
   const {name, description, location, openingHours, ticketPrices, type, tags, category, governor } = req.body;
 
@@ -103,8 +99,6 @@ const updateHistoricalLocation = async (req, res) => {
   }
 };
 
-
-
 //Delete Historical Location
 const deleteHistoricalLocation = async (req, res) => {
   const { id } = req.params;
@@ -122,6 +116,7 @@ const deleteHistoricalLocation = async (req, res) => {
   }
 };
 
+
 // Create a tag
 const createTag = async (req, res) => {
     const {type, historicalPeriod} = req.body;
@@ -134,8 +129,8 @@ const createTag = async (req, res) => {
     }
   };
 
-  //Read my Museums and Historical Locations
 
+//Read my Museums and Historical Locations
   const showMyMuseumsAndHistoricalPlaces = async(req,res) => {
    
 
