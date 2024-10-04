@@ -5,7 +5,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 // Import routes
-const guestRoutes = require("./routes/guestRoutes");
+//const guestRoutes = require("./routes/guestRoutes");
 const advertiserRoutes = require("./routes/advertiserRoutes");
 const sellerRoutes = require("./routes/sellerRoutes");
 const tourGuideRoutes = require("./routes/tourGuideRoutes");
@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 });
 
 // Use routes
-app.use("/api/users", guestRoutes);
+//app.use("/api/users", guestRoutes);
 app.use("/api/advertisers", advertiserRoutes);
 app.use("/api/sellers", sellerRoutes);
 app.use("/api/tour-guides", tourGuideRoutes);
