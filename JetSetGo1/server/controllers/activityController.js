@@ -51,7 +51,7 @@ const getActivities = async (req, res) => {
 const searchActivityByName = async (req,res) => {
   const activityName = req.body
   try{
-    const activty = await Activity.find({name: activityName})
+    const activty = await Activity.find(activityName)
     res.status(200).json(activty)
   }
   catch(error){
@@ -63,7 +63,7 @@ const searchActivityByName = async (req,res) => {
 const searchActivityByCategory = async (req,res) =>{
   const categoryName = req.body
   try{
-    const activty = await Activity.find({category: categoryName})
+    const activty = await Activity.find(categoryName)
     res.status(200).json(activty)
   }
   catch(error){
@@ -75,7 +75,7 @@ const searchActivityByCategory = async (req,res) =>{
 const searchActivityByTag = async (req,res) =>{
   const tagName = req.body
   try{
-    const activty = await Activity.find({tag: tagName})
+    const activty = await Activity.find(tagName)
     res.status(200).json(activty)
   }
   catch(error){
@@ -87,7 +87,7 @@ const searchActivityByTag = async (req,res) =>{
 const searchActivityByDate = async (req,res) =>{
   const dateReq = req.body
   try{
-    const activty = await Activity.find({date: dateReq})
+    const activty = await Activity.find(dateReq)
     res.status(200).json(activty)
   }
   catch(error){
@@ -99,7 +99,7 @@ const searchActivityByDate = async (req,res) =>{
 const searchActivityByRating = async (req,res) =>{
   const ratingReq = req.body
   try{
-    const activty = await Activity.find({rating: ratingReq})
+    const activty = await Activity.find(ratingReq)
     res.status(200).json(activty)
   }
   catch(error){
@@ -108,13 +108,14 @@ const searchActivityByRating = async (req,res) =>{
 };
 
 //Seach Activity by budget
-//DOES NOT WORK AS INTENDED
-//INTENTION: SEARCH FOR ACTIVITIES WITH PRICE LOWER THAN OR EQUAL TO BUDGET
 const searchActivityByBudget = async (req,res) =>{
   const budget = req.body
   try{
-    const activty = await Activity.find({price_range: budget})
-    res.status(200).json(activty)
+    const activty = await Activity.find()
+    
+    const result = activty.filter(el => el.price <= budget.price)
+
+    res.status(200).json(result)
   }
   catch(error){
     res.status(404).json({error:"Activity not found"})

@@ -23,8 +23,8 @@ const activitySchema = new Schema({
     type: String,
     required: true,
   },
-  price_range: {
-    type: String,
+  price: {
+    type: Number,
     required: true,
   },
   category: {
