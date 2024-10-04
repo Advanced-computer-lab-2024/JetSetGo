@@ -1,4 +1,3 @@
-const tourismGoverner = require('../models/TourismGovernerModel');
 const MuseumOrHistoricalPlace = require('../models/MuseumModel');
 
 const tag = require('../models/TagModel');
@@ -73,7 +72,20 @@ const createTag = async (req, res) => {
   };
 
   //Read my Museums/historical places
+
+  const showMyMuseumsAndHistoricalPlaces = async(req,res) => {
+   
+
+    const govUsername = req.query.userId;
+
+    if(govUsername){
+        const result = await MuseumModel.find({author:mongoose.Types.ObjectId(govUsername)})
+        res.status(200).json(result)
+    } else{
+        res.status(400).json({error:"Username is required"})
+    }
+}
   
 
 
-module.exports = { createMuseumOrHistoricalPlace, getMuseumOrHistoricalPlace, updateMuseumOrHistoricalPlace ,deleteMuseumOrHistoricalPlace, createTag};
+module.exports = { createMuseumOrHistoricalPlace, getMuseumOrHistoricalPlace, updateMuseumOrHistoricalPlace, deleteMuseumOrHistoricalPlace, createTag, showMyMuseumsAndHistoricalPlaces};
