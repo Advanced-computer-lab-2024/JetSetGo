@@ -1,38 +1,41 @@
-// const tourismGovernerModel = require('../models/TourismGovernerModel');
 const tourismGoverner = require('../models/TourismGovernerModel');
+const MuseumOrHistoricalPlace = require('../models/MuseumModel');
 
-// Create Tourism Governer Profile
-const createTourismGovernerProfile = async (req, res) => {
-  const {username, password, email } = req.body;
+const tag = require('../models/TagModel');
+
+
+// Create Museum or historical place
+const createMuseumOrHistoricalPlace = async (req, res) => {
+  const {name, description, location, openingHours, ticketPrices, pictures, tags, category, governor } = req.body;
 
   try {
-    const newTourismGoverner = await tourismGoverner.create({ username, password, email });
-    res.status(201).json(newTourismGoverner);
+    const newMuseumOrHistoricalPlace = await MuseumOrHistoricalPlace.create({ name, description, location, openingHours, ticketPrices, pictures, tags, category, governor });
+    res.status(201).json(newMuseumOrHistoricalPlace);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
 
-// Read Tourism Governer Profile
-const getTourismGovernerProfile = async (req, res) => {
-  const { id } = req.params;
+// Read Museum or historical place
+const getMuseumOrHistoricalPlace = async (req, res) => {
+const { id } = req.params;
 
   try {
-    const TourismGoverner = await tourismGoverner.findById(id);
-    res.status(200).json(TourismGoverner);
+    const MuseumOrHistoricalPlaceProfile = await MuseumOrHistoricalPlace.findById(id);
+    res.status(200).json(MuseumOrHistoricalPlaceProfile);
   } catch (err) {
     res.status(404).json({ error: 'Profile not found' });
   }
 };
 
-// Update Tourism Governer Profile
-const updateTourismGovernerProfile = async (req, res) => {
+// Update Museum or historical place
+const updateMuseumOrHistoricalPlace = async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
 
   try {
-    const updatedTourismGoverner = await tourismGoverner.findByIdAndUpdate(id, updates, { new: true });
-    res.status(200).json(updatedTourismGoverner);
+    const updatedMuseumOrHistoricalPlace = await MuseumOrHistoricalPlace.findByIdAndUpdate(id, updates, { new: true });
+    res.status(200).json(updatedMuseumOrHistoricalPlace);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -40,20 +43,37 @@ const updateTourismGovernerProfile = async (req, res) => {
 
 
 
-//Delete Tourism Governer Profile
-const deleteTourismGoverner = async (req, res) => {
+//Delete Museum or historical place 
+const deleteMuseumOrHistoricalPlace = async (req, res) => {
   const { id } = req.params;
 
   try {
-      const deletedTourismGoverner = await tourismGoverner.findByIdAndDelete(id);
+      const deletedMuseumOrHistoricalPlace = await MuseumOrHistoricalPlace.findByIdAndDelete(id);
       
-      if (!deletedTourismGoverner) {
-          return res.status(404).json({ message: 'Tourism Governer not found' });
+      if (!deletedMuseumOrHistoricalPlace) {
+          return res.status(404).json({ message: 'Museum or historical place not found' });
       }
       
-      res.status(200).json({ message: 'Tourism Governer deleted successfully' });
+      res.status(200).json({ message: 'Museum or historical place deleted successfully' });
   } catch (err) {
       res.status(500).json({ error: err.message });
   }
 };
-module.exports = { createTourismGovernerProfile, getTourismGovernerProfile, updateTourismGovernerProfile ,deleteTourismGoverner};
+
+// Create a tag
+const createTag = async (req, res) => {
+    const {type, historicalPeriod} = req.body;
+  
+    try {
+      const newTag = await tag.create({ type, historicalPeriod});
+      res.status(201).json(newTag);
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  };
+
+  //Read my Museums/historical places
+  
+
+
+module.exports = { createMuseumOrHistoricalPlace, getMuseumOrHistoricalPlace, updateMuseumOrHistoricalPlace ,deleteMuseumOrHistoricalPlace, createTag};
