@@ -2,17 +2,17 @@ const Activity = require('../models/AdvertiserActivityModel');
 
   
   //Read my Activities
-
+3
   const showMyActivities = async(req,res) => {
    
 
-    const AdvUsername = req.query.userId;
+    const AdvId = req.query.AdvId;
 
-    if(AdvUsername){
-        const result = await MuseumModel.find({author:mongoose.Types.ObjectId(AdvUsername)})
+try{
+        const result = await Activity.find({advertiser:(AdvId)})
         res.status(200).json(result)
-    } else{
-        res.status(400).json({error:"Username is required"})
+    } catch{
+        res.status(400).json({error:"Id is required"})
     }
 }
 

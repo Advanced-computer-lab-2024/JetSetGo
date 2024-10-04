@@ -5,14 +5,16 @@ const ItineraryModel = require('../models/ItineraryModel');
   const showMyItineraries = async(req,res) => {
    
 
-    const guideUsername = req.query.userId;
+    const guideId = req.query.guideId;
 
-    if(guideUsername){
-        const result = await ItineraryModel.find({author:mongoose.Types.ObjectId(guideUsername)})
+    try{
+        const result = await ItineraryModel.find({tourGuide:(guideId)})
         res.status(200).json(result)
-    } else{
-        res.status(400).json({error:"Username is required"})
-    }
+      }catch{
+        res.status(400).json({error:"Id is required"})
+      }
+  
+
 }
   
 

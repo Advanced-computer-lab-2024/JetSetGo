@@ -32,7 +32,7 @@ app.use((req,res,next)=>{
 app.use('/api/advertisers', advertiserRoutes);
 // app.use('/api/sellers', sellerRoutes);
 app.use('/api/tour-guides', tourGuideRoutes);
-app.use('/api/tour-guides', tourismGovernerRoutes);
+app.use('/api/tourism-governer', tourismGovernerRoutes);
 
 
 

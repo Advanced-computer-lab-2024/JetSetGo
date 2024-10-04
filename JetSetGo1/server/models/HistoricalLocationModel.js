@@ -22,23 +22,21 @@ const historicalLocationSchema = new mongoose.Schema({
         native: { type: Number, required: true },
         student: { type: Number, required: true },
     },
-    type: {
-        type: String,
-        enum: ['Monument', 'Museum', 'Religious Site', 'Palace/Castle'],
-        required: true,
-    },
+
     tags: [{ 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Tag' 
     }],
     category: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Tag', 
+        ref: 'Category', 
     },
     createdAt: { 
         type: Date, 
         default: Date.now 
-    }
+    },
+    governor: { type: mongoose.Schema.Types.ObjectId, ref: 'TourismGovernor', required: true },
+
 });
 
 module.exports = mongoose.model('HistoricalLocation', historicalLocationSchema);

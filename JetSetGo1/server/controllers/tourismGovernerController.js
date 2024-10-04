@@ -1,15 +1,38 @@
+const { default: mongoose } = require('mongoose');
 const Museum = require('../models/MuseumModel');
+const HistoricalTag = require('../models/HistoricalTagModel');
 const HistoricalLocation = require('../models/HistoricalLocationModel')
 
-const tag = require('../models/TagModel');
+
 
 
 // Create Museum
+
+/*{
+    "name": "m",
+    "description": "museum",
+    "location": "c7",
+    "openingHours": "9-5",
+    "ticketPrices": {
+        "foreigner": 100,
+        "native": 10,
+        "student": 2
+    },
+    "pictures": [
+        "no"
+    ],
+    "tags": [],
+    "governor": "67000cb1df7b256d80587f8a",
+    "_id": "670011a07a807c949db05397",
+    "createdAt": "2024-10-04T16:02:40.143Z",
+    "__v": 0
+}*/
+
 const createMuseum = async (req, res) => {
-  const {name, description, location, openingHours, ticketPrices, pictures, tags, category, governor } = req.body;
+  const {name, description, location, openingHours, ticketPrices, pictures, /*tags, category,*/ governor } = req.body;
 
   try {
-    const newMuseum = await Museum.create({ name, description, location, openingHours, ticketPrices, pictures, tags, category, governor });
+    const newMuseum = await Museum.create({ name, description, location, openingHours, ticketPrices, pictures,/* tags, category, */governor });
     res.status(201).json(newMuseum);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -61,11 +84,28 @@ const deleteMuseum = async (req, res) => {
 };
 
 // Create Historical Location
+/*{
+    "name": "m",
+    "description": "museum",
+    "location": "c7",
+    "openingHours": "9-5",
+    "ticketPrices": {
+        "foreigner": 100,
+        "native": 10,
+        "student": 2
+    },
+    "type": "Monument",
+    "tags": [],
+    "_id": "6700123f7a807c949db05399",
+    "createdAt": "2024-10-04T16:05:19.923Z",
+    "__v": 0
+}*/ 
+
 const createHistoricalLocation = async (req, res) => {
-  const {name, description, location, openingHours, ticketPrices, type, tags, category } = req.body;
+  const {name, description, location, openingHours, ticketPrices, type, tags, category, governor } = req.body;
 
   try {
-    const newHistoricalLocation = await HistoricalLocation.create({ name, description, location, openingHours, ticketPrices, type, tags, category });
+    const newHistoricalLocation = await HistoricalLocation.create({ name, description, location, openingHours, ticketPrices, type, tags, category, governor});
     res.status(201).json(newHistoricalLocation);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -121,7 +161,7 @@ const createTag = async (req, res) => {
     const {type, historicalPeriod} = req.body;
   
     try {
-      const newTag = await tag.create({ type, historicalPeriod});
+      const newTag = await HistoricalTag.create({ type, historicalPeriod});
       res.status(201).json(newTag);
     } catch (err) {
       res.status(400).json({ error: err.message });
@@ -133,14 +173,23 @@ const createTag = async (req, res) => {
   const showMyMuseumsAndHistoricalPlaces = async(req,res) => {
    
 
-    const govUsername = req.query.userId;
-
-    if(govUsername){
-        const result = await MuseumModel.find({author:mongoose.Types.ObjectId(govUsername)}) + await HistocialPlaceModel.find({author:mongoose.Types.ObjectId(govUsername)})
-        res.status(200).json(result)
-    } else{
-        res.status(400).json({error:"Username is required"})
+    const govId = req.query.govId;
+    try{
+      const Museums = await Museum.find({governor:(govId)})
+      const HistoricalLocations =await HistoricalLocation.find({governor:(govId)})
+      const result = {Museums,HistoricalLocations}
+      res.status(200).json(result)
+    }catch{
+      res.status(400).json({error:"Id is required"})
     }
+
+
+    // if(govId){
+    //     const result = await Museum.find({governor:mongoose.Types.ObjectId(govId)}) /*+ await HistoricalLocation.find({governor:mongoose.Types.ObjectId(govId)})*/
+    //     res.status(200).json(result)
+    // } else{
+    //     res.status(400).json({error:"Id is required"})
+    // }
 }
   
 
