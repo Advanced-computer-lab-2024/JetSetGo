@@ -5,12 +5,12 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors');
 // Import routes
-const guestRoutes = require('./routes/guestRoutes'); 
+// const guestRoutes = require('./routes/guestRoutes'); 
 const advertiserRoutes = require('./routes/advertiserRoutes'); 
-const sellerRoutes = require('./routes/sellerRoutes'); 
+// const sellerRoutes = require('./routes/sellerRoutes'); 
 const tourGuideRoutes = require('./routes/tourGuideRoutes'); 
-const activityRoutes = require('./routes/activityRoutes'); // we  may not use here
-const tourismGovernorRoutes = require('./routes/tourismGovernorRoutes'); // we  may not use here
+// const activityRoutes = require('./routes/activityRoutes'); // we  may not use here
+const tourismGovernerRoutes = require('./routes/tourismGovernerRoutes'); // we  may not use here
 
 //express app
 const app = express()
@@ -28,11 +28,11 @@ app.use((req,res,next)=>{
 
 
 // Use routes
-app.use('/api/users', guestRoutes);
+// app.use('/api/users', guestRoutes);
 app.use('/api/advertisers', advertiserRoutes);
-app.use('/api/sellers', sellerRoutes);
+// app.use('/api/sellers', sellerRoutes);
 app.use('/api/tour-guides', tourGuideRoutes);
-app.use('/api/tour-guides', tourismGovernorRoutes);
+app.use('/api/tour-guides', tourismGovernerRoutes);
 
 
 
