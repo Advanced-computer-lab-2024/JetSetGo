@@ -9,7 +9,7 @@ router.get('/showAll', showMyItineraries )
 module.exports = router;
 const express = require('express');
 const { updateProfile, getProfile } = require('../controllers/tourGuideController');
-const router = express.Router();
+// const router = express.Router();
 
 // Create or Update Tour Guide Profile
 // router.post('/create', createProfile);

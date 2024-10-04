@@ -43,7 +43,6 @@ const deleteActivity = async (req, res) => {
 };
 
 
-module.exports = { updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity};
 const Activity = require('../models/AdvertiserActivityModel');
 
   
@@ -61,5 +60,6 @@ try{
     }
 }
 
-module.exports = { showMyActivities}
+module.exports = {showMyActivities, updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity};
+
   
