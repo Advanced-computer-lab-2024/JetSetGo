@@ -1,6 +1,6 @@
 const ItineraryModel = require('../models/ItineraryModel');
 
-  //Read Itineraries
+  //Read My Itineraries
 
   const showMyItineraries = async(req,res) => {
    

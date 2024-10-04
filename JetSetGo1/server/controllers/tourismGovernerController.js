@@ -8,25 +8,6 @@ const HistoricalLocation = require('../models/HistoricalLocationModel')
 
 // Create Museum
 
-/*{
-    "name": "m",
-    "description": "museum",
-    "location": "c7",
-    "openingHours": "9-5",
-    "ticketPrices": {
-        "foreigner": 100,
-        "native": 10,
-        "student": 2
-    },
-    "pictures": [
-        "no"
-    ],
-    "tags": [],
-    "governor": "67000cb1df7b256d80587f8a",
-    "_id": "670011a07a807c949db05397",
-    "createdAt": "2024-10-04T16:02:40.143Z",
-    "__v": 0
-}*/
 
 const createMuseum = async (req, res) => {
   const {name, description, location, openingHours, ticketPrices, pictures, /*tags, category,*/ governor } = req.body;
@@ -84,22 +65,7 @@ const deleteMuseum = async (req, res) => {
 };
 
 // Create Historical Location
-/*{
-    "name": "m",
-    "description": "museum",
-    "location": "c7",
-    "openingHours": "9-5",
-    "ticketPrices": {
-        "foreigner": 100,
-        "native": 10,
-        "student": 2
-    },
-    "type": "Monument",
-    "tags": [],
-    "_id": "6700123f7a807c949db05399",
-    "createdAt": "2024-10-04T16:05:19.923Z",
-    "__v": 0
-}*/ 
+
 
 const createHistoricalLocation = async (req, res) => {
   const {name, description, location, openingHours, ticketPrices, type, tags, category, governor } = req.body;
@@ -168,7 +134,7 @@ const createTag = async (req, res) => {
     }
   };
 
-  //Read my Museums
+  //Read my Museums and Historical Locations
 
   const showMyMuseumsAndHistoricalPlaces = async(req,res) => {
    
@@ -184,12 +150,6 @@ const createTag = async (req, res) => {
     }
 
 
-    // if(govId){
-    //     const result = await Museum.find({governor:mongoose.Types.ObjectId(govId)}) /*+ await HistoricalLocation.find({governor:mongoose.Types.ObjectId(govId)})*/
-    //     res.status(200).json(result)
-    // } else{
-    //     res.status(400).json({error:"Id is required"})
-    // }
 }
   
 
