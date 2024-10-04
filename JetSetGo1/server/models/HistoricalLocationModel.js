@@ -1,0 +1,44 @@
+const mongoose = require('mongoose');
+
+const historicalLocationSchema = new mongoose.Schema({
+    name: { 
+        type: String, 
+        required: true 
+    },
+    description: { 
+        type: String, 
+        required: true 
+    },
+    location: {
+        type: String,
+        required: true,
+    },
+    openingHours: {
+        type: String,
+        required: true,
+    },
+    ticketPrices: {
+        foreigner: { type: Number, required: true },
+        native: { type: Number, required: true },
+        student: { type: Number, required: true },
+    },
+    type: {
+        type: String,
+        enum: ['Monument', 'Museum', 'Religious Site', 'Palace/Castle'],
+        required: true,
+    },
+    tags: [{ 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Tag' 
+    }],
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Tag', 
+    },
+    createdAt: { 
+        type: Date, 
+        default: Date.now 
+    }
+});
+
+module.exports = mongoose.model('HistoricalLocation', historicalLocationSchema);

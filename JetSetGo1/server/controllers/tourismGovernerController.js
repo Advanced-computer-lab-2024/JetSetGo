@@ -1,40 +1,41 @@
-const MuseumOrHistoricalPlace = require('../models/MuseumModel');
+const Museum = require('../models/MuseumModel');
+const HistoricalLocation = require('../models/HistoricalLocationModel')
 
 const tag = require('../models/TagModel');
 
 
-// Create Museum or historical place
-const createMuseumOrHistoricalPlace = async (req, res) => {
+// Create Museum
+const createMuseum = async (req, res) => {
   const {name, description, location, openingHours, ticketPrices, pictures, tags, category, governor } = req.body;
 
   try {
-    const newMuseumOrHistoricalPlace = await MuseumOrHistoricalPlace.create({ name, description, location, openingHours, ticketPrices, pictures, tags, category, governor });
-    res.status(201).json(newMuseumOrHistoricalPlace);
+    const newMuseum = await Museum.create({ name, description, location, openingHours, ticketPrices, pictures, tags, category, governor });
+    res.status(201).json(newMuseum);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
 
-// Read Museum or historical place
-const getMuseumOrHistoricalPlace = async (req, res) => {
+// Read Museum
+const getMuseum = async (req, res) => {
 const { id } = req.params;
 
   try {
-    const MuseumOrHistoricalPlaceProfile = await MuseumOrHistoricalPlace.findById(id);
-    res.status(200).json(MuseumOrHistoricalPlaceProfile);
+    const MuseumProfile = await Museum.findById(id);
+    res.status(200).json(MuseumProfile);
   } catch (err) {
-    res.status(404).json({ error: 'Profile not found' });
+    res.status(404).json({ error: 'Museum not found' });
   }
 };
 
-// Update Museum or historical place
-const updateMuseumOrHistoricalPlace = async (req, res) => {
+// Update Museum 
+const updateMuseum = async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
 
   try {
-    const updatedMuseumOrHistoricalPlace = await MuseumOrHistoricalPlace.findByIdAndUpdate(id, updates, { new: true });
-    res.status(200).json(updatedMuseumOrHistoricalPlace);
+    const updatedMuseum = await Museum.findByIdAndUpdate(id, updates, { new: true });
+    res.status(200).json(updatedMuseum);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -42,18 +43,74 @@ const updateMuseumOrHistoricalPlace = async (req, res) => {
 
 
 
-//Delete Museum or historical place 
-const deleteMuseumOrHistoricalPlace = async (req, res) => {
+//Delete Museum
+const deleteMuseum = async (req, res) => {
   const { id } = req.params;
 
   try {
-      const deletedMuseumOrHistoricalPlace = await MuseumOrHistoricalPlace.findByIdAndDelete(id);
+      const deletedMuseum = await Museum.findByIdAndDelete(id);
       
-      if (!deletedMuseumOrHistoricalPlace) {
-          return res.status(404).json({ message: 'Museum or historical place not found' });
+      if (!deletedMuseum) {
+          return res.status(404).json({ message: 'Museum not found' });
       }
       
-      res.status(200).json({ message: 'Museum or historical place deleted successfully' });
+      res.status(200).json({ message: 'Museum deleted successfully' });
+  } catch (err) {
+      res.status(500).json({ error: err.message });
+  }
+};
+
+// Create Historical Location
+const createHistoricalLocation = async (req, res) => {
+  const {name, description, location, openingHours, ticketPrices, type, tags, category } = req.body;
+
+  try {
+    const newHistoricalLocation = await HistoricalLocation.create({ name, description, location, openingHours, ticketPrices, type, tags, category });
+    res.status(201).json(newHistoricalLocation);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+// Read Historical Location
+const getHistoricalLocation = async (req, res) => {
+const { id } = req.params;
+
+  try {
+    const HistoricalLocationProfile = await HistoricalLocation.findById(id);
+    res.status(200).json(HistoricalLocationProfile);
+  } catch (err) {
+    res.status(404).json({ error: 'Historical Location not found' });
+  }
+};
+
+// Update Historical Location 
+const updateHistoricalLocation = async (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+
+  try {
+    const updatedHistoricalLocation = await HistoricalLocation.findByIdAndUpdate(id, updates, { new: true });
+    res.status(200).json(updatedHistoricalLocation);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+
+
+//Delete Historical Location
+const deleteHistoricalLocation = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      const deletedHistoricalLocation = await HistoricalLocation.findByIdAndDelete(id);
+      
+      if (!deletedHistoricalLocation) {
+          return res.status(404).json({ message: 'Historical Location not found' });
+      }
+      
+      res.status(200).json({ message: 'Historical Location deleted successfully' });
   } catch (err) {
       res.status(500).json({ error: err.message });
   }
@@ -71,7 +128,7 @@ const createTag = async (req, res) => {
     }
   };
 
-  //Read my Museums/historical places
+  //Read my Museums
 
   const showMyMuseumsAndHistoricalPlaces = async(req,res) => {
    
@@ -79,7 +136,7 @@ const createTag = async (req, res) => {
     const govUsername = req.query.userId;
 
     if(govUsername){
-        const result = await MuseumModel.find({author:mongoose.Types.ObjectId(govUsername)})
+        const result = await MuseumModel.find({author:mongoose.Types.ObjectId(govUsername)}) + await HistocialPlaceModel.find({author:mongoose.Types.ObjectId(govUsername)})
         res.status(200).json(result)
     } else{
         res.status(400).json({error:"Username is required"})
@@ -88,4 +145,4 @@ const createTag = async (req, res) => {
   
 
 
-module.exports = { createMuseumOrHistoricalPlace, getMuseumOrHistoricalPlace, updateMuseumOrHistoricalPlace, deleteMuseumOrHistoricalPlace, createTag, showMyMuseumsAndHistoricalPlaces};
+module.exports = { createMuseum, getMuseum, updateMuseum, deleteMuseum, createHistoricalLocation, getHistoricalLocation, updateHistoricalLocation, deleteHistoricalLocation, createTag, showMyMuseumsAndHistoricalPlaces};
