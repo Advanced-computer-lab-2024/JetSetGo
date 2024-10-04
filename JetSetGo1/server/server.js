@@ -8,10 +8,10 @@ const cors = require('cors');
 // const guestRoutes = require('./routes/guestRoutes'); 
 const advertiserRoutes = require('./routes/advertiserRoutes'); 
 // const sellerRoutes = require('./routes/sellerRoutes'); 
-const tourGuideRoutes = require('./routes/tourGuideRoutes'); 
+// const tourGuideRoutes = require('./routes/tourGuideRoutes'); 
 // const activityRoutes = require('./routes/activityRoutes'); // we  may not use here
 const tourismGovernerRoutes = require('./routes/tourismGovernerRoutes'); // we  may not use here
-const advertiserRoutes = require('./routes/advertiserRoutes'); 
+// const advertiserRoutes = require('./routes/advertiserRoutes'); 
 const sellerRoutes = require('./routes/sellerRoutes'); 
 const tourGuideRoutes = require('./routes/tourGuideRoutes'); 
 // const activityRoutes = require('./routes/activityRoutes'); // we  may not use here
@@ -45,17 +45,7 @@ app.use('/api/admin', adminRoutes);
 
 
 
-//connect to db
-mongoose.connect(process.env.MONGO_URI)
-.then(()=>{
-    //listen for reqs when connected to db
-app.listen(process.env.PORT,() =>{
-    console.log("listeing on port",process.env.PORT)
- })
-})
-.catch((error)=>{
-    console.log(error)
-})
+
 
 
 //EF93SkpGhRJ9gcfz
