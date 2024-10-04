@@ -3,7 +3,6 @@ const Activity = require('../models/AdvertiserActivityModel');
 // Create Activity
 const createActivity = async (req, res) => {
   const { date, time, location, price, category, tags, special_discounts, booking_open } = req.body;
-
   try {
     const newActivity = await Activity.create({ date, time, location, price, category, tags, special_discounts, booking_open });
     res.status(201).json(newActivity);
