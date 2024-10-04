@@ -21,6 +21,10 @@ const activitySchema = new mongoose.Schema({
       type: Number, 
       required: true 
     },
+    rating :{
+      type:Number,
+      default:0
+    },
     category: { 
       type: mongoose.Schema.Types.ObjectId, 
       ref: 'Category' 
@@ -41,10 +45,6 @@ const activitySchema = new mongoose.Schema({
     specialDiscounts: {
       type: String, 
       default: null  
-  },
-  rating :{
-    type:Number,
-    default:0
   },
 
     createdAt: { 

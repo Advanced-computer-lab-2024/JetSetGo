@@ -1,4 +1,13 @@
 const express = require('express');
+const {showMyItineraries} = require('../controllers/tourGuideController');
+
+const router = express.Router();
+
+
+router.get('/showAll', showMyItineraries )
+
+module.exports = router;
+const express = require('express');
 const { updateProfile, getProfile } = require('../controllers/tourGuideController');
 const router = express.Router();
 
