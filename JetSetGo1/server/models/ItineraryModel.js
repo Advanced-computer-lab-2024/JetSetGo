@@ -8,36 +8,37 @@ const itinerarySchema = new mongoose.Schema({
     description: { 
         type: String, 
         required: true 
-    },  
+    },
     tourGuide: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'TourGuide', 
         required: true 
     },  // Reference to the tour guide who created the itinerary
-    activities: [
+    // activities: [
+    //     {
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         ref: 'Activity'  // References multiple activities
+    //     }
+    // ],
+    activities: 
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Activity'  // References multiple activities
+            name: { type: [String], required: true },  // Start time of the activity
+            duration: { type: [String], required: true }
         }
-    ],
-    locations: [
+    ,
+    locations: 
         {
-            name: { type: String, required: true },  
-            address: { type: String, required: true }, 
-            coordinates: { type: [Number], required: true } 
+            type: [String], required: true ,
+            // address: { type: String, required: true }, 
+            // coordinates: { type: [Number], required: true } 
         }
-    ],
-    timeline: [
-        {
-            activity: { type: mongoose.Schema.Types.ObjectId, ref: 'Activity', required: true },
-            startTime: { type: Date, required: true },  // Start time of the activity
-            endTime: { type: Date, required: true }  // End time of the activity
-        }
-    ],
-    duration: { type: String, required: true },  ////// (e.g., '3 hours', '1 day')
+    ,
+    timeline: {
+        type: [String],
+        required: true
+    },
     language: { 
         type: String, 
-        enum: ['English', 'Spanish', 'French', 'German', 'Chinese', 'Arabic'],  //  supported langss
         required: true 
     },
     price: { type: Number, required: true },  // Total price for the tour
@@ -60,6 +61,11 @@ const itinerarySchema = new mongoose.Schema({
         type: String, 
         required: true  // Location where participants will be dropped off
     },
+    rating :{
+        type:Number,
+        default:0
+      },
+
     createdAt: { type: Date, default: Date.now }
 });
 
