@@ -1,7 +1,7 @@
-const Admin = require('../models/Admin.js');
+const Admin = require('../models/AdminModel.js');
 const preferencetags = require('../models/TagModel.js');
 const CategoryModel = require('../models/CategoryModel.js');
-const tourism_gouverner = require('../models/TourismGoverner.js');
+const TourismGovernerModel = require('../models/TourismGovernerModel.js');
 const AdvertiserActivityModel = require('../models/AdvertiserActivityModel.js');
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ const create_pref_tag = async (req, res) => {
 
 //read preference tags
 const get_pref_tag = async (req, res) => {
-    const { tag_name } = req.body;
+    // const { tag_name } = req.body;
     try {
         const tag = await preferencetags.find();
         res.status(200).json(tag);
@@ -120,7 +120,7 @@ const delete_act_category = async (req, res) => {
 const add_tourism_governer = async (req,res) => {
     const { username , password , email } = req.body;
     try{
-        const tourism_governer = await tourism_gouverner.create({username , password , email});
+        const tourism_governer = await TourismGovernerModel.create({username , password , email});
         res.status(200).json(tourism_governer);
     }
     catch (error) {
@@ -131,7 +131,7 @@ const add_tourism_governer = async (req,res) => {
 //for testing
 const view_tourism_governer = async (req,res) => {
     try{
-        const tourism_governer = await tourism_gouverner.find();
+        const tourism_governer = await TourismGovernerModel.find();
         res.status(200).json(tourism_governer);
     }
     catch (error) {

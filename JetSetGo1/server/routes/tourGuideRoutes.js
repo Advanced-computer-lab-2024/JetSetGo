@@ -1,9 +1,9 @@
 const express = require('express');
-const { createProfile, updateProfile, getProfile } = require('../controllers/tourGuideController');
+const { updateProfile, getProfile } = require('../controllers/tourGuideController');
 const router = express.Router();
 
 // Create or Update Tour Guide Profile
-router.post('/create', createProfile);
+// router.post('/create', createProfile);
 router.patch('/update/:id', updateProfile);
 router.get('/profile/:id', getProfile);
 

@@ -8,7 +8,7 @@ const cors = require('cors');
 const advertiserRoutes = require('./routes/advertiserRoutes'); 
 const sellerRoutes = require('./routes/sellerRoutes'); 
 const tourGuideRoutes = require('./routes/tourGuideRoutes'); 
-const activityRoutes = require('./routes/activityRoutes'); // we  may not use here
+// const activityRoutes = require('./routes/activityRoutes'); // we  may not use here
 const adminRoutes = require('./routes/adminRoutes.js');
 // const activityRoutes = require('./routes/activityRoutes.js'); 
 //express app
@@ -32,7 +32,7 @@ app.use('/api/advertisers', advertiserRoutes);
 app.use('/api/sellers', sellerRoutes);
 app.use('/api/tour-guides', tourGuideRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/activity', activityRoutes);
+// app.use('/api/activity', activityRoutes);
 
 
 

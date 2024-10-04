@@ -42,6 +42,10 @@ const activitySchema = new mongoose.Schema({
       type: String, 
       default: null  
   },
+  rating :{
+    type:Number,
+    default:0
+  },
 
     createdAt: { 
       type: Date, 
