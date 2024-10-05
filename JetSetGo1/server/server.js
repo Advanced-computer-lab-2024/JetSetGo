@@ -30,7 +30,7 @@ app.use('/api/users', guestRoutes);
 app.use('/api/advertisers', advertiserRoutes);
 app.use('/api/sellers', sellerRoutes);
 app.use('/api/tour-guides', tourGuideRoutes);
-
+app.use('/api/products',productRoutes)
 
 
 //connect to db
