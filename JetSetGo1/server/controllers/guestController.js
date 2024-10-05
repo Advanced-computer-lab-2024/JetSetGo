@@ -1,4 +1,5 @@
-const Guest = require('../models/GuestModel'); // Assuming the Guest model covers all user types
+//const Guest = require('../models/GuestModel'); // Assuming the Guest model covers all user types
+
 
 // Register Guest (Tourist, Tour Guide, Advertiser, Seller)
 const registerGuest = async (req, res) => {

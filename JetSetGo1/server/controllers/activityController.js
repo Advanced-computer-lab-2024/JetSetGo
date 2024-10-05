@@ -110,6 +110,7 @@ const searchActivityByRating = async (req,res) =>{
 //Seach Activity by budget
 const searchActivityByBudget = async (req,res) =>{
   const budget = req.body
+  
   try{
     const activty = await Activity.find()
     

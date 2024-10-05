@@ -1,49 +1,57 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 
-const activitySchema = new Schema({
-  advertiser_id: {
-    type: Schema.Types.ObjectId,
-    ref: "Advertiser",
-    required: true,
-  },
-  name:{
-    type: String,
-    required: true,
-  },
-  date: {
-    type: Date,
-    required: true,
-  },
-  time: {
-    type: String,
-    required: true,
-  },
-  location: {
-    type: String,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  category: {
-    type: String,
-    required: true,
-  },
-  tags: {
-    type: [String],
-  },
-  special_discounts: {
-    type: String,
-  },
-  is_booking_open: {
-    type: Boolean,
-    default: true,
-  },
-  rating:{
-    type: Number,
-  }
-}, { timestamps: true });
+const activitySchema = new mongoose.Schema({
+    title: { 
+      type: String, 
+      required: true
+     },
+    date: { 
+      type: Date, 
+      required: true 
+    },
+    time: { 
+      type: String, 
+      required: true 
+    },
+    location: { 
+      type: String,
+       required: true 
+      },
+    price: { 
+      type: Number, 
+      required: true 
+    },
+    category: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Category'
+    },  // Reference to the activity category
+    tags: [
+      { type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Tag' }],
+    advertiser: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Advertiser', 
+      required: true 
+    },
+    bookingOpen: { 
+      type: Boolean, 
+      default: true 
+    },
 
-module.exports = mongoose.model("Activity", activitySchema);
+    rating :{
+      type:Number,
+      default:0
+    },
+
+    specialDiscounts: {
+      type: String, 
+      default: null
+  },
+
+    createdAt: { 
+      type: Date, 
+      default: Date.now 
+    }
+});
+
+module.exports = mongoose.model('Activity', activitySchema);
