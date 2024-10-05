@@ -1,37 +1,40 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 
-const tourGuideSchema = new Schema({
-  username: {
-    type: String,
-    required: true,
-    trim: true,
-    maxLength: 20,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  mobile_number: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  years_of_experience: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-  previous_work: {
-    type: String,
-    trim: true,
-  },
-}, { timestamps: true });
+const tourGuideSchema = new mongoose.Schema({
+    username: { 
+      type: String, 
+      required: true, 
+      unique: true 
+    },
+    email: { 
+      type: String, 
+      required: true, 
+      unique: true 
+    },
+    password: { 
+      type: String, 
+      required: true 
+    },
+    experience: { 
+      type: Number, 
+      required: false 
+    },  // Years of experience
+    mobile: { 
+      type: String, 
+      required: false 
+    },
+    previousWork: [
+      { 
+        type: String 
+      }],  // Previous work (optional)
+    accepted: { 
+      type: Boolean, 
+      default: false 
+    },  // If the guide is accepted by the system
+    createdAt: { 
+      type: Date, 
+      default: Date.now 
+    }
+});
 
-module.exports = mongoose.model("TourGuide", tourGuideSchema);
+module.exports = mongoose.model('TourGuide', tourGuideSchema);

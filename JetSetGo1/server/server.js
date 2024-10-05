@@ -9,8 +9,7 @@ const guestRoutes = require('./routes/guestRoutes');
 const advertiserRoutes = require('./routes/advertiserRoutes'); 
 const sellerRoutes = require('./routes/sellerRoutes'); 
 const tourGuideRoutes = require('./routes/tourGuideRoutes'); 
-const activityRoutes = require('./routes/activityRoutes'); // we  may not use here
-const itineraryRoutes = require('./routes/itineraryRoutes');
+const touristRoutes = require('./routes/touristRoutes'); 
 //express app
 const app = express()
 
@@ -32,12 +31,11 @@ app.get('/', (req, res) => {
 
 
 // Use routes
-app.use('/api/users', guestRoutes);
+app.use('/api/guests', guestRoutes);
 app.use('/api/advertisers', advertiserRoutes);
 app.use('/api/sellers', sellerRoutes);
 app.use('/api/tour-guides', tourGuideRoutes);
-app.use('/api/activity', activityRoutes);
-app.use('/api/itinerary', itineraryRoutes);
+app.use('/api/tourists', touristRoutes)
 
 
 

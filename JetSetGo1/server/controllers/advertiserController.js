@@ -1,4 +1,6 @@
 const Advertiser = require('../models/AdvertiserModel');
+const Activity = require('../models/AdvertiserActivityModel');
+
 
 // Create Advertiser Profile
 const createAdvertiserProfile = async (req, res) => {
@@ -36,6 +38,31 @@ const getAdvertiserProfile = async (req, res) => {
     res.status(404).json({ error: 'Profile not found' });
   }
 };
+
+const createActivity = async (req, res) => {
+  const {title, date, time, location, price, category, tags, advertiser, bookingOpen, rating, specialDiscounts } = req.body;
+
+  try {
+    const newActivity = await Activity.create({title, date, time, location, price, category, tags, advertiser, bookingOpen, rating, specialDiscounts });
+    res.status(201).json(newActivity);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+// Update Activity
+const updateActivity = async (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+
+  try {
+    const updatedActivity = await Activity.findByIdAndUpdate(id, updates, { new: true });
+    res.status(200).json(updatedActivity);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
 const deleteActivity = async (req, res) => {
   const { id } = req.params;
 
@@ -51,4 +78,15 @@ const deleteActivity = async (req, res) => {
       res.status(500).json({ error: err.message });
   }
 };
-module.exports = { createAdvertiserProfile, updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity};
+
+// Get All Activities
+const getActivities = async (req, res) => {
+  try {
+    const activities = await Activity.find();
+    res.status(200).json(activities);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+module.exports = { createAdvertiserProfile, updateAdvertiserProfile, getAdvertiserProfile ,createActivity, updateActivity, deleteActivity, getActivities};

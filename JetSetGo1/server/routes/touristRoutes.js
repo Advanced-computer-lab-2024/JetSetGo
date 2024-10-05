@@ -1,5 +1,5 @@
 const express = require('express');
-const {getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating, getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag } = require('../controllers/guestController');
+const {getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating, getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag } = require('../controllers/touristController');
 const router = express.Router();
 
 router.get('/getUpcomingActivities', getUpcomingActivities);
