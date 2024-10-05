@@ -70,6 +70,9 @@ const createItinerary = async (req, res) => {
       accessibility,
       pickupLocation,
       dropoffLocation,
+      isBooked,
+      tags,
+      rating,
     } = req.body;
 
     // Expect activities to be provided as an array of strings
@@ -86,6 +89,9 @@ const createItinerary = async (req, res) => {
       accessibility,
       pickupLocation,
       dropoffLocation,
+      isBooked,
+      tags,
+      rating,
     });
 
     await itinerary.save();
@@ -132,7 +138,7 @@ const deleteItinerary = async (req, res) => {
     }
 
     // If bookings exist, we won't delete the itinerary
-    if (itinerary.bookingsCount > 0) {
+    if (itinerary.isBooked) {
       return res
         .status(400)
         .json({ message: "Cannot delete itinerary with existing bookings" });

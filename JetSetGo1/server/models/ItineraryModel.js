@@ -58,6 +58,16 @@ const itinerarySchema = new mongoose.Schema({
     type: String,
     required: true, // Location where participants will be dropped off
   },
+  isBooked: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
+  rating: {
+    type: Number,
+    default: 0,
+  },
   createdAt: { type: Date, default: Date.now },
 });
 
