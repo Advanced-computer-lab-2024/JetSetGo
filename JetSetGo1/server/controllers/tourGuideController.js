@@ -12,13 +12,14 @@ const createProfile = async (req, res) => {
 
     // Check if the tour guide is accepted
     if (!tourGuide || !tourGuide.accepted) {
-      return res
-        .status(403)
-        .json({
-          error: "You must be accepted as a tour guide to create a profile",
-        });
+      return res.status(403).json({
+        error: "You must be accepted as a tour guide to create a profile",
+      });
     }
 
+    if (tourGuide.mobile || tourGuide.experience || tourGuide.previousWork) {
+      return res.status(403).json({ error: "You already created a profile" });
+    }
     // Update the tour guide profile with new information
     tourGuide.mobile = mobile;
     tourGuide.experience = experience;
@@ -42,11 +43,9 @@ const updateProfile = async (req, res) => {
 
     // Check if the profile exists and if the tour guide is accepted
     if (!profile || !profile.accepted) {
-      return res
-        .status(403)
-        .json({
-          error: "You must be accepted as a tour guide to update your profile",
-        });
+      return res.status(403).json({
+        error: "You must be accepted as a tour guide to update your profile",
+      });
     }
 
     // If accepted, update the profile
@@ -69,11 +68,9 @@ const getProfile = async (req, res) => {
 
     // Check if the profile exists and if the tour guide is accepted
     if (!profile || !profile.accepted) {
-      return res
-        .status(403)
-        .json({
-          error: "You must be accepted as a tour guide to view the profile",
-        });
+      return res.status(403).json({
+        error: "You must be accepted as a tour guide to view the profile",
+      });
     }
 
     // Return the profile data if accepted
@@ -141,7 +138,7 @@ const getItineraries = async (req, res) => {
   }
 };
 
-updateItinerary = async (req, res) => {
+const updateItinerary = async (req, res) => {
   try {
     const updatedItinerary = await Itinerary.findByIdAndUpdate(
       req.params.id,
