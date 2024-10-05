@@ -1,4 +1,4 @@
-const Tourist = require('../models/touristModel'); 
+const Tourist = require('../models/TouristModel'); 
 //66f8084788afe7e5aff3aefc
 
 // Update tourist information

@@ -1,8 +1,8 @@
-const Admin = require('../models/adminModels');
+const Admin = require('../models/AdminModel');
 //const Account = require('../models/GuestModel');
 const Seller = require('../models/SellerModel');
 const TourGuide = require('../models/TourGuideModel');
-const Tourist = require('../models/touristModel');
+const Tourist = require('../models/TouristModel');
 //66f8084788afe7e5aff3aefc
 
 //Dynamic model deletion utility
@@ -11,10 +11,10 @@ const models={admin: Admin, seller: Seller, tourguide: TourGuide, tourist: Touri
 
 // Add Admin 
 const addAdmin = async (req, res) => {
-    const { username,password} = req.body;
+    const { username,password, email} = req.body;
 
     try {
-      const newAdmin = await Admin.create({username, password});
+      const newAdmin = await Admin.create({username, password,email});
       res.status(201).json(newAdmin);
     } catch (err) {
       res.status(400).json({ error: err.message });

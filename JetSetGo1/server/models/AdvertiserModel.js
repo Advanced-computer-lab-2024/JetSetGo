@@ -1,41 +1,36 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose');
 
-const advertiserSchema = new Schema({
-  username: {
-    type: String,
-    ref: 'GuestModel',
-    required: true,
-    trim: true,
-    maxLength: 20,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  company_name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  company_profile: {
-    type: String,
-    trim: true,
-  },
-  website_link: {
-    type: String,
-    trim: true,
-  },
-  hotline: {
-    type: String,
-    trim: true,
-  },
-}, { timestamps: true });
+const advertiserSchema = new mongoose.Schema({
+    username: { 
+      type: String, 
+      required: true, 
+      unique: true 
+    },
+    email: { 
+      type: String, 
+      required: true, 
+      unique: true 
+    },
+    password: { 
+      type: String, 
+      required: true 
+    },
+    companyProfile: { 
+      type: String 
+    },  // Information about the company
+    websiteLink: { 
+      type: String 
+    },  // Link to the company website
+    hotline: { 
+      type: String
+     },  // Company hotline
+    accepted: { 
+      type: Boolean, 
+      default: false 
+    },  // If the advertiser is accepted by the system
+    createdAt: { 
+      type: Date, 
+      default: Date.now }
+});
 
-module.exports = mongoose.model("Advertiser", advertiserSchema);
+module.exports = mongoose.model('Advertiser', advertiserSchema);

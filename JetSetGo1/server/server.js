@@ -9,7 +9,6 @@ const guestRoutes = require('./routes/guestRoutes');
 const advertiserRoutes = require('./routes/advertiserRoutes'); 
 const sellerRoutes = require('./routes/sellerRoutes'); 
 const tourGuideRoutes = require('./routes/tourGuideRoutes'); 
-const activityRoutes = require('./routes/activityRoutes'); // we  may not use here
 const adminRoutes = require('./routes/adminRoutes');
 const touristRoutes = require('./routes/touristRoutes');
 
