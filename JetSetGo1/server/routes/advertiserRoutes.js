@@ -6,4 +6,5 @@ const router = express.Router();
 
 router.get('/showAll', showMyActivities )
 
+
 module.exports = router;
