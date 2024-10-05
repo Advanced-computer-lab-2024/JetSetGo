@@ -1,6 +1,21 @@
 const express = require('express');
-const {getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating, getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag } = require('../controllers/guestController');
+const { searchActivityByBudget,searchActivityByDate, searchActivityByRating,searchActivityByCategory, searchItineraryByTag,
+searchItineraryByDate, searchItineraryByBudget, searchItineraryByLanguage,getUpcomingActivities, sortActivityByPrice,
+ sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating, getMuseums,
+  filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag } = require('../controllers/guestController');
 const router = express.Router();
+
+
+router.get('/searchActivityByRating',searchActivityByRating);
+router.get('/searchActivityByDate',searchActivityByDate);
+router.get('/searchActivityByCategory',searchActivityByCategory);
+router.get('/searchActivityByBudget',searchActivityByBudget);
+
+router.get('/searchItineraryByDate',searchItineraryByDate);
+router.get('/searchItineraryByBudget',searchItineraryByBudget);
+router.get('/searchItineraryByLanguage',searchItineraryByLanguage);
+router.get('/searchItineraryByTag',searchItineraryByTag);
+
 
 router.get('/getUpcomingActivities', getUpcomingActivities);
 router.get('/sortActivityByPrice', sortActivityByPrice);

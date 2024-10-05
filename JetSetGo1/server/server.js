@@ -44,7 +44,7 @@ mongoose.connect(process.env.MONGO_URI)
 .then(()=>{
     //listen for reqs when connected to db
 app.listen(process.env.PORT,() =>{
-    console.log("listeing on port",process.env.PORT)
+    console.log("listeing to request on http://localhost:",process.env.PORT)
  })
 })
 .catch((error)=>{
