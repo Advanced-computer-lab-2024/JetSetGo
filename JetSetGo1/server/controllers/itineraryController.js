@@ -102,5 +102,4 @@ const searchItineraryByTag = async (req,res) =>{
   }
 };
 module.exports = {searchItineraryByPreferenes, searchItineraryByDate, searchItineraryByBudget, searchItineraryByLanguage,
-searchItineraryByCategory,searchItineraryByName,searchItineraryByTag
- };
+searchItineraryByCategory,searchItineraryByName,searchItineraryByTag};

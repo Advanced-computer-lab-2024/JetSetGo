@@ -23,7 +23,7 @@ const activitySchema = new mongoose.Schema({
     },
     category: { 
       type: mongoose.Schema.Types.ObjectId, 
-      ref: 'Category'
+      ref: 'Category'   
     },  // Reference to the activity category
     tags: [
       { type: mongoose.Schema.Types.ObjectId, 
@@ -37,7 +37,7 @@ const activitySchema = new mongoose.Schema({
       type: Boolean, 
       default: true 
     },
-
+    
     rating :{
       type:Number,
       default:0
@@ -45,7 +45,7 @@ const activitySchema = new mongoose.Schema({
 
     specialDiscounts: {
       type: String, 
-      default: null
+      default: null  
   },
 
     createdAt: { 

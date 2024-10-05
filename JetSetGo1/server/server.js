@@ -10,7 +10,8 @@ const advertiserRoutes = require('./routes/advertiserRoutes');
 const sellerRoutes = require('./routes/sellerRoutes'); 
 const tourGuideRoutes = require('./routes/tourGuideRoutes'); 
 const activityRoutes = require('./routes/activityRoutes');
-const itineraryRoutes = require('./routes/itineraryRoutes'); // Moemen : we  may not use here | Mahmoud : we should use it
+const itineraryRoutes = require('./routes/itineraryRoutes');
+const touristRoutes = require('./routes/touristRoutes'); // Moemen : we  may not use here | Mahmoud : we should use it
 //express app
 const app = express()
 
@@ -27,12 +28,13 @@ app.use((req,res,next)=>{
 
 
 // Use routes
-app.use('/api/users', guestRoutes);
+app.use('/api/guest', guestRoutes);
 app.use('/api/advertisers', advertiserRoutes);
 app.use('/api/sellers', sellerRoutes);
 app.use('/api/tour-guides', tourGuideRoutes);
 app.use('/api/activity',activityRoutes);
 app.use('/api/itinerary',itineraryRoutes);
+app.use('/api/tourist',touristRoutes);
 
 
 

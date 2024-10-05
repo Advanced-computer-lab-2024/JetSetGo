@@ -17,11 +17,11 @@ const tourGuideSchema = new mongoose.Schema({
     },
     experience: { 
       type: Number, 
-      required: true 
+      required: false 
     },  // Years of experience
     mobile: { 
       type: String, 
-      required: true 
+      required: false 
     },
     previousWork: [
       { 
