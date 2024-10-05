@@ -8,7 +8,7 @@ const itinerarySchema = new mongoose.Schema({
     description: { 
         type: String, 
         required: true 
-    },
+    },  
     tourGuide: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'TourGuide', 
@@ -28,7 +28,7 @@ const itinerarySchema = new mongoose.Schema({
     ,
     locations: 
         {
-            type: [String], required: true ,
+            type: [String], required: true ,  
             // address: { type: String, required: true }, 
             // coordinates: { type: [Number], required: true } 
         }
@@ -65,7 +65,15 @@ const itinerarySchema = new mongoose.Schema({
         type:Number,
         default:0
       },
-
+      tags: [
+        { type: mongoose.Schema.Types.ObjectId, 
+          ref: 'Tag' }],
+     isBooked: {
+        type: Boolean,
+        required: true,
+        default: false,
+        },
+  
     createdAt: { type: Date, default: Date.now }
 });
 

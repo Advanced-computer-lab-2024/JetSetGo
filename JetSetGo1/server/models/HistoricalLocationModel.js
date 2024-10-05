@@ -22,21 +22,22 @@ const historicalLocationSchema = new mongoose.Schema({
         native: { type: Number, required: true },
         student: { type: Number, required: true },
     },
-
-    tags: [{ 
+  
+    tags: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Tag' 
-    }],
+        ref: 'HistoricalTag' 
+    },
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category', 
     },
+    
+  governor: { type: mongoose.Schema.Types.ObjectId, ref: 'TourismGovernor', required: true },
+
     createdAt: { 
         type: Date, 
         default: Date.now 
-    },
-    governor: { type: mongoose.Schema.Types.ObjectId, ref: 'TourismGovernor', required: true },
-
+    }
 });
 
 module.exports = mongoose.model('HistoricalLocation', historicalLocationSchema);
