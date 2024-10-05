@@ -23,7 +23,12 @@ const museumSchema = new mongoose.Schema({
         student: { type: Number, required: true }
     },
     pictures: [{ type: String }],
-    tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }],
+    tags: [{ 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Tag',
+        required: true 
+ 
+    }],
     category: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Category',  // Reference to the Category model
