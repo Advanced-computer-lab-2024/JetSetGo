@@ -1,7 +1,6 @@
-/* google font /
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap');
 
-/ layout /
 :root {
   --primary: #1aac83;
   --error: #e7195a;
@@ -32,7 +31,7 @@ header a {
   margin: 0 auto;
 }
 
-/ homepage /
+ 
 .home {
   display: grid;
   grid-template-columns: 3fr 1fr;
@@ -67,7 +66,7 @@ header a {
   color: #333;
 }
 
-/ new workout form */
+form 
 label, input {
   display: block;
 }

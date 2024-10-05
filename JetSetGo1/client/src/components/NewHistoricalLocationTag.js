@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const newHLTag = () => {
+const NewHLTag = () => {
     const [type, setType] = useState('');
     const [historicalPeriod, setHistoricalPeriod] = useState('');
     const [error, setError] = useState(null);
@@ -56,4 +56,4 @@ const newHLTag = () => {
     );
 };
 
-export default NewHistoricalTag;
+export default NewHLTag

@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const newHL = () =>{
+const NewHL = () =>{
     const[name, setName] = useState('')
     const[description, setDescription] = useState('')
     const[location, setLocation] = useState('')
@@ -143,4 +143,4 @@ const newHL = () =>{
     )
 }
 
-export default newHL
+export default NewHL

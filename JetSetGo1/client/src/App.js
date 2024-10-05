@@ -1,9 +1,8 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
 
 //pages and components
-import Home from './pages/Home'
 import Navbar from './components/Navbar';
-import CMuseum from './pages/cMuseum';
+import Museums from './pages/Museums.js';
 
 
 function App() {
@@ -15,7 +14,7 @@ function App() {
         <Routes>
           <Route
             path = "/"
-            element={<CMuseum />}
+            element={<Museums/>}
           />
         </Routes>
       </div>
