@@ -11,6 +11,11 @@ const {
 
 const router = express.Router();
 
+// Add this above other routes
+router.post("/test", (req, res) => {
+  res.send("Tour Guide Test Route is working!");
+});
+
 // Create or Update Tour Guide Profile
 router.post("/create", createProfile);
 router.patch("/update/:id", updateProfile);
