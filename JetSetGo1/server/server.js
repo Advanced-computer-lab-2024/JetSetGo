@@ -72,8 +72,10 @@ app.use((req,res,next)=>{
 
 // app.use('/api/activity', activityRoutes);
 //connect to db
+
 mongoose.connect(process.env.MONGO_URI)
 .then(()=>{
+
     //listen for reqs when connected to db
 app.listen(process.env.PORT,() =>{
     console.log("listeing on port",process.env.PORT)

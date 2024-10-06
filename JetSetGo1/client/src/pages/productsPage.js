@@ -6,6 +6,10 @@ import { PriceRange } from '@faststore/ui'
 import Filter from '../components/Filterbox.js';
 import { Range } from 'react-range';
 import { MdArrowDropDown, MdArrowDropUp } from 'react-icons/md';
+import ProductForm from '../components/ProductForm.js';
+import ProductDetails from '../components/ProductDetails.js';
+import UpdateProducts from '../components/UpdateProduct.js';
+import { useParams, useNavigate } from 'react-router-dom'; // useParams to get the model and ID from the URL
 
 
 const STEP = 1;
@@ -48,6 +52,7 @@ const ProductListing = () => {
   const [isPriceRangeVisible, setIsPriceRangeVisible] = useState(false);
   const [ratingValue, setRatingValue] = useState(1);
   const [isRatingVisible, setIsRatingVisible] = useState(false);
+  const navigate = useNavigate(); // For navigation after the update
 
   const formatter = (value) => {
     return new Intl.NumberFormat('en-US', {
@@ -85,6 +90,8 @@ const ProductListing = () => {
           onChange={handleSearchChange}
           className="search-input"
         />
+        <button type="button" onClick={() => navigate(`../components/ProductForm`)}>Add Product</button>
+
         
         <Filter isFilterOpen={isFilterOpen} toggleFilter={setIsFilterOpen}>
           {/* Dynamic content passed to the filter */}
@@ -210,6 +217,7 @@ const ProductListing = () => {
             </div>
             <p className="product-description">{product.description}</p>
             <button className="add-to-cart-btn">Add to Cart</button>
+            <button type="button" onClick={() => navigate(`../components/UpdateProduct`)}>Edit Product</button>
           </div>
         ))}
       </div>

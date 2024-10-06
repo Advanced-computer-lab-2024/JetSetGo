@@ -47,18 +47,48 @@ const getProducts= async (req,res) => {
 
 
 // Add new product
-const createProduct = async (req, res) =>{
-  const {name, description, price, quantityAvailable, picture, seller, ratings} = req.body
+// const createProduct = async (req, res) =>{
+//   const {name, description, price, quantityAvailable, picture, seller, ratings} = req.body
 
-  try{
-      const product= await Product.create({name, description, price, quantityAvailable, seller, picture,ratings})
-      res.status(200).json(product)
-  } catch(error){
-      res.status(400).json({error: error.message})
+//   try{
+//       const product= await Product.create({name, description, price, quantityAvailable, seller, picture,ratings})
+//       res.status(200).json(product)
+//   } catch(error){
+//       res.status(400).json({error: error.message})
+//   }
+
+//   res.json({mssg: 'added a new product'})
+// }
+const createProduct = async (req, res) => {
+  const { name, description, price, quantityAvailable, picture, seller, ratings } = req.body;
+
+  // Input validation
+  if (!name || !description || !price || !quantityAvailable || !seller || !picture) {
+      return res.status(400).json({ error: 'All fields are required' });
   }
 
-  res.json({mssg: 'added a new product'})
-}
+  if (isNaN(price) || isNaN(quantityAvailable) || (ratings && isNaN(ratings))) {
+      return res.status(400).json({ error: 'Price, quantity, and ratings must be valid numbers' });
+  }
+
+  try {
+      const product = await Product.create({
+          name,
+          description,
+          price,
+          quantityAvailable,
+          seller,
+          picture,
+          ratings: ratings || 0, // Default ratings to 0 if not provided
+      });
+
+      res.status(200).json({ mssg: 'Added a new product', product });
+      console.log(product);
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+};
+
 
 //  update a product
 const updateProduct = async (req, res) =>{
