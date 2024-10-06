@@ -14,12 +14,12 @@ const createSellerProfile = async (req, res) => {
 
       // Check if the seller is accepted
       if (!seller || !seller.accepted) {
-          return res.status(403).json({ error: 'You must be accepted as a seller to create a profile' });
+          return res.status(404).json({ error: 'You must be accepted as a seller to create a profile' });
       }
 
       // Check if the profile fields are already set
       if (seller.name || seller.description) {
-          return res.status(403).json({ error: 'You already created a profile' });
+          return res.status(404).json({ error: 'You already created a profile' });
       }
 
       // Update the seller profile with new information
@@ -32,7 +32,7 @@ const createSellerProfile = async (req, res) => {
 
   } catch (err) {
     console.log("i am here")
-      res.status(400).json({ error: err.message });
+      res.status(404).json({ error: err.message });
   }
 };
 
@@ -48,7 +48,7 @@ const updateSellerProfile = async (req, res) => {
 
     // Check if the seller exists and if they are accepted
     if (!seller || !seller.accepted) {
-      return res.status(403).json({ error: 'You must be accepted as a seller to update your profile' });
+      return res.status(404).json({ error: 'You must be accepted as a seller to update your profile' });
     }
 
     // If accepted, update the profile with the provided updates
@@ -56,7 +56,7 @@ const updateSellerProfile = async (req, res) => {
     res.status(200).json(updatedSeller);
 
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(404).json({ error: err.message });
   }
 };
 
@@ -95,7 +95,7 @@ const createProduct = async (req, res) =>{
       const product= await Product.create({name, description, price, quantityAvailable, seller, picture,ratings})
       res.status(200).json(product)
   } catch(error){
-      res.status(400).json({error: error.message})
+      res.status(404).json({error: error.message})
   }
 
   res.json({mssg: 'added a new product'})
@@ -104,14 +104,14 @@ const createProduct = async (req, res) =>{
 //  update a product
 const updateProduct = async (req, res) =>{
     const { id } = req.params
-
+    
     if (!mongoose.Types.ObjectId.isValid(id)){
         return res.status(404).json({error: 'No such product'})
     }
 
     const product = await Product.findOneAndUpdate({_id:id},{
         ...req.body
-    })
+    },{ new: true })
 
     if(!product){
         return res.status(404).json({error:'No such product'})
@@ -122,7 +122,7 @@ const updateProduct = async (req, res) =>{
 
 const filterProducts = async(req,res) => {
     
-    const{min, max}= req.body
+  const { min, max } = req.query;
 
     try{
         const query = {
@@ -134,22 +134,28 @@ const filterProducts = async(req,res) => {
         const products = await Product.find(query)
         res.status(200).json(products)
     } catch(error){
-        res.status(400).json({error: error.message})
+        res.status(404).json({error: error.message})
     }
 }
 
-const sortByRate = async(req,res) => {
-    const{flag}=req.body
-    try {
-        // Get sorted products by ratings in descending order
-        const products = await Product.find().sort({ ratings: flag }); // Change to 1 for ascending order and -1 for desc
-    
-        res.status(200).json(products); // Send the sorted products as JSON
-      } catch (error) {
-        console.error(error);
-        res.status(500).send('Error fetching products');
-      }
-}
+const sortByRate = async (req, res) => {
+  const  {flag}  = req.query; // Use req.query here
+  var x=0
+  try {
+    if (flag=="1") {
+      x=1
+    }
+    else{
+      x=-1
+    }
+      // Get sorted products by ratings in descending order
+      const products = await Product.find().sort(  {ratings:x} ); // Change to 1 for ascending order and -1 for descending
+      res.status(200).json(products); // Send the sorted products as JSON
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Error fetching products');
+  }
+};
 
 const searchProductName = async(req,res) => {
 
@@ -161,7 +167,7 @@ const searchProductName = async(req,res) => {
         const productname = await Product.find({name: { $regex: name, $options: 'i' }})
         res.status(200).json(productname)
     }catch(error){
-        res.status(400).json({error:error.message})
+        res.status(404).json({error:error.message})
     }
 
 }

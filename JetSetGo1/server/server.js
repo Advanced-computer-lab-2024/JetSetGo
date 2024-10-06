@@ -67,11 +67,11 @@ app.use((req,res,next)=>{
     next()
 })
 // Use routes
-app.use('/api/users', guestRoutes);
+//app.use('/api/users', guestRoutes);
 app.use('/api/advertisers', advertiserRoutes);
 app.use('/api/sellers', sellerRoutes);
 app.use('/api/tour-guides', tourGuideRoutes);
-app.use('/api/products',productRoutes)
+//app.use('/api/products',productRoutes)
 
 // app.use('/api/users', guestRoutes);
 
