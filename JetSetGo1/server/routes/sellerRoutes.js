@@ -4,7 +4,7 @@ const { createSellerProfile, updateSellerProfile, getSellerProfile,
 const router = express.Router();
 
 // Create or Update Seller Profile
-router.post('/create', createSellerProfile);
+router.post('/create/:id', createSellerProfile);
 router.patch('/update/:id', updateSellerProfile);
 router.get('/profile/:id', getSellerProfile);
 

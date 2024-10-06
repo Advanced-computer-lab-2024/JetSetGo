@@ -26,7 +26,6 @@ router.get('/filterProducts',filterProducts)
 router.get('/sortByRate',sortByRate)
 router.get('/searchProductName',searchProductName)
 router.post('/createProduct',createProduct)
-
 // Update workout
 router.patch('/product/:id', updateProduct)
 
