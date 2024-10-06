@@ -6,6 +6,12 @@ import Categorypage from './pages/my_category.js'
 import Navbar from './components/navbar.js'
 import Tourism_Governer from './pages/Tourism_Governer.js'
 import HL from './pages/historicallocations.js'
+import Museum from './pages/museums.js'
+import HLMs from './pages/my_HLMs.js'
+import Activities from './pages/my_activities.js'
+import Itineraries from './pages/my_itineraries.js'
+import HLTags from './pages/hltag.js'
+
 
 function App() {
   return (
@@ -26,7 +32,7 @@ function App() {
               path="/my_category"
               element={<Categorypage />}
             />
-             <Route
+            <Route
               path="/Tourism_Governer"
               element={<Tourism_Governer />}
             />
@@ -34,6 +40,31 @@ function App() {
               path="/HL"
               element={<HL />}
             />
+
+            <Route
+              path="/Museum"
+              element={<Museum />}
+            />
+            <Route
+              path="/HLTags"
+              element={<HLTags />}
+            />
+
+            <Route
+              path="/HLMs"
+              element={<HLMs />}
+            />
+
+            <Route
+              path="/Activities"
+              element={<Activities />}
+            />
+
+            <Route
+              path="/Itineraries"
+              element={<Itineraries />}
+            />
+
           </Routes>
         </div>
       </BrowserRouter>
