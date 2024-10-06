@@ -20,6 +20,11 @@ const Home = () =>{
                 <br/>
                 <br/>
                 <Link to='/HL'>HistoricalLocation</Link>
+                <br/>
+                <Link to='/Museum'>Museum</Link>
+                <br/>
+                <Link to='/HLTags'>New Historical Tag</Link>
+
             </div>
         </div>
      )
