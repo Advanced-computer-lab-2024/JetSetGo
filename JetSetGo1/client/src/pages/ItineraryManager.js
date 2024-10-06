@@ -3,11 +3,13 @@ import axios from 'axios';
 
 axios.defaults.baseURL = 'http://localhost:4000'; // Replace with your actual API URL
 
+const tourGuide_ID = '67002c827e9690cf35059882';
+
 const ItineraryManager = () => {
   const [itineraryData, setItineraryData] = useState({
     title: '',
     description: '',
-    tourGuide: '67002c827e9690cf35059882',
+    tourGuide: tourGuide_ID,
     activities: { name: [], duration: [] },
     locations: [],
     timeline: [],
@@ -17,7 +19,9 @@ const ItineraryManager = () => {
     availableDates: [{ date: '', times: [] }],
     accessibility: '',
     pickupLocation: '',
-    dropoffLocation: ''
+    dropoffLocation: '',
+    rating: 0, // Added rating field
+    isBooked: false, // Added isBooked field
   });
 
   const [itineraries, setItineraries] = useState([]);
@@ -29,7 +33,7 @@ const ItineraryManager = () => {
   const handleChange = (e) => {
     setItineraryData({
       ...itineraryData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -39,7 +43,7 @@ const ItineraryManager = () => {
     updatedActivities[type][index] = value;
     setItineraryData({
       ...itineraryData,
-      activities: updatedActivities
+      activities: updatedActivities,
     });
   };
 
@@ -49,7 +53,7 @@ const ItineraryManager = () => {
     updatedArray[index] = value;
     setItineraryData({
       ...itineraryData,
-      [field]: updatedArray
+      [field]: updatedArray,
     });
   };
 
@@ -59,7 +63,7 @@ const ItineraryManager = () => {
     updatedDates[index].date = value;
     setItineraryData({
       ...itineraryData,
-      availableDates: updatedDates
+      availableDates: updatedDates,
     });
   };
 
@@ -68,7 +72,7 @@ const ItineraryManager = () => {
     updatedDates[dateIndex].times[timeIndex] = value;
     setItineraryData({
       ...itineraryData,
-      availableDates: updatedDates
+      availableDates: updatedDates,
     });
   };
 
@@ -121,7 +125,13 @@ const ItineraryManager = () => {
 
   // Handle edit operation (fill the form with existing data)
   const handleEdit = (itinerary) => {
-    setItineraryData(itinerary);
+    // Format date to YYYY-MM-DD for display
+    const formattedDates = itinerary.availableDates.map((dateItem) => ({
+      ...dateItem,
+      date: new Date(dateItem.date).toISOString().split('T')[0], // Format date for input field
+    }));
+
+    setItineraryData({ ...itinerary, availableDates: formattedDates });
     setEditMode(true);
     setCurrentItineraryId(itinerary._id);
   };
@@ -131,7 +141,7 @@ const ItineraryManager = () => {
     setItineraryData({
       title: '',
       description: '',
-      tourGuide: '67002c827e9690cf35059882',
+      tourGuide: tourGuide_ID,
       activities: { name: [], duration: [] },
       locations: [],
       timeline: [],
@@ -141,7 +151,9 @@ const ItineraryManager = () => {
       availableDates: [{ date: '', times: [] }],
       accessibility: '',
       pickupLocation: '',
-      dropoffLocation: ''
+      dropoffLocation: '',
+      rating: 0, // Reset rating
+      isBooked: false, // Reset isBooked
     });
   };
 
@@ -214,6 +226,34 @@ const ItineraryManager = () => {
           <option value="not accessible">Not Accessible</option>
           <option value="limited accessibility">Limited Accessibility</option>
         </select>
+
+        {/* Rating */}
+        <div>
+          <label>
+            Rating:
+            <input
+              type="number"
+              name="rating"
+              value={itineraryData.rating}
+              onChange={handleChange}
+              min="0"
+              max="5"
+            />
+          </label>
+        </div>
+
+        {/* Is Booked */}
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              name="isBooked"
+              checked={itineraryData.isBooked}
+              onChange={(e) => setItineraryData({ ...itineraryData, isBooked: e.target.checked })}
+            />
+            Is Booked
+          </label>
+        </div>
 
         {/* Add activities */}
         <div>
@@ -360,6 +400,8 @@ const ItineraryManager = () => {
           <li key={itinerary._id}>
             <h3>{itinerary.title}</h3>
             <p>{itinerary.description}</p>
+            <p>Rating: {itinerary.rating}</p>
+            <p>Booked: {itinerary.isBooked ? 'Yes' : 'No'}</p>
             <button onClick={() => handleEdit(itinerary)}>Edit</button>
             <button onClick={() => handleDelete(itinerary._id)}>Delete</button>
           </li>
