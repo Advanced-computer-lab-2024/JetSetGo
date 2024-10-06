@@ -15,4 +15,5 @@ const {showMyActivities} = require('../controllers/advertiserController');
 
 router.get('/showAll', showMyActivities )
 
+
 module.exports = router;

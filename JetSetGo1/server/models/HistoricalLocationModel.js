@@ -23,10 +23,10 @@ const historicalLocationSchema = new mongoose.Schema({
         student: { type: Number, required: true },
     },
 
-    tags: [{ 
+    tags: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Tag' 
-    }],
+        ref: 'HistoricalTag' 
+    },
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category', 
