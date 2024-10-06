@@ -3,7 +3,7 @@ const { createProfile, updateProfile, getProfile } = require('../controllers/tou
 const router = express.Router();
 
 // Create or Update Tour Guide Profile
-router.post('/create', createProfile);
+router.post('/create/:id', createProfile);
 router.patch('/update/:id', updateProfile);
 router.get('/profile/:id', getProfile);
 
