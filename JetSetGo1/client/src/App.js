@@ -4,7 +4,6 @@ import ProductListing from './pages/productsPage'
 import Navbar from "./components/Navbar";
 import ProductForm from "./components/ProductForm";
 import UpdateProducts from "./components/UpdateProduct";
-import ProductDetails from "./components/ProductDetails";
 
 function App() {
   return (
