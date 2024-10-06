@@ -12,7 +12,7 @@ const ActivityDetails = ({Activity}) => {
             <p><strong> Booking Open: </strong>{Activity.bookingOpen}</p>
             <p><strong> Rating: </strong>{Activity.rating}</p>
             <p><strong> Special Discounts: </strong>{Activity.specialDiscounts}</p>
-            <p>{Activity.createdAt}</p>
+            <p><strong>Created At: </strong>{new Date(Activity.createdAt).toLocaleDateString()}</p>
         </div>
     )
 }
