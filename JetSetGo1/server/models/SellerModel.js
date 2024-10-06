@@ -16,7 +16,6 @@ const sellerSchema = new mongoose.Schema({
     },
     name: { 
       type: String, 
-      required: true 
     },  // Name of the seller
     description: {
        type: String
