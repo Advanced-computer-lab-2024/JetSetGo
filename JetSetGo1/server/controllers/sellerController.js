@@ -80,4 +80,4 @@ const getSellerProfile = async (req, res) => {
   }
 };
 
-module.exports = { createSellerProfile, updateSellerProfile, getSellerProfile };
+module.exports = { createSellerProfile, updateSellerProfile, getSellerProfile};

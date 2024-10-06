@@ -1,7 +1,6 @@
 const Advertiser = require('../models/AdvertiserModel');
 const Activity = require('../models/AdvertiserActivityModel');
 
-
 const createAdvertiserProfile = async (req, res) => {
   const { id } = req.params;
   const { companyProfile, websiteLink, hotline } = req.body;
@@ -81,7 +80,7 @@ const getAdvertiserProfile = async (req, res) => {
     res.status(404).json({ error: 'Profile not found' });
   }
 };
-
+///delete activity
 const deleteActivity = async (req, res) => {
   const { id } = req.params;
 
@@ -149,4 +148,20 @@ const getActivities = async (req, res) => {
   }
 };
 
-module.exports = {createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity};
+
+//Read my Activities
+const showMyActivities = async(req,res) => {
+
+
+    const AdvId = req.query.AdvId;
+
+try{
+        const result = await Activity.find({advertiser:(AdvId)})
+        res.status(200).json(result)
+    } catch{
+        res.status(400).json({error:"Id is required"})
+    }
+}
+
+
+module.exports = {createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities};

@@ -2,6 +2,7 @@ const express = require('express');
 const { createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile , createActivity, updateActivity, deleteActivity, getActivities } = require('../controllers/advertiserController');
 const router = express.Router();
 
+
 // Create or Update Advertiser Profile
 // router.post('/create', createAdvertiserProfile);
 router.post('/createProfile/:id',createAdvertiserProfile);
