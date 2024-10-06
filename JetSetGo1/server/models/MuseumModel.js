@@ -27,7 +27,7 @@ const museumSchema = new mongoose.Schema({
     category: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Category',  // Reference to the Category model
-        // required: true 
+        required: true 
     },
     governor: { type: mongoose.Schema.Types.ObjectId, ref: 'TourismGovernor', required: true },
     createdAt: { type: Date, default: Date.now }

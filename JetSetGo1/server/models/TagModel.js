@@ -1,21 +1,16 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const tagSchema = new mongoose.Schema({
+const preferencetag = new Schema({
+  tag_name: {
+    type: String,
+    required: true,
+    unique: true 
+  },
+  description: {
+    type:String,
+    required:false
+},
+}, { timestamps: true });
 
-    type: { 
-        Monuments: { type: String, required: true },
-        Museums: { type: String, required: true },
-        ReligiousSites: { type: String, required: true },
-        Castles: { type: String, required: true }
-    },
-
-    historicalPeriod: { 
-        type: String, 
-        required: true 
-    },
-    
-
-    
-});
-
-module.exports = mongoose.model('Tag', tagSchema);
+module.exports = mongoose.model("Tag", preferencetag);
