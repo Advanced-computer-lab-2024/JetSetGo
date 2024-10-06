@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Import Axios for HTTP requests
 import './ProductListing.css';
-import filterIcon from '../assets/filter_3839020.png';
 import { FaStar } from 'react-icons/fa';
 import Filter from '../components/Filterbox.js';
 import { Range } from 'react-range';
 import { MdArrowDropDown, MdArrowDropUp } from 'react-icons/md';
-import ProductForm from '../components/ProductForm.js';
-import ProductDetails from '../components/ProductDetails.js';
-import UpdateProducts from '../components/UpdateProduct.js';
-import { useParams, useNavigate } from 'react-router-dom'; // useParams to get the model and ID from the URL
-
 
 const STEP = 1;
 const MIN = 0;
@@ -24,8 +17,7 @@ const ProductListing = () => {
   const [isPriceRangeVisible, setIsPriceRangeVisible] = useState(false);
   const [ratingValue, setRatingValue] = useState(1);
   const [isRatingVisible, setIsRatingVisible] = useState(false);
-  const navigate = useNavigate(); // For navigation after the update
-  const [filtersApplied, setFiltersApplied] = useState(false);
+  const [sortOrder, setSortOrder] = useState(''); // State for sorting order
 
   // Formatter for price display
   const formatter = (value) => {
@@ -53,9 +45,11 @@ const ProductListing = () => {
   // Fetch all products from the backend
   useEffect(() => {
     const fetchProducts = async () => {
+      
       try {
-        const response = await axios.get('/api/sellers/Products');
-        setProducts(response.data); // Assuming response data is an array of products
+        const response = await fetch('/api/sellers/Products');
+        const data = await response.json();
+        setProducts(data); // Assuming response data is an array of products
       } catch (error) {
         console.error('Error fetching products:', error);
       }
@@ -64,38 +58,61 @@ const ProductListing = () => {
     fetchProducts();
   }, []);
 
-  // Fetch filtered products by price range and rating
-  useEffect(() => {
-    if (filtersApplied) { // Only apply when filters are saved
-      const fetchFilteredProducts = async () => {
-        try {
-          const response = await axios.get('/api/sellers/filterProducts', {
-            params: {
-              minPrice: values[0],
-              maxPrice: values[1],
-              rating: ratingValue, // Pass rating filter
-            },
-          });
-          setProducts(response.data); // Update products with filtered data
-        } catch (error) {
-          console.error('Error filtering products:', error);
-        }
-      };
-
-      fetchFilteredProducts();
+  // Fetch filtered products by price range (POST request)
+  const fetchFilteredProducts = async () => {
+    try {
+      const response = await fetch(`/api/sellers/filterProducts?min=${values[0]}&max=${values[1]}`, {
+        method: 'GET', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const filtered = await response.json(); // Parse the JSON response
+      setProducts(filtered); // Update products with filtered data
+    } catch (error) {
+      console.error('Error filtering products by price:', error);
     }
-  }, [values, ratingValue, filtersApplied]); // Trigger when price range or rating changes, or save filters is clicked
-
-  // Handle saving the filters
-  const handleSaveFilter = () => {
-    setFiltersApplied(true); // This will trigger the useEffect for fetching filtered products
   };
+
+  const fetchSortedProducts = async (order) => {
+    try {
+      
+        const response = await fetch(`/api/sellers/sortByRate?flag=${order}`, {
+            method: 'GET', // This is correct
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const sortedProducts = await response.json(); // Parse the JSON response
+        setProducts(sortedProducts); // Update products with sorted data
+    } catch (error) {
+        console.error('Error sorting products by rating:', error);
+    }
+};
+
+  const handleSortChange = (event) => {
+    const selectedOrder = event.target.value;
+    setSortOrder(selectedOrder);
+    const flag = selectedOrder === 'ascending' ? 1 : -1; // Determine flag based on selection
+    fetchSortedProducts(flag); // Fetch sorted products
+};
+  
 
   // Filter products based on the search term
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+  
   return (
     <div className="product-listing">
       <div className="filter-section">
@@ -106,10 +123,8 @@ const ProductListing = () => {
           onChange={handleSearchChange}
           className="search-input"
         />
-        <button type="button" onClick={() => navigate(`../components/ProductForm`)}>Add Product</button>
 
-
-        <Filter isFilterOpen={isFilterOpen} toggleFilter={setIsFilterOpen} onSaveFilter={handleSaveFilter}>
+        <Filter isFilterOpen={isFilterOpen} toggleFilter={setIsFilterOpen}>
           <h2>Advanced Filters</h2>
 
           {/* Price selector */}
@@ -162,6 +177,11 @@ const ProductListing = () => {
             </div>
           )}
 
+          {/* Save Button to Apply Filter */}
+          <button className="save-filter-btn" onClick={fetchFilteredProducts}>
+            Save Filter
+          </button>
+
           {/* Rating Toggle Section */}
           <div className="rating-toggle" onClick={toggleRatingVisibility}>
             <span>Rating</span>
@@ -175,39 +195,13 @@ const ProductListing = () => {
               <div className="rating-display">
                 <span>Rating: {ratingValue.toFixed(1)} Stars</span>
               </div>
-
-              <Range
-                values={[ratingValue]}
-                step={0.5}
-                min={1}
-                max={5}
-                onChange={(values) => setRatingValue(values[0])}
-                renderTrack={({ props, children }) => (
-                  <div
-                    {...props}
-                    style={{
-                      ...props.style,
-                      height: '6px',
-                      width: '100%',
-                      background: 'linear-gradient(to right, #FF5733, #007bff)',
-                    }}
-                  >
-                    {children}
-                  </div>
-                )}
-                renderThumb={({ props, isDragged }) => (
-                  <div
-                    {...props}
-                    style={{
-                      ...props.style,
-                      height: '24px',
-                      width: '24px',
-                      backgroundColor: isDragged ? '#007bff' : '#ccc',
-                      borderRadius: '50%',
-                    }}
-                  />
-                )}
-              />
+              <select id="sort" value={sortOrder} onChange={handleSortChange}>
+                <option value="">Select</option>
+                <option value="ascending">1 to 5</option>
+                <option value="descending">5 to 1</option>
+              </select>
+              
+              
             </div>
           )}
         </Filter>
@@ -220,12 +214,11 @@ const ProductListing = () => {
             <h2 className="product-title">{product.name}</h2>
             <p className="product-price">${product.price.toFixed(2)}</p>
             <div className="product-rating">
-              <p>{(product.rating !== undefined ? product.rating.toFixed(2) : '0.00')}</p>
+              <p  className='rating'>{product.ratings}</p>
               <FaStar className="star-icon" />
             </div>
             <p className="product-description">{product.description}</p>
             <button className="add-to-cart-btn">Add to Cart</button>
-            <button type="button" onClick={() => navigate(`../components/UpdateProduct`)}>Edit Product</button>
           </div>
         ))}
       </div>
