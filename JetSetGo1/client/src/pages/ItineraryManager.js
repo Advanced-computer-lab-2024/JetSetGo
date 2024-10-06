@@ -13,7 +13,7 @@ const ItineraryManager = () => {
     activities: { name: [], duration: [] },
     locations: [],
     timeline: [],
-    tags: [],
+    tags: [], // This will hold the selected tag IDs
     language: '',
     price: '',
     availableDates: [{ date: '', times: [] }],
@@ -25,9 +25,37 @@ const ItineraryManager = () => {
   });
 
   const [itineraries, setItineraries] = useState([]);
+  const [tags, setTags] = useState([]); // Store fetched tags from backend
   const [editMode, setEditMode] = useState(false);
   const [currentItineraryId, setCurrentItineraryId] = useState(null);
   const [error, setError] = useState(null); // State for handling errors
+
+  // Fetch tags from the backend
+  const fetchTags = async () => {
+    try {
+      const response = await axios.get('/api/admin/tag'); // Fetch tags
+      setTags(response.data); // Set fetched tags
+    } catch (error) {
+      console.error('Error fetching tags:', error);
+    }
+  };
+
+  // Fetch all itineraries
+  const fetchItineraries = async () => {
+    try {
+      const response = await axios.get('/api/tour-guides/getItineraries');
+      setItineraries(response.data);
+      setError(null); // Clear error state on success
+    } catch (error) {
+      console.error('Error fetching itineraries:', error);
+      setError('Error fetching itineraries');
+    }
+  };
+
+  useEffect(() => {
+    fetchItineraries(); // Fetch itineraries on component mount
+    fetchTags(); // Fetch tags when component mounts
+  }, []);
 
   // Handle input changes for basic fields
   const handleChange = (e) => {
@@ -47,7 +75,7 @@ const ItineraryManager = () => {
     });
   };
 
-  // Handle changes for arrays like locations, timeline, tags, availableDates
+  // Handle changes for arrays like locations, timeline, availableDates
   const handleArrayChange = (index, field, value) => {
     const updatedArray = [...itineraryData[field]];
     updatedArray[index] = value;
@@ -74,18 +102,6 @@ const ItineraryManager = () => {
       ...itineraryData,
       availableDates: updatedDates,
     });
-  };
-
-  // Fetch all itineraries
-  const fetchItineraries = async () => {
-    try {
-      const response = await axios.get('/api/tour-guides/getItineraries');
-      setItineraries(response.data);
-      setError(null); // Clear error state on success
-    } catch (error) {
-      console.error('Error fetching itineraries:', error);
-      setError('Error fetching itineraries');
-    }
   };
 
   // Submit the form to create or update an itinerary
@@ -119,7 +135,7 @@ const ItineraryManager = () => {
       setError(null); // Clear error state on success
     } catch (error) {
       console.error('Error deleting itinerary:', error);
-      setError('Error deleting itinerary'); // Display error
+      setError('Error deleting itinerary because it is booked'); // Display error
     }
   };
 
@@ -145,7 +161,7 @@ const ItineraryManager = () => {
       activities: { name: [], duration: [] },
       locations: [],
       timeline: [],
-      tags: [],
+      tags: [], // Reset tags
       language: '',
       price: '',
       availableDates: [{ date: '', times: [] }],
@@ -156,10 +172,6 @@ const ItineraryManager = () => {
       isBooked: false, // Reset isBooked
     });
   };
-
-  useEffect(() => {
-    fetchItineraries(); // Fetch itineraries on component mount
-  }, []);
 
   return (
     <div>
@@ -334,28 +346,32 @@ const ItineraryManager = () => {
           })}>Add Timeline</button>
         </div>
 
-        {/* Add tags */}
+        {/* Tags as toggle buttons */}
         <div>
           <h3>Tags</h3>
-          {itineraryData.tags.map((tag, index) => (
-            <div key={index}>
-              <input
-                type="text"
-                placeholder="Tag"
-                value={tag || ''}
-                onChange={(e) => handleArrayChange(index, 'tags', e.target.value)}
-              />
-              <button type="button" onClick={() => {
-                const updatedTags = [...itineraryData.tags];
-                updatedTags.splice(index, 1);
+          {tags.map((tag) => (
+            <button
+              key={tag._id}
+              type="button"
+              onClick={() => {
+                const updatedTags = itineraryData.tags.includes(tag._id)
+                  ? itineraryData.tags.filter(t => t !== tag._id) // Remove tag ID if already selected
+                  : [...itineraryData.tags, tag._id]; // Add tag ID if not selected
                 setItineraryData({ ...itineraryData, tags: updatedTags });
-              }}>Remove Tag</button>
-            </div>
+              }}
+              style={{
+                backgroundColor: itineraryData.tags.includes(tag._id) ? 'blue' : 'lightgray',
+                color: itineraryData.tags.includes(tag._id) ? 'white' : 'black',
+                margin: '5px',
+                padding: '10px',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+              }}
+            >
+              {tag.tag_name}
+            </button>
           ))}
-          <button type="button" onClick={() => setItineraryData({
-            ...itineraryData,
-            tags: [...itineraryData.tags, '']
-          })}>Add Tag</button>
         </div>
 
         {/* Add available dates */}
