@@ -27,8 +27,8 @@ const historicalLocationSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'HistoricalTag' 
     },
-        ref: 'HistoricalTag' 
-    },
+        // ref: 'HistoricalTag' ,
+    
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category', 

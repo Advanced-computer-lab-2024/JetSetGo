@@ -1,40 +1,56 @@
-// import { Link } from "react-router-dom"
-import { useEffect , useState } from "react"
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 
-//components 
-import HistoricalLocationElement from '../components/RDHistoricalLocations.js'
-import HistoricalLocationForm from '../components/CUHistoricalLocation.js'
+//components
+import HistoricalLocationDetails from "../components/HistoricalLocationDetails"
 
-const HL = () =>{
-    const [ tags , get_tags ] = useState(null)
-
-    useEffect (()=>{
-        const fetchtags = async () =>{
-            const response = await fetch('http://localhost:8000/api/tourism-governer/showHL')
-            const json = await response.json()
-            console.log("kokokokokok",json,"kikikik");
-            if (response.ok){
-                get_tags(json);
-            }
-        }
-        fetchtags()
+const HistoricalLocations = ({ filteredHistoricalPlace }) => {
+    const [historicalLocations, setHistoricalLocations] = useState(null)
+    
+    useEffect(() => {
+        fetchHistoricalLocations()
     }, [])
 
-    console.log("kokokokokok",tags);
-     return(
-        <div className="home">
-            <div className="tags">
-                {tags && tags.map((tag)=>(
-                    // <p key={tag.tag_name}>{tag.tag_name}</p>
-                    // <tagelement tag={tag}/>
-                    <HistoricalLocationElement tag={tag}/>
+    const fetchHistoricalLocations = async () => {
+        const response = await fetch('/api/guests/getHistoricalLocations')
+        const json= await response.json()
+
+        if (response.ok){
+            setHistoricalLocations(json);
+        }
+    }
+
+    const activitiesToShow = filteredHistoricalPlace || historicalLocations;
+
+    return (
+        <div className="historicalLocations">
+            <nav>
+                <ul>
+                    <li><Link to="/activities">Activities</Link></li>
+                    <li><Link to="/itineraries">Itineraries</Link></li>
+                    <li><Link to="/museums">Museums</Link></li>
+                    <li><Link to="/historicalLocations">Historical Locations</Link></li>
+                </ul>
+            </nav>
+            
+
+            <div className="upcomingHistoricalLocations">
+            { activitiesToShow && activitiesToShow.length === 0 && 
+                (
+                <p>No results found</p>
+                )}
+            {activitiesToShow && activitiesToShow.map((location) => (
+                    <HistoricalLocationDetails key={location._id} HistoricalLocation={location} />
                 ))}
+                {/* {(filteredLocations || historicalLocations) && (filteredLocations.length ? 
+                    filteredLocations.map((location) => (
+                        <HistoricalLocationDetails key={location._id} HistoricalLocation={location} />
+                    )) : <p>No historical locations found.</p>
+                )} */}
             </div>
-            <HistoricalLocationForm/>
         </div>
-     )
+    )
 }
 
-
-export default HL
+export default HistoricalLocations;

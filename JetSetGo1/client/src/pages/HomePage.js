@@ -15,18 +15,47 @@ const  HomePage = () =>  {
           <Link to="/create/tour-guides/:id"><button>Create Tour Guide Profile</button></Link>
           <Link to="/update-profile/tour-guides/:id"><button>Update Tour Guide Profile</button></Link>
           <Link to="/profile/tour-guides/:id"><button>Tour Guide Profile</button></Link>
-          <Link to="/activities"><button>Activities</button></Link>
-          <Link to="/itineraries"><button>Itineraries</button></Link>
+          <Link to="/activities2"><button>Activities</button></Link>
+          <Link to="/itineraries2"><button>Itineraries</button></Link>
           <Link to="/museums"><button>Museums</button></Link>
           <Link to="/historicalLocations"><button>Historical Locations</button></Link>
-          <Link to="/productPage"><button>Product Listing</button></Link>
+          {/* <Link to="/productPage"><button>Product Listing</button></Link> */}
           {/**/}
           <Link to="/seller/products"><button> seller Product Listing</button></Link>
           <Link to="/admin/products"><button> admin Product Listing</button></Link>
           <Link to="/tourist/products"><button> tourist Product Listing</button></Link>
           <Link to="/seller/addProduct"><button>seller add product</button></Link>
           <Link to="/admin/addProduct"><button>admin add product </button></Link>
-
+          <li>
+          <Link to="/my_tags">My Tags</Link>
+        </li>
+        <li>
+          <Link to="/my_category">My Category</Link>
+        </li>
+        <li>
+          <Link to="/Tourism_Governer">Tourism Governor</Link>
+        </li>
+        <li>
+          <Link to="/HL">HL</Link>
+        </li>
+        <li>
+          <Link to="/Museum">Museum</Link>
+        </li>
+        <li>
+          <Link to="/HLTags">HL Tags</Link>
+        </li>
+        <li>
+          <Link to="/HLMs">HLMs</Link>
+        </li>
+        <li>
+          <Link to="/Activities">Activities</Link>
+        </li>
+        <li>
+          <Link to="/Itineraries">Itineraries</Link>
+        </li>
+        <li>
+          <Link to="/historicalLocations">Historical Locations</Link>
+        </li>
         </div>
       </div>
     );

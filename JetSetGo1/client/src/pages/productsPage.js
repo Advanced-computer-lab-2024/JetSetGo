@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './ProductListing.css';
-import { FaStar } from 'react-icons/fa';
+// import { FaStar } from 'react-icons/fa';
 import Filter from '../components/Filterbox.js';
 import { Range } from 'react-range';
-import { MdArrowDropDown, MdArrowDropUp } from 'react-icons/md';
-import ProductForm from '../components/ProductForm.js';
-import ProductDetails from '../components/ProductDetails.js';
-import UpdateProducts from '../components/UpdateProduct.js';
+// import { MdArrowDropDown, MdArrowDropUp } from 'react-icons/md';
+// import ProductForm from '../components/ProductForm.js';
+// import ProductDetails from '../components/ProductDetails.js';
+// import UpdateProducts from '../components/UpdateProduct.js';
 import { useParams, useNavigate } from 'react-router-dom'; // useParams to get the model and ID from the URL
 
 const STEP = 1;
@@ -138,7 +138,7 @@ const ProductListing = ({usertype}) => {
           <div className="price-toggle" onClick={togglePriceRangeVisibility}>
             <span>Price</span>
             <div className="toggle-arrow">
-              {isPriceRangeVisible ? <MdArrowDropUp size={34} /> : <MdArrowDropDown size={34} />}
+              {/* {isPriceRangeVisible ? <MdArrowDropUp size={34} /> : <MdArrowDropDown size={34} />} */}
             </div>
           </div>
 
@@ -193,7 +193,7 @@ const ProductListing = ({usertype}) => {
           <div className="rating-toggle" onClick={toggleRatingVisibility}>
             <span>Rating</span>
             <div className="toggle-arrow">
-              {isRatingVisible ? <MdArrowDropUp size={34} /> : <MdArrowDropDown size={34} />}
+              {/* {isRatingVisible ? <MdArrowDropUp size={34} /> : <MdArrowDropDown size={34} />} */}
             </div>
           </div>
 
@@ -224,7 +224,7 @@ const ProductListing = ({usertype}) => {
             <p className="product-price">${product.price.toFixed(2)}</p>
             <div className="product-rating">
               <p  className='rating'>{product.ratings}</p>
-              <FaStar className="star-icon" />
+              {/* <FaStar className="star-icon" /> */}
             </div>
             <p className="product-description">{product.description}</p>
             <button className="add-to-cart-btn">Add to Cart</button>
