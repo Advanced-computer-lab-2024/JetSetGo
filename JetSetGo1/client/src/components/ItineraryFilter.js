@@ -1,27 +1,21 @@
+// ItineraryFilter.js
 import { useState } from 'react';
 import SearchBar from './Searchbar';
 
-const ItineraryFilter = ({onFilter}) => {
+const ItineraryFilter = ({ onFilter }) => {
     // States for search terms
     const [name, setName] = useState('');
     const [tagId, setTag] = useState('');
     const [language, setLanguage] = useState('');
     const [date, setDate] = useState('');
     const [budget, setBudget] = useState('');
-    const [availableDates,setAvailableDates] = useState('')
-
-
-    // State for results
-    const [commonResults, setCommonResults] = useState([]);
     const [loading, setLoading] = useState(false);
 
     // Function to fetch results from the backend
-    const fetchResults = async ( query , field , rout ) => {
+    const fetchResults = async (query, field, rout) => {
         setLoading(true);
         try {
-
-            if(query.length != 0)
-            {
+            if (query.length !== 0) {
                 const response = await fetch(rout, {
                     method: 'POST',
                     headers: {
@@ -30,19 +24,14 @@ const ItineraryFilter = ({onFilter}) => {
                     body: JSON.stringify({ [field]: query }), // Send the search fields
                 });
                 
-            const json = await response.json();
-            return json; // Return the search results
+                const json = await response.json();
+                return json; // Return the search results
+            } else {
+                const response = await fetch('/api/tourists/getUpcomingItineraries');
+                const json = await response.json();
+                return json; // Return the search results
             }
-            else
-            {
-                //THIS WILL CHANGE DEPENDING ON THE OBJECT (ACTIVITY, MUSUEM ..)
-                const response = await fetch('/api/tourists/getUpcomingItineraries')
-                
-            const json = await response.json();
-            return json; // Return the search results
-            }
-        }
-        catch (error) {
+        } catch (error) {
             console.error('Error fetching search results:', error);
             return [];
         } finally {
@@ -52,75 +41,30 @@ const ItineraryFilter = ({onFilter}) => {
 
     // Handle submit when the user clicks the submit button
     const handleSubmit = async () => {
-        
-        try{
         setLoading(true);
-        
-        
-        if(date.length !== 0)
-        {
-            console.log("There is a date")
-            const c = {'date' : date}
-            setAvailableDates([c])
-        }
-        else
-        {
-            setAvailableDates('')
-        }
-            const results = await fetchResults(name, 'title','/api/tourists/searchItineraryByName');
+        try {
+            const results = await fetchResults(name, 'title', '/api/tourists/searchItineraryByName');
+            const results2 = await fetchResults(tagId, 'tagId', '/api/tourists/searchItineraryByTag');
+            const results3 = await fetchResults(language, 'language', '/api/tourists/searchItineraryByLanguage');
+            const results4 = await fetchResults(date, 'date', '/api/tourists/searchItineraryByDate');
+            const results5 = await fetchResults(budget, 'price', '/api/tourists/searchItineraryByBudget');
 
-            const results2 = await fetchResults(tagId, 'tagId','/api/tourists/searchItineraryByTag');
-    
-            const results3 = await fetchResults(language, 'language','/api/tourists/searchItineraryByLanguage');
-
-            const results5 = await fetchResults(availableDates, 'availableDates','/api/tourists/searchItineraryByDate');
-
-            const results6 = await fetchResults(budget, 'price','/api/tourists/searchItineraryByBudget');
-
-            const common = results.filter((item) =>
+            const commonResults = results.filter((item) =>
                 results2.some((loc) => loc._id === item._id) &&
                 results3.some((lan) => lan._id === item._id) &&
-                results5.some((dat) => dat._id === item._id) &&
-                results6.some((bud) => bud._id === item._id)
+                results4.some((dat) => dat._id === item._id) &&
+                results5.some((bud) => bud._id === item._id)
             );
-            setCommonResults(common);
-           if(common.length != 0)
-            {
-                onFilter(common)
-            }
-        
-    //     else
-    //     {
-    //     const results = await fetchResults(name, 'title','/api/tourists/searchItineraryByName');
 
-    //     const results2 = await fetchResults(tagId, 'tagId','/api/tourists/searchItineraryByTag');
+            // Pass filtered results back to parent
+            onFilter(commonResults);
 
-    //     const results3 = await fetchResults(language, 'language','/api/tourists/searchItineraryByLanguage');
-                   
-    //     const results6 = await fetchResults(budget, 'price','/api/tourists/searchItineraryByBudget');
-
-    //     const common = results.filter((item) =>
-    //         results2.some((loc) => loc._id === item._id) &&
-    //         results3.some((lan) => lan._id === item._id) &&
-    //         results6.some((bud) => bud._id === item._id)
-    //     );
-    //     setCommonResults(common);
-    //    if(common.length != 0)
-    //     {
-    //         onFilter(common)
-    //     }
-    //     }
-
-    }
-    catch(error)
-    {
-        alert(`An error occurred: ${error.message}`);
-        console.error('Error fetching search results:', error);
-    }
-    finally{
-        setLoading(false);  
-    }
-       
+        } catch (error) {
+            alert(`An error occurred: ${error.message}`);
+            console.error('Error fetching search results:', error);
+        } finally {
+            setLoading(false);  
+        }
     };
 
     return (
@@ -139,7 +83,6 @@ const ItineraryFilter = ({onFilter}) => {
 
             {/* Loading indicator */}
             {loading && <p>Loading...</p>}
-
         </div>
     );
 };

@@ -44,7 +44,6 @@ function App() {
               path="/activities"
               element={
                 <>
-                  <ActivityFilter onFilter={handleFilterResultsActivities}/>
                   <Activities filteredActivities={filteredActivities} />
                 </>
               }
@@ -53,7 +52,6 @@ function App() {
               path="/itineraries"
               element={
                 <>
-                  <ItineraryFilter onFilter={handleFilterResultsItineraries}/>
                   <Itineraries filteredItinerary={filteredItinerary} />
                 </>
               }

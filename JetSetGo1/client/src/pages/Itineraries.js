@@ -1,45 +1,43 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+// Itineraries.js
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
+// Components
+import ItineraryDetails from "../components/ItineraryDetails";
+import ItineraryFilter from "../components/ItineraryFilter"; // Import the filter component
 
-//components
-import ItineraryDetails from "../components/ItineraryDetails"
-
-const Itineraries = ({ filteredItinerary }) => {
+const Itineraries = () => {
     const [upcomingItineraries, setUpcomingItineraries] = useState(null);
-  
+    const [filteredItinerary, setFilteredItinerary] = useState([]); // State for filtered itineraries
+    const [sortOrder, setSortOrder] = useState(''); // State for sorting order
+
     useEffect(() => {
-      fetchItineraries();
+        fetchItineraries();
     }, []);
 
     const fetchItineraries = async () => {
-        const response = await fetch('/api/guests/getUpcomingItineraries')
-        const json= await response.json()
-
-        if (response.ok){
-            setUpcomingItineraries(json)
-        }
-    }
-
-    const fetchSortedByPrice = async () => {
-        const response = await fetch('/api/guests/sortItineraryByPrice');
+        const response = await fetch('/api/guests/getUpcomingItineraries');
         const json = await response.json();
 
         if (response.ok) {
             setUpcomingItineraries(json);
         }
-    }
+    };
 
-    const fetchSortedByRating = async () => {
-        const response = await fetch('/api/guests/sortItineraryByRating');
-        const json = await response.json();
+    // Sorting functions
+    const sortByPrice = () => {
+        const sorted = [...(filteredItinerary.length > 0 ? filteredItinerary : upcomingItineraries)].sort((a, b) => a.price - b.price);
+        setFilteredItinerary(sorted);
+        setSortOrder('price'); // Update sort order
+    };
 
-        if (response.ok) {
-            setUpcomingItineraries(json);
-        }
-    }
+    const sortByRating = () => {
+        const sorted = [...(filteredItinerary.length > 0 ? filteredItinerary : upcomingItineraries)].sort((a, b) => a.rating - b.rating);
+        setFilteredItinerary(sorted);
+        setSortOrder('rating'); // Update sort order
+    };
 
-    const itinerariesToShow = filteredItinerary || upcomingItineraries;
+    const itinerariesToShow = filteredItinerary.length > 0 ? filteredItinerary : upcomingItineraries;
 
     return (
         <div className="itineraries">
@@ -52,23 +50,23 @@ const Itineraries = ({ filteredItinerary }) => {
                 </ul>
             </nav>
             
+            {/* Itinerary Filter */}
+            <ItineraryFilter onFilter={setFilteredItinerary} /> {/* Pass the state setter to filter */}
+
             {/* Sorting Buttons */}
             <div className="sorting-buttons" style={{ textAlign: 'center', marginBottom: '20px' }}>
-                <button onClick={fetchSortedByPrice}>Sort by Price</button>
-                <button onClick={fetchSortedByRating}>Sort by Rating</button>
+                <button onClick={sortByPrice}>Sort by Price</button>
+                <button onClick={sortByRating}>Sort by Rating</button>
             </div>
 
             <div className="upcomingItineraries">
-            { itinerariesToShow && itinerariesToShow.length === 0 && 
-                (
-                <p>No results found</p>
-                )}
-                {itinerariesToShow && itinerariesToShow.map((Itinerary) => (
-                    <ItineraryDetails key={Itinerary._id} Itinerary={Itinerary} />
+                {itinerariesToShow && itinerariesToShow.length === 0 && <p>No results found</p>}
+                {itinerariesToShow && itinerariesToShow.map((itinerary) => (
+                    <ItineraryDetails key={itinerary._id} Itinerary={itinerary} />
                 ))}
             </div>
         </div>
-    )
+    );
 }
 
 export default Itineraries;
