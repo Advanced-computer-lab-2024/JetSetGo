@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 // not stated in the requiemnts about its attributes but logically the admin data should be stored
+
 const adminSchema = new mongoose.Schema({
     username: { 
         type: String, 
@@ -10,11 +11,8 @@ const adminSchema = new mongoose.Schema({
         type: String, 
         required: true 
     },
-    email: { 
-        type: String, 
-        required: true,
-         unique: true 
-        },
+    
+   
     
      createdAt: { 
         type: Date, 
