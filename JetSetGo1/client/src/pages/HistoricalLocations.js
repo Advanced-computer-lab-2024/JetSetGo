@@ -5,10 +5,8 @@ import { Link } from 'react-router-dom'
 //components
 import HistoricalLocationDetails from "../components/HistoricalLocationDetails"
 
-const HistoricalLocations = () => {
+const HistoricalLocations = ({ filteredHistoricalPlace }) => {
     const [historicalLocations, setHistoricalLocations] = useState(null)
-    const [tagId, setTagId] = useState(''); // State for tag ID
-    const [filteredLocations, setFilteredLocations] = useState(null); // State for filtered locations
     
     useEffect(() => {
         fetchHistoricalLocations()
@@ -20,25 +18,10 @@ const HistoricalLocations = () => {
 
         if (response.ok){
             setHistoricalLocations(json);
-            setFilteredLocations(json); // Initialize filtered locations with all locations
         }
     }
 
-    const handleFilter = async (e) => {
-        e.preventDefault(); // Prevent the default form submission behavior
-
-        // Fetch historical locations filtered by tagId
-        const response = await fetch(`/api/guests/filterHistoricalLocationsByTag/${tagId}`);
-        const json = await response.json();
-
-        if (response.ok) {
-            setFilteredLocations(json); // Update filtered locations
-        } else {
-            // Handle no locations found or error
-            alert(json.message || 'Error fetching historical locations');
-            setFilteredLocations(null); // Clear filtered locations on error
-        }
-    }
+    const activitiesToShow = filteredHistoricalPlace || historicalLocations;
 
     return (
         <div className="historicalLocations">
@@ -51,22 +34,20 @@ const HistoricalLocations = () => {
                 </ul>
             </nav>
             
-            <form onSubmit={handleFilter}>
-                <input
-                    type="text"
-                    placeholder="Enter tag ID"
-                    value={tagId}
-                    onChange={(e) => setTagId(e.target.value)} // Update tagId state on input change
-                />
-                <button type="submit">Filter Locations</button>
-            </form>
 
             <div className="upcomingHistoricalLocations">
-                {(filteredLocations || historicalLocations) && (filteredLocations.length ? 
+            { activitiesToShow && activitiesToShow.length === 0 && 
+                (
+                <p>No results found</p>
+                )}
+            {activitiesToShow && activitiesToShow.map((location) => (
+                    <HistoricalLocationDetails key={location._id} HistoricalLocation={location} />
+                ))}
+                {/* {(filteredLocations || historicalLocations) && (filteredLocations.length ? 
                     filteredLocations.map((location) => (
                         <HistoricalLocationDetails key={location._id} HistoricalLocation={location} />
                     )) : <p>No historical locations found.</p>
-                )}
+                )} */}
             </div>
         </div>
     )

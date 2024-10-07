@@ -1,46 +1,40 @@
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'; // Add this line
+import ActivityDetails from "../components/ActivityDetails";
 import { Link } from 'react-router-dom'
+import { trusted } from 'mongoose';
 
-//components
-import ActivityDetails from "../components/ActivityDetails"
-
-const Activities = () => {
-    const [upcomingActivities, setUpcomingActivities] = useState(null)
+const Activities = ({ filteredActivities }) => {
+    const [upcomingActivities, setUpcomingActivities] = useState(null);
+    const [loading,setLoading ] = useState('')
 
     useEffect(() => {
-        fetchActivities()
-    }, [])
+        fetchActivities();
+    }, []);
 
+ 
     const fetchActivities = async () => {
-        const response = await fetch('/api/guests/getUpcomingActivities')
-        const json= await response.json()
+        const response = await fetch('/api/guests/getUpcomingActivities');
+        const json = await response.json();
 
-        if (response.ok){
-            setUpcomingActivities(json)
+        if (response.ok) {
+            setUpcomingActivities(json);
         }
-    }
+    };
 
     const fetchSortedByPrice = async () => {
-        const response = await fetch('/api/guests/sortActivityByPrice');
-        const json = await response.json();
-
-        if (response.ok) {
-            setUpcomingActivities(json);
-        }
+        console.log("PRICE CLICKED")
     }
-
     const fetchSortedByRating = async () => {
-        const response = await fetch('/api/guests/sortActivityByRating');
-        const json = await response.json();
-
-        if (response.ok) {
-            setUpcomingActivities(json);
-        }
+        console.log("RAITNG CLICKED")
     }
+ 
 
+    let activitiesToShow = filteredActivities || upcomingActivities
+
+ 
     return (
         <div className="activities">
-            <nav>
+             <nav>
                 <ul>
                     <li><Link to="/activities">Activities</Link></li>
                     <li><Link to="/itineraries">Itineraries</Link></li>
@@ -48,20 +42,25 @@ const Activities = () => {
                     <li><Link to="/historicalLocations">Historical Locations</Link></li>
                 </ul>
             </nav>
-            
             {/* Sorting Buttons */}
             <div className="sorting-buttons" style={{ textAlign: 'center', marginBottom: '20px' }}>
-                <button onClick={fetchSortedByPrice}>Sort by Price</button>
+                <button onClick={ fetchSortedByPrice}>Sort by Price</button>
                 <button onClick={fetchSortedByRating}>Sort by Rating</button>
             </div>
-
             <div className="upcomingActivities">
-                {upcomingActivities && upcomingActivities.map((Activity) => (
+                {loading && <p> Loading ...</p>}
+                { activitiesToShow && activitiesToShow.length === 0 && 
+                (
+                <p>No results found</p>
+                )}
+                {activitiesToShow  && activitiesToShow.map((Activity) => (
                     <ActivityDetails key={Activity._id} Activity={Activity} />
-                ))}
+                ) )}
             </div>
         </div>
-    )
+    );
+
 }
+
 
 export default Activities;

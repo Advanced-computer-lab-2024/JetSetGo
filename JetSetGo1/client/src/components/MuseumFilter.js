@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import SearchBar from './Searchbar';
 
-const MuseumFilter = () => {
+const MuseumFilter = ({onFilter}) => {
     // States for search terms
     const [name, setName] = useState('');
     const [tagId, setTag] = useState('');
@@ -64,7 +64,10 @@ const MuseumFilter = () => {
             results3.some((cat) => cat._id === item._id)
         );
         setCommonResults(common);
-
+        if(common.length != 0)
+        {
+            onFilter(common)
+        }
         setLoading(false);
     };
 
@@ -84,25 +87,7 @@ const MuseumFilter = () => {
             {/* Loading indicator */}
             {loading && <p>Loading...</p>}
 
-            {/* Display the common results */}
-            {!loading && commonResults.length > 0 && (
-                <div>
-                    <h2>Results:</h2>
-                    {commonResults.map((result) => (
-                        <div key={result._id}>
-                            <h3>{result.title}</h3>
-                            <p>TAG : {result.tags}</p>
-                            <p>Location: {result.location}</p>
-                            <p>Category: {result.category}</p>
-                        </div>
-                    ))}
-                </div>
-            )}
 
-            {/* Display message if no results found */}
-            {!loading && commonResults.length === 0 && (
-                <p>No results found</p>
-            )}
         </div>
     );
 };

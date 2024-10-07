@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 //components
 import ItineraryDetails from "../components/ItineraryDetails"
 
-const Itineraries = () => {
+const Itineraries = ({ filteredItinerary }) => {
     const [upcomingItineraries, setUpcomingItineraries] = useState(null);
   
     useEffect(() => {
@@ -39,6 +39,8 @@ const Itineraries = () => {
         }
     }
 
+    const itinerariesToShow = filteredItinerary || upcomingItineraries;
+
     return (
         <div className="itineraries">
             <nav>
@@ -57,7 +59,11 @@ const Itineraries = () => {
             </div>
 
             <div className="upcomingItineraries">
-                {upcomingItineraries && upcomingItineraries.map((Itinerary) => (
+            { itinerariesToShow && itinerariesToShow.length === 0 && 
+                (
+                <p>No results found</p>
+                )}
+                {itinerariesToShow && itinerariesToShow.map((Itinerary) => (
                     <ItineraryDetails key={Itinerary._id} Itinerary={Itinerary} />
                 ))}
             </div>
