@@ -1,25 +1,29 @@
-import {BrowserRouter,Routes,Route} from 'react-router-dom'
+import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom'
 
-import Home from './pages/Home'
+//pages & components
+import Activities from './pages/Activities'
+import Itineraries from './pages/Itineraries';
+import Museums from './pages/Museums';
+import HistoricalLocations from './pages/HistoricalLocations';
 import Navbar from './components/Navbar'
-import Searchbar from './components/Searchbar'
-import Form from './components/Form'
-import FormV2 from './components/FormV2'
-import ActivityFilter from './components/ActivityFilter'
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
-      <ActivityFilter />
-      <div className='pages'>
-        <Routes>
-          <Route 
-          path='/'
-          // element ={<Home />}
-          />
-        </Routes>
-      </div>
+        <Navbar />
+        <div className="pages">
+          <Routes>
+            {/* Redirect to the /activities route when the app loads */}
+            <Route path="/" element={<Navigate to="/activities" />} />
+
+            
+            <Route path="/activities" element={<Activities />} />
+            <Route path="/itineraries" element={<Itineraries />} />
+            <Route path="/museums" element={<Museums />} />
+            <Route path="/historicalLocations" element={<HistoricalLocations />} />
+          </Routes>
+        </div>
       </BrowserRouter>
     </div>
   );
