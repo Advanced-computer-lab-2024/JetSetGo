@@ -10,7 +10,7 @@ const Myactivitiespage = () =>{
 
     useEffect (()=>{
         const fetchtags = async () =>{
-            const response = await fetch('http://localhost:4000/api/advertisers/showAll?AdvId=66ff03e2f99d83cc77b8cb27')
+            const response = await fetch('http://localhost:8000/api/advertisers/showAll?AdvId=66ff03e2f99d83cc77b8cb27')
             const json = await response.json()
             console.log("kokokokokok",response);
             if (response.ok){

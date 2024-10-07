@@ -10,7 +10,7 @@ const Myitinerariespage = () =>{
 
     useEffect (()=>{
         const fetchtags = async () =>{
-            const response = await fetch('http://localhost:4000/api/tour-guides/showAll?guideId=67002c827e9690cf35059882')
+            const response = await fetch('http://localhost:8000/api/tour-guides/showAll?guideId=67002c827e9690cf35059882')
             const json = await response.json()
             console.log("kokokokokok",response);
             if (response.ok){

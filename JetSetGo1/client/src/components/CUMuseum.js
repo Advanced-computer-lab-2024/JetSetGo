@@ -98,7 +98,7 @@ const MuseumForm = () => {
       />
 
 
-      <label>Name:</label>
+      <label>Museum Name:</label>
       <input
         type="text"
         onChange={(e) => setName(e.target.value)}

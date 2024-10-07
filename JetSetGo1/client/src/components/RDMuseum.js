@@ -40,7 +40,7 @@ const MuseumElement = ({ tag: museum }) => {
       <p><strong>Ticket Prices for Foreigners: </strong>{museum.ticketPrices.foreigner}</p>
       <p><strong>Ticket Prices for Natives: </strong>{museum.ticketPrices.native}</p>
       <p><strong>Ticket Prices for Students: </strong>{museum.ticketPrices.student}</p>
-      <p><strong>Name: </strong>{museum.name}</p>
+      <p><strong>Museum Name: </strong>{museum.name}</p>
       <p><strong>Description: </strong>{museum.description}</p>
       <p><strong>Location: </strong>{museum.location}</p>
       <p><strong>Opening Hours : </strong>{museum.openingHours}</p>

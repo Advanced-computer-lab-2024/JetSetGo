@@ -98,7 +98,7 @@ const HistoricalLocationForm = () => {
       />
 
 
-      <label>Name:</label>
+      <label > HistoricalLocation Name:</label>
       <input
         type="text"
         onChange={(e) => setName(e.target.value)}

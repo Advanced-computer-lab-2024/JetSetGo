@@ -40,7 +40,7 @@ const HistoricalLocationElement = ({ tag: historicallocation }) => {
       <p><strong>Ticket Prices for Foreigners: </strong>{historicallocation.ticketPrices.foreigner}</p>
       <p><strong>Ticket Prices for Natives: </strong>{historicallocation.ticketPrices.native}</p>
       <p><strong>Ticket Prices for Students: </strong>{historicallocation.ticketPrices.student}</p>
-      <p><strong>Name: </strong>{historicallocation.name}</p>
+      <p><strong>Historical_Location Name: </strong>{historicallocation.name}</p>
       <p><strong>Description: </strong>{historicallocation.description}</p>
       <p><strong>Location: </strong>{historicallocation.location}</p>
       <p><strong>Opening Hours : </strong>{historicallocation.openingHours}</p>

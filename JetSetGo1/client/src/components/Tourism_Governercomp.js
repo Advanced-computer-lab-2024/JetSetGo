@@ -2,7 +2,7 @@
 const Tourism_Governercomp = ({ tag: Tourism_Governer, dispatch }) => {
 
    
-    console.log("inside the RD",Tourism_Governer)
+    // console.log("inside the RD",Tourism_Governer)
     return (
         <div className="tag-details">
             <h4>{Tourism_Governer.title}</h4>

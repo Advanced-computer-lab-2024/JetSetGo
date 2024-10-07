@@ -1,6 +1,6 @@
 
-const Categoryelement = ({ tag: museum, tag: historicallocation, dispatch }) => {
-
+const Categoryelement = ({ tag1: museum , tag2: historicallocation ,dispatch }) => {
+    
     
     
     return (
