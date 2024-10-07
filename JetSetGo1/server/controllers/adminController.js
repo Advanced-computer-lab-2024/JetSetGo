@@ -29,6 +29,27 @@ const get_pref_tag = async (req, res) => {
     }
 };
 
+// Add Admin
+const addAdmin = async (req, res) => {
+  const { username, password } = req.body;
+
+  // Validate that the required fields are provided
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password are required.' });
+  }
+
+  try {
+    const newAdmin = await Admin.create({ username, password });
+
+    // Send both a success message and the new admin object in the response
+    return res.status(201).json({
+      message: 'Admin added successfully',
+      admin: newAdmin
+    });
+
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
 //update preference tags
 const update_pref_tag = async (req, res) => {
     const { tag_name, description } = req.body;
@@ -138,6 +159,27 @@ const view_tourism_governer = async (req,res) => {
         res.status(400).json({ error: error.message })
     }
 };
+// Get all users for a specific role
+const getAllUsers = async (req, res) => {
+  const { role } = req.params;
+
+  // Check if model exists
+  const Model = models[role.toLowerCase()];
+
+  if (!Model) {
+    return res.status(400).json({ error: `Model '${role}' not found` });
+  }
+
+  try {
+    const users = await Model.find(); // Fetch all users for the specified model
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+module.exports = {addAdmin, deleteAccount, getAllUsers};
 
 module.exports = { create_pref_tag ,  get_pref_tag , update_pref_tag , delete_pref_tag , create_act_category , get_act_category , update_act_category , delete_act_category , add_tourism_governer , view_tourism_governer};
 
