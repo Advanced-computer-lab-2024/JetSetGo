@@ -39,7 +39,7 @@ const searchHistoricalPlaceByName = async (req,res) =>{
       const Historical = await HistoricalLocationModel.find(nameReq)
       if(Historical.length == 0)
         {
-          res.status(404).json({error:"Historical Place not found"})
+         return res.status(404).json({error:"Historical Place not found"})
         }
       res.status(200).json(Historical)
     }
@@ -72,7 +72,7 @@ const searchHistoricalPlaceByTag = async (req, res) => {
     const Historical = await HistoricalLocationModel.find(req.body);
     if(Historical.length == 0)
       {
-        res.status(404).json({error:"Historical Place not found"})
+        return res.status(404).json({error:"Historical Place not found"})
       }
     res.status(200).json(Historical)
   }
@@ -106,10 +106,7 @@ const searchMuseumByName = async (req,res) =>{
     const nameReq = req.body
     try{
       const Museum = await MuseumModel.find(nameReq)
-      if(Museum.length == 0)
-      {
-        res.status(404).json({error:"Museum not found"})
-      }
+
       res.status(200).json(Museum)
     }
     catch(error){
@@ -124,7 +121,7 @@ const searchMuseumByCategory = async (req,res) =>{
       const Museum = await MuseumModel.find(nameReq)
       if(Museum.length == 0)
       {
-        res.status(404).json({error:"Museum not found"})
+       return  res.status(404).json({error:"Museum not found"})
       }
       res.status(200).json(Museum)
     }

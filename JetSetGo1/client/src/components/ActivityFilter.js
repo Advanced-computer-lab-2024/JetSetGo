@@ -23,12 +23,23 @@ const ActivityFilter = ({onFilter}) => {
                     body: JSON.stringify({ [field]: query }), 
                 });
                 
-                const json = await response.json();
-                return json; 
-            } else {
-                const response = await fetch('/api/tourists/getUpcomingActivities');
-                const json = await response.json();
-                return json;
+                if(response.ok)
+                    {
+                    const json = await response.json();
+                    return json;
+                    }
+                    else
+                    {
+                      return [];  
+                    }
+            }
+            else
+            {
+                //THIS WILL CHANGE DEPENDING ON THE OBJECT (ACTIVITY, MUSUEM ..)
+                const response = await fetch('/api/tourists/getUpcomingActivities')
+                
+            const json = await response.json();
+            return json; // Return the search results
             }
         } catch (error) {
             console.error('Error fetching search results:', error);

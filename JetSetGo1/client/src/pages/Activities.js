@@ -76,9 +76,11 @@ const Activities = () => {
             </div>
 
             <div className="upcomingActivities">
-                {loading && <p>Loading ...</p>}
-                {activitiesToShow && activitiesToShow.length === 0 && <p>No results found</p>}
-                {activitiesToShow && activitiesToShow.map((Activity) => (
+                { activitiesToShow && activitiesToShow.length === 0 && 
+                (
+                <p>No results found</p>
+                )}
+                {activitiesToShow  && activitiesToShow.map((Activity) => (
                     <ActivityDetails key={Activity._id} Activity={Activity} />
                 ))}
             </div>

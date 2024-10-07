@@ -26,8 +26,15 @@ const MuseumFilter = ({onFilter}) => {
                     body: JSON.stringify({ [field]: query }), // Send the search fields
                 });
                 
-            const json = await response.json();
-            return json; // Return the search results
+                if(response.ok)
+                {
+                const json = await response.json();
+                return json;
+                }
+                else
+                return [];
+                    
+                 
             }
             else
             {
@@ -57,17 +64,28 @@ const MuseumFilter = ({onFilter}) => {
         const results2 = await fetchResults(tagId, 'tagId','/api/tourists/searchMuseumByTag');
 
         const results3 = await fetchResults(category, 'category','/api/tourists/searchMuseumByCategory');
-
-
-        const common = results.filter((item) =>
-            results2.some((loc) => loc._id === item._id) &&
-            results3.some((cat) => cat._id === item._id)
-        );
-        setCommonResults(common);
-        if(common.length != 0)
+        
+        if(results.length != 0 && results2.length != 0 && results3.length != 0)
         {
-            onFilter(common)
+            const common = results.filter((item) =>
+                results2.some((loc) => loc._id === item._id) &&
+                results3.some((cat) => cat._id === item._id)
+            );
+            setCommonResults(common);
+            if(common.length != 0)
+            {
+                onFilter(common)
+            }
+            else
+            {
+                onFilter([])
+            }
         }
+        else
+        {
+            onFilter([])
+        }
+      
         setLoading(false);
     };
 
