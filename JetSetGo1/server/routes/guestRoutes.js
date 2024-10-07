@@ -6,15 +6,15 @@ searchItineraryByDate, searchItineraryByBudget, searchItineraryByLanguage,getUpc
 const router = express.Router();
 
 
-router.get('/searchActivityByRating',searchActivityByRating);
-router.get('/searchActivityByDate',searchActivityByDate);
-router.get('/searchActivityByCategory',searchActivityByCategory);
-router.get('/searchActivityByBudget',searchActivityByBudget);
+router.post('/searchActivityByRating',searchActivityByRating);
+router.post('/searchActivityByDate',searchActivityByDate);
+router.post('/searchActivityByCategory',searchActivityByCategory);
+router.post('/searchActivityByBudget',searchActivityByBudget);
 
-router.get('/searchItineraryByDate',searchItineraryByDate);
-router.get('/searchItineraryByBudget',searchItineraryByBudget);
-router.get('/searchItineraryByLanguage',searchItineraryByLanguage);
-router.get('/searchItineraryByTag',searchItineraryByTag);
+router.post('/searchItineraryByDate',searchItineraryByDate);
+router.post('/searchItineraryByBudget',searchItineraryByBudget);
+router.post('/searchItineraryByLanguage',searchItineraryByLanguage);
+router.post('/searchItineraryByTag',searchItineraryByTag);
 
 
 router.get('/getUpcomingActivities', getUpcomingActivities);
