@@ -2,6 +2,8 @@ const Seller = require('../models/SellerModel');
 
 const mongoose= require('mongoose')
 const Product= require('../models/ProductModel')
+const multer = require('multer');
+const path = require('path');
 
 // Create Seller Profile
 const createSellerProfile = async (req, res) => {
@@ -100,34 +102,57 @@ const getProducts= async (req,res) => {
 
 //   res.json({mssg: 'added a new product'})
 // }
-const createProduct = async (req, res) => {
-  const { name, description, price, quantityAvailable, picture, seller, ratings } = req.body;
 
-  // Input validation
-  if (!name || !description || !price || !quantityAvailable || !seller || !picture) {
-      return res.status(400).json({ error: 'All fields are required' });
+const getSingleProduct= async (req,res) => {
+  const {id}= req.params
+
+  const product = await Product.find({_id:id})
+  
+  if(!product){
+    return res.status(404).json({error:'No such product'})
   }
+  res.status(200).json(product)
+}
 
-  if (isNaN(price) || isNaN(quantityAvailable) || (ratings && isNaN(ratings))) {
-      return res.status(400).json({ error: 'Price, quantity, and ratings must be valid numbers' });
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, 'uploads/'); // Folder where images will be stored
+  },
+  filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname)); // Save the file with a unique name
   }
+});
 
-  try {
-      const product = await Product.create({
-          name,
-          description,
-          price,
-          quantityAvailable,
-          seller,
-          picture,
-          ratings: ratings || 0, // Default ratings to 0 if not provided
-      });
+// Initialize multer with the storage configuration
+const upload = multer({ storage: storage }).single('picture');
 
-      res.status(200).json({ mssg: 'Added a new product', product });
-      console.log(product);
-  } catch (error) {
-      res.status(400).json({ error: error.message });
-  }
+// Create a new product function
+const createProduct = (req, res) => {
+  upload(req, res, async (err) => {
+      if (err) {
+          return res.status(400).json({ error: 'Image upload failed' });
+      }
+      
+      const { name, description, price, quantityAvailable, seller, ratings } = req.body;
+
+      try {
+          // Create a new product with the uploaded image path
+          const newProduct = new Product({
+              name,
+              description,
+              price,
+              quantityAvailable,
+              picture: req.file ? req.file.path : null, // Save the image path
+              seller,
+              ratings
+          });
+
+          const savedProduct = await newProduct.save();
+          res.status(201).json(savedProduct);
+      } catch (error) {
+          res.status(400).json({ error: error.message });
+      }
+  });
 };
 
 
@@ -202,4 +227,4 @@ const searchProductName = async(req,res) => {
 
 }
 
-module.exports = { createSellerProfile, updateSellerProfile, getSellerProfile,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName };
+module.exports = { createSellerProfile, updateSellerProfile, getSellerProfile,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct };

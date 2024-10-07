@@ -17,6 +17,7 @@ const tourGuideRoutes = require('./routes/tourGuideRoutes');
 // const activityRoutes = require('./routes/activityRoutes'); // we  may not use here
 const adminRoutes = require('./routes/adminRoutes.js');
 const registerRoutes = require('./routes/registerRoutes');
+const touristRoutes = require('./routes/touristRoutes')
 
 
 
@@ -41,8 +42,9 @@ app.use('/api/tourism-governer', tourismGovernerRoutes);
 app.use('/api/sellers', sellerRoutes);
 app.use('/api/tour-guides', tourGuideRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/tourist/',touristRoutes)
 
-
+app.use('/uploads', express.static('uploads'));
 
 
 

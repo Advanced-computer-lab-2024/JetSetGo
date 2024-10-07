@@ -18,7 +18,7 @@ const getProducts= async (req,res) => {
 
 const filterProducts = async(req,res) => {
     
-    const{min, max}= req.body
+    const{min, max}= req.query;
 
     try{
         const query = {
@@ -34,18 +34,24 @@ const filterProducts = async(req,res) => {
     }
 }
 
-const sortByRate = async(req,res) => {
-    const{flag}=req.body
+const sortByRate = async (req, res) => {
+    const  {flag}  = req.query; // Use req.query here
+    var x=0
     try {
+      if (flag=="1") {
+        x=1
+      }
+      else{
+        x=-1
+      }
         // Get sorted products by ratings in descending order
-        const products = await Product.find().sort({ ratings: flag }); // Change to 1 for ascending order and -1 for desc
-    
+        const products = await Product.find().sort(  {ratings:x} ); // Change to 1 for ascending order and -1 for descending
         res.status(200).json(products); // Send the sorted products as JSON
-      } catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500).send('Error fetching products');
-      }
-}
+    }
+  };
 
 const searchProductName = async(req,res) => {
 

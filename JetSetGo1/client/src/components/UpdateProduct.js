@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; // useParams to get the model and ID from the URL
-//import './Updateproduct.css';//////////////////////////////name, description, price, quantityAvailable, seller, picture,ratings
 import ProductListing from '../pages/productsPage';
-const UpdateProducts = () => {
-  const { id} = useParams(); // Extract the profile ID and model from the URL
-  const [formValues, setFormValues] = useState({
-    name: '',
-    description: '',
-    price: '',
-    quantityAvailable: '',
-    seller: '',
-    picture: '',
-    ratings: ''
-  });
+
+const UpdateProducts = ({usertype}) => {
+  const { id } = useParams(); // Extract the profile ID and model from the URL
+
+  // Replacing formValues with individual state variables
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [quantityAvailable, setQuantityAvailable] = useState('');
+  const [seller, setSeller] = useState('');
+  const [picture, setPicture] = useState('');
+  const [ratings, setRatings] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate(); // For navigation after the update
@@ -20,58 +20,94 @@ const UpdateProducts = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`/api/admin/Products/${id}` || `/api/sellers/Products/${id}`); // Dynamically use the model in the API endpoint
+        console.log(id);
+        const response = await fetch(`/api/sellers/getSingleProduct/${id}`); // Fetch the product data
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to fetch profile');
+          throw new Error(errorData.error || 'Failed to fetch product');
         }
         const data = await response.json();
-        setFormValues({
-          name: data.name || '',
-          description: data.description || '',
-          price: data.price || '',
-          quantityAvailable: data.quantityAvailable || '',
-          seller : data.seller || '',
-          picture : data.picture || '',
-          ratings : data.ratings || ''
-        });
+        console.log(data);
+  
+        // Assuming data is an array with one element
+        const product = data[0]; 
+  
+        // Set individual state variables with the fetched data
+        setName(product.name);
+        setDescription(product.description);
+        setPrice(product.price);
+        setQuantityAvailable(product.quantityAvailable);
+        setSeller(product.seller);
+        setPicture(product.picture);
+        setRatings(product.ratings);
       } catch (err) {
-        console.error('Error fetching profile:', err);
+        console.error('Error fetching product:', err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
-     fetchProfile();
+  
+    fetchProfile();
   }, [id]);
-
-  // Handle input changes
+  
+  
+  // Handle input changes for individual variables
   const handleInputChange = (e) => {
-    setFormValues({
-      ...formValues,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+      case 'description':
+        setDescription(value);
+        break;
+      case 'price':
+        setPrice(value);
+        break;
+      case 'quantityAvailable':
+        setQuantityAvailable(value);
+        break;
+      case 'seller':
+        setSeller(value);
+        break;
+      case 'picture':
+        setPicture(value);
+        break;
+      case 'ratings':
+        setRatings(value);
+        break;
+      default:
+        break;
+    }
   };
-
-  // Handle form submission to update profile
+  console.log(name)
+  // Handle form submission to update product
   const handleUpdateProfile = async () => {
     try {
-      const response = await fetch(`/api/admin/product/${id}` || `/api/sellers/product/${id}`, {
+      const updatedProduct = {
+        name,
+        description,
+        price,
+        quantityAvailable,
+        seller,
+        picture,
+        ratings,
+      };
+      const response = await fetch(`/api/sellers/product/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formValues),
+        body: JSON.stringify(updatedProduct),
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update Product');
+        throw new Error(errorData.error || 'Failed to update product');
       }
-      //const updatedProfile = await response.json();
-      navigate(`../pages/productsPage/${id}`); // Redirect back to the profile page after a successful update
+      navigate(`/${usertype}/products`); // Redirect back to the products page after a successful update
     } catch (err) {
-      console.error('Error updating Product:', err);
+      console.error('Error updating product:', err);
       setError(err.message);
     }
   };
@@ -84,17 +120,16 @@ const UpdateProducts = () => {
       <h2>Update Your Product</h2>
       <form className="Product-form">
         <div className="form-group">
-          <label htmlFor="name">name <span className="required">*</span></label>
+          <label htmlFor="name">Name <span className="required">*</span></label>
           <input
             type="text"
             id="name"
             name="name"
-            value={formValues.name}
+            value={name}
             onChange={handleInputChange}
-            placeholder="Enter Product name"
+            placeholder="Enter product name"
             required
           />
-          {/* <small>Choose a unique username.</small> */}
         </div>
 
         <div className="form-group">
@@ -103,12 +138,11 @@ const UpdateProducts = () => {
             type="text"
             id="description"
             name="description"
-            value={formValues.description}
+            value={description}
             onChange={handleInputChange}
             placeholder="Enter product description"
             required
           />
-          {/* <small>We’ll use this to contact you.</small> */}
         </div>
 
         <div className="form-group">
@@ -117,25 +151,25 @@ const UpdateProducts = () => {
             type="number"
             id="price"
             name="price"
-            value={formValues.price}
+            value={price}
             onChange={handleInputChange}
             placeholder="Enter product price"
             required
           />
-          {/* <small>Your contact number for communication.</small> */}
         </div>
 
         <div className="form-group">
-          <label htmlFor="quantityAvailable">Quantity-Available <span className="required">*</span></label>
+          <label htmlFor="quantityAvailable">Quantity Available <span className="required">*</span></label>
           <input
             type="number"
             id="quantityAvailable"
             name="quantityAvailable"
-            value={formValues.quantityAvailable}
+            value={quantityAvailable}
             onChange={handleInputChange}
-            placeholder="Enter quantity-Available"
+            placeholder="Enter quantity available"
             required
           />
+        </div>
 
         <div className="form-group">
           <label htmlFor="seller">Seller <span className="required">*</span></label>
@@ -143,58 +177,38 @@ const UpdateProducts = () => {
             type="text"
             id="seller"
             name="seller"
-            value={formValues.seller}
+            value={seller}
             onChange={handleInputChange}
             placeholder="Enter product seller"
             required
           />
-          {/* <small>Your contact number for communication.</small> */}
         </div>
-
-
-
 
         <div className="form-group">
-          <label htmlFor="picture">Price <span className="required">*</span></label>
+          <label htmlFor="picture">Picture URL <span className="required">*</span></label>
           <input
-            type="picture"
+            type="text"
             id="picture"
             name="picture"
-            value={formValues.picture}
+            value={picture}
             onChange={handleInputChange}
-            placeholder="Enter product picture"
+            placeholder="Enter product picture URL"
             required
           />
-          {/* <small>Your contact number for communication.</small> */}
         </div>
-          <div className="form-group">
+
+        <div className="form-group">
           <label htmlFor="ratings">Ratings <span className="required">*</span></label>
           <input
             type="number"
             id="ratings"
             name="ratings"
-            value={formValues.ratings}
+            value={ratings}
             onChange={handleInputChange}
             placeholder="Enter product ratings"
             required
           />
-          {/* <small>Your contact number for communication.</small> */}
         </div>
-          {/* <small>Enter the total number of years you’ve worked as a tour guide.</small> */}
-        </div>
-
-        {/* <div className="form-group">
-          <label htmlFor="previousWork">Previous Work</label>
-          <textarea
-            id="previousWork"
-            name="previousWork"
-            value={formValues.previousWork}
-            onChange={handleInputChange}
-            placeholder="Describe your previous work experience"
-            rows="4"
-          />
-          <small>Briefly describe your previous experience in the industry.</small>
-        </div> */}
 
         <div className="form-actions">
           <button type="button" onClick={handleUpdateProfile}>Save Changes</button>

@@ -4,12 +4,16 @@ import { FaStar } from 'react-icons/fa';
 import Filter from '../components/Filterbox.js';
 import { Range } from 'react-range';
 import { MdArrowDropDown, MdArrowDropUp } from 'react-icons/md';
+import ProductForm from '../components/ProductForm.js';
+import ProductDetails from '../components/ProductDetails.js';
+import UpdateProducts from '../components/UpdateProduct.js';
+import { useParams, useNavigate } from 'react-router-dom'; // useParams to get the model and ID from the URL
 
 const STEP = 1;
 const MIN = 0;
 const MAX = 500;
 
-const ProductListing = () => {
+const ProductListing = ({usertype}) => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -18,6 +22,8 @@ const ProductListing = () => {
   const [ratingValue, setRatingValue] = useState(1);
   const [isRatingVisible, setIsRatingVisible] = useState(false);
   const [sortOrder, setSortOrder] = useState(''); // State for sorting order
+  const navigate = useNavigate(); // For navigation after the update
+  const [filtersApplied, setFiltersApplied] = useState(false);
 
   // Formatter for price display
   const formatter = (value) => {
@@ -47,7 +53,7 @@ const ProductListing = () => {
     const fetchProducts = async () => {
       
       try {
-        const response = await fetch('/api/sellers/Products');
+        const response = await fetch('/api/admin/Products');
         const data = await response.json();
         setProducts(data); // Assuming response data is an array of products
       } catch (error) {
@@ -61,7 +67,7 @@ const ProductListing = () => {
   // Fetch filtered products by price range (POST request)
   const fetchFilteredProducts = async () => {
     try {
-      const response = await fetch(`/api/sellers/filterProducts?min=${values[0]}&max=${values[1]}`, {
+      const response = await fetch(`/api/${usertype}/filterProducts?min=${values[0]}&max=${values[1]}`, {
         method: 'GET', 
         headers: {
           'Content-Type': 'application/json',
@@ -82,7 +88,7 @@ const ProductListing = () => {
   const fetchSortedProducts = async (order) => {
     try {
       
-        const response = await fetch(`/api/sellers/sortByRate?flag=${order}`, {
+        const response = await fetch(`/api/${usertype}/sortByRate?flag=${order}`, {
             method: 'GET', // This is correct
             headers: {
                 'Content-Type': 'application/json',
@@ -123,6 +129,7 @@ const ProductListing = () => {
           onChange={handleSearchChange}
           className="search-input"
         />
+        { usertype!== "tourist"  &&  (<button type="button" onClick={() => navigate(`../${usertype}/addProduct`)}>Add Product</button>)}
 
         <Filter isFilterOpen={isFilterOpen} toggleFilter={setIsFilterOpen}>
           <h2>Advanced Filters</h2>
@@ -209,8 +216,10 @@ const ProductListing = () => {
 
       <div className="product-grid">
         {filteredProducts.map((product) => (
-          <div key={product.id || product.name} className="product-card"> {/* Ensure unique key */}
-            <img src={product.imageUrl} alt={product.name} className="product-image" />
+          <div key={product._id || product.name} className="product-card"> {/* Ensure unique key */}
+            <img src={`http://localhost:3000/${product.picture}`} alt={product.name} className="product-image" />
+
+            {/* Ensure this matches your DB field */}
             <h2 className="product-title">{product.name}</h2>
             <p className="product-price">${product.price.toFixed(2)}</p>
             <div className="product-rating">
@@ -219,6 +228,7 @@ const ProductListing = () => {
             </div>
             <p className="product-description">{product.description}</p>
             <button className="add-to-cart-btn">Add to Cart</button>
+            {usertype!=="tourist" && (<button type="button" onClick={() => navigate(`../${usertype}/updateProduct/${product._id}`)}>Edit Product</button>)}
           </div>
         ))}
       </div>

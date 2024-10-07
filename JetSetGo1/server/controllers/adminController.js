@@ -4,6 +4,8 @@ const CategoryModel = require('../models/CategoryModel.js');
 const TourismGovernerModel = require('../models/TourismGovernerModel.js');
 const AdvertiserActivityModel = require('../models/AdvertiserActivityModel.js');
 const mongoose= require('mongoose')
+const multer = require('multer');
+const path = require('path');
 const Product= require('../models/ProductModel')
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -147,6 +149,13 @@ const getProducts= async (req,res) => {
     res.status(200).json(products)
 }
 
+const getSingleProduct= async (req,res) => {
+    const {id}= req.params
+
+    const product = await Product.find({_id:id})
+    res.status(200).json(product)
+}
+
 
 // Add new product
 // const createProduct = async (req, res) =>{
@@ -161,36 +170,47 @@ const getProducts= async (req,res) => {
 //     }
 
 // }
-const createProduct = async (req, res) => {
-    const { name, description, price, quantityAvailable, picture, seller, ratings } = req.body;
-
-    // Input validation
-    if (!name || !description || !price || !quantityAvailable || !seller || !picture) {
-        return res.status(400).json({ error: 'All fields are required' });
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Folder where images will be stored
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // Save the file with a unique name
     }
+});
 
-    if (isNaN(price) || isNaN(quantityAvailable) || (ratings && isNaN(ratings))) {
-        return res.status(400).json({ error: 'Price, quantity, and ratings must be valid numbers' });
-    }
+// Initialize multer with the storage configuration
+const upload = multer({ storage: storage }).single('picture');
 
-    try {
-        const product = await Product.create({
-            name,
-            description,
-            price,
-            quantityAvailable,
-            seller,
-            picture,
-            ratings: ratings || 0, // Default ratings to 0 if not provided
-        });
+// Create a new product function
+const createProduct = (req, res) => {
+    upload(req, res, async (err) => {
+        if (err) {
+            return res.status(400).json({ error: 'Image upload failed' });
+        }
+        
+        const { name, description, price, quantityAvailable, seller, ratings } = req.body;
 
-        res.status(200).json({ mssg: 'Added a new product', product });
-        console.log(product);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
+        try {
+            // Create a new product with the uploaded image path
+            const newProduct = new Product({
+                name,
+                description,
+                price,
+                quantityAvailable,
+                picture: req.file ? req.file.path : null, // Save the image path
+                seller,
+                ratings
+            });
+
+            const savedProduct = await newProduct.save();
+            res.status(201).json(savedProduct);
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    });
 };
-
 
 
 //  update a product
@@ -214,7 +234,7 @@ const updateProduct = async (req, res) =>{
 
 const filterProducts = async(req,res) => {
     
-    const{min, max}= req.body
+    const{min, max}= req.query;
 
     try{
         const query = {
@@ -230,18 +250,24 @@ const filterProducts = async(req,res) => {
     }
 }
 
-const sortByRate = async(req,res) => {
-    const{flag}=req.body
+const sortByRate = async (req, res) => {
+    const  {flag}  = req.query; // Use req.query here
+    var x=0
     try {
+      if (flag=="1") {
+        x=1
+      }
+      else{
+        x=-1
+      }
         // Get sorted products by ratings in descending order
-        const products = await Product.find().sort({ ratings: flag }); // Change to 1 for ascending order and -1 for desc
-    
+        const products = await Product.find().sort(  {ratings:x} ); // Change to 1 for ascending order and -1 for descending
         res.status(200).json(products); // Send the sorted products as JSON
-      } catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500).send('Error fetching products');
-      }
-}
+    }
+  };
 
 const searchProductName = async(req,res) => {
 
@@ -259,5 +285,5 @@ const searchProductName = async(req,res) => {
 }
 
 module.exports = { create_pref_tag ,  get_pref_tag , update_pref_tag , delete_pref_tag , create_act_category , get_act_category , update_act_category , delete_act_category , add_tourism_governer , view_tourism_governer
-    ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName};
+    ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct};
 
