@@ -2,9 +2,7 @@ const TourGuide = require("../models/TourGuideModel");
 const Itinerary = require("../models/ItineraryModel");
 //66f8084788afe7e5aff3aefc
 // Create Tour Guide Profile
-const createProfile = async (req, res) => {           
-  const { id } = req.params;
-  const { mobile, experience, previousWork} = req.body;
+
 const createProfile = async (req, res) => {           
   const { id } = req.params;
   const { mobile, experience, previousWork} = req.body;
@@ -182,6 +180,21 @@ const deleteItinerary = async (req, res) => {
     res.status(400).json({ message: "Error deleting itinerary", error });
   }
 };
+//Read My Itineraries
+const showMyItineraries = async(req,res) => {
+   
+
+  const guideId = req.query.guideId;
+
+  try{
+      const result = await ItineraryModel.find({tourGuide:(guideId)})
+      res.status(200).json(result)
+    }catch{
+      res.status(400).json({error:"Id is required"})
+    }
+
+
+}
 
 module.exports = {
   createProfile,
@@ -191,28 +204,11 @@ module.exports = {
   getItineraries,
   updateItinerary,
   deleteItinerary,
-};
-
-    res.status(404).json({ error: 'Profile not found' });
-  }
+  showMyItineraries,
 };
 
 
 
-//Read My Itineraries
-const showMyItineraries = async(req,res) => {
-   
 
-    const guideId = req.query.guideId;
 
-    try{
-        const result = await ItineraryModel.find({tourGuide:(guideId)})
-        res.status(200).json(result)
-      }catch{
-        res.status(400).json({error:"Id is required"})
-      }
   
-
-}
-  
-module.exports = { updateProfile, getProfile ,showMyItineraries,createProfile}

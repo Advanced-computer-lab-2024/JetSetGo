@@ -365,6 +365,15 @@ const ItineraryManager = () => {
               ))}
             </ul>
 
+            <h4>Available Dates</h4>
+            <ul>
+              {itinerary.availableDates.map((dateItem, index) => (
+                <li key={index}>
+                  {dateItem.date} - Times: {dateItem.times.join(', ')}
+                </li>
+              ))}
+            </ul>
+
             <h4>Tags</h4>
             <ul>
               {itinerary.tags.map(tag => {

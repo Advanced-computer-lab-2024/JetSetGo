@@ -1,6 +1,6 @@
 const mongoose= require('mongoose')
 const Product= require('../models/ProductModel')
-
+const Tourist = require("../models/TouristModel");
 
 
 
@@ -9,12 +9,6 @@ const getProducts= async (req,res) => {
     const products = await Product.find({}).sort({createdAt: -1})
     res.status(200).json(products)
 }
-
-
-
-
-
-
 
 const filterProducts = async(req,res) => {
     
@@ -61,10 +55,6 @@ const searchProductName = async(req,res) => {
     }
 
 }
-
-module.exports = {getProducts, filterProducts, sortByRate, searchProductName};const Tourist = require("../models/TouristModel");
-//66f8084788afe7e5aff3aefc
-
 // Update tourist information
 const updateInfo = async (req, res) => {
   const { id } = req.params;
@@ -97,4 +87,6 @@ const getInfo = async (req, res) => {
   }
 };
 
-module.exports = { updateInfo, getInfo };
+//66f8084788afe7e5aff3aefc
+module.exports = {getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo};
+

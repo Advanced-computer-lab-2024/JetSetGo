@@ -1,5 +1,5 @@
 const express = require('express');
-const { createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile , createActivity, updateActivity, deleteActivity, getActivities ,createActivity, updateActivity, getActivities} = require('../controllers/advertiserController');
+const { createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile , createActivity, updateActivity, deleteActivity, getActivities } = require('../controllers/advertiserController');
 const router = express.Router();
 
 
