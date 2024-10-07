@@ -4,12 +4,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@faststore/ui": "^3.0.116",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.7.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.26.2",
+    "react-icons": "^5.3.0",
+    "react-intersection-observer": "^9.13.1",
+    "react-range": "^1.10.0",
+    "react-router-dom": "^6.26.1",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -36,7 +41,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
-  
-  
 }

@@ -1,7 +1,5 @@
 const mongoose= require('mongoose')
-const Product= require('../models/ProductModel')
-
-
+const Product= require('../models/Product')
 
 
 // get all products
@@ -11,10 +9,38 @@ const getProducts= async (req,res) => {
 }
 
 
+// Add new product
+const createProduct = async (req, res) =>{
+    const {name, description, price, quantityAvailable, picture, seller, ratings} = req.body
 
+    try{
+        const product= await Product.create({name, description, price, quantityAvailable, seller, picture,ratings})
+        res.status(200).json(product)
+    } catch(error){
+        res.status(400).json({error: error.message})
+    }
 
+    res.json({mssg: 'added a new product'})
+}
 
+//  update a product
+const updateProduct = async (req, res) =>{
+    const { id } = req.params
 
+    if (!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).json({error: 'No such product'})
+    }
+
+    const product = await Product.findOneAndUpdate({_id:id},{
+        ...req.body
+    })
+
+    if(!product){
+        return res.status(404).json({error:'No such product'})
+    }
+
+    res.status(200).json(product)
+}
 
 const filterProducts = async(req,res) => {
     
@@ -61,40 +87,4 @@ const searchProductName = async(req,res) => {
     }
 
 }
-
-module.exports = {getProducts, filterProducts, sortByRate, searchProductName};const Tourist = require("../models/TouristModel");
-//66f8084788afe7e5aff3aefc
-
-// Update tourist information
-const updateInfo = async (req, res) => {
-  const { id } = req.params;
-  const updates = req.body;
-
-  try {
-    if (updates.username || updates.wallet) {
-      return res
-        .status(403)
-        .json({ error: "You cannot edit username or wallet" });
-    }
-    const updatedInfo = await Tourist.findByIdAndUpdate(id, updates, {
-      new: true,
-    });
-    res.status(200).json(updatedInfo);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
-
-// Get tourist information
-const getInfo = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const profile = await Tourist.findById(id);
-    res.status(200).json(profile);
-  } catch (err) {
-    res.status(404).json({ error: "Profile not found" });
-  }
-};
-
-module.exports = { updateInfo, getInfo };
+module.exports = {getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName}

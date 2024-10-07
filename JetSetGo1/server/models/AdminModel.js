@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 // not stated in the requiemnts about its attributes but logically the admin data should be stored
-
 const adminSchema = new mongoose.Schema({
     username: { 
         type: String, 
@@ -12,12 +11,10 @@ const adminSchema = new mongoose.Schema({
         required: true 
     },
     
-   
-    
      createdAt: { 
         type: Date, 
         default: Date.now 
     }
 });
 
-module.exports = mongoose.model("Admin", adminSchema);
+module.exports = mongoose.model('Admin', adminSchema);

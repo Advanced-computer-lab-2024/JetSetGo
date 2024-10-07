@@ -39,3 +39,4 @@ const registerGuest = async (req, res) => {
 };
 
 module.exports = { registerGuest };
+

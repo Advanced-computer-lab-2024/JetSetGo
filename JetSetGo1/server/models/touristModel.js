@@ -4,8 +4,8 @@ const touristSchema = new mongoose.Schema({
     username: { 
         type: String, 
         required: true, 
-        unique: true,
-        immutable: true 
+        unique: true ,
+        immutable:true
     },
     email: { type: String, 
         required: true,
@@ -35,7 +35,7 @@ const touristSchema = new mongoose.Schema({
     },
     wallet: { 
         type: Number, 
-        default: 0, 
+        default: 0 ,
         immutable: true
     },         // Not editable directly
        
