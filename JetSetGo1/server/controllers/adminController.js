@@ -1,4 +1,4 @@
-const Admin = require('../models/AdminModel');
+const Admin = require("../models/AdminModel");
 //const Account = require('../models/GuestModel');
 const Seller = require('../models/SellerModel');
 const TourGuide = require('../models/TourGuideModel');
@@ -14,7 +14,7 @@ const express = require('express');
 const models={admin: Admin, seller: Seller, tourguides: TourGuide, tourist: Tourist, advertisers: Advertiser, tourismgoverner: TourismGoverner};
 
 
-// Add Admin 
+// Add Admin
 const addAdmin = async (req, res) => {
   const { username, password } = req.body;
 
@@ -38,23 +38,27 @@ const addAdmin = async (req, res) => {
 };
 
 // Delete Account
-const deleteAccount= async (req, res) => {
-  const { id , modelName} = req.params;
+const deleteAccount = async (req, res) => {
+  const { id, modelName } = req.params;
 
   //Check if model exists
   const Model = models[modelName.toLowerCase()];
 
-  if(!Model){
-    return resizeTo.status(400).json({error: `Model '${modelName}' not found`});
+  if (!Model) {
+    return resizeTo
+      .status(400)
+      .json({ error: `Model '${modelName}' not found` });
   }
   try {
     const deletedAccount = await Model.findByIdAndDelete(id);
-    if(!deletedAccount){
-        return resizeTo.status(404).json({erro:'This account does not exist'});
+    if (!deletedAccount) {
+      return resizeTo.status(404).json({ erro: "This account does not exist" });
     }
-    res.status(200).json({message:'Account deleted successfully',deletedAccount});
+    res
+      .status(200)
+      .json({ message: "Account deleted successfully", deletedAccount });
   } catch (err) {
-    res.status(400).json({ error: err.message});
+    res.status(400).json({ error: err.message });
   }
 };
 // Get all users for a specific role

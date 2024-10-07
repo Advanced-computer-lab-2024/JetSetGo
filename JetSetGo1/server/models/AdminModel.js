@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 // not stated in the requiemnts about its attributes but logically the admin data should be stored
 
 const adminSchema = new mongoose.Schema({
@@ -20,4 +20,4 @@ const adminSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Admin', adminSchema);
+module.exports = mongoose.model("Admin", adminSchema);
