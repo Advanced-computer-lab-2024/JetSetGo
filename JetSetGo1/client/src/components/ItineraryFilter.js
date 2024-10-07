@@ -30,7 +30,10 @@ const ItineraryFilter = ({ onFilter }) => {
                     return json;
                     }
                     else
-                    return [];
+                    {
+                        console.log("INSIDE ")
+                        return [];
+                    }
             }
             else
             {
@@ -66,7 +69,12 @@ const ItineraryFilter = ({ onFilter }) => {
             );
 
             // Pass filtered results back to parent
-            onFilter(commonResults);
+            if (commonResults.length !== 0) {
+                onFilter(commonResults);
+            } else {
+                console.log(commonResults)
+                onFilter([]);
+            }
 
         } catch (error) {
             alert(`An error occurred: ${error.message}`);

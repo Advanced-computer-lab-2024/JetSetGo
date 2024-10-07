@@ -28,7 +28,7 @@ import ItineraryFilter from './components/ItineraryFilter';
 import MuseumFilter from './components/MuseumFilter';
 import HistoricalPlaceFilter from './components/HistoricalPlaceFilter';
 
-
+import HomePage from './pages/HomePage';
 
 
 function App() {
@@ -39,115 +39,52 @@ function App() {
   const [filteredHistoricalPlace, setFilteredHistoricalPlace] = useState(null);
 
   const handleFilterResultsActivities = (results) => {
-
     setFilteredActivities(results);
   };
-  const handleFilterResultsItineraries = (results) => {
 
+  const handleFilterResultsItineraries = (results) => {
     setFilteredItinerary(results);
   };
-  const handleFilterResultsMusuems = (results) => {
 
+  const handleFilterResultsMusuems = (results) => {
     setFilteredMuseum(results);
   };
-  const handleFilterResultsHistoricalPlaces = (results) => {
 
+  const handleFilterResultsHistoricalPlaces = (results) => {
     setFilteredHistoricalPlace(results);
   };
-  
+
   return (
     <div className="App">
       <BrowserRouter>
-        <Profile/>
         <div className="pages">
           <Routes>
-            <Route
-            path="/delete/:role"
-            element={<UserList/>}
-            />
-            <Route
-            path="/tour-guide/itineraryManager"
-            element={<ItineraryManager/>}
-            />
-            <Route
-            path="/admin/profile"
-            element={<AdminProfilePage/>}
-            />
-            <Route
-            path="/admin/delete-options"
-            element={<DeleteOptions/>}
-            />
-            <Route
-            path="/admin/add"
-            element={<AdminAddPage/>}
-            />
-            <Route
-            path="/edit/tourist/:id"
-            element={<TouristEditPage/>}
-            />
-            <Route
-            path="/profile/tourist/:id"
-            element={<TouristProfilePage/>}
-            />
-            <Route
-            path="/create/tour-guides/:id"
-            element={<CreateProfile/>}
-            />
-            <Route path="/update-profile/tour-guides/:id"
-             element={<UpdateProfile />} 
-            />
-            <Route
-              path="/profile/tour-guides/:id"
-              element={<Profile/>}
-            />
-            <Route 
-              path="/"
-              element={<ProductListing />} />
-              <Route
-            path="/components/ProductForm"
-            element={<ProductForm/>}
-            />
-            <Route
-            path="components/UpdateProduct/:id"
-            element={<UpdateProducts/>}
-            />
-
-            
-            <Route
-              path="/activities"
-              element={
-                <>
-                  <Activities filteredActivities={filteredActivities} />
-                </>
-              }
-            />
-            <Route
-              path="/itineraries"
-              element={
-                <>
-                  <Itineraries filteredItinerary={filteredItinerary} />
-                </>
-              }
-            />
-             <Route
-              path="/museums"
-              element={
-                <>
-                  <MuseumFilter onFilter={handleFilterResultsMusuems}/>
-                  <Museums filteredMuseum={filteredMuseum} />
-                </>
-              }
-            />
-             <Route
-              path="/historicalLocations"
-              element={
-                <>
-                  <HistoricalPlaceFilter onFilter={handleFilterResultsHistoricalPlaces}/>
-                  <HistoricalLocations filteredHistoricalPlace={filteredHistoricalPlace} />
-                </>
-              }
-            />
-          
+            <Route path="/" element={<HomePage />} />
+            <Route path="/productPage" element={<ProductListing />}/>
+            <Route path="/delete/:role" element={<UserList />} />
+            <Route path="/tour-guide/itineraryManager" element={<ItineraryManager />} />
+            <Route path="/admin/profile" element={<AdminProfilePage />} />
+            <Route path="/admin/delete-options" element={<DeleteOptions />} />
+            <Route path="/admin/add" element={<AdminAddPage />} />
+            <Route path="/edit/tourist/:id" element={<TouristEditPage />} />
+            <Route path="/profile/tourist/:id" element={<TouristProfilePage />} />
+            <Route path="/create/tour-guides/:id" element={<CreateProfile />} />
+            <Route path="/update-profile/tour-guides/:id" element={<UpdateProfile />} />
+            <Route path="/profile/tour-guides/:id" element={<Profile />} />
+            <Route path="/activities" element={<Activities filteredActivities={filteredActivities} />} />
+            <Route path="/itineraries" element={<Itineraries filteredItinerary={filteredItinerary} />} />
+            <Route path="/museums" element={
+              <>
+                <MuseumFilter onFilter={handleFilterResultsMusuems} />
+                <Museums filteredMuseum={filteredMuseum} />
+              </>
+            } />
+            <Route path="/historicalLocations" element={
+              <>
+                <HistoricalPlaceFilter onFilter={handleFilterResultsHistoricalPlaces} />
+                <HistoricalLocations filteredHistoricalPlace={filteredHistoricalPlace} />
+              </>
+            } />
           </Routes>
         </div>
       </BrowserRouter>
@@ -156,6 +93,5 @@ function App() {
 }
 
 export default App;
-
 
 

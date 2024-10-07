@@ -60,6 +60,7 @@ const ActivityFilter = ({onFilter}) => {
             const results5 = await fetchResults(date, 'date', '/api/tourist/searchActivityByDate');
             const results6 = await fetchResults(budget, 'price', '/api/tourist/searchActivityByBudget');
 
+            
             const common = results.filter((item) =>
                 results2.some((loc) => loc._id === item._id) &&
                 results3.some((cat) => cat._id === item._id) &&
@@ -71,6 +72,7 @@ const ActivityFilter = ({onFilter}) => {
             if (common.length !== 0) {
                 onFilter(common);
             } else {
+                console.log("empty")
                 onFilter([]);
             }
         } catch (error) {
