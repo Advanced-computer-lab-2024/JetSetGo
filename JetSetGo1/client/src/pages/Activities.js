@@ -48,7 +48,6 @@ const Activities = ({ filteredActivities }) => {
                 <button onClick={fetchSortedByRating}>Sort by Rating</button>
             </div>
             <div className="upcomingActivities">
-                {loading && <p> Loading ...</p>}
                 { activitiesToShow && activitiesToShow.length === 0 && 
                 (
                 <p>No results found</p>

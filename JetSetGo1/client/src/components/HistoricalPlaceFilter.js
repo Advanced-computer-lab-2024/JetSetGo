@@ -25,9 +25,15 @@ const HistoricalPlaceFilter = ({onFilter}) => {
                     },
                     body: JSON.stringify({ [field]: query }), // Send the search fields
                 });
-                
+            if(response.ok)
+            {
             const json = await response.json();
-            return json; // Return the search results
+            return json;
+            }
+            else
+            {
+              return [];  
+            }
             }
             else
             {

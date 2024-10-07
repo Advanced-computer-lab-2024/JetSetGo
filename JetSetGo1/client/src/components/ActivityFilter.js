@@ -29,8 +29,15 @@ const ActivityFilter = ({onFilter}) => {
                     body: JSON.stringify({ [field]: query }), // Send the search fields
                 });
                 
-            const json = await response.json();
-            return json; // Return the search results
+                if(response.ok)
+                    {
+                    const json = await response.json();
+                    return json;
+                    }
+                    else
+                    {
+                      return [];  
+                    }
             }
             else
             {

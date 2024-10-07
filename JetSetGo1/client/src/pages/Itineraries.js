@@ -60,9 +60,9 @@ const Itineraries = ({ filteredItinerary }) => {
 
             <div className="upcomingItineraries">
             { itinerariesToShow && itinerariesToShow.length === 0 && 
-                (
-                <p>No results found</p>
-                )}
+            (
+            <p>No results found</p>
+            )}
                 {itinerariesToShow && itinerariesToShow.map((Itinerary) => (
                     <ItineraryDetails key={Itinerary._id} Itinerary={Itinerary} />
                 ))}
