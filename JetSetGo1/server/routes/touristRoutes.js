@@ -1,6 +1,13 @@
 const express = require('express');
 const { getProducts, createProduct, updateProduct,filterProducts,sortByRate, searchProductName,} = require('../controllers/adminController.js');
-const {updateInfo, getInfo } = require('../controllers/touristController');
+const {updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByName,
+  searchHistoricalPlaceByCategory, searchMuseumByTag,searchMuseumByName,searchMuseumByCategory,searchActivityByBudget,searchActivityByDate, 
+  searchActivityByRating,searchActivityByTag,searchActivityByCategory,
+  searchActivityByName, searchItineraryByDate, searchItineraryByBudget, 
+  searchItineraryByLanguage,searchItineraryByName,searchItineraryByTag,
+  getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice,
+   sortItineraryByRating, getMuseums, filterMuseumsByTag,
+    getHistoricalLocations, filterHistoricalLocationsByTag  } = require('../controllers/touristController');
 const router = express.Router();
 
 
@@ -14,30 +21,8 @@ router.patch('/update/:id', updateInfo);
 router.get('/profile/:id', getInfo);
 
 
-//66f80af288afe7e5aff3af00
-module.exports = router;
-
-
-
-
-
-
-const express = require('express');
-const {updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByName,
-searchHistoricalPlaceByCategory, searchMuseumByTag,searchMuseumByName,searchMuseumByCategory,searchActivityByBudget,searchActivityByDate, 
-searchActivityByRating,searchActivityByTag,searchActivityByCategory,
-searchActivityByName, searchItineraryByDate, searchItineraryByBudget, 
-searchItineraryByLanguage,searchItineraryByName,searchItineraryByTag,
-getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice,
- sortItineraryByRating, getMuseums, filterMuseumsByTag,
-  getHistoricalLocations, filterHistoricalLocationsByTag  } = require('../controllers/touristController');
-
-const router = express.Router();
 
 // Create or Update Tour Guide Profile
-
-router.patch('/update/:id', updateInfo);
-router.get('/profile/:id', getInfo);
 
 router.post('/searchHistoricalPlaceByName', searchHistoricalPlaceByName);
 router.post('/searchHistoricalPlaceByTag', searchHistoricalPlaceByTag);

@@ -36,7 +36,7 @@ const ActivityFilter = ({onFilter}) => {
             else
             {
                 //THIS WILL CHANGE DEPENDING ON THE OBJECT (ACTIVITY, MUSUEM ..)
-                const response = await fetch('/api/tourists/getUpcomingActivities')
+                const response = await fetch('/api/tourist/getUpcomingActivities')
                 
             const json = await response.json();
             return json; // Return the search results
@@ -53,12 +53,12 @@ const ActivityFilter = ({onFilter}) => {
         try {
             setLoading(true);
             
-            const results = await fetchResults(name, 'title', '/api/tourists/searchActivityByName');
-            const results2 = await fetchResults(tagId, 'tagId', '/api/tourists/searchActivityByTag');
-            const results3 = await fetchResults(category, 'category', '/api/tourists/searchActivityByCategory');
-            const results4 = await fetchResults(rating, 'rating', '/api/tourists/searchActivityByRating');
-            const results5 = await fetchResults(date, 'date', '/api/tourists/searchActivityByDate');
-            const results6 = await fetchResults(budget, 'price', '/api/tourists/searchActivityByBudget');
+            const results = await fetchResults(name, 'title', '/api/tourist/searchActivityByName');
+            const results2 = await fetchResults(tagId, 'tagId', '/api/tourist/searchActivityByTag');
+            const results3 = await fetchResults(category, 'category', '/api/tourist/searchActivityByCategory');
+            const results4 = await fetchResults(rating, 'rating', '/api/tourist/searchActivityByRating');
+            const results5 = await fetchResults(date, 'date', '/api/tourist/searchActivityByDate');
+            const results6 = await fetchResults(budget, 'price', '/api/tourist/searchActivityByBudget');
 
             const common = results.filter((item) =>
                 results2.some((loc) => loc._id === item._id) &&

@@ -53,13 +53,13 @@ const GuestActivityFilter = () => {
         // 'TITLE' CHANGES DEPENDING ON THE ATTIRBUTE IN THE SCHEMAAA
         //NAME DEPENDS ON THE STATE 
 
-        const results3 = await fetchResults(category, 'category','/api/tourists/searchActivityByCategory');
+        const results3 = await fetchResults(category, 'category','/api/tourist/searchActivityByCategory');
 
-        const results4 = await fetchResults(rating, 'rating','/api/tourists/searchActivityByRating');
+        const results4 = await fetchResults(rating, 'rating','/api/tourist/searchActivityByRating');
 
-        const results5 = await fetchResults(date, 'date','/api/tourists/searchActivityByDate');
+        const results5 = await fetchResults(date, 'date','/api/tourist/searchActivityByDate');
 
-        const results6 = await fetchResults(budget, 'price','/api/tourists/searchActivityByBudget');
+        const results6 = await fetchResults(budget, 'price','/api/tourist/searchActivityByBudget');
 
         const common = results3.filter((item) =>
             results4.some((rat) => rat._id === item._id) &&

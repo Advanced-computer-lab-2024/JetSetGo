@@ -16,7 +16,7 @@ const sellerRoutes = require("./routes/sellerRoutes");
 const tourGuideRoutes = require("./routes/tourGuideRoutes");
 // const adminRoutes = require("./routes/adminRoutes");
 const touristRoutes = require("./routes/touristRoutes");
-
+const guestRoutes = require('./routes/guestRoutes.js')
 const adminRoutes = require('./routes/adminRoutes.js');
 const registerRoutes = require('./routes/registerRoutes');
 
@@ -48,16 +48,9 @@ app.use("/api/tourist", touristRoutes);
 
 
 
-//EF93SkpGhRJ9gcfz
 
-app.use(express.json()); // what this does is that it allows us to access the body of the request
-app.use(cors()); // Enable CORS for all routes (saw it in a vid)
 
-//Logging Middleware
-app.use((req, res, next) => {
-  console.log(req.path, req.method);
-  next();
-});
+
 
 
 

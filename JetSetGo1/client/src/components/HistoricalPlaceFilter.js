@@ -38,7 +38,7 @@ const HistoricalPlaceFilter = ({onFilter}) => {
             else
             {
                 //THIS WILL CHANGE DEPENDING ON THE OBJECT (ACTIVITY, MUSUEM ..)
-                const response = await fetch('/api/tourists/getHistoricalLocations')
+                const response = await fetch('/api/tourist/getHistoricalLocations')
                 
             const json = await response.json();
             return json; // Return the search results
@@ -58,11 +58,11 @@ const HistoricalPlaceFilter = ({onFilter}) => {
         //ROUTES CHANGE DEPENDING ON THE FUCNTION NEEDED
         // 'TITLE' CHANGES DEPENDING ON THE ATTIRBUTE IN THE SCHEMAAA
         //NAME DEPENDS ON THE STATE 
-        const results = await fetchResults(name, 'name','/api/tourists/searchHistoricalPlaceByName');
+        const results = await fetchResults(name, 'name','/api/tourist/searchHistoricalPlaceByName');
 
-        const results2 = await fetchResults(tagId, 'tags','/api/tourists/searchHistoricalPlaceByTag');
+        const results2 = await fetchResults(tagId, 'tags','/api/tourist/searchHistoricalPlaceByTag');
 
-        const results3 = await fetchResults(category, 'category','/api/tourists/searchHistoricalPlaceByCategory');
+        const results3 = await fetchResults(category, 'category','/api/tourist/searchHistoricalPlaceByCategory');
 
         if(results.length != 0 && results3.length != 0 && results2.length != 0  )
         {

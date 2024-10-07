@@ -32,7 +32,7 @@ const GuestItineraryFilter = () => {
             else
             {
                 //THIS WILL CHANGE DEPENDING ON THE OBJECT (ACTIVITY, MUSUEM ..)
-                const response = await fetch('/api/tourists/getUpcomingItineraries')
+                const response = await fetch('/api/tourist/getUpcomingItineraries')
                 
             const json = await response.json();
             return json; // Return the search results
@@ -53,13 +53,13 @@ const GuestItineraryFilter = () => {
         // 'TITLE' CHANGES DEPENDING ON THE ATTIRBUTE IN THE SCHEMAAA
         //NAME DEPENDS ON THE STATE 
 
-        const results2 = await fetchResults(tagId, 'tagId','/api/tourists/searchItineraryByTag');
+        const results2 = await fetchResults(tagId, 'tagId','/api/tourist/searchItineraryByTag');
 
-        const results3 = await fetchResults(language, 'language','/api/tourists/searchItineraryByLanguage');
+        const results3 = await fetchResults(language, 'language','/api/tourist/searchItineraryByLanguage');
 
-        const results5 = await fetchResults(date, 'availableDates','/api/tourists/searchItineraryByDate');
+        const results5 = await fetchResults(date, 'availableDates','/api/tourist/searchItineraryByDate');
 
-        const results6 = await fetchResults(budget, 'price','/api/tourists/searchItineraryByBudget');
+        const results6 = await fetchResults(budget, 'price','/api/tourist/searchItineraryByBudget');
 
         const common = results2.filter((item) =>
             results3.some((lan) => lan._id === item._id) &&

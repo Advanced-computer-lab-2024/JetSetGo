@@ -35,7 +35,7 @@ const ItineraryFilter = ({ onFilter }) => {
             else
             {
                 //THIS WILL CHANGE DEPENDING ON THE OBJECT (ACTIVITY, MUSUEM ..)
-                const response = await fetch('/api/tourists/getUpcomingItineraries')
+                const response = await fetch('/api/tourist/getUpcomingItineraries')
                 
             const json = await response.json();
             return json; // Return the search results
@@ -52,11 +52,11 @@ const ItineraryFilter = ({ onFilter }) => {
     const handleSubmit = async () => {
         setLoading(true);
         try {
-            const results = await fetchResults(name, 'title', '/api/tourists/searchItineraryByName');
-            const results2 = await fetchResults(tagId, 'tagId', '/api/tourists/searchItineraryByTag');
-            const results3 = await fetchResults(language, 'language', '/api/tourists/searchItineraryByLanguage');
-            const results4 = await fetchResults(date, 'date', '/api/tourists/searchItineraryByDate');
-            const results5 = await fetchResults(budget, 'price', '/api/tourists/searchItineraryByBudget');
+            const results = await fetchResults(name, 'title', '/api/tourist/searchItineraryByName');
+            const results2 = await fetchResults(tagId, 'tagId', '/api/tourist/searchItineraryByTag');
+            const results3 = await fetchResults(language, 'language', '/api/tourist/searchItineraryByLanguage');
+            const results4 = await fetchResults(date, 'date', '/api/tourist/searchItineraryByDate');
+            const results5 = await fetchResults(budget, 'price', '/api/tourist/searchItineraryByBudget');
 
             const commonResults = results.filter((item) =>
                 results2.some((loc) => loc._id === item._id) &&

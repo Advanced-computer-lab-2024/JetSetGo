@@ -39,7 +39,7 @@ const MuseumFilter = ({onFilter}) => {
             else
             {
                 //THIS WILL CHANGE DEPENDING ON THE OBJECT (ACTIVITY, MUSUEM ..)
-                const response = await fetch('/api/tourists/getMuseums')
+                const response = await fetch('/api/tourist/getMuseums')
                 
             const json = await response.json();
             return json; // Return the search results
@@ -59,11 +59,11 @@ const MuseumFilter = ({onFilter}) => {
         //ROUTES CHANGE DEPENDING ON THE FUCNTION NEEDED
         // 'TITLE' CHANGES DEPENDING ON THE ATTIRBUTE IN THE SCHEMAAA
         //NAME DEPENDS ON THE STATE 
-        const results = await fetchResults(name, 'name','/api/tourists/searchMuseumByName');
+        const results = await fetchResults(name, 'name','/api/tourist/searchMuseumByName');
 
-        const results2 = await fetchResults(tagId, 'tagId','/api/tourists/searchMuseumByTag');
+        const results2 = await fetchResults(tagId, 'tagId','/api/tourist/searchMuseumByTag');
 
-        const results3 = await fetchResults(category, 'category','/api/tourists/searchMuseumByCategory');
+        const results3 = await fetchResults(category, 'category','/api/tourist/searchMuseumByCategory');
         
         if(results.length != 0 && results2.length != 0 && results3.length != 0)
         {
