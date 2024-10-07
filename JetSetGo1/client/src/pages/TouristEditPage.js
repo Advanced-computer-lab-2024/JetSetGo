@@ -8,7 +8,7 @@ const TouristEditPage = () => {
   const [formValues, setFormValues] = useState({
     name: '',
     email: '',
-    phone: '',
+    mobile: '',
     country: '',
     languages: '',
     interests: ''
@@ -25,7 +25,7 @@ const TouristEditPage = () => {
         setFormValues({
           name: data.name || '',
           email: data.email || '',
-          phone: data.phone || '',
+          mobile: data.mobile || '',
           country: data.country || '',
           languages: data.languages?.join(', ') || '',
           interests: data.interests?.join(', ') || ''
@@ -83,10 +83,10 @@ const TouristEditPage = () => {
       />
       <input
         type="tel"
-        name="phone"
+        name="mobile"
         value={formValues.mobile}
         onChange={handleInputChange}
-        placeholder="Phone"
+        placeholder="Mobile"
       />
       <input
         type="text"

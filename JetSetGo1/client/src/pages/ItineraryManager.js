@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './ItineraryManager.css'; // Add a CSS file for custom styles
 
 axios.defaults.baseURL = 'http://localhost:4000'; // Replace with your actual API URL
 
@@ -12,7 +13,7 @@ const ItineraryManager = () => {
     tourGuide: tourGuide_ID,
     activities: { name: [], duration: [] },
     locations: [],
-    timeline: [],
+    timeline: [], // Timeline added here
     tags: [], // This will hold the selected tag IDs
     language: '',
     price: '',
@@ -160,7 +161,7 @@ const ItineraryManager = () => {
       tourGuide: tourGuide_ID,
       activities: { name: [], duration: [] },
       locations: [],
-      timeline: [],
+      timeline: [], // Reset timeline
       tags: [], // Reset tags
       language: '',
       price: '',
@@ -174,62 +175,20 @@ const ItineraryManager = () => {
   };
 
   return (
-    <div>
-      <h1>Itinerary Manager</h1>
+    <div className="itinerary-manager">
+      <h1 className="title">Itinerary Manager</h1>
 
       {/* Display errors */}
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {/* Form for creating/updating an itinerary */}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          value={itineraryData.title}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="description"
-          placeholder="Description"
-          value={itineraryData.description}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="language"
-          placeholder="Language"
-          value={itineraryData.language}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="number"
-          name="price"
-          placeholder="Price"
-          value={itineraryData.price}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="pickupLocation"
-          placeholder="Pickup Location"
-          value={itineraryData.pickupLocation}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="dropoffLocation"
-          placeholder="Dropoff Location"
-          value={itineraryData.dropoffLocation}
-          onChange={handleChange}
-          required
-        />
+      <form onSubmit={handleSubmit} className="itinerary-form">
+        <input type="text" name="title" placeholder="Title" value={itineraryData.title} onChange={handleChange} required />
+        <textarea name="description" placeholder="Description" value={itineraryData.description} onChange={handleChange} required />
+        <input type="text" name="language" placeholder="Language" value={itineraryData.language} onChange={handleChange} required />
+        <input type="number" name="price" placeholder="Price" value={itineraryData.price} onChange={handleChange} required />
+        <input type="text" name="pickupLocation" placeholder="Pickup Location" value={itineraryData.pickupLocation} onChange={handleChange} required />
+        <input type="text" name="dropoffLocation" placeholder="Dropoff Location" value={itineraryData.dropoffLocation} onChange={handleChange} required />
 
         {/* Accessibility Options */}
         <select name="accessibility" value={itineraryData.accessibility} onChange={handleChange} required>
@@ -240,138 +199,109 @@ const ItineraryManager = () => {
         </select>
 
         {/* Rating */}
-        <div>
-          <label>
-            Rating:
-            <input
-              type="number"
-              name="rating"
-              value={itineraryData.rating}
-              onChange={handleChange}
-              min="0"
-              max="5"
-            />
-          </label>
+        <div className="form-group">
+          <label>Rating:</label>
+          <input type="number" name="rating" value={itineraryData.rating} onChange={handleChange} min="0" max="5" />
         </div>
 
         {/* Is Booked */}
-        <div>
+        <div className="form-group">
           <label>
-            <input
-              type="checkbox"
-              name="isBooked"
-              checked={itineraryData.isBooked}
-              onChange={(e) => setItineraryData({ ...itineraryData, isBooked: e.target.checked })}
-            />
+            <input type="checkbox" name="isBooked" checked={itineraryData.isBooked} onChange={(e) => setItineraryData({ ...itineraryData, isBooked: e.target.checked })} />
             Is Booked
           </label>
         </div>
 
-        {/* Add activities */}
-        <div>
-          <h3>Activities</h3>
-          {itineraryData.activities.name.map((_, index) => (
-            <div key={index}>
-              <input
-                type="text"
-                placeholder="Activity Name"
-                value={itineraryData.activities.name[index] || ''}
-                onChange={(e) => handleActivityChange(index, 'name', e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="Duration"
-                value={itineraryData.activities.duration[index] || ''}
-                onChange={(e) => handleActivityChange(index, 'duration', e.target.value)}
-              />
-              <button type="button" onClick={() => {
-                const updatedActivities = itineraryData.activities;
-                updatedActivities.name.splice(index, 1);
-                updatedActivities.duration.splice(index, 1);
-                setItineraryData({ ...itineraryData, activities: updatedActivities });
-              }}>Remove Activity</button>
-            </div>
-          ))}
-          <button type="button" onClick={() => setItineraryData({
-            ...itineraryData,
-            activities: { name: [...itineraryData.activities.name, ''], duration: [...itineraryData.activities.duration, ''] }
-          })}>Add Activity</button>
-        </div>
+        {/* Activities */}
+        <h3>Activities</h3>
+        {itineraryData.activities.name.map((_, index) => (
+          <div key={index} className="activity-item">
+            <input type="text" placeholder="Activity Name" value={itineraryData.activities.name[index] || ''} onChange={(e) => handleActivityChange(index, 'name', e.target.value)} />
+            <input type="text" placeholder="Duration" value={itineraryData.activities.duration[index] || ''} onChange={(e) => handleActivityChange(index, 'duration', e.target.value)} />
+            <button type="button" className="remove-btn" onClick={() => {
+              const updatedActivities = itineraryData.activities;
+              updatedActivities.name.splice(index, 1);
+              updatedActivities.duration.splice(index, 1);
+              setItineraryData({ ...itineraryData, activities: updatedActivities });
+            }}>Remove</button>
+          </div>
+        ))}
+        <button type="button" onClick={() => setItineraryData({
+          ...itineraryData,
+          activities: { name: [...itineraryData.activities.name, ''], duration: [...itineraryData.activities.duration, ''] }
+        })}>Add Activity</button>
 
-        {/* Add locations */}
-        <div>
-          <h3>Locations</h3>
-          {itineraryData.locations.map((location, index) => (
-            <div key={index}>
-              <input
-                type="text"
-                placeholder="Location"
-                value={location || ''}
-                onChange={(e) => handleArrayChange(index, 'locations', e.target.value)}
-              />
-              <button type="button" onClick={() => {
-                const updatedLocations = [...itineraryData.locations];
-                updatedLocations.splice(index, 1);
-                setItineraryData({ ...itineraryData, locations: updatedLocations });
-              }}>Remove Location</button>
-            </div>
-          ))}
-          <button type="button" onClick={() => setItineraryData({
-            ...itineraryData,
-            locations: [...itineraryData.locations, '']
-          })}>Add Location</button>
-        </div>
+        {/* Locations */}
+        <h3>Locations</h3>
+        {itineraryData.locations.map((location, index) => (
+          <div key={index} className="location-item">
+            <input type="text" placeholder="Location" value={location || ''} onChange={(e) => handleArrayChange(index, 'locations', e.target.value)} />
+            <button type="button" className="remove-btn" onClick={() => {
+              const updatedLocations = [...itineraryData.locations];
+              updatedLocations.splice(index, 1);
+              setItineraryData({ ...itineraryData, locations: updatedLocations });
+            }}>Remove</button>
+          </div>
+        ))}
+        <button type="button" onClick={() => setItineraryData({
+          ...itineraryData,
+          locations: [...itineraryData.locations, '']
+        })}>Add Location</button>
 
-        {/* Add timeline */}
-        <div>
-          <h3>Timeline</h3>
-          {itineraryData.timeline.map((time, index) => (
-            <div key={index}>
-              <input
-                type="text"
-                placeholder="Timeline"
-                value={time || ''}
-                onChange={(e) => handleArrayChange(index, 'timeline', e.target.value)}
-              />
-              <button type="button" onClick={() => {
-                const updatedTimeline = [...itineraryData.timeline];
-                updatedTimeline.splice(index, 1);
-                setItineraryData({ ...itineraryData, timeline: updatedTimeline });
-              }}>Remove Timeline</button>
-            </div>
-          ))}
-          <button type="button" onClick={() => setItineraryData({
-            ...itineraryData,
-            timeline: [...itineraryData.timeline, '']
-          })}>Add Timeline</button>
-        </div>
+        {/* Timeline */}
+        <h3>Timeline</h3>
+        {itineraryData.timeline.map((time, index) => (
+          <div key={index} className="timeline-item">
+            <input type="text" placeholder="Timeline Entry" value={time || ''} onChange={(e) => handleArrayChange(index, 'timeline', e.target.value)} />
+            <button type="button" className="remove-btn" onClick={() => {
+              const updatedTimeline = [...itineraryData.timeline];
+              updatedTimeline.splice(index, 1);
+              setItineraryData({ ...itineraryData, timeline: updatedTimeline });
+            }}>Remove</button>
+          </div>
+        ))}
+        <button type="button" onClick={() => setItineraryData({
+          ...itineraryData,
+          timeline: [...itineraryData.timeline, '']
+        })}>Add Timeline Entry</button>
 
         {/* Tags as toggle buttons */}
         <div>
           <h3>Tags</h3>
-          {tags.map((tag) => (
-            <button
-              key={tag._id}
-              type="button"
-              onClick={() => {
-                const updatedTags = itineraryData.tags.includes(tag._id)
-                  ? itineraryData.tags.filter(t => t !== tag._id) // Remove tag ID if already selected
-                  : [...itineraryData.tags, tag._id]; // Add tag ID if not selected
-                setItineraryData({ ...itineraryData, tags: updatedTags });
-              }}
-              style={{
-                backgroundColor: itineraryData.tags.includes(tag._id) ? 'blue' : 'lightgray',
-                color: itineraryData.tags.includes(tag._id) ? 'white' : 'black',
-                margin: '5px',
-                padding: '10px',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-              }}
-            >
-              {tag.tag_name}
-            </button>
-          ))}
+          <div className="tags-container">
+            {tags.map((tag) => (
+              <button
+                key={tag._id}
+                type="button"
+                onClick={() => {
+                  // Create a copy of the current tags array
+                  let updatedTags;
+                  // Check if the tag is already selected
+                  if (itineraryData.tags.includes(tag._id)) {
+                    // Remove the tag if it's already selected
+                    updatedTags = itineraryData.tags.filter(t => t !== tag._id);
+                  } else {
+                    // Add the tag if it's not selected
+                    updatedTags = [...itineraryData.tags, tag._id];
+                  }
+                  // Update the state with the new tags array
+                  setItineraryData({ ...itineraryData, tags: updatedTags });
+                }}
+                className={itineraryData.tags.includes(tag._id) ? 'tag-btn selected' : 'tag-btn'}
+                style={{
+                  backgroundColor: itineraryData.tags.includes(tag._id) ? 'blue' : 'lightgray',
+                  color: itineraryData.tags.includes(tag._id) ? 'white' : 'black',
+                  margin: '5px',
+                  padding: '10px',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                }}
+              >
+                {tag.tag_name}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Add available dates */}
@@ -379,18 +309,9 @@ const ItineraryManager = () => {
           <h3>Available Dates</h3>
           {itineraryData.availableDates.map((dateItem, dateIndex) => (
             <div key={dateIndex}>
-              <input
-                type="date"
-                value={dateItem.date || ''}
-                onChange={(e) => handleDateChange(dateIndex, e.target.value)}
-              />
+              <input type="date" value={dateItem.date || ''} onChange={(e) => handleDateChange(dateIndex, e.target.value)} />
               {dateItem.times.map((time, timeIndex) => (
-                <input
-                  type="time"
-                  key={timeIndex}
-                  value={time || ''}
-                  onChange={(e) => handleTimeChange(dateIndex, timeIndex, e.target.value)}
-                />
+                <input type="time" key={timeIndex} value={time || ''} onChange={(e) => handleTimeChange(dateIndex, timeIndex, e.target.value)} />
               ))}
               <button type="button" onClick={() => handleTimeChange(dateIndex, dateItem.times.length, '')}>Add Time</button>
               <button type="button" onClick={() => {
@@ -411,18 +332,52 @@ const ItineraryManager = () => {
 
       {/* Displaying fetched itineraries */}
       <h2>Itineraries</h2>
-      <ul>
+      <div className="itinerary-list">
         {itineraries.map((itinerary) => (
-          <li key={itinerary._id}>
+          <div key={itinerary._id} className="itinerary-card">
             <h3>{itinerary.title}</h3>
             <p>{itinerary.description}</p>
-            <p>Rating: {itinerary.rating}</p>
-            <p>Booked: {itinerary.isBooked ? 'Yes' : 'No'}</p>
-            <button onClick={() => handleEdit(itinerary)}>Edit</button>
-            <button onClick={() => handleDelete(itinerary._id)}>Delete</button>
-          </li>
+            <p><strong>Language:</strong> {itinerary.language}</p>
+            <p><strong>Price:</strong> ${itinerary.price}</p>
+            <p><strong>Pickup Location:</strong> {itinerary.pickupLocation}</p>
+            <p><strong>Dropoff Location:</strong> {itinerary.dropoffLocation}</p>
+            <p><strong>Rating:</strong> {itinerary.rating}</p>
+            <p><strong>Booked:</strong> {itinerary.isBooked ? 'Yes' : 'No'}</p>
+
+            <h4>Activities</h4>
+            <ul>
+              {itinerary.activities.name.map((activity, index) => (
+                <li key={index}>{activity} - {itinerary.activities.duration[index]}</li>
+              ))}
+            </ul>
+
+            <h4>Locations</h4>
+            <ul>
+              {itinerary.locations.map((location, index) => (
+                <li key={index}>{location}</li>
+              ))}
+            </ul>
+
+            <h4>Timeline</h4>
+            <ul>
+              {itinerary.timeline.map((entry, index) => (
+                <li key={index}>{entry}</li>
+              ))}
+            </ul>
+
+            <h4>Tags</h4>
+            <ul>
+              {itinerary.tags.map(tag => {
+                const selectedTag = tags.find(t => t._id === tag);
+                return selectedTag ? <li key={tag}>{selectedTag.tag_name}</li> : null;
+              })}
+            </ul>
+
+            <button className="edit-btn" onClick={() => handleEdit(itinerary)}>Edit</button>
+            <button className="delete-btn" onClick={() => handleDelete(itinerary._id)}>Delete</button>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

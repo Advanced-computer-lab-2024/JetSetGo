@@ -5,7 +5,7 @@ const TourismGoverner = require('../models/TourismGovernerModel.js');
 const AdvertiserActivityModel = require('../models/AdvertiserActivityModel.js');
 const Seller = require('../models/SellerModel');
 const TourGuide = require('../models/TourGuideModel');
-const Tourist = require('../models/TouristModel');
+const Tourist = require('../models/TouristModel.js');
 const Advertiser = require('../models/AdvertiserModel');
 
 const models={admin: Admin, seller: Seller, tourguides: TourGuide, tourist: Tourist, advertisers: Advertiser, tourismgoverner: TourismGoverner};
