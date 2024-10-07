@@ -3,12 +3,23 @@ const { createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile , 
 const router = express.Router();
 
 
+
+
+
+// Advertiser activities 
+router.post('/createActivity', createActivity);
+router.patch('/updateActivity/:id', updateActivity);
+
+router.get('/', getActivities);
+
+
+
 // Create or Update Advertiser Profile
 // router.post('/create', createAdvertiserProfile);
 router.post('/createProfile/:id',createAdvertiserProfile);
 router.patch('/updateProfile/:id', updateAdvertiserProfile);
 router.get('/profile/:id', getAdvertiserProfile);
-router.delete('/deleteAct/:id', deleteActivity); // Delete an activity
+router.delete('/deleteAct/delete/:id', deleteActivity); // Delete an activity
 
 // Advertiser activities 
 router.post('/create', createActivity);

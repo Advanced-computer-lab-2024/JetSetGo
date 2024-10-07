@@ -65,4 +65,96 @@ header a {
   padding: 6px;
   border-radius: 50%;
   color: #333;
+}/* google font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap');
+
+/* layout */
+:root {
+  --primary: #1aac83;
+  --error: #e7195a;
+}
+body{
+  background: #f1f1f1;
+  margin: 0;
+  font-family: "Poppins";
+}
+header{
+  background: #fff;
+}
+header .container {
+  max-width:1400px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+header a{
+  color: #333;
+  text-decoration: none;
+}
+.pages{
+  max-width:1400px;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+.activities, .itineraries, .museums, .historicalLocations{
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 100px;
+}
+.activity-details, .itinerary-details, .museum-details, .historicalLocation-details{
+  background: #fff;
+  border-radius: 4px;
+  margin: 20px auto;
+  padding: 20px;
+  position: relative;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+}
+.activity-details h4, .itinerary-details h4, .museum-details h4, .historicalLocation-details h4{
+  margin: 0 0 10px 0;
+  font-size: 1.2em;
+  color: var(--primary);
+}
+.activity-details p, .itinerary-details p, .museum-details p, .historicalLocation-details p{
+  margin: 0;
+  font-size: 0.9em;
+  color:#555;
+}
+.activity-details span, .itinerary-details span, .museum-details span, .historicalLocation-details span{
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  background: #f1f1f1;
+  padding: 6px;
+  border-radius: 50%;
+  color: #333;
+}
+
+.sorting-buttons {
+  margin-bottom: 20px;
+}
+
+.sorting-buttons button {
+  margin-right: 10px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+nav ul {
+  list-style-type: none;
+  display: flex;
+  gap: 10px;
+}
+nav ul li a {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+}
+nav ul li a:hover {
+  background-color: #0056b3;
 }
