@@ -67,7 +67,8 @@ const ProductListing = ({usertype}) => {
   // Fetch filtered products by price range (POST request)
   const fetchFilteredProducts = async () => {
     try {
-      const response = await fetch(`/api/${usertype}/filterProducts?min=${values[0]}&max=${values[1]}`, {
+      
+      const response = await fetch(`/api/sellers/filterProducts?min=${values[0]}&max=${values[1]}`, {
         method: 'GET', 
         headers: {
           'Content-Type': 'application/json',
@@ -84,11 +85,10 @@ const ProductListing = ({usertype}) => {
       console.error('Error filtering products by price:', error);
     }
   };
-
   const fetchSortedProducts = async (order) => {
     try {
       
-        const response = await fetch(`/api/${usertype}/sortByRate?flag=${order}`, {
+        const response = await fetch(`/api/admin/sortByRate?flag=${order}`, {
             method: 'GET', // This is correct
             headers: {
                 'Content-Type': 'application/json',
