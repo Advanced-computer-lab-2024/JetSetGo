@@ -15,26 +15,26 @@ const router = express.Router();
 router.patch('/update/:id', updateInfo);
 router.get('/profile/:id', getInfo);
 
-router.get('/searchHistoricalPlaceByName', searchHistoricalPlaceByName);
-router.get('/searchHistoricalPlaceByTag', searchHistoricalPlaceByTag);
-router.get('/searchHistoricalPlaceByCategory', searchHistoricalPlaceByCategory);
+router.post('/searchHistoricalPlaceByName', searchHistoricalPlaceByName);
+router.post('/searchHistoricalPlaceByTag', searchHistoricalPlaceByTag);
+router.post('/searchHistoricalPlaceByCategory', searchHistoricalPlaceByCategory);
 
-router.get('/searchMuseumByTag', searchMuseumByTag);
-router.get('/searchMuseumByName', searchMuseumByName);
-router.get('/searchMuseumByCategory', searchMuseumByCategory);
+router.post('/searchMuseumByTag', searchMuseumByTag);
+router.post('/searchMuseumByName', searchMuseumByName);
+router.post('/searchMuseumByCategory', searchMuseumByCategory);
 
-router.get('/searchActivityByName',searchActivityByName);
-router.get('/searchActivityByCategory',searchActivityByCategory);
-router.get('/searchActivityByTag',searchActivityByTag);
-router.get('/searchActivityByRating',searchActivityByRating);
-router.get('/searchActivityByDate',searchActivityByDate);
-router.get('/searchActivityByBudget',searchActivityByBudget);
+router.post('/searchActivityByName',searchActivityByName);
+router.post('/searchActivityByCategory',searchActivityByCategory);
+router.post('/searchActivityByTag',searchActivityByTag);
+router.post('/searchActivityByRating',searchActivityByRating);
+router.post('/searchActivityByDate',searchActivityByDate);
+router.post('/searchActivityByBudget',searchActivityByBudget);
 
-router.get('/searchItineraryByDate',searchItineraryByDate);
-router.get('/searchItineraryByBudget',searchItineraryByBudget);
-router.get('/searchItineraryByLanguage',searchItineraryByLanguage);
-router.get('/searchItineraryByName',searchItineraryByName);
-router.get('/searchItineraryByTag',searchItineraryByTag);
+router.post('/searchItineraryByDate',searchItineraryByDate);
+router.post('/searchItineraryByBudget',searchItineraryByBudget);
+router.post('/searchItineraryByLanguage',searchItineraryByLanguage);
+router.post('/searchItineraryByName',searchItineraryByName);
+router.post('/searchItineraryByTag',searchItineraryByTag);
 
 
 
