@@ -12,6 +12,7 @@ import AdminAddPage from './pages/AdminAddPage';
 import AdminProfilePage from './pages/AdminProfilePage';
 import DeleteOptions from './pages/DeleteOptions';
 import UserList from './pages/UserList';
+import ItineraryManager from './pages/ItineraryManager';
 
 function App() {
   return (
@@ -23,6 +24,10 @@ function App() {
             <Route
             path="/delete/:role"
             element={<UserList/>}
+            />
+            <Route
+            path="/tour-guide/itineraryManager"
+            element={<ItineraryManager/>}
             />
             <Route
             path="/admin/profile"

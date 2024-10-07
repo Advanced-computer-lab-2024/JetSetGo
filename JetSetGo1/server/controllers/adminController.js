@@ -1,9 +1,14 @@
 const Admin = require('../models/AdminModel.js');
 const preferencetags = require('../models/TagModel.js');
 const CategoryModel = require('../models/CategoryModel.js');
-const TourismGovernerModel = require('../models/TourismGovernerModel.js');
+const TourismGoverner = require('../models/TourismGovernerModel.js');
 const AdvertiserActivityModel = require('../models/AdvertiserActivityModel.js');
+const Seller = require('../models/SellerModel');
+const TourGuide = require('../models/TourGuideModel');
+const Tourist = require('../models/TouristModel');
+const Advertiser = require('../models/AdvertiserModel');
 
+const models={admin: Admin, seller: Seller, tourguides: TourGuide, tourist: Tourist, advertisers: Advertiser, tourismgoverner: TourismGoverner};
 ////////////////////////////////////////////////////////////////////////////////
 //create preference tags
 const create_pref_tag = async (req, res) => {
@@ -50,6 +55,7 @@ const addAdmin = async (req, res) => {
   } catch (err) {
     return res.status(400).json({ error: err.message });
   }
+}
 //update preference tags
 const update_pref_tag = async (req, res) => {
     const { tag_name, description } = req.body;
@@ -178,8 +184,30 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+// Delete Account
+const deleteAccount = async (req, res) => {
+    const { id, modelName } = req.params;
+  
+    //Check if model exists
+    const Model = models[modelName.toLowerCase()];
+  
+    if (!Model) {
+      return resizeTo
+        .status(400)
+        .json({ error: `Model '${modelName}' not found` });
+    }
+    try {
+      const deletedAccount = await Model.findByIdAndDelete(id);
+      if (!deletedAccount) {
+        return resizeTo.status(404).json({ erro: "This account does not exist" });
+      }
+      res
+        .status(200)
+        .json({ message: "Account deleted successfully", deletedAccount });
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  };
 
-module.exports = {addAdmin, deleteAccount, getAllUsers};
-
-module.exports = { create_pref_tag ,  get_pref_tag , update_pref_tag , delete_pref_tag , create_act_category , get_act_category , update_act_category , delete_act_category , add_tourism_governer , view_tourism_governer};
+module.exports = { create_pref_tag ,  get_pref_tag , update_pref_tag , delete_pref_tag , create_act_category , get_act_category , update_act_category , delete_act_category , add_tourism_governer , view_tourism_governer,addAdmin, deleteAccount, getAllUsers};
 
