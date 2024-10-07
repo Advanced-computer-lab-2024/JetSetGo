@@ -21,13 +21,9 @@ const activitySchema = new mongoose.Schema({
       type: Number, 
       required: true 
     },
-    rating :{
-      type:Number,
-      default:0
-    },
     category: { 
       type: mongoose.Schema.Types.ObjectId, 
-      ref: 'Category' 
+      ref: 'Category'   
     },  // Reference to the activity category
     tags: [
       { type: mongoose.Schema.Types.ObjectId, 
@@ -42,6 +38,11 @@ const activitySchema = new mongoose.Schema({
       default: true 
     },
     
+    rating :{
+      type:Number,
+      default:0
+    },
+
     specialDiscounts: {
       type: String, 
       default: null  
@@ -52,5 +53,7 @@ const activitySchema = new mongoose.Schema({
       default: Date.now 
     }
 });
+
+
 
 module.exports = mongoose.model('Activity', activitySchema);

@@ -1,19 +1,29 @@
 const express = require('express');
-const { updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity} = require('../controllers/advertiserController');
-// const router = express.Router();
+const { createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile , createActivity, updateActivity, deleteActivity, getActivities } = require('../controllers/advertiserController');
 const router = express.Router();
+
+
+
+
+
+// Advertiser activities 
+router.post('/createActivity', createActivity);
+router.patch('/updateActivity/:id', updateActivity);
+
+router.get('/', getActivities);
+
 
 
 // Create or Update Advertiser Profile
 // router.post('/create', createAdvertiserProfile);
-router.patch('/update/:id', updateAdvertiserProfile);
+router.post('/createProfile/:id',createAdvertiserProfile);
+router.patch('/updateProfile/:id', updateAdvertiserProfile);
 router.get('/profile/:id', getAdvertiserProfile);
-router.delete('/:id', deleteActivity); // Delete an activity
-const {showMyActivities} = require('../controllers/advertiserController');
+router.delete('/deleteAct/delete/:id', deleteActivity); // Delete an activity
 
-
-
-router.get('/showAll', showMyActivities )
-
+// Advertiser activities 
+router.post('/create', createActivity);
+router.patch('/update/:id', updateActivity);
+router.get('/', getActivities);
 
 module.exports = router;

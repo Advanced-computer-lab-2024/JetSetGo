@@ -27,16 +27,19 @@ const historicalLocationSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'HistoricalTag' 
     },
+        ref: 'HistoricalTag' 
+    },
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category', 
     },
+    
+  governor: { type: mongoose.Schema.Types.ObjectId, ref: 'TourismGovernor', required: true },
+
     createdAt: { 
         type: Date, 
         default: Date.now 
-    },
-    governor: { type: mongoose.Schema.Types.ObjectId, ref: 'TourismGovernor', required: true },
-
+    }
 });
 
 module.exports = mongoose.model('HistoricalLocation', historicalLocationSchema);

@@ -4,7 +4,8 @@ const touristSchema = new mongoose.Schema({
     username: { 
         type: String, 
         required: true, 
-        unique: true 
+        unique: true ,
+        immutable:true
     },
     email: { type: String, 
         required: true,
@@ -24,7 +25,8 @@ const touristSchema = new mongoose.Schema({
     },
     dob: { 
         type: Date, 
-        required: true 
+        required: true ,
+        immutable: true
     },  //     Date of Birth (not editable)
     job: { 
         type: String, 
@@ -33,7 +35,8 @@ const touristSchema = new mongoose.Schema({
     },
     wallet: { 
         type: Number, 
-        default: 0 
+        default: 0 ,
+        immutable: true
     },         // Not editable directly
        
     createdAt: { 
