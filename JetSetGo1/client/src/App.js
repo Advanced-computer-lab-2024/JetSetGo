@@ -17,7 +17,7 @@ import ProductListing from './pages/productsPage'
 
 
 
-import Navbar from "./components/navbar";
+// import Navbar from "./components/Navbar";
 import ProductForm from "./components/ProductForm";
 import UpdateProducts from "./components/UpdateProduct";
 
@@ -61,7 +61,7 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Navbar />
+        
         <div className="pages">
           <Routes>
             <Route path="/" element={<HomePage />} />

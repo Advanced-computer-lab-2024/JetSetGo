@@ -217,7 +217,7 @@ const ProductListing = ({usertype}) => {
       <div className="product-grid">
         {filteredProducts.map((product) => (
           <div key={product._id || product.name} className="product-card"> {/* Ensure unique key */}
-            <img src={`http://localhost:3000/${product.picture}`} alt={product.name} className="product-image" />
+            <img src={`http://localhost:8000/${product.picture}`} alt={product.name} className="product-image" />
 
             {/* Ensure this matches your DB field */}
             <h2 className="product-title">{product.name}</h2>
