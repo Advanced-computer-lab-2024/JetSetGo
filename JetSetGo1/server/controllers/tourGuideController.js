@@ -1,7 +1,7 @@
 const TourGuide = require('../models/TourGuideModel'); 
 //66f8084788afe7e5aff3aefc
 // Create Tour Guide Profile
-const createProfile = async (req, res) => {           
+const createProfile = async (req, res) => {
   const { id } = req.params;
   const { mobile, experience, previousWork} = req.body;
 
