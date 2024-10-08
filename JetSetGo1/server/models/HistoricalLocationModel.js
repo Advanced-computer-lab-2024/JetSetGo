@@ -22,11 +22,13 @@ const historicalLocationSchema = new mongoose.Schema({
         native: { type: Number, required: true },
         student: { type: Number, required: true },
     },
-  
+
     tags: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'HistoricalTag' 
     },
+        // ref: 'HistoricalTag' ,
+    
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category', 

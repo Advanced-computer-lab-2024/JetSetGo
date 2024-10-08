@@ -1,5 +1,6 @@
-import {BrowserRouter, Routes, Route} from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import React from 'react'
+import { useState } from 'react'; // Add this line
 //pages & components
 import Profile from './components/Profile'
 //import touristProfile from './components/touristProfile'
@@ -14,16 +15,12 @@ import DeleteOptions from './pages/DeleteOptions';
 import UserList from './pages/UserList';
 import ItineraryManager from './pages/ItineraryManager';
 import ProductListing from './pages/productsPage'
-
-
-
 // import Navbar from "./components/Navbar";
 import ProductForm from "./components/ProductForm";
 import UpdateProducts from "./components/UpdateProduct";
 
-import { useState } from 'react'; // Add this line
-import Activities from './pages/Activities';
-import Itineraries from './pages/Itineraries';
+import Activities2 from './pages/Activities';
+import Itineraries2 from './pages/Itineraries';
 import Museums from './pages/Museums';
 import HistoricalLocations from './pages/HistoricalLocations';
 
@@ -33,6 +30,21 @@ import MuseumFilter from './components/MuseumFilter';
 import HistoricalPlaceFilter from './components/HistoricalPlaceFilter';
 
 import HomePage from './pages/HomePage';
+
+// import { BrowserRouter, Routes, Route } from 'react-router-dom'
+//pages and components 
+// import Home from './pages/home.js'
+import Tagspage from './pages/my_tags.js'
+import Categorypage from './pages/my_category.js'
+// import Navbar from './components/navbar.js'
+import Tourism_Governer from './pages/Tourism_Governer.js'
+import HL from './pages/HistoricalLocations2.js'
+import Museum from './pages/Museums2.js'
+import HLMs from './pages/my_HLMs.js'
+import Activities from './pages/my_activities2.js'
+import Itineraries from './pages/my_itineraries.js'
+import HLTags from './pages/hltag.js'
+
 
 
 function App() {
@@ -61,7 +73,7 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        
+
         <div className="pages">
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -71,9 +83,9 @@ function App() {
             {/* Other routes can be defined similarly */}
             <Route path="/seller/addProduct" element={<ProductForm usertype="seller" />} /> {/* Add product page */}
             <Route path="/admin/addProduct" element={<ProductForm usertype="admin" />} /> {/* Add product page */}
-            <Route path="/seller/updateProduct/:id" element={<UpdateProducts usertype="seller"/>} /> {/* Update product page */}
-            <Route path="/admin/updateProduct/:id" element={<UpdateProducts usertype="admin"/>} />
-            
+            <Route path="/seller/updateProduct/:id" element={<UpdateProducts usertype="seller" />} /> {/* Update product page */}
+            <Route path="/admin/updateProduct/:id" element={<UpdateProducts usertype="admin" />} />
+
             <Route path="/delete/:role" element={<UserList />} />
             <Route path="/tour-guide/itineraryManager" element={<ItineraryManager />} />
             <Route path="/admin/profile" element={<AdminProfilePage />} />
@@ -84,14 +96,57 @@ function App() {
             <Route path="/create/tour-guides/:id" element={<CreateProfile />} />
             <Route path="/update-profile/tour-guides/:id" element={<UpdateProfile />} />
             <Route path="/profile/tour-guides/:id" element={<Profile />} />
-            <Route path="/activities" element={<Activities filteredActivities={filteredActivities} />} />
-            <Route path="/itineraries" element={<Itineraries filteredItinerary={filteredItinerary} />} />
+            <Route path="/activities2" element={<Activities2 filteredActivities={filteredActivities} />} />
+            <Route path="/itineraries2" element={<Itineraries2 filteredItinerary={filteredItinerary} />} />
             <Route path="/museums" element={
-              <>
-                <MuseumFilter onFilter={handleFilterResultsMusuems} />
-                <Museums filteredMuseum={filteredMuseum} />
-              </>
-            } />
+              <><MuseumFilter onFilter={handleFilterResultsMusuems} />
+                <Museums filteredMuseum={filteredMuseum} /></>} />
+                
+            {/* 
+            <Route
+              path="/"
+              element={<Home />}
+            /> */}
+            <Route
+              path="/my_tags"
+              element={<Tagspage />}
+            />
+            <Route
+              path="/my_category"
+              element={<Categorypage />}
+            />
+            <Route
+              path="/Tourism_Governer"
+              element={<Tourism_Governer />}
+            />
+            <Route
+              path="/HL"
+              element={<HL />}
+            />
+
+            <Route
+              path="/Museum"
+              element={<Museum />}
+            />
+            <Route
+              path="/HLTags"
+              element={<HLTags />}
+            />
+            <Route
+              path="/HLMs"
+              element={<HLMs />}
+            />
+
+            <Route
+              path="/Activities"
+              element={<Activities />}
+            />
+
+            <Route
+              path="/Itineraries"
+              element={<Itineraries />}
+            />
+
             <Route path="/historicalLocations" element={
               <>
                 <HistoricalPlaceFilter onFilter={handleFilterResultsHistoricalPlaces} />
@@ -104,7 +159,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
-
-
