@@ -1,5 +1,9 @@
 const Seller = require('../models/SellerModel');
 
+const mongoose= require('mongoose')
+const Product= require('../models/ProductModel')
+const multer = require('multer');
+const path = require('path');
 
 // Create Seller Profile
 const createSellerProfile = async (req, res) => {
@@ -12,12 +16,12 @@ const createSellerProfile = async (req, res) => {
 
       // Check if the seller is accepted
       if (!seller || !seller.accepted) {
-          return res.status(403).json({ error: 'You must be accepted as a seller to create a profile' });
+          return res.status(404).json({ error: 'You must be accepted as a seller to create a profile' });
       }
 
       // Check if the profile fields are already set
       if (seller.name || seller.description) {
-          return res.status(403).json({ error: 'You already created a profile' });
+          return res.status(404).json({ error: 'You already created a profile' });
       }
 
       // Update the seller profile with new information
@@ -30,7 +34,7 @@ const createSellerProfile = async (req, res) => {
 
   } catch (err) {
     console.log("i am here")
-      res.status(400).json({ error: err.message });
+      res.status(404).json({ error: err.message });
   }
 };
 
@@ -46,7 +50,7 @@ const updateSellerProfile = async (req, res) => {
 
     // Check if the seller exists and if they are accepted
     if (!seller || !seller.accepted) {
-      return res.status(403).json({ error: 'You must be accepted as a seller to update your profile' });
+      return res.status(404).json({ error: 'You must be accepted as a seller to update your profile' });
     }
 
     // If accepted, update the profile with the provided updates
@@ -54,7 +58,7 @@ const updateSellerProfile = async (req, res) => {
     res.status(200).json(updatedSeller);
 
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(404).json({ error: err.message });
   }
 };
 
@@ -80,4 +84,147 @@ const getSellerProfile = async (req, res) => {
   }
 };
 
-module.exports = { createSellerProfile, updateSellerProfile, getSellerProfile };
+const getProducts= async (req,res) => {
+  const products = await Product.find({}).sort({createdAt: -1})
+  res.status(200).json(products)
+}
+
+// Add new product
+// const createProduct = async (req, res) =>{
+//   const {name, description, price, quantityAvailable, picture, seller, ratings} = req.body
+
+//   try{
+//       const product= await Product.create({name, description, price, quantityAvailable, seller, picture,ratings})
+//       res.status(200).json(product)
+//   } catch(error){
+//       res.status(400).json({error: error.message})
+//   }
+
+//   res.json({mssg: 'added a new product'})
+// }
+
+const getSingleProduct= async (req,res) => {
+  const {id}= req.params
+
+  const product = await Product.find({_id:id})
+  
+  if(!product){
+    return res.status(404).json({error:'No such product'})
+  }
+  res.status(200).json(product)
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, 'uploads/'); // Folder where images will be stored
+  },
+  filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname)); // Save the file with a unique name
+  }
+});
+
+// Initialize multer with the storage configuration
+const upload = multer({ storage: storage }).single('picture');
+
+// Create a new product function
+const createProduct = (req, res) => {
+  upload(req, res, async (err) => {
+      if (err) {
+          return res.status(400).json({ error: 'Image upload failed' });
+      }
+      
+      const { name, description, price, quantityAvailable, seller, ratings } = req.body;
+
+      try {
+          // Create a new product with the uploaded image path
+          const newProduct = new Product({
+              name,
+              description,
+              price,
+              quantityAvailable,
+              picture: req.file ? req.file.path : null, // Save the image path
+              seller,
+              ratings
+          });
+
+          const savedProduct = await newProduct.save();
+          res.status(201).json(savedProduct);
+      } catch (error) {
+          res.status(400).json({ error: error.message });
+      }
+  });
+};
+
+
+//  update a product
+const updateProduct = async (req, res) =>{
+    const { id } = req.params
+    
+    if (!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).json({error: 'No such product'})
+    }
+
+    const product = await Product.findOneAndUpdate({_id:id},{
+        ...req.body
+    },{ new: true })
+
+    if(!product){
+        return res.status(404).json({error:'No such product'})
+    }
+
+    res.status(200).json(product)
+}
+
+const filterProducts = async(req,res) => {
+    
+  const { min, max } = req.query;
+
+    try{
+        const query = {
+            price: {
+              $gte: min, // Greater than or equal to minPrice
+              $lte: max, // Less than or equal to maxPrice
+            },
+          };
+        const products = await Product.find(query)
+        res.status(200).json(products)
+    } catch(error){
+        res.status(404).json({error: error.message})
+    }
+}
+
+const sortByRate = async (req, res) => {
+  const  {flag}  = req.query; // Use req.query here
+  var x=0
+  try {
+    if (flag=="1") {
+      x=1
+    }
+    else{
+      x=-1
+    }
+      // Get sorted products by ratings in descending order
+      const products = await Product.find().sort(  {ratings:x} ); // Change to 1 for ascending order and -1 for descending
+      res.status(200).json(products); // Send the sorted products as JSON
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Error fetching products');
+  }
+};
+
+const searchProductName = async(req,res) => {
+
+    const { name } = req.body;
+    
+    
+    try{
+        // Use RegEx to match the substring in the product's name (case-insensitive)
+        const productname = await Product.find({name: { $regex: name, $options: 'i' }})
+        res.status(200).json(productname)
+    }catch(error){
+        res.status(404).json({error:error.message})
+    }
+
+}
+
+module.exports = { createSellerProfile, updateSellerProfile, getSellerProfile,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct };

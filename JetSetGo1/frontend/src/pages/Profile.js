@@ -1,4 +1,4 @@
-import PersonalProfile from "../components/userDetails/userProfile"
+import PersonalProfile from "../../../client/src/components/userDetails/userProfile.js"
 import { useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { userId } from '../components/accountBox/signupForm.js'

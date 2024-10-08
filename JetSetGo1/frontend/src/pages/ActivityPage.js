@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ActivityList, AddActivityForm, ActivitiesPage } from '../components/Activiy'
-import Act from '../components/act.js'
+import { ActivityList, AddActivityForm, ActivitiesPage } from '../../../client/src/components/Activiy.js'
+import Act from '../../../client/src/components/act.js'
 
 
-export default function ActivityPage() {
+export default function ActivityPagejohn() {
   const [activities, setActivities] = useState([]);
   const [editingActivity, setEditingActivity] = useState(null);
 

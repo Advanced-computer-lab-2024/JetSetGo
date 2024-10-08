@@ -1,6 +1,9 @@
 const express = require('express');
-const { create_pref_tag, get_pref_tag, update_pref_tag, delete_pref_tag, create_act_category, get_act_category, update_act_category, delete_act_category, add_tourism_governer, view_tourism_governer} = require('../controllers/adminController.js');
+const { create_pref_tag, get_pref_tag, update_pref_tag, delete_pref_tag, create_act_category, get_act_category, update_act_category, delete_act_category, add_tourism_governer, view_tourism_governer
+    ,getProducts, createProduct, updateProduct,filterProducts,sortByRate, searchProductName,deleteAccount,addAdmin,getAllUsers,getSingleProduct} = require('../controllers/adminController.js');
 const router = express.Router();
+
+
 
 // Advertiser activities 
 router.post('/createtag', create_pref_tag);
@@ -16,6 +19,30 @@ router.get('/category', get_act_category);
 
 
 router.post('/create_tourism_governer', add_tourism_governer);
+router.get('/viewTourismGoverner', view_tourism_governer);
 router.get('/', view_tourism_governer);
+router.post('/add', addAdmin);
+router.delete('/delete/:modelName/:id', deleteAccount);
+router.get('/:role/list',getAllUsers);
+
+router.get('/Products',getProducts )
+router.get('/filterProducts',filterProducts)
+router.get('/sortByRate',sortByRate)
+router.get('/searchProductName',searchProductName)
+router.post('/createProduct',createProduct)
+// Update workout
+router.patch('/product/:id', updateProduct)
+router.get('/getSingleProduct/:id', getSingleProduct)
+
+
 
 module.exports = router;
+
+
+
+
+
+
+
+
+

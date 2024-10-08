@@ -8,10 +8,10 @@ const HistoricalLocation = require('../models/HistoricalLocationModel')
 
 // Create Museum
 const createMuseum = async (req, res) => {
-  const {name, description, location, openingHours, ticketPrices, pictures, tags, category, governor } = req.body;
+  const {name, description, location, openingHours, ticketPrices, pictures, tags, category,governor } = req.body;
 
   try {
-    const newMuseum = await Museum.create({ name, description, location, openingHours, ticketPrices, pictures, tags, category,governor });
+    const newMuseum = await Museum.create({ name, description, location, openingHours, ticketPrices, pictures,tags, category, governor });
     res.status(201).json(newMuseum);
   } catch (err) {
     res.status(400).json({ error: err.message });
