@@ -13,7 +13,10 @@ const {
 } = require("../controllers/tourGuideController");
 
 const router = express.Router();
+const { changePassword } = require('../controllers/PasswordController');
+const authMiddleware = require('../controllers/authMiddleware');
 
+router.post('/change-password', authMiddleware, changePassword);
 
 router.get('/showAll', showMyItineraries )
 
