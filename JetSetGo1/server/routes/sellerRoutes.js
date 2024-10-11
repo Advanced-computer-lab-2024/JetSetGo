@@ -3,12 +3,8 @@ const { createSellerProfile, updateSellerProfile, getSellerProfile,
     getProducts, createProduct, updateProduct,filterProducts,sortByRate, searchProductName,getSingleProduct } = require('../controllers/sellerController');
 const router = express.Router();
 
-
-const { changePassword } = require('../controllers/PasswordController');
-const authMiddleware = require('../controllers/authMiddleware');
-
-router.post('/change-password', authMiddleware, changePassword);
-
+const { changePassword } = require("../controllers/PasswordController");
+router.patch("/change-password/:id/:modelName", changePassword);
 
 // Create or Update Seller Profile
 router.post('/create/:id', createSellerProfile);

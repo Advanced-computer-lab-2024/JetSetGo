@@ -164,4 +164,40 @@ try{
 }
 
 
-module.exports = {createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities};
+
+
+const changePassword = async (req, res) => {
+  const { id } = req.params; // Get the user ID from the route parameters
+  const { oldPassword, newPassword } = req.body; // Get old and new passwords from the body
+
+  // Validate input
+  if (!id || !oldPassword || !newPassword) {
+      return res.status(400).json({ error: "User ID, old password, and new password are required." });
+  }
+
+  try {
+  
+      const user = await Advertiser.findById(id);
+
+      if (!user) {
+          return res.status(404).json({ error: "User not found." });
+      }
+
+      // Compare old password
+      const isMatch = await bcrypt.compare(oldPassword, user.password); // Assuming you're using bcrypt
+
+      if (!isMatch) {
+          return res.status(400).json({ error: "Old password is incorrect." });
+      }
+
+      // Update password
+      user.password = await bcrypt.hash(newPassword, 10);
+      await user.save();
+
+      res.status(200).json({ message: "Password changed successfully." });
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+};
+
+module.exports = {createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities,changePassword};

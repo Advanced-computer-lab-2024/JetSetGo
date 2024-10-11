@@ -339,7 +339,7 @@ const sortByRate = async (req, res) => {
         res.status(200).json(products); // Send the sorted products as JSON
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error fetching products');
+        res.status(400).send('Error fetching products');
     }
   };
 
