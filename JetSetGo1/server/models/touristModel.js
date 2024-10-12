@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+///aaaaaaA11111111111111111111111
 const touristSchema = new mongoose.Schema({
     username: { 
         type: String, 
@@ -38,10 +38,7 @@ const touristSchema = new mongoose.Schema({
         default: 0 ,
         immutable: true
     },         // Not editable directly
-    deletionRequested: {////////////////////////////////////////////////
-        type: Boolean,
-        default: false
-    },
+       
     createdAt: { 
         type: Date, 
         default: Date.now 
