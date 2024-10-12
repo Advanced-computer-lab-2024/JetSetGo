@@ -126,6 +126,22 @@ const storage = multer.diskStorage({
 // Initialize multer with the storage configuration
 const upload = multer({ storage: storage }).single('picture');
 
+const uploadLogo = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  fileFilter: (req, file, cb) => {
+    const fileTypes = /jpeg|jpg|png|gif/;
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = fileTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb('Error: Images Only!');
+    }
+  }
+});
+
 // Create a new product function
 const createProduct = (req, res) => {
   upload(req, res, async (err) => {
@@ -154,7 +170,6 @@ const createProduct = (req, res) => {
       }
   });
 };
-
 
 //  update a product
 const updateProduct = async (req, res) =>{
@@ -227,4 +242,26 @@ const searchProductName = async(req,res) => {
 
 }
 
-module.exports = { createSellerProfile, updateSellerProfile, getSellerProfile,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct };
+uploadProfileImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const profileImage = req.file ? req.file.path : null;
+
+    // Update the advertiser's profile image in the database
+    const seller = await Seller.findByIdAndUpdate(
+      id,
+      { profileImage },
+      { new: true }
+    );
+
+    if (!seller) {
+      return res.status(404).json({ error: 'Seller not found' });
+    }
+
+    res.json({ message: 'Profile image uploaded successfully', imagePath: profileImage });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
+};
+
+module.exports = { uploadLogo,createSellerProfile, updateSellerProfile, getSellerProfile,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,uploadProfileImage };

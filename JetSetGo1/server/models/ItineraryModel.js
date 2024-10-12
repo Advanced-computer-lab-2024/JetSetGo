@@ -68,6 +68,18 @@ const itinerarySchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+
+  Tourists: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Tourist', // Assuming you have a Tourist model
+  }],
+
+  comments: {
+    type : [String],
+    required: true,
+},
+
+
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -45,8 +45,6 @@ const searchItineraryByDate = async (req, res) => {
   }
 };
 
-
-
 //Search Itinerary By Language
 const searchItineraryByLanguage = async (req,res) =>{
     const languageReq = req.body
@@ -76,8 +74,6 @@ const searchActivityByCategory = async (req,res) =>{
     res.status(404).json({error:"Activity not found"})
   }
 };
-
-
 
 //Seach Activity by date 
 const searchActivityByDate = async (req,res) =>{
@@ -159,7 +155,6 @@ const getUpcomingActivities = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
 
 const sortActivityByPrice = async (req, res) => {
   try {
@@ -285,7 +280,6 @@ const filterHistoricalLocationsByTag = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
 
 module.exports = {searchActivityByBudget,searchActivityByDate,searchActivityByCategory,searchActivityByRating,searchItineraryByTag, 
   searchItineraryByDate, searchItineraryByBudget, searchItineraryByLanguage, getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries,

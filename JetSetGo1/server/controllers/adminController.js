@@ -15,7 +15,6 @@ const mongoose= require('mongoose')
 
 
 
-
 const models={admin: Admin, seller: Seller, tourguides: TourGuide, tourist: Tourist, advertisers: Advertiser, tourismgoverner: TourismGoverner};
 ////////////////////////////////////////////////////////////////////////////////
 //create preference tags

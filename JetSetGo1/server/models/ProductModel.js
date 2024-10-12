@@ -16,7 +16,9 @@ const productSchema = new mongoose.Schema({
     archieved:{type: Boolean,
         default:false
     },
-    ratings: { type: Number, default: 0 },
+
+    
+    ratings: { type: Number, default: 0 }, // lets make it array of numbers and calculate the avergage
     createdAt: { type: Date, default: Date.now }
 });
 
