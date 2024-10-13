@@ -6,6 +6,7 @@ const Activity = require('../models/AdvertiserActivityModel');
 const Tag = require('../models/TagModel');
 const HistoricalLocationModel = require('../models/HistoricalLocationModel');
 const MuseumModel = require('../models/MuseumModel');
+const Complaint = require('../models/ComplaintModel');
 
 
 
@@ -547,6 +548,35 @@ const sortItineraryByRating = async (req, res) => {
     }
   };
 
+const addComplaint = async (req, res) => {
+  try {
+      const { title, body, date } = req.body;
+
+      // Validate required fields
+      if (!title || !body) {
+          return res.status(400).json({ error: 'Title and body are required' });
+      }
+
+      // Create a new complaint
+      const complaint = new Complaint({
+          userId: req.user._id, // Assuming the user ID is coming from the authenticated user
+          title,
+          body,
+          date: date || Date.now() // If date is not provided, use the current date
+      });
+
+      // Save the complaint
+      const savedComplaint = await complaint.save();
+
+      // Return the saved complaint
+      res.status(201).json(savedComplaint);
+  } catch (error) {
+      console.error('Error adding complaint:', error);
+      res.status(500).json({ error: 'Server error while adding complaint' });
+  }
+};
+
+
 
   module.exports = {
     searchHistoricalPlaceByTag,searchHistoricalPlaceByName,searchHistoricalPlaceByCategory,
@@ -556,4 +586,4 @@ const sortItineraryByRating = async (req, res) => {
     searchItineraryByLanguage, searchItineraryByCategory,searchItineraryByName,searchItineraryByTag,
     getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating,
      getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag,
-     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo};
+     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo, addComplaint};
