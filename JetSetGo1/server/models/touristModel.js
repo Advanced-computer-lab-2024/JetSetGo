@@ -38,11 +38,6 @@ const touristSchema = new mongoose.Schema({
         default: 0 ,
         immutable: true
     },         // Not editable directly
-    
-    deletionRequested: {////////////////////////////////////////////////
-        type: Boolean,
-        default: false
-    },
        
     createdAt: { 
         type: Date, 
