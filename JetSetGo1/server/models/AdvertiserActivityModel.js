@@ -38,15 +38,25 @@ const activitySchema = new mongoose.Schema({
       default: true 
     },
     
-    rating :{
-      type:Number,
-      default:0
+    rate :{
+      type:[Number],
     },
+
 
     specialDiscounts: {
       type: String, 
       default: null  
   },
+
+  Tourists: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Tourist', // Assuming you have a Tourist model
+  }],
+  comments: {
+    type : [String],
+    required: true,
+},
+
 
     createdAt: { 
       type: Date, 
