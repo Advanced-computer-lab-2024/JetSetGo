@@ -245,6 +245,110 @@ const uploadProfileImage = async (req, res) => {
   }
 };
 
+// Method to add a rating from a tourist
+const addRating = async (req, res) => {
+  const { guideId, touristId, rating } = req.body;
+
+  try {
+    // Find the tour guide by ID
+    const tourGuide = await TourGuide.findById(guideId);
+
+    if (!tourGuide) {
+      return res.status(404).json({ message: 'Tour Guide not found.' });
+    }
+
+    // Check if the tourist is associated with the tour guide
+    if (tourGuide.Tourists.includes(touristId)) {
+      tourGuide.rate.push(rating); // Add the rating to the rate array
+      await tourGuide.save(); // Save the updated tour guide
+      return res.status(200).json({ message: 'Rating added successfully.', tourGuide });
+    } else {
+      return res.status(400).json({ message: 'Tourist not associated with this tour guide.' });
+    }
+
+  } catch (error) {
+    return res.status(500).json({ message: 'Error adding rating.', error });
+  }
+};
+
+// Method to add a comment from a tourist
+const addComment = async (req, res) => {
+  const { guideId, touristId, comment } = req.body;
+
+  try {
+    // Find the tour guide by ID
+    const tourGuide = await TourGuide.findById(guideId);
+
+    if (!tourGuide) {
+      return res.status(404).json({ message: 'Tour Guide not found.' });
+    }
+
+    // Check if the tourist is associated with the tour guide
+    if (tourGuide.Tourists.includes(touristId)) {
+      tourGuide.comments.push(comment); // Add the comment to the comments array
+      await tourGuide.save(); // Save the updated tour guide
+      return res.status(200).json({ message: 'Comment added successfully.', tourGuide });
+    } else {
+      return res.status(400).json({ message: 'Tourist not associated with this tour guide.' });
+    }
+
+  } catch (error) {
+    return res.status(500).json({ message: 'Error adding comment.', error });
+  }
+};
+
+// Method to add a rating from a tourist to an itinerary
+const addItineraryRating = async (req, res) => {
+  const { itineraryId, touristId, rating } = req.body;
+
+  try {
+    // Find the itinerary by ID
+    const itinerary = await Itinerary.findById(itineraryId);
+
+    if (!itinerary) {
+      return res.status(404).json({ message: 'Itinerary not found.' });
+    }
+
+    // Check if the tourist is associated with the itinerary
+    if (itinerary.Tourists.includes(touristId)) {
+      itinerary.rating = ((itinerary.rating * itinerary.Tourists.length) + rating) / (itinerary.Tourists.length + 1); // Update rating as an average
+      await itinerary.save(); // Save the updated itinerary
+      return res.status(200).json({ message: 'Rating added successfully.', itinerary });
+    } else {
+      return res.status(400).json({ message: 'Tourist not associated with this itinerary.' });
+    }
+
+  } catch (error) {
+    return res.status(500).json({ message: 'Error adding rating.', error });
+  }
+};
+
+// Method to add a comment from a tourist to an itinerary
+const addItineraryComment = async (req, res) => {
+  const { itineraryId, touristId, comment } = req.body;
+
+  try {
+    // Find the itinerary by ID
+    const itinerary = await Itinerary.findById(itineraryId);
+
+    if (!itinerary) {
+      return res.status(404).json({ message: 'Itinerary not found.' });
+    }
+
+    // Check if the tourist is associated with the itinerary
+    if (itinerary.Tourists.includes(touristId)) {
+      itinerary.comments.push(comment); // Add the comment to the comments array
+      await itinerary.save(); // Save the updated itinerary
+      return res.status(200).json({ message: 'Comment added successfully.', itinerary });
+    } else {
+      return res.status(400).json({ message: 'Tourist not associated with this itinerary.' });
+    }
+
+  } catch (error) {
+    return res.status(500).json({ message: 'Error adding comment.', error });
+  }
+};
+
 module.exports = {upload,
   createProfile,
   updateProfile,
@@ -254,7 +358,11 @@ module.exports = {upload,
   updateItinerary,
   deleteItinerary,
   showMyItineraries,
-  uploadProfileImage
+  uploadProfileImage,
+  addRating,
+  addComment,
+  addItineraryRating,
+  addItineraryComment,
 };
 
 
