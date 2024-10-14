@@ -349,6 +349,87 @@ const addItineraryComment = async (req, res) => {
   }
 };
 
+// Method for a tourist to follow an itinerary (add tourist to Itinerary.Tourists)
+const followItinerary = async (req, res) => {
+  const { itineraryId, touristId } = req.body;
+
+  try {
+    // Find the itinerary by ID
+    const itinerary = await Itinerary.findById(itineraryId);
+
+    if (!itinerary) {
+      return res.status(404).json({ message: 'Itinerary not found.' });
+    }
+
+    // Check if the tourist is already following the itinerary
+    if (itinerary.Tourists.includes(touristId)) {
+      return res.status(400).json({ message: 'Tourist already following this itinerary.' });
+    }
+
+    // Add the tourist to the Tourists array
+    itinerary.Tourists.push(touristId);
+    await itinerary.save(); // Save the updated itinerary
+
+    return res.status(200).json({ message: 'Itinerary followed successfully.', itinerary });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error following itinerary.', error });
+  }
+};
+
+// Method for a tourist to unfollow an itinerary (remove tourist from Itinerary.Tourists)
+const unfollowItinerary = async (req, res) => {
+  const { itineraryId, touristId } = req.body;
+
+  try {
+    // Find the itinerary by ID
+    const itinerary = await Itinerary.findById(itineraryId);
+
+    if (!itinerary) {
+      return res.status(404).json({ message: 'Itinerary not found.' });
+    }
+
+    // Check if the tourist is actually following the itinerary
+    const index = itinerary.Tourists.indexOf(touristId);
+    if (index === -1) {
+      return res.status(400).json({ message: 'Tourist is not following this itinerary.' });
+    }
+
+    // Remove the tourist from the Tourists array
+    itinerary.Tourists.splice(index, 1); // Remove tourist by index
+    await itinerary.save(); // Save the updated itinerary
+
+    return res.status(200).json({ message: 'Itinerary unfollowed successfully.', itinerary });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error unfollowing itinerary.', error });
+  }
+};
+// Method for a tourist to follow a tour guide (add tourist to TourGuide.Tourists)
+const compeleteWithTourGuide = async (req, res) => {
+  const { tourGuideId, touristId } = req.body;
+
+  try {
+    // Find the tour guide by ID
+    const tourGuide = await TourGuide.findById(tourGuideId);
+
+    if (!tourGuide) {
+      return res.status(404).json({ message: 'Tour guide not found.' });
+    }
+
+    // Check if the tourist is already following the tour guide
+    if (tourGuide.Tourists.includes(touristId)) {
+      return res.status(400).json({ message: 'Tourist already following this tour guide.' });
+    }
+
+    // Add the tourist to the Tourists array
+    tourGuide.Tourists.push(touristId);
+    await tourGuide.save(); // Save the updated tour guide
+
+    return res.status(200).json({ message: 'Tour guide followed successfully.', tourGuide });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error following tour guide.', error });
+  }
+};
+
 module.exports = {upload,
   createProfile,
   updateProfile,
@@ -363,6 +444,9 @@ module.exports = {upload,
   addComment,
   addItineraryRating,
   addItineraryComment,
+  followItinerary,
+  unfollowItinerary,
+  compeleteWithTourGuide,
 };
 
 
