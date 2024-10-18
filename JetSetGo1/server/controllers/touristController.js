@@ -1,4 +1,5 @@
 const TransportBooking = require('../models/TransportationBookingModel');
+const Tourist = require('../models/TouristModel');
 
 // Create TransportBooking
 const createTransportBooking = async (req, res) => {
@@ -54,7 +55,35 @@ const createTransportBooking = async (req, res) => {
     }
   };
 
-module.exports = { createTransportBooking, getTransportBooking, deleteTransportBooking}
+
+  
+  const selectPrefrences = async (req, res) => {
+    const { id } = req.params;
+    const updates = req.body;
+  
+    try {
+      const myPrefrences = await Tourist.findByIdAndUpdate(id, {$push:{ prefrences :updates}}, { new: true });
+      res.status(200).json(myPrefrences);
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  };
+
+  const getPrefrences = async (req, res) => {
+     const { id } = req.params;
+    
+      try {
+        const TouristProfile = await Tourist.findById(id);
+        const PrefrencesProfile = TouristProfile.prefrences;
+        res.status(200).json(PrefrencesProfile);
+      } catch (err) {
+        res.status(404).json({ error: 'Tourist not found' });
+      }
+    };
+  
+
+
+module.exports = { createTransportBooking, getTransportBooking, deleteTransportBooking, selectPrefrences, getPrefrences}
 
 
 
