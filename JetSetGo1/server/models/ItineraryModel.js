@@ -58,12 +58,20 @@ const itinerarySchema = new mongoose.Schema({
     type: String,
     required: true, // Location where participants will be dropped off
   },
+  tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
   isBooked: {
     type: Boolean,
     required: true,
     default: false,
   },
-  tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
+  active: {
+    type: Boolean,
+    default: true, // Indicates if the itinerary is active
+  },
+  flagged: {
+    type: Boolean,
+    default: false,
+  },
   ratings: [
     {
       tourist: {
