@@ -45,6 +45,10 @@ import Activities from './pages/my_activities2.js'
 import Itineraries from './pages/my_itineraries.js'
 import HLTags from './pages/hltag.js'
 
+//john
+import ActivityPagejohn from './pages/ActivityJohn';
+import Authentication from './pages/Authentication/Authentication';
+import ProfileJohn from './pages/profileJohn.js';
 
 
 function App() {
@@ -145,8 +149,11 @@ function App() {
             <Route
               path="/Itineraries"
               element={<Itineraries />}
-            />
-
+            />{/*johnn* */}
+            <Route path='/ActivitiesJohn' element={<ActivityPagejohn />} />
+            <Route path='/Authentication' element={<Authentication />} />
+            <Route path='/profileJohn/:id' element={<ProfileJohn/>} />
+              {/*johnn* */}
             <Route path="/historicalLocations" element={
               <>
                 <HistoricalPlaceFilter onFilter={handleFilterResultsHistoricalPlaces} />

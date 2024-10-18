@@ -10,6 +10,8 @@ const {updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByNam
     getHistoricalLocations, filterHistoricalLocationsByTag  } = require('../controllers/touristController');
 const router = express.Router();
 
+const { changePassword } = require("../controllers/PasswordController");
+router.patch("/change-password/:id/:modelName", changePassword);
 
 router.get('/Products',getProducts )
 router.get('/filterProducts',filterProducts)

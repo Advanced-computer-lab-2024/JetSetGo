@@ -14,6 +14,7 @@ const MIN = 0;
 const MAX = 500;
 
 const ProductListing = ({usertype}) => {
+  console.log(usertype)
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);

@@ -56,6 +56,17 @@ const  HomePage = () =>  {
         <li>
           <Link to="/historicalLocations">Historical Locations</Link>
         </li>
+
+        <li>
+          <Link to="/ActivitiesJohn">Go to Activities John</Link>
+        </li>
+        <li>
+          <Link to="/Authentication">Go to Authentication</Link>
+        </li>
+        <li>
+          <Link to="/profileJohn/:id">Go to Profile John</Link> {/* Replace 1 with the actual ID */}
+        </li>
+
         </div>
       </div>
     );

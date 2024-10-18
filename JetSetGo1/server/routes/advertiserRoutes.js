@@ -1,10 +1,16 @@
 const express = require('express');
 const { createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile , createActivity, updateActivity, deleteActivity, getActivities } = require('../controllers/advertiserController');
+const { changePassword } = require("../controllers/PasswordController");
 const router = express.Router();
 
+const advertiserController = require('../controllers/advertiserController');
+
+const {upload} = require('../controllers/advertiserController');
+
+router.patch('/:id/upload-profile-image', upload.single('image'), advertiserController.uploadProfileImage);
 
 
-
+router.patch("/change-password/:id/:modelName", changePassword);
 
 // Advertiser activities 
 router.post('/createActivity', createActivity);

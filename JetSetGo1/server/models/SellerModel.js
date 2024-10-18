@@ -24,6 +24,17 @@ const sellerSchema = new mongoose.Schema({
       type: Boolean, 
       default: false 
     },  // If the seller is accepted by the system
+    documents: {//////////////////////////
+      type: [String]
+     },// Paths to required documents
+      profileImage: {/////////////////////////////
+         type:String
+       },// Path to profile image or 
+       
+    deletionRequested: {/////////////////////////////////
+        type: Boolean,
+        default: false
+    },
     createdAt: { type: Date, default: Date.now }
 });
 

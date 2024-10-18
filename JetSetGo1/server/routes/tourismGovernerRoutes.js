@@ -2,6 +2,11 @@ const express = require('express');
 const {createMuseum, getMuseum, updateMuseum, deleteMuseum, createHistoricalLocation, getHistoricalLocation, updateHistoricalLocation, deleteHistoricalLocation, createTag, showMyMuseumsAndHistoricalPlaces} = require('../controllers/tourismGovernerController');
 const router = express.Router();
 
+
+const { changePassword } = require("../controllers/PasswordController");
+router.patch("/change-password/:id/:modelName", changePassword);
+
+
 router.post('/newMuseum', createMuseum )
 router.get('/showMuseum', getMuseum )
 router.patch('/updateMuseum/:id', updateMuseum)
