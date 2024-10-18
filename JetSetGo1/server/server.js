@@ -11,6 +11,7 @@ const advertiserRoutes = require('./routes/advertiserRoutes');
 const tourGuideRoutes = require('./routes/tourGuideRoutes'); 
 // const activityRoutes = require('./routes/activityRoutes'); // we  may not use here
 const tourismGovernerRoutes = require('./routes/tourismGovernerRoutes'); // we  may not use here
+const touristRoutes = require('./routes/touristRoutes'); // we  may not use here
 
 //express app
 const app = express()
@@ -33,6 +34,7 @@ app.use('/api/advertisers', advertiserRoutes);
 // app.use('/api/sellers', sellerRoutes);
 app.use('/api/tour-guides', tourGuideRoutes);
 app.use('/api/tourism-governer', tourismGovernerRoutes);
+app.use('/api/tourist', touristRoutes);
 
 
 
