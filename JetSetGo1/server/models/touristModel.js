@@ -58,8 +58,7 @@ const touristSchema = new mongoose.Schema({
         enum: [1, 2, 3],  // Only allow values 1, 2, or 3
         default: 1 ,
         immutable: true
-    },
-    
+    },   
     createdAt: { 
         type: Date, 
         default: Date.now 
