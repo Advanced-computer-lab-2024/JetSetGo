@@ -43,6 +43,22 @@ const touristSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    TotalPoints: { 
+        type: Number, 
+        default: 0 ,
+        immutable: true
+    },
+    Points: { 
+        type: Number, 
+        default: 0 ,
+        immutable: true
+    },
+    Level: { 
+        type: Number,
+        enum: [1, 2, 3],  // Only allow values 1, 2, or 3
+        default: 1 ,
+        immutable: true
+    },
        
     createdAt: { 
         type: Date, 

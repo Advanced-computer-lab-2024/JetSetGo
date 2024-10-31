@@ -582,6 +582,103 @@ const sortItineraryByRating = async (req, res) => {
   };
   
 
+// Function to update wallet by converting points to EGP
+async function updatePointsToWallet(req, res) {
+    try {
+        const { touristId } = req.params; // Assuming touristId is passed in the URL
+        const tourist = await Tourist.findById(touristId);
+
+        if (!tourist) {
+            return res.status(404).json({ message: 'Tourist not found' });
+        }
+
+        // Check if points are sufficient for conversion
+        if (tourist.Points >= 10000) {
+            const egpToAdd = Math.floor(tourist.Points / 10000) * 100;
+            const remainingPoints = tourist.Points % 10000;
+
+            // Update Points and wallet fields
+            tourist.Points = remainingPoints;
+            tourist.wallet += egpToAdd;
+
+            await tourist.save();
+            return res.status(200).json({ message: 'Wallet updated successfully', tourist });
+        } else {
+            return res.status(200).json({ message: 'Not enough points for conversion', tourist });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'An error occurred', error });
+    }
+}
+
+async function payForItinerary(req, res) {
+  try {
+    const { touristId, itineraryId, amountPaid } = req.body; // Receive touristId, itineraryId, and amountPaid from the body
+
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(touristId);
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found' });
+    }
+
+    // Find the itinerary or event the tourist is paying for (assuming Itinerary model exists)
+    const itinerary = await Itinerary.findById(itineraryId);
+    if (!itinerary) {
+      return res.status(404).json({ message: 'Itinerary not found' });
+    }
+
+    // Check if tourist has enough balance in their wallet
+    if (tourist.wallet < amountPaid) {
+      return res.status(400).json({ message: 'Insufficient funds in wallet' });
+    }
+
+    // Deduct the amount from the wallet
+    tourist.wallet -= amountPaid;
+
+    // Calculate loyalty points based on the level
+    let pointsEarned = 0;
+    if (tourist.Level === 1) {
+      pointsEarned = amountPaid * 0.5;
+    } else if (tourist.Level === 2) {
+      pointsEarned = amountPaid * 1;
+    } else if (tourist.Level === 3) {
+      pointsEarned = amountPaid * 1.5;
+    }
+
+    // Update Points, TotalPoints, and Level
+    tourist.Points += pointsEarned;
+    tourist.TotalPoints += pointsEarned;
+
+    // Update Level based on new TotalPoints
+    if (tourist.TotalPoints > 500000) {
+      tourist.Level = 3;
+    } else if (tourist.TotalPoints > 100000) {
+      tourist.Level = 2;
+    } else {
+      tourist.Level = 1;
+    }
+
+    await tourist.save();
+
+    // Optionally, update the itinerary's booked status or add the tourist to the itinerary's participants
+    itinerary.isBooked = true;
+    itinerary.Tourists.push(tourist._id);
+    await itinerary.save();
+    
+    return res.status(200).json({
+      message: 'Payment successful, wallet and points updated',
+      tourist,
+      itinerary,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'An error occurred', error });
+  }
+}
+
+
+
 
 
   module.exports = {
@@ -592,4 +689,4 @@ const sortItineraryByRating = async (req, res) => {
     searchItineraryByLanguage, searchItineraryByCategory,searchItineraryByName,searchItineraryByTag,
     getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating,
      getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag,
-     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo, addComplaint};
+     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo, addComplaint, updatePointsToWallet, payForItinerary};
