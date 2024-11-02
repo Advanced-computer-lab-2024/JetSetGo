@@ -35,8 +35,7 @@ const touristSchema = new mongoose.Schema({
     },
     wallet: { 
         type: Number, 
-        default: 0 ,
-        immutable: true
+        default: 0
     },         // Not editable directly
     
     deletionRequested: {////////////////////////////////////////////////
@@ -45,19 +44,16 @@ const touristSchema = new mongoose.Schema({
     },
     TotalPoints: { 
         type: Number, 
-        default: 0 ,
-        immutable: true
+        default: 0
     },
     Points: { 
         type: Number, 
-        default: 0 ,
-        immutable: true
+        default: 0
     },
     Level: { 
         type: Number,
         enum: [1, 2, 3],  // Only allow values 1, 2, or 3
-        default: 1 ,
-        immutable: true
+        default: 1 
     },   
     createdAt: { 
         type: Date, 

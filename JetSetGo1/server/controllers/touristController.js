@@ -614,7 +614,7 @@ async function updatePointsToWallet(req, res) {
 
 async function payForItinerary(req, res) {
   try {
-    const { touristId, itineraryId, amountPaid } = req.body; // Receive touristId, itineraryId, and amountPaid from the body
+    const { touristId, itineraryId } = req.body; // Receive touristId and itineraryId from the body
 
     // Find the tourist by ID
     const tourist = await Tourist.findById(touristId);
@@ -622,13 +622,16 @@ async function payForItinerary(req, res) {
       return res.status(404).json({ message: 'Tourist not found' });
     }
 
-    // Find the itinerary or event the tourist is paying for (assuming Itinerary model exists)
+    // Find the itinerary the tourist is paying for
     const itinerary = await Itinerary.findById(itineraryId);
     if (!itinerary) {
       return res.status(404).json({ message: 'Itinerary not found' });
     }
 
-    // Check if tourist has enough balance in their wallet
+    // Use the price from the itinerary as the amount to be paid
+    const amountPaid = itinerary.price;
+
+    // Check if the tourist has enough balance in their wallet
     if (tourist.wallet < amountPaid) {
       return res.status(400).json({ message: 'Insufficient funds in wallet' });
     }
@@ -661,7 +664,7 @@ async function payForItinerary(req, res) {
 
     await tourist.save();
 
-    // Optionally, update the itinerary's booked status or add the tourist to the itinerary's participants
+    // Update the itinerary's booked status and add the tourist to participants
     itinerary.isBooked = true;
     itinerary.Tourists.push(tourist._id);
     await itinerary.save();
@@ -676,6 +679,7 @@ async function payForItinerary(req, res) {
     return res.status(500).json({ message: 'An error occurred', error });
   }
 }
+
 
 
 
