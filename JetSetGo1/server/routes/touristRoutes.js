@@ -7,7 +7,7 @@ const {updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByNam
   searchItineraryByLanguage,searchItineraryByName,searchItineraryByTag,
   getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice,
    sortItineraryByRating, getMuseums, filterMuseumsByTag,
-    getHistoricalLocations, filterHistoricalLocationsByTag  } = require('../controllers/touristController');
+    getHistoricalLocations, filterHistoricalLocationsByTag, rateActivity,addCommentToActivity, deleteCommentFromActivity, book_activity_Itinerary, cancel_booking} = require('../controllers/touristController');
 const router = express.Router();
 
 const { changePassword } = require("../controllers/PasswordController");
@@ -59,5 +59,18 @@ router.get('/getMuseums', getMuseums);
 router.get('/filterMuseumsByTag/:id', filterMuseumsByTag);
 router.get('/getHistoricalLocations', getHistoricalLocations);
 router.get('/filterHistoricalLocationsByTag/:id', filterHistoricalLocationsByTag);
+
+router.get('/filterHistoricalLocationsByTag/:id', filterHistoricalLocationsByTag);
+
+
+
+router.put('/rating',rateActivity);
+
+router.post('/comment',addCommentToActivity);
+router.delete('/del_comment', deleteCommentFromActivity);
+
+
+router.post('/book_activity_Itinerary',book_activity_Itinerary);
+router.delete('/cancel_booking',cancel_booking);
 
 module.exports = router;

@@ -89,7 +89,6 @@ function App() {
             <Route path="/admin/addProduct" element={<ProductForm usertype="admin" />} /> {/* Add product page */}
             <Route path="/seller/updateProduct/:id" element={<UpdateProducts usertype="seller" />} /> {/* Update product page */}
             <Route path="/admin/updateProduct/:id" element={<UpdateProducts usertype="admin" />} />
-
             <Route path="/delete/:role" element={<UserList />} />
             <Route path="/tour-guide/itineraryManager" element={<ItineraryManager />} />
             <Route path="/admin/profile" element={<AdminProfilePage />} />
