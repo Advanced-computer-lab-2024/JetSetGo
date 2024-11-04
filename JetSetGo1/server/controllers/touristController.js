@@ -1,7 +1,7 @@
 const TransportBooking = require('../models/TransportationBookingModel');
 const mongoose= require('mongoose')
 const Product= require('../models/ProductModel')
-const Tourist = require("../models/TouristModel");
+const Tourist = require("../models/touristModel");
 const Itinerary = require('../models/ItineraryModel');
 const Activity = require('../models/AdvertiserActivityModel');
 const Tag = require('../models/TagModel');
