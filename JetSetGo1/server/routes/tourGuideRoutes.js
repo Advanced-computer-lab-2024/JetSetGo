@@ -10,6 +10,8 @@ const {
   updateItinerary,
   deleteItinerary,
   showMyItineraries,
+  itineraryActivation,
+  itineraryDeactivation,
 } = require("../controllers/tourGuideController");
 
 const router = express.Router();
@@ -44,6 +46,11 @@ router.post("/createItinerary", createItinerary);
 router.get("/getItineraries", getItineraries);
 router.patch("/updateItinerary/:id", updateItinerary);
 router.delete("/deleteItinerary/:id", deleteItinerary);
+
+//Activate an itinerary with bookings
+router.patch("/itineraries/activate/:id",itineraryActivation);
+//Deactivate an itinerary with bookings
+router.patch("/itineraries/deactivate/:id",itineraryDeactivation);
 
 //66f80af288afe7e5aff3af00
 module.exports = router;

@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+
+
 const itinerarySchema = new mongoose.Schema({
   title: {
     type: String,
@@ -63,6 +65,15 @@ const itinerarySchema = new mongoose.Schema({
     required: true,
     default: false,
   },
+  active: {
+    type: Boolean,
+    default: true, // Indicates if the itinerary is active
+  },
+  flagged: {
+    type: Boolean,
+    default: false,
+  },
+ 
   tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
   rating: {
     type: Number,

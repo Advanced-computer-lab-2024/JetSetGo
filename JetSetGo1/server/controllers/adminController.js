@@ -9,8 +9,9 @@ const Tourist = require('../models/TouristModel.js');
 const TourismGovernerModel = require('../models/TourismGovernerModel.js');
 const multer = require('multer');
 const path = require('path');
-const Product= require('../models/ProductModel')
-const Advertiser = require('../models/AdvertiserModel.js')
+const Product= require('../models/ProductModel');
+const Advertiser = require('../models/AdvertiserModel.js');
+const Itinerary = require("../models/ItineraryModel");
 const mongoose= require('mongoose')
 
 
@@ -18,6 +19,41 @@ const mongoose= require('mongoose')
 
 const models={admin: Admin, seller: Seller, tourguides: TourGuide, tourist: Tourist, advertisers: Advertiser, tourismgoverner: TourismGoverner};
 ////////////////////////////////////////////////////////////////////////////////
+
+// Flag an Itinerary
+const flagItinerary = async (req, res) => {
+    const { itineraryId } = req.params;
+    
+  
+    
+  
+    try {
+      // Validate itinerary ID
+      if (!mongoose.Types.ObjectId.isValid(itineraryId)) {
+        return res.status(400).json({ error: 'Invalid itinerary ID.' });
+      }
+  
+      const itinerary = await Itinerary.findById(itineraryId);
+  
+      if (!itinerary) {
+        return res.status(404).json({ error: 'Itinerary not found.' });
+      }
+      
+      // Set flagged to true
+      itinerary.flagged = true;
+  
+      await itinerary.save();
+  
+      res.status(200).json({ message: 'Itinerary flagged successfully.', itinerary });
+    } catch (error) {
+      res.status(500).json({ error: 'Server error while flagging itinerary.', details: error.message });
+    }
+  };
+
+  
+
+
+
 //create preference tags
 const create_pref_tag = async (req, res) => {
     const { tag_name, description } = req.body;
@@ -361,5 +397,5 @@ const searchProductName = async(req,res) => {
 
 
 module.exports = { create_pref_tag ,  get_pref_tag , update_pref_tag , delete_pref_tag , create_act_category , get_act_category , update_act_category , delete_act_category , add_tourism_governer , view_tourism_governer,addAdmin, deleteAccount, getAllUsers
-    ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct};
+    ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,flagItinerary};
 
