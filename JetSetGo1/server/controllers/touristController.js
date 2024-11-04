@@ -680,6 +680,74 @@ async function payForItinerary(req, res) {
   }
 }
 
+async function payForActivity(req, res) {
+  try {
+    const { touristId, activityId } = req.body; // Receive touristId and activityId from the body
+
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(touristId);
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found' });
+    }
+
+    // Find the activity the tourist is paying for
+    const activity = await Activity.findById(activityId);
+    if (!activity) {
+      return res.status(404).json({ message: 'Activity not found' });
+    }
+
+    // Use the price from the activity as the amount to be paid
+    const amountPaid = activity.price;
+
+    // Check if the tourist has enough balance in their wallet
+    if (tourist.wallet < amountPaid) {
+      return res.status(400).json({ message: 'Insufficient funds in wallet' });
+    }
+
+    // Deduct the amount from the wallet
+    tourist.wallet -= amountPaid;
+
+    // Calculate loyalty points based on the level
+    let pointsEarned = 0;
+    if (tourist.Level === 1) {
+      pointsEarned = amountPaid * 0.5;
+    } else if (tourist.Level === 2) {
+      pointsEarned = amountPaid * 1;
+    } else if (tourist.Level === 3) {
+      pointsEarned = amountPaid * 1.5;
+    }
+
+    // Update Points, TotalPoints, and Level
+    tourist.Points += pointsEarned;
+    tourist.TotalPoints += pointsEarned;
+
+    // Update Level based on new TotalPoints
+    if (tourist.TotalPoints > 500000) {
+      tourist.Level = 3;
+    } else if (tourist.TotalPoints > 100000) {
+      tourist.Level = 2;
+    } else {
+      tourist.Level = 1;
+    }
+
+    await tourist.save();
+
+    // Update the activity's booked status and add the tourist to participants
+    activity.isBooked = true;
+    activity.Tourists.push(tourist._id);
+    await activity.save();
+    
+    return res.status(200).json({
+      message: 'Payment successful, wallet and points updated',
+      tourist,
+      activity,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'An error occurred', error });
+  }
+}
+
 
 
 
@@ -693,4 +761,5 @@ async function payForItinerary(req, res) {
     searchItineraryByLanguage, searchItineraryByCategory,searchItineraryByName,searchItineraryByTag,
     getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating,
      getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag,
-     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo, addComplaint, updatePointsToWallet, payForItinerary};
+     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo,
+     addComplaint, updatePointsToWallet, payForItinerary, payForActivity};
