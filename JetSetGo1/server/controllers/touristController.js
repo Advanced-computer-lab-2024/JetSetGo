@@ -1,11 +1,43 @@
 const mongoose= require('mongoose')
 const Product= require('../models/ProductModel')
-const Tourist = require("../models/TouristModel");
+const Tourist = require("../models/touristModel");
 const Itinerary = require('../models/ItineraryModel');
 const Activity = require('../models/AdvertiserActivityModel');
 const Tag = require('../models/TagModel');
 const HistoricalLocationModel = require('../models/HistoricalLocationModel');
 const MuseumModel = require('../models/MuseumModel');
+const Complaint = require('../models/ComplaintModel');
+const Category = require('../models/CategoryModel')
+
+const getTagNameById = async (req, res) => {
+  try {
+      const tagId = req.params.id;
+      const tag = await Tag.findById(tagId, 'tag_name'); // Only select `tag_name`
+
+      if (!tag) {
+          return res.status(404).json({ error: 'Tag not found' });
+      }
+
+      res.json({ tag_name: tag.tag_name });
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch tag name' });
+  }
+};
+
+const getCategoryNameById = async (req, res) => {
+  try {
+      const categoryId = req.params.id;
+      const category = await Category.findById(categoryId, 'name');
+
+      if (!category) {
+          return res.status(404).json({ error: 'Category not found' });
+      }
+
+      res.json({ name: category.name });
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch category name' });
+  }
+};
 
 
 
@@ -547,6 +579,210 @@ const sortItineraryByRating = async (req, res) => {
     }
   };
 
+  const addComplaint = async (req, res) => {
+    try {
+        const { title, body, date, userId: bodyUserId } = req.body;
+        const userId = req.user ? req.user._id : bodyUserId; // Fallback to body.userId if req.user is not available
+  
+        // Validate required fields
+        if (!title || !body) {
+            return res.status(400).json({ error: 'Title and body are required' });
+        }
+  
+        if (!userId) {
+            return res.status(400).json({ error: 'User ID is required' });
+        }
+  
+        // Create a new complaint
+        const complaint = new Complaint({
+            userId, // Use either req.user._id or req.body.userId
+            title,
+            body,
+            date: date || Date.now() // If date is not provided, use the current date
+        });
+  
+        // Save the complaint
+        const savedComplaint = await complaint.save();
+  
+        // Return the saved complaint
+        res.status(201).json(savedComplaint);
+    } catch (error) {
+        console.error('Error adding complaint:', error);
+        res.status(500).json({ error: 'Server error while adding complaint' });
+    }
+  };
+  
+
+// Function to update wallet by converting points to EGP
+async function updatePointsToWallet(req, res) {
+    try {
+        const { touristId } = req.params; // Assuming touristId is passed in the URL
+        const tourist = await Tourist.findById(touristId);
+
+        if (!tourist) {
+            return res.status(404).json({ message: 'Tourist not found' });
+        }
+
+        // Check if points are sufficient for conversion
+        if (tourist.Points >= 10000) {
+            const egpToAdd = Math.floor(tourist.Points / 10000) * 100;
+            const remainingPoints = tourist.Points % 10000;
+
+            // Update Points and wallet fields
+            tourist.Points = remainingPoints;
+            tourist.wallet += egpToAdd;
+
+            await tourist.save();
+            return res.status(200).json({ message: 'Wallet updated successfully', tourist });
+        } else {
+            return res.status(200).json({ message: 'Not enough points for conversion', tourist });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'An error occurred', error });
+    }
+}
+
+async function payForItinerary(req, res) {
+  try {
+    const { touristId, itineraryId } = req.body; // Receive touristId and itineraryId from the body
+
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(touristId);
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found' });
+    }
+
+    // Find the itinerary the tourist is paying for
+    const itinerary = await Itinerary.findById(itineraryId);
+    if (!itinerary) {
+      return res.status(404).json({ message: 'Itinerary not found' });
+    }
+
+    // Use the price from the itinerary as the amount to be paid
+    const amountPaid = itinerary.price;
+
+    // Check if the tourist has enough balance in their wallet
+    if (tourist.wallet < amountPaid) {
+      return res.status(400).json({ message: 'Insufficient funds in wallet' });
+    }
+
+    // Deduct the amount from the wallet
+    tourist.wallet -= amountPaid;
+
+    // Calculate loyalty points based on the level
+    let pointsEarned = 0;
+    if (tourist.Level === 1) {
+      pointsEarned = amountPaid * 0.5;
+    } else if (tourist.Level === 2) {
+      pointsEarned = amountPaid * 1;
+    } else if (tourist.Level === 3) {
+      pointsEarned = amountPaid * 1.5;
+    }
+
+    // Update Points, TotalPoints, and Level
+    tourist.Points += pointsEarned;
+    tourist.TotalPoints += pointsEarned;
+
+    // Update Level based on new TotalPoints
+    if (tourist.TotalPoints > 500000) {
+      tourist.Level = 3;
+    } else if (tourist.TotalPoints > 100000) {
+      tourist.Level = 2;
+    } else {
+      tourist.Level = 1;
+    }
+
+    await tourist.save();
+
+    // Update the itinerary's booked status and add the tourist to participants
+    itinerary.isBooked = true;
+    itinerary.Tourists.push(tourist._id);
+    await itinerary.save();
+    
+    return res.status(200).json({
+      message: 'Payment successful, wallet and points updated',
+      tourist,
+      itinerary,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'An error occurred', error });
+  }
+}
+
+async function payForActivity(req, res) {
+  try {
+    const { touristId, activityId } = req.body; // Receive touristId and activityId from the body
+
+    // Find the tourist by ID
+    const tourist = await Tourist.findById(touristId);
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found' });
+    }
+
+    // Find the activity the tourist is paying for
+    const activity = await Activity.findById(activityId);
+    if (!activity) {
+      return res.status(404).json({ message: 'Activity not found' });
+    }
+
+    // Use the price from the activity as the amount to be paid
+    const amountPaid = activity.price;
+
+    // Check if the tourist has enough balance in their wallet
+    if (tourist.wallet < amountPaid) {
+      return res.status(400).json({ message: 'Insufficient funds in wallet' });
+    }
+
+    // Deduct the amount from the wallet
+    tourist.wallet -= amountPaid;
+
+    // Calculate loyalty points based on the level
+    let pointsEarned = 0;
+    if (tourist.Level === 1) {
+      pointsEarned = amountPaid * 0.5;
+    } else if (tourist.Level === 2) {
+      pointsEarned = amountPaid * 1;
+    } else if (tourist.Level === 3) {
+      pointsEarned = amountPaid * 1.5;
+    }
+
+    // Update Points, TotalPoints, and Level
+    tourist.Points += pointsEarned;
+    tourist.TotalPoints += pointsEarned;
+
+    // Update Level based on new TotalPoints
+    if (tourist.TotalPoints > 500000) {
+      tourist.Level = 3;
+    } else if (tourist.TotalPoints > 100000) {
+      tourist.Level = 2;
+    } else {
+      tourist.Level = 1;
+    }
+
+    await tourist.save();
+
+    // Update the activity's booked status and add the tourist to participants
+    activity.isBooked = true;
+    activity.Tourists.push(tourist._id);
+    await activity.save();
+    
+    return res.status(200).json({
+      message: 'Payment successful, wallet and points updated',
+      tourist,
+      activity,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'An error occurred', error });
+  }
+}
+
+
+
+
+
 
   module.exports = {
     searchHistoricalPlaceByTag,searchHistoricalPlaceByName,searchHistoricalPlaceByCategory,
@@ -556,4 +792,5 @@ const sortItineraryByRating = async (req, res) => {
     searchItineraryByLanguage, searchItineraryByCategory,searchItineraryByName,searchItineraryByTag,
     getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating,
      getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag,
-     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo};
+     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo,
+     addComplaint, updatePointsToWallet, payForItinerary, payForActivity, getTagNameById, getCategoryNameById};
