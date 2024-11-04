@@ -29,6 +29,7 @@ import ItineraryFilter from './components/ItineraryFilter';
 import MuseumFilter from './components/MuseumFilter';
 import HistoricalPlaceFilter from './components/HistoricalPlaceFilter';
 
+
 import HomePage from './pages/HomePage';
 
 // import { BrowserRouter, Routes, Route } from 'react-router-dom'
@@ -49,6 +50,10 @@ import HLTags from './pages/hltag.js'
 import ActivityPagejohn from './pages/ActivityJohn';
 import Authentication from './pages/Authentication/Authentication';
 import ProfileJohn from './pages/profileJohn.js';
+
+
+import AdminComplaints from './pages/Admin/AdminComplaintsPage.js';
+import AdminViewComplaint from './pages/Admin/AdminViewComplaint.js'
 
 
 function App() {
@@ -145,6 +150,16 @@ function App() {
               path="/Activities"
               element={<Activities />}
             />
+
+            <Route
+              path="/admin/getComplaints"
+              element={<AdminComplaints />}
+            />
+
+            <Route
+              path="/api/admin/viewComplaint"
+              element={<AdminViewComplaint />}
+            /> 
 
             <Route
               path="/Itineraries"
