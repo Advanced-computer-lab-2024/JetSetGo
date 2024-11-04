@@ -21,8 +21,8 @@ import UpdateProducts from "./components/UpdateProduct";
 
 import Activities2 from './pages/Activities';
 import Itineraries2 from './pages/Itineraries';
-import Museums from './pages/Museums';
-import HistoricalLocations from './pages/HistoricalLocations';
+import Museums from './pages/museums';
+import HistoricalLocations from './pages/historicallocations';
 
 import ActivityFilter from './components/ActivityFilter';
 import ItineraryFilter from './components/ItineraryFilter';
