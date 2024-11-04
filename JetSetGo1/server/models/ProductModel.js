@@ -10,7 +10,19 @@ const productSchema = new mongoose.Schema({
     quantityAvailable: { type: Number, required: true },
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'Seller', required: true },
     picture: { type: String },
-    ratings: { type: Number, default: 0 },
+    reviews: {
+        type: [String]
+    },
+    archieved:{type: Boolean,
+        default:false
+    },
+    Tourists: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Tourist', // Assuming you have a Tourist model
+      }],
+
+    
+    ratings: { type: [Number] }, // lets make it array of numbers and calculate the avergage
     createdAt: { type: Date, default: Date.now }
 });
 

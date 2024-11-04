@@ -22,6 +22,7 @@ const registerRoutes = require('./routes/registerRoutes');
 
 
 
+
 //express app
 const app = express();
 
@@ -44,15 +45,40 @@ app.use('/api/tourism-governer', tourismGovernerRoutes);
 app.use('/api/sellers', sellerRoutes);
 app.use('/api/tour-guides', tourGuideRoutes);
 app.use('/api/admin', adminRoutes);
-app.use("/api/tourist", touristRoutes);
+app.use('/api/tourist',touristRoutes)
+
+app.use('/uploads', express.static('uploads'));
 
 
 
 
 
+//EF93SkpGhRJ9gcfz
+
+// Import routes
+// const guestRoutes = require('./routes/guestRoutes'); 
+
+// const activityRoutes = require('./routes/activityRoutes.js'); 
+//express app
+// const app = express()
 
 
+//middleware
+app.use(express.json()) // what this does is that it allows us to access the body of the request
+app.use(cors()); // Enable CORS for all routes (saw it in a vid)
 
+app.use((req,res,next)=>{
+    console.log(req.path,req.method)
+    next()
+})
+// Use routes
+//app.use('/api/users', guestRoutes);
+app.use('/api/advertisers', advertiserRoutes);
+app.use('/api/sellers', sellerRoutes);
+app.use('/api/tour-guides', tourGuideRoutes);
+//app.use('/api/products',productRoutes)
+
+// app.use('/api/users', guestRoutes);
 
 // app.use('/api/activity', activityRoutes);
 //connect to db

@@ -8,10 +8,10 @@ const HistoricalLocation = require('../models/HistoricalLocationModel')
 
 // Create Museum
 const createMuseum = async (req, res) => {
-  const {name, description, location, openingHours, ticketPrices, pictures, /*tags, category,*/ governor } = req.body;
+  const {name, description, location, openingHours, ticketPrices, pictures, tags, category,governor } = req.body;
 
   try {
-    const newMuseum = await Museum.create({ name, description, location, openingHours, ticketPrices, pictures,/* tags, category, */governor });
+    const newMuseum = await Museum.create({ name, description, location, openingHours, ticketPrices, pictures,tags, category, governor });
     res.status(201).json(newMuseum);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -20,10 +20,10 @@ const createMuseum = async (req, res) => {
 
 // Read Museum
 const getMuseum = async (req, res) => {
-const { id } = req.params;
+// const { id } = req.params;
 
   try {
-    const MuseumProfile = await Museum.findById(id);
+    const MuseumProfile = await Museum.find();
     res.status(200).json(MuseumProfile);
   } catch (err) {
     res.status(404).json({ error: 'Museum not found' });
@@ -76,10 +76,10 @@ const createHistoricalLocation = async (req, res) => {
 
 // Read Historical Location
 const getHistoricalLocation = async (req, res) => {
-const { id } = req.params;
+// const { id } = req.params;
 
   try {
-    const HistoricalLocationProfile = await HistoricalLocation.findById(id);
+    const HistoricalLocationProfile = await HistoricalLocation.find();
     res.status(200).json(HistoricalLocationProfile);
   } catch (err) {
     res.status(404).json({ error: 'Historical Location not found' });

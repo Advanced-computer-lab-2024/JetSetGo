@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import ItineraryDetails from "../components/ItineraryDetails";
 import ItineraryFilter from "../components/ItineraryFilter"; // Import the filter component
 
-const Itineraries = () => {
+const Itineraries2 = () => {
     const [upcomingItineraries, setUpcomingItineraries] = useState(null);
     const [filteredItinerary, setFilteredItinerary] = useState([]); // State for filtered itineraries
     const [sortOrder, setSortOrder] = useState(''); // State for sorting order
@@ -69,4 +69,4 @@ const Itineraries = () => {
     );
 }
 
-export default Itineraries;
+export default Itineraries2;

@@ -3,7 +3,7 @@ import ActivityDetails from "../components/ActivityDetails";
 import { Link } from 'react-router-dom';
 import ActivityFilter from '../components/ActivityFilter';  // Import ActivityFilter
 
-const Activities = () => {
+const Activities2 = () => {
     const [upcomingActivities, setUpcomingActivities] = useState(null); // All activities fetched from backend
     const [filteredActivitiesState, setFilteredActivitiesState] = useState(null); // Holds activities after filtering
     const [sortedActivities, setSortedActivities] = useState(null); // Holds the currently sorted activities
@@ -88,4 +88,4 @@ const Activities = () => {
     );
 };
 
-export default Activities;
+export default Activities2;

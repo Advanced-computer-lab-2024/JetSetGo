@@ -28,6 +28,17 @@ const advertiserSchema = new mongoose.Schema({
       type: Boolean, 
       default: false 
     },  // If the advertiser is accepted by the system
+    documents: {/////////////////////////////
+      type: [String]
+     },// Paths to required documents
+    profileImage: {/////////////////////////////
+         type:String
+       },// Path to profile image or logo
+       
+      deletionRequested: {////////////////////////////////
+        type: Boolean,
+        default: false
+    },
     createdAt: { 
       type: Date, 
       default: Date.now }

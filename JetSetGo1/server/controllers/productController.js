@@ -8,6 +8,12 @@ const getProducts= async (req,res) => {
     res.status(200).json(products)
 }
 
+const getSingleProduct= async (req,res) => {
+    const {id}= req.params
+
+    const product = await Product.findById(id)
+    res.status(200).json(product)
+}
 
 // Add new product
 const createProduct = async (req, res) =>{
@@ -87,4 +93,4 @@ const searchProductName = async(req,res) => {
     }
 
 }
-module.exports = {getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName}
+module.exports = {getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct}

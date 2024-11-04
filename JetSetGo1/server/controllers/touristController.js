@@ -6,6 +6,8 @@ const Activity = require('../models/AdvertiserActivityModel');
 const Tag = require('../models/TagModel');
 const HistoricalLocationModel = require('../models/HistoricalLocationModel');
 const MuseumModel = require('../models/MuseumModel');
+const ComplaintModel = require('../models/ComplaintModel');
+const SalesModel = require('../models/SalesModel');
 
 
 
@@ -17,7 +19,7 @@ const getProducts= async (req,res) => {
 
 const filterProducts = async(req,res) => {
     
-    const{min, max}= req.body
+    const{min, max}= req.query;
 
     try{
         const query = {
@@ -33,18 +35,24 @@ const filterProducts = async(req,res) => {
     }
 }
 
-const sortByRate = async(req,res) => {
-    const{flag}=req.body
+const sortByRate = async (req, res) => {
+    const  {flag}  = req.query; // Use req.query here
+    var x=0
     try {
+      if (flag=="1") {
+        x=1
+      }
+      else{
+        x=-1
+      }
         // Get sorted products by ratings in descending order
-        const products = await Product.find().sort({ ratings: flag }); // Change to 1 for ascending order and -1 for desc
-    
+        const products = await Product.find().sort(  {ratings:x} ); // Change to 1 for ascending order and -1 for descending
         res.status(200).json(products); // Send the sorted products as JSON
-      } catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500).send('Error fetching products');
-      }
-}
+    }
+  };
 
 const searchProductName = async(req,res) => {
 
@@ -541,6 +549,97 @@ const sortItineraryByRating = async (req, res) => {
     }
   };
 
+  const getComplaints= async (req,res) => {
+    const complaints = await ComplaintModel.find({}).sort({createdAt: -1})
+    res.status(200).json(complaints)
+}
+// const ADDRateReview= async (req,res) => {
+//    const { id } = req.params;
+//    const { review, rate, touristId} = req.body;
+//   try {
+//     // Assume you get the tourist ID from the authenticated user (e.g., from a JWT)
+
+//     // Find the tourist by ID
+//     const tourist = await Tourist.findById(touristId);
+
+//     // Check if the tourist has the product in their products array
+//     if (!tourist || !tourist.products.includes(id)) {
+//         return res.status(400).json({ error: "Product not found in tourist's purchased items." });
+//     }
+
+//     feedBack = await SalesModel.findByIdAndUpdate(id,{ $push: { reviews : review , ratings : rate }},{ new: true })
+    
+//     // await product.save();
+//     res.status(200).json(feedBack);
+
+// } catch (err) {
+//     res.status(400).json({ error: err.message });
+// }
+// }
+
+const  ADDRateReview = async (req, res) =>  {
+     const { reviews, ratings, touristId,productId} = req.body;
+
+  try {
+      // Find the sale record based on tourist and product IDs
+      const sale = await SalesModel.findOne({ 
+        Tourists: touristId, 
+        Product: productId 
+      });
+
+      if (!sale) {
+          throw new Error('Sale record not found for this tourist and product.');
+      }
+
+      // Add the rating and review
+      sale.reviews = reviews;
+      sale.ratings = ratings ; // Ensure ratings is an array
+     // sale.ratings.push(ratings);
+
+      // Calculate the average rating
+      //const averageRating = sale.ratings.reduce((acc, curr) => acc + curr, 0) / sale.ratings.length;
+      
+      // Save the updated sale record
+      //sale.ratings = averageRating; // Store the average rating as the new value
+
+      await sale.save();
+
+      return {
+          message: 'Rating and review added successfully!',
+      //    averageRating,
+      };
+  } catch (error) {
+      throw new Error(`Error adding rating and review: ${error.message}`);
+  }
+}
+ const addSales = async (req, res) => {
+  const { price, quantityPurchased,touristId,productId,sellerId } = req.body;
+  // const sale = await SalesModel.findOne({ 
+  //   Tourist: touristId, 
+  //   Product: productId,
+  //   Seller: sellerId 
+  // });
+  if (!price || !quantityPurchased || !touristId || !productId || !sellerId) {
+    return res.status(400).json({ error: 'All fields are required: price, quantityPurchased, touristId, productId, and sellerId.' });
+}
+
+try {
+    // Create a new sale
+    const sale = await SalesModel.create({
+        price,
+        quantityPurchased,
+        Tourists: touristId, // Make sure the field names match your schema
+        Seller: sellerId,
+        Product: productId,
+    });
+
+    res.status(201).json(sale); // Use 201 status for created resource
+} catch (error) {
+    res.status(400).json({ error: error.message });
+}
+ };
+
+
 
   module.exports = {
     searchHistoricalPlaceByTag,searchHistoricalPlaceByName,searchHistoricalPlaceByCategory,
@@ -550,4 +649,4 @@ const sortItineraryByRating = async (req, res) => {
     searchItineraryByLanguage, searchItineraryByCategory,searchItineraryByName,searchItineraryByTag,
     getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating,
      getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag,
-     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo};
+     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo,getComplaints,ADDRateReview,addSales};

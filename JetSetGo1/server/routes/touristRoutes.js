@@ -7,9 +7,12 @@ const {updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByNam
   searchItineraryByLanguage,searchItineraryByName,searchItineraryByTag,
   getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice,
    sortItineraryByRating, getMuseums, filterMuseumsByTag,
-    getHistoricalLocations, filterHistoricalLocationsByTag  } = require('../controllers/touristController');
+    getHistoricalLocations, filterHistoricalLocationsByTag,getComplaints,ADDRateReview,  
+    addSales} = require('../controllers/touristController');
 const router = express.Router();
 
+const { changePassword } = require("../controllers/PasswordController");
+router.patch("/change-password/:id/:modelName", changePassword);
 
 router.get('/Products',getProducts )
 router.get('/filterProducts',filterProducts)
@@ -44,6 +47,9 @@ router.post('/searchItineraryByBudget',searchItineraryByBudget);
 router.post('/searchItineraryByLanguage',searchItineraryByLanguage);
 router.post('/searchItineraryByName',searchItineraryByName);
 router.post('/searchItineraryByTag',searchItineraryByTag);
+router.post('/feedback',ADDRateReview);
+router.post('/add-sales',addSales)
+
 
 
 
@@ -58,4 +64,5 @@ router.get('/filterMuseumsByTag/:id', filterMuseumsByTag);
 router.get('/getHistoricalLocations', getHistoricalLocations);
 router.get('/filterHistoricalLocationsByTag/:id', filterHistoricalLocationsByTag);
 
+router.get('/getComplaints',getComplaints)
 module.exports = router;

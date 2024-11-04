@@ -1,7 +1,37 @@
 const TourGuide = require("../models/TourGuideModel");
 const Itinerary = require("../models/ItineraryModel");
+const multer = require('multer');
+const path = require('path');
 //66f8084788afe7e5aff3aefc
 // Create Tour Guide Profile
+
+
+// Set up storage configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+// Initialize upload with storage configuration
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  fileFilter: (req, file, cb) => {
+    const fileTypes = /jpeg|jpg|png|gif/;
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = fileTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb('Error: Images Only!');
+    }
+  }
+});
 
 const createProfile = async (req, res) => {           
   const { id } = req.params;
@@ -180,23 +210,42 @@ const deleteItinerary = async (req, res) => {
     res.status(400).json({ message: "Error deleting itinerary", error });
   }
 };
+
 //Read My Itineraries
 const showMyItineraries = async(req,res) => {
-   
-
   const guideId = req.query.guideId;
-
   try{
-      const result = await ItineraryModel.find({tourGuide:(guideId)})
+      const result = await Itinerary.find({tourGuide:(guideId)})
       res.status(200).json(result)
     }catch{
       res.status(400).json({error:"Id is required"})
     }
-
-
 }
 
-module.exports = {
+
+const uploadProfileImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const profileImage = req.file ? req.file.path : null;
+
+    // Update the advertiser's profile image in the database
+    const tourGuide = await TourGuide.findByIdAndUpdate(
+      id,
+      { profileImage },
+      { new: true }
+    );
+
+    if (!tourGuide) {
+      return res.status(404).json({ error: 'Tourguide not found' });
+    }
+
+    res.json({ message: 'Profile image uploaded successfully', imagePath: profileImage });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
+};
+
+module.exports = {upload,
   createProfile,
   updateProfile,
   getProfile,
@@ -205,6 +254,7 @@ module.exports = {
   updateItinerary,
   deleteItinerary,
   showMyItineraries,
+  uploadProfileImage
 };
 
 
