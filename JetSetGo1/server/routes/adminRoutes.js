@@ -1,7 +1,7 @@
 const express = require('express');
 const { create_pref_tag, get_pref_tag, update_pref_tag, delete_pref_tag, create_act_category, get_act_category, update_act_category, delete_act_category, add_tourism_governer, view_tourism_governer
     ,getProducts, createProduct, updateProduct,filterProducts,sortByRate, searchProductName,deleteAccount,
-    addAdmin,getAllUsers,getSingleProduct,getComplaints,viewComplaint,resolveComplaint, flagItinerary,} = require('../controllers/adminController.js');
+    addAdmin,getAllUsers,getSingleProduct,getComplaints,viewComplaint,resolveComplaint, flagItinerary} = require('../controllers/adminController.js');
     const router = express.Router();
     const { changePassword } = require("../controllers/PasswordController");
     router.patch("/change-password/:id/:modelName", changePassword);

@@ -7,53 +7,15 @@ const {updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByNam
   searchItineraryByLanguage,searchItineraryByName,searchItineraryByTag,
   getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice,
    sortItineraryByRating, getMuseums, filterMuseumsByTag,
-    getHistoricalLocations, filterHistoricalLocationsByTag, addComplaint, updatePointsToWallet, payForItinerary, payForActivity, getTagNameById, getCategoryNameById} = require('../controllers/touristController');
-const express = require("express");
-const {
-  getProducts,
-  createProduct,
-  updateProduct,
-  filterProducts,
-  sortByRate,
-  searchProductName,
-} = require("../controllers/adminController.js");
-const {
-  updateInfo,
-  getInfo,
-  searchHistoricalPlaceByTag,
-  searchHistoricalPlaceByName,
-  searchHistoricalPlaceByCategory,
-  searchMuseumByTag,
-  searchMuseumByName,
-  searchMuseumByCategory,
-  searchActivityByBudget,
-  searchActivityByDate,
-  searchActivityByRating,
-  searchActivityByTag,
-  searchActivityByCategory,
-  searchActivityByName,
-  searchItineraryByDate,
-  searchItineraryByBudget,
-  searchItineraryByLanguage,
-  searchItineraryByName,
-  searchItineraryByTag,
-  getUpcomingActivities,
-  sortActivityByPrice,
-  sortActivityByRating,
-  getUpcomingItineraries,
-  sortItineraryByPrice,
-  sortItineraryByRating,
-  getMuseums,
-  filterMuseumsByTag,
-  getHistoricalLocations,
-  filterHistoricalLocationsByTag,
-  rateActivity,
-  addCommentToActivity,
-  deleteCommentFromActivity,
-  book_activity_Itinerary,
-  cancel_booking,
-  getActivitiesByCategory,
-} = require("../controllers/touristController");
+    getHistoricalLocations, filterHistoricalLocationsByTag,
+    addComplaint, updatePointsToWallet, payForItinerary, payForActivity, getTagNameById, getCategoryNameById,
+    rateActivity,
+    addCommentToActivity,
+    deleteCommentFromActivity,
+    book_activity_Itinerary,
+    cancel_booking,
+    getActivitiesByCategory} = require('../controllers/touristController');
+
 const router = express.Router();
 
 const { changePassword } = require("../controllers/PasswordController");

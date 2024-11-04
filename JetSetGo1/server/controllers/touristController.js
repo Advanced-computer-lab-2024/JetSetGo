@@ -7,7 +7,8 @@ const Tag = require("../models/TagModel");
 const HistoricalLocationModel = require("../models/HistoricalLocationModel");
 const MuseumModel = require("../models/MuseumModel");
 const Complaint = require('../models/ComplaintModel');
-const Category = require('../models/CategoryModel')
+const Category = require('../models/CategoryModel');
+const Booking = require("../models/bookingmodel");
 
 const getTagNameById = async (req, res) => {
   try {
@@ -38,7 +39,6 @@ const getCategoryNameById = async (req, res) => {
       res.status(500).json({ error: 'Failed to fetch category name' });
   }
 };
-const Booking = require("../models/bookingmodel");
 
 // get all products
 const getProducts = async (req, res) => {
@@ -984,46 +984,10 @@ const cancel_booking = async (req, res) => {
     getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating,
      getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag,
      getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo,
-     addComplaint, updatePointsToWallet, payForItinerary, payForActivity, getTagNameById, getCategoryNameById};
-module.exports = {
-  searchHistoricalPlaceByTag,
-  searchHistoricalPlaceByName,
-  searchHistoricalPlaceByCategory,
-  searchMuseumByTag,
-  searchMuseumByName,
-  searchMuseumByCategory,
-  searchActivityByBudget,
-  searchActivityByDate,
-  searchActivityByRating,
-  searchActivityByTag,
-  searchActivityByCategory,
-  searchActivityByName,
-  searchItineraryByDate,
-  searchItineraryByBudget,
-  searchItineraryByLanguage,
-  searchItineraryByCategory,
-  searchItineraryByName,
-  searchItineraryByTag,
-  getUpcomingActivities,
-  sortActivityByPrice,
-  sortActivityByRating,
-  getUpcomingItineraries,
-  sortItineraryByPrice,
-  sortItineraryByRating,
-  getMuseums,
-  filterMuseumsByTag,
-  getHistoricalLocations,
-  filterHistoricalLocationsByTag,
-  getProducts,
-  filterProducts,
-  sortByRate,
-  searchProductName,
-  updateInfo,
-  getInfo,
-  getActivitiesByCategory,
-  rateActivity,
-  addCommentToActivity,
-  deleteCommentFromActivity,
-  book_activity_Itinerary,
-  cancel_booking,
-};
+     addComplaint, updatePointsToWallet, payForItinerary, payForActivity, getTagNameById, getCategoryNameById,
+     getActivitiesByCategory,
+     rateActivity,
+     addCommentToActivity,
+     deleteCommentFromActivity,
+     book_activity_Itinerary,
+     cancel_booking};
