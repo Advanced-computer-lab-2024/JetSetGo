@@ -218,7 +218,8 @@ try{
     }
 }
 
-module.exports = { showMyActivities, createTransportation, getTransportation, updateTransportation, deleteTransportation}
+module.exports = { showMyActivities, createTransportation, getTransportation, updateTransportation, deleteTransportation, 
+createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity}
 
 
 
