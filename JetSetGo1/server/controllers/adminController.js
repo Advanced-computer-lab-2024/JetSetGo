@@ -400,10 +400,11 @@ const resolveComplaint = async (req,res) =>{
         if(complaintId)
         {
             const complaint = await Complaint.findById(complaintId)
-
+            console.log(reply)
             complaint.status = 'resolved'
             complaint.adminResponse = reply
             await complaint.save();
+            
             console.log(complaint.status)
             console.log(complaint.adminResponse)
             res.status(200).json(complaint) //IN Frontend (if ok then continue to another page which says go back)

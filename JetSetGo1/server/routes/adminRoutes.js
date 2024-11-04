@@ -38,7 +38,7 @@ router.patch('/product/:id', updateProduct)
 router.get('/getSingleProduct/:id', getSingleProduct)
 
 router.get('/getComplaints', getComplaints)
-//router.get('/viewComplaint/?id', viewComplaint)// Most probably no use
+router.get('/viewComplaint', viewComplaint)
 router.post('/resolveComplaint', resolveComplaint)
 
 
