@@ -2,7 +2,7 @@ const express = require('express');
 const { searchActivityByBudget,searchActivityByDate, searchActivityByRating,searchActivityByCategory, searchItineraryByTag,
 searchItineraryByDate, searchItineraryByBudget, searchItineraryByLanguage,getUpcomingActivities, sortActivityByPrice,
  sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating, getMuseums,
-  filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag } = require('../controllers/guestController');
+  filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag ,getActivitiesByCategory} = require('../controllers/guestController');
 const router = express.Router();
 
 
@@ -16,6 +16,9 @@ router.post('/searchItineraryByBudget',searchItineraryByBudget);
 router.post('/searchItineraryByLanguage',searchItineraryByLanguage);
 router.post('/searchItineraryByTag',searchItineraryByTag);
 
+
+//choose category of activities
+router.get('/activities/category/:categoryId', getActivitiesByCategory);
 
 router.get('/getUpcomingActivities', getUpcomingActivities);
 router.get('/sortActivityByPrice', sortActivityByPrice);

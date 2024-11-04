@@ -3,6 +3,63 @@ const Itinerary = require("../models/ItineraryModel");
 const multer = require("multer");
 const path = require("path");
 //66f8084788afe7e5aff3aefc
+
+//Deactivate an itinerary with bookings
+const itineraryDeactivation = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Find the itinerary by ID
+    const itinerary = await Itinerary.findById(id);
+
+    if (!itinerary) {
+      return res.status(404).json({ message: "Itinerary not found" });
+    }
+
+    // Check if the itinerary has existing bookings
+    if (itinerary.isBooked) {
+      if (itinerary.active) {
+        // Deactivate the itinerary
+        itinerary.active = false;
+        await itinerary.save();
+        return res
+          .status(200)
+          .json({ message: "Itinerary deactivated successfully", itinerary });
+      }
+    }
+  } catch (error) {
+    res.status(400).json({ message: "Error updating itinerary status", error });
+  }
+};
+
+//Activate an itinerary with bookings
+const itineraryActivation = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Find the itinerary by ID
+    const itinerary = await Itinerary.findById(id);
+
+    if (!itinerary) {
+      return res.status(404).json({ message: "Itinerary not found" });
+    }
+
+    // Check if the itinerary has existing bookings
+    if (itinerary.isBooked) {
+      if (!itinerary.active) {
+        // Activate the itinerary
+        itinerary.active = true;
+        await itinerary.save();
+        return res
+          .status(200)
+          .json({ message: "Itinerary activated successfully", itinerary });
+      }
+    }
+  } catch (error) {
+    res.status(400).json({ message: "Error updating itinerary status", error });
+  }
+};
+
 // Create Tour Guide Profile
 
 // Set up storage configuration
@@ -33,7 +90,6 @@ const upload = multer({
     }
   },
 });
-
 const createProfile = async (req, res) => {
   const { id } = req.params;
   const { mobile, experience, previousWork } = req.body;
@@ -511,6 +567,8 @@ module.exports = {
   updateItinerary,
   deleteItinerary,
   showMyItineraries,
+  itineraryActivation,
+  itineraryDeactivation,
   uploadProfileImage,
   addRating,
   addComment,

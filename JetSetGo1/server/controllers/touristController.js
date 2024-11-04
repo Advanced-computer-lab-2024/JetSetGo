@@ -386,6 +386,24 @@ const searchActivityByCategory = async (req,res) =>{
     res.status(404).json({error:"Activity not found"})
   }
 };
+// Fetch activities by category
+const getActivitiesByCategory = async (req, res) => {
+  const { categoryId } = req.params;  // Extract category ID from the request params
+
+  try {
+      // Query activities where the category matches the provided categoryId
+      const activities = await Activity.find({ category: categoryId }).populate('category');  // Optionally populate category details
+
+      if (activities.length === 0) {
+          return res.status(404).json({ error: "No activities found for this category" });
+      }
+
+      res.status(200).json(activities);
+  } catch (error) {
+      res.status(500).json({ error: "An error occurred while fetching activities" });
+  }
+};
+
 
 //Seach Activity by tag 
 const searchActivityByTag = async (req, res) => {
@@ -556,4 +574,4 @@ const sortItineraryByRating = async (req, res) => {
     searchItineraryByLanguage, searchItineraryByCategory,searchItineraryByName,searchItineraryByTag,
     getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating,
      getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag,
-     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo};
+     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo,getActivitiesByCategory,};
