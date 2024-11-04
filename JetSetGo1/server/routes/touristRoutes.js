@@ -7,7 +7,7 @@ const {updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByNam
   searchItineraryByLanguage,searchItineraryByName,searchItineraryByTag,
   getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice,
    sortItineraryByRating, getMuseums, filterMuseumsByTag,
-    getHistoricalLocations, filterHistoricalLocationsByTag, addComplaint, updatePointsToWallet, payForItinerary, payForActivity} = require('../controllers/touristController');
+    getHistoricalLocations, filterHistoricalLocationsByTag, addComplaint, updatePointsToWallet, payForItinerary, payForActivity, getTagNameById, getCategoryNameById} = require('../controllers/touristController');
 const router = express.Router();
 
 const { changePassword } = require("../controllers/PasswordController");
@@ -64,6 +64,7 @@ router.post('/addComplaint',addComplaint);
 router.patch('/updatePointsToWallet/:touristId',updatePointsToWallet);
 router.patch('/payForItinerary',payForItinerary);
 router.patch('/payForActivity',payForActivity);
-
+router.get('/tagName/:id', getTagNameById);
+router.get('/categoryName/:id', getCategoryNameById);
 
 module.exports = router;

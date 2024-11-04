@@ -1,12 +1,43 @@
 const mongoose= require('mongoose')
 const Product= require('../models/ProductModel')
-const Tourist = require("../models/TouristModel");
+const Tourist = require("../models/touristModel");
 const Itinerary = require('../models/ItineraryModel');
 const Activity = require('../models/AdvertiserActivityModel');
 const Tag = require('../models/TagModel');
 const HistoricalLocationModel = require('../models/HistoricalLocationModel');
 const MuseumModel = require('../models/MuseumModel');
 const Complaint = require('../models/ComplaintModel');
+const Category = require('../models/CategoryModel')
+
+const getTagNameById = async (req, res) => {
+  try {
+      const tagId = req.params.id;
+      const tag = await Tag.findById(tagId, 'tag_name'); // Only select `tag_name`
+
+      if (!tag) {
+          return res.status(404).json({ error: 'Tag not found' });
+      }
+
+      res.json({ tag_name: tag.tag_name });
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch tag name' });
+  }
+};
+
+const getCategoryNameById = async (req, res) => {
+  try {
+      const categoryId = req.params.id;
+      const category = await Category.findById(categoryId, 'name');
+
+      if (!category) {
+          return res.status(404).json({ error: 'Category not found' });
+      }
+
+      res.json({ name: category.name });
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch category name' });
+  }
+};
 
 
 
@@ -762,4 +793,4 @@ async function payForActivity(req, res) {
     getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating,
      getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag,
      getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo,
-     addComplaint, updatePointsToWallet, payForItinerary, payForActivity};
+     addComplaint, updatePointsToWallet, payForItinerary, payForActivity, getTagNameById, getCategoryNameById};
