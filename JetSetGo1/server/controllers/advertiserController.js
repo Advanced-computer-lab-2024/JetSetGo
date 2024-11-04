@@ -1,6 +1,41 @@
 const Advertiser = require('../models/AdvertiserModel');
 const Activity = require('../models/AdvertiserActivityModel');
+const multer = require('multer');
+const path = require('path');
 const Transportation = require('../models/TransportationModel');
+
+
+
+
+// Set up storage configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+// Initialize upload with storage configuration
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  fileFilter: (req, file, cb) => {
+    const fileTypes = /jpeg|jpg|png|gif/;
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = fileTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb('Error: Images Only!');
+    }
+  }
+});
+
+
+
 
 // Create Transportation
 const createTransportation = async (req, res) => {
@@ -88,9 +123,6 @@ const createAdvertiserProfile = async (req, res) => {
   }
 };
 
-
-
-
 // Update Advertiser Profile
 const updateAdvertiserProfile = async (req, res) => {
   const { id } = req.params;
@@ -113,7 +145,6 @@ const updateAdvertiserProfile = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
 
 // Get Advertiser Profile
 const getAdvertiserProfile = async (req, res) => {
@@ -151,7 +182,6 @@ const deleteActivity = async (req, res) => {
       res.status(500).json({ error: err.message });
   }
 };
-
 
 // Create Activity
 const createActivity = async (req, res) => {
@@ -192,7 +222,6 @@ const updateActivity = async (req, res) => {
   }
 };
 
-
 // Get All Activities
 const getActivities = async (req, res) => {
   try {
@@ -202,7 +231,6 @@ const getActivities = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
 
 //Read my Activities
 const showMyActivities = async(req,res) => {
@@ -218,46 +246,60 @@ try{
     }
 }
 
-module.exports = { showMyActivities, createTransportation, getTransportation, updateTransportation, deleteTransportation, 
-createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity}
+const changePassword = async (req, res) => {
+  const { id } = req.params; // Get the user ID from the route parameters
+  const { oldPassword, newPassword } = req.body; // Get old and new passwords from the body
 
+  // Validate input
+  if (!id || !oldPassword || !newPassword) {
+      return res.status(400).json({ error: "User ID, old password, and new password are required." });
+  }
 
-
-/*[
-    {
-        "_id": "67129e1f0f09f130c62ebefc",
-        "carModel": "Tesla",
-        "days": [
-            "Monday",
-            "Tuesday"
-        ],
-        "time": "12PM-6PM",
-        "location": "Cairo",
-        "price": 3000,
-        "totalrating": "0",
-        "advertiser": "66ff041bf99d83cc77b8cb2b",
-        "ratings": [],
-        "bookings": [],
-        "createdAt": "2024-10-18T17:42:55.310Z",
-        "__v": 0
-    },
-    {
-        "_id": "67129e570f09f130c62ebefe",
-        "carModel": "Mustang",
-        "days": [
-            "Friday",
-            "Saturday",
-            "Sunday"
-        ],
-        "time": "8PM-6AM",
-        "location": "Cairo",
-        "price": 3000,
-        "totalrating": "0",
-        "advertiser": "66ff041bf99d83cc77b8cb2b",
-        "ratings": [],
-        "bookings": [],
-        "createdAt": "2024-10-18T17:43:51.260Z",
-        "__v": 0
-    }
-]*/ 
+  try {
   
+      const user = await Advertiser.findById(id);
+
+      if (!user) {
+          return res.status(404).json({ error: "User not found." });
+      }
+
+      // Compare old password
+      const isMatch = await bcrypt.compare(oldPassword, user.password); // Assuming you're using bcrypt
+
+      if (!isMatch) {
+          return res.status(400).json({ error: "Old password is incorrect." });
+      }
+
+      // Update password
+      user.password = await bcrypt.hash(newPassword, 10);
+      await user.save();
+
+      res.status(200).json({ message: "Password changed successfully." });
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+};
+
+const uploadProfileImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const profileImage = req.file ? req.file.path : null;
+
+    // Update the advertiser's profile image in the database
+    const advertiser = await Advertiser.findByIdAndUpdate(
+      id,
+      { profileImage },
+      { new: true }
+    );
+
+    if (!advertiser) {
+      return res.status(404).json({ error: 'Advertiser not found' });
+    }
+
+    res.json({ message: 'Profile image uploaded successfully', imagePath: profileImage });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
+};
+
+module.exports = {upload,createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities,changePassword,uploadProfileImage,  createTransportation, getTransportation, updateTransportation, deleteTransportation};

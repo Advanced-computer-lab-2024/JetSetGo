@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+///aaaaaaA11111111111111111111111
 const touristSchema = new mongoose.Schema({
     username: { 
         type: String, 
@@ -35,10 +35,26 @@ const touristSchema = new mongoose.Schema({
     },
     wallet: { 
         type: Number, 
-        default: 0 ,
-        immutable: true
-    },         // Not editable directly
-       
+        default: 0
+    },
+    
+    deletionRequested: {////////////////////////////////////////////////
+        type: Boolean,
+        default: false
+    },
+    TotalPoints: { 
+        type: Number, 
+        default: 0
+    },
+    Points: { 
+        type: Number, 
+        default: 0
+    },
+    Level: { 
+        type: Number,
+        enum: [1, 2, 3],  // Only allow values 1, 2, or 3
+        default: 1 
+    },   
     createdAt: { 
         type: Date, 
         default: Date.now 

@@ -15,7 +15,6 @@ const getSingleProduct= async (req,res) => {
     res.status(200).json(product)
 }
 
-
 // Add new product
 const createProduct = async (req, res) =>{
     const {name, description, price, quantityAvailable, picture, seller, ratings} = req.body

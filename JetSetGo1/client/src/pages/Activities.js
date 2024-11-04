@@ -57,14 +57,14 @@ const Activities2 = () => {
 
     return (
         <div className="activities">
-            <nav>
+            {/* <nav>
                 <ul>
                     <li><Link to="/activities">Activities</Link></li>
                     <li><Link to="/itineraries">Itineraries</Link></li>
                     <li><Link to="/museums">Museums</Link></li>
                     <li><Link to="/historicalLocations">Historical Locations</Link></li>
                 </ul>
-            </nav>
+            </nav> */}
 
             {/* Render ActivityFilter component */}
             <ActivityFilter onFilter={handleSearchFilter} />
@@ -75,7 +75,7 @@ const Activities2 = () => {
                 <button onClick={fetchSortedByRating}>Sort by Rating</button>
             </div>
 
-            <div className="upcomingActivities">
+            <div className="product-grid">
                 { activitiesToShow && activitiesToShow.length === 0 && 
                 (
                 <p>No results found</p>

@@ -2,6 +2,20 @@ const express = require('express');
 const { createSellerProfile, updateSellerProfile, getSellerProfile, 
     getProducts, createProduct, updateProduct,filterProducts,sortByRate, searchProductName,getSingleProduct } = require('../controllers/sellerController');
 const router = express.Router();
+const SellerController = require('../controllers/sellerController')
+const {uploadLogo} = require('../controllers/sellerController');
+
+router.patch('/:id/upload-profile-image', uploadLogo.single('image'), SellerController.uploadProfileImage);
+
+
+// const sellerController = require('../controllers/sellerController');
+//  multer = require('../config/multer');
+// router.patch('/:id/upload-profile-image', multer.single('image'), sellerController.uploadProfileImage);
+
+
+
+const { changePassword } = require("../controllers/PasswordController");
+router.patch("/change-password/:id/:modelName", changePassword);
 
 // Create or Update Seller Profile
 router.post('/create/:id', createSellerProfile);

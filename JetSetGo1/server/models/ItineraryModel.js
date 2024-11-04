@@ -13,7 +13,8 @@ const itinerarySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "TourGuide",
     required: true,
-  }, // Reference to the tour guide who created the itinerary
+  }, 
+  // Reference to the tour guide who created the itinerary
   // activities: [
   //     {
   //         type: mongoose.Schema.Types.ObjectId,
@@ -58,16 +59,44 @@ const itinerarySchema = new mongoose.Schema({
     type: String,
     required: true, // Location where participants will be dropped off
   },
+  tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
   isBooked: {
     type: Boolean,
     required: true,
     default: false,
   },
-  tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
-  rating: {
-    type: Number,
-    default: 0,
+  active: {
+    type: Boolean,
+    default: true, // Indicates if the itinerary is active
   },
+  flagged: {
+    type: Boolean,
+    default: false,
+  },
+  ratings: [
+    {
+      tourist: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tourist", // Reference to the tourist
+      },
+      rating: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
+  Tourists: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tourist", // Assuming you have a Tourist model
+    },
+  ],
+
+  comments: {
+    type: [String],
+    required: true,
+  },
+
   createdAt: { type: Date, default: Date.now },
 });
 
