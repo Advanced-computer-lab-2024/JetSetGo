@@ -5,8 +5,8 @@ import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import './AdminComplaintsPageStyle.css';
 
 const statusClasses = {
-  Resolved: 'status-resolved',
-  Pending: 'status-pending',
+  resolved: 'status-resolved',
+  pending: 'status-pending',
 };
 
 const AdminComplaints = () => {

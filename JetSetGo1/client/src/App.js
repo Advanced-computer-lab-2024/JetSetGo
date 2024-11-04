@@ -52,8 +52,8 @@ import Authentication from './pages/Authentication/Authentication';
 import ProfileJohn from './pages/profileJohn.js';
 
 
-import AdminComplaints from './pages/AdminComplaintsPage.js';
-import AdminViewComplaint from './pages/AdminViewComplaint.js'
+import AdminComplaints from './pages/Admin/AdminComplaintsPage.js';
+import AdminViewComplaint from './pages/Admin/AdminViewComplaint.js'
 
 
 function App() {

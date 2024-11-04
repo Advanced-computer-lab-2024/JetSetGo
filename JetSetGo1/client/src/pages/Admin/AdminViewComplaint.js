@@ -7,7 +7,7 @@ const AdminViewComplaint = () => {
     const params = new URLSearchParams(window.location.search);
     const complaintId = params.get('complaintId');
 
-     const navigate = useNavigate()
+    const navigate = useNavigate();
 
     useEffect(() => {
         viewComplaint();
@@ -31,7 +31,7 @@ const AdminViewComplaint = () => {
                 body: JSON.stringify({ complaintId, reply: replyText }),
             });
             if (response.ok) {
-                window.location.href = '/admin/getComplaints';
+                navigate('/admin/getComplaints');
             }
         } catch (error) {
             console.error('Error resolving complaint:', error);
@@ -46,21 +46,27 @@ const AdminViewComplaint = () => {
 
     return (
         <div className="complaint-container">
-             <button onClick={() => navigate(-1)} className="back-button">Go Back</button>
-            <h2 className="complaint-title">Complaint Details</h2>
-
             <div className="complaint-details">
-                <h3>{complaint ? complaint.title : "Not found"}</h3>
-                <p><strong>Description:</strong> {complaint ? complaint.body : "Not found"}</p>
-                <p><strong>Status:</strong> {complaint ? complaint.status : "Not found"}</p>
-                <p><strong>Date:</strong> {complaint ? complaint.date : "Not found"}</p>
+                <h2>{complaint ? complaint.title : "Not found"}</h2>
+                <p className="complaint-body">{complaint ? complaint.body : "Not found"}</p>
+                <p className={`status ${complaint?.status?.toLowerCase()}`}>
+                    {complaint ? complaint.status.toUpperCase() : "Not found"}
+                </p>
+                <p>{complaint ? new Date(complaint.date).toLocaleDateString() : "Not found"}</p>
             </div>
-
-            <form onSubmit={handleSubmit} className="response-form">
-                <label htmlFor="response" className="response-label">Admin Response:</label>
-                <input id="response" className="response-input" placeholder="Enter your response here..." />
+        <form onSubmit={handleSubmit} className="response-form">
+            <label htmlFor="response" className="response-label">Admin Response:</label>
+            <textarea
+                id="response"
+                className="response-textarea"
+                placeholder="Enter your response here..."
+            />
+            <div className="form-actions">
+                <button onClick={() => navigate(-1)} className="back-button">Go Back</button>
                 <button type="submit" className="submit-button">Submit Response</button>
-            </form>
+            </div>
+        </form>
+
         </div>
     );
 };
