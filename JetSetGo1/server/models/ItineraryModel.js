@@ -13,7 +13,8 @@ const itinerarySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "TourGuide",
     required: true,
-  }, // Reference to the tour guide who created the itinerary
+  }, 
+  // Reference to the tour guide who created the itinerary
   // activities: [
   //     {
   //         type: mongoose.Schema.Types.ObjectId,
