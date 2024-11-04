@@ -2,6 +2,7 @@
 .update-profile-container {
     max-width: 600px;
     margin: 0 auto;
+    margin-top: 30px;
     padding: 40px;
     background-color: #fff;
     border-radius: 8px;
