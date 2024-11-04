@@ -38,6 +38,31 @@ const touristSchema = new mongoose.Schema({
         default: 0 ,
         immutable: true
     },         // Not editable directly
+    
+    deletionRequested: {////////////////////////////////////////////////
+        type: Boolean,
+        default: false
+    },
+
+    prefrences:{
+        historicalTags: [{ 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'HistoricalTag',
+            }],
+        tags: [{ 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'Tag',
+            
+        }],
+        budget: { 
+            maximum: { 
+                type: Number
+            },
+            minimum: { 
+                type: Number
+            }
+        }
+    },
        
     createdAt: { 
         type: Date, 

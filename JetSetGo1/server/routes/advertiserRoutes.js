@@ -1,9 +1,6 @@
 const express = require('express');
-const { createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile , createActivity, updateActivity, deleteActivity, getActivities } = require('../controllers/advertiserController');
+const { showMyActivities, createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile , createActivity, updateActivity, deleteActivity, getActivities , createTransportation, getTransportation, updateTransportation, deleteTransportation} = require('../controllers/advertiserController');
 const router = express.Router();
-
-
-
 
 
 // Advertiser activities 
@@ -11,8 +8,11 @@ router.post('/createActivity', createActivity);
 router.patch('/updateActivity/:id', updateActivity);
 
 router.get('/', getActivities);
-const {showMyActivities} = require('../controllers/advertiserController');
 
+router.post('/newTransportation', createTransportation )
+router.get('/showTransportation', getTransportation )
+router.patch('/updateTransportation/:id', updateTransportation)
+router.delete('/deleteTransportation/:id', deleteTransportation )
 
 
 // Create or Update Advertiser Profile
@@ -28,6 +28,8 @@ router.delete('/:id', deleteActivity); // Delete an activity
 router.post('/create', createActivity);
 router.patch('/update/:id', updateActivity);
 // router.get('/', getActivities);
+
+
 router.get('/showAll', showMyActivities )
 
 module.exports = router;

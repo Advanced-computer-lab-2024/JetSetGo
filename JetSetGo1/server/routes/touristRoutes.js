@@ -1,14 +1,29 @@
 const express = require('express');
+const {createTransportBooking, getTransportBooking, deleteTransportBooking,  selectPrefrences, getPrefrences, updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByName,
+    searchHistoricalPlaceByCategory, searchMuseumByTag,searchMuseumByName,searchMuseumByCategory,searchActivityByBudget,searchActivityByDate, 
+    searchActivityByRating,searchActivityByTag,searchActivityByCategory,
+    searchActivityByName, searchItineraryByDate, searchItineraryByBudget, 
+    searchItineraryByLanguage,searchItineraryByName,searchItineraryByTag,
+    getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice,
+     sortItineraryByRating, getMuseums, filterMuseumsByTag,
+      getHistoricalLocations, filterHistoricalLocationsByTag  } = require('../controllers/touristController');
+
 const { getProducts, createProduct, updateProduct,filterProducts,sortByRate, searchProductName,} = require('../controllers/adminController.js');
-const {updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByName,
-  searchHistoricalPlaceByCategory, searchMuseumByTag,searchMuseumByName,searchMuseumByCategory,searchActivityByBudget,searchActivityByDate, 
-  searchActivityByRating,searchActivityByTag,searchActivityByCategory,
-  searchActivityByName, searchItineraryByDate, searchItineraryByBudget, 
-  searchItineraryByLanguage,searchItineraryByName,searchItineraryByTag,
-  getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice,
-   sortItineraryByRating, getMuseums, filterMuseumsByTag,
-    getHistoricalLocations, filterHistoricalLocationsByTag  } = require('../controllers/touristController');
+
+
 const router = express.Router();
+
+
+
+router.post('/newTransportBooking', createTransportBooking )
+router.get('/showTransportBooking', getTransportBooking )
+router.delete('/deleteTransportBooking/:id', deleteTransportBooking )
+
+router.patch('/selectPrefrences/:id', selectPrefrences )
+router.get('/myPrefrenes/:id', getPrefrences )
+
+
+
 
 
 router.get('/Products',getProducts )
