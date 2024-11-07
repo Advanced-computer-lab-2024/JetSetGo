@@ -14,7 +14,7 @@ const {updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByNam
     deleteCommentFromActivity,
     book_activity_Itinerary,
     cancel_booking,
-    getActivitiesByCategory} = require('../controllers/touristController');
+    getActivitiesByCategory, fetchID, fetchActivityID, fetchItineraryID} = require('../controllers/touristController');
 
 const router = express.Router();
 
@@ -87,11 +87,16 @@ router.delete("/del_comment", deleteCommentFromActivity);
 router.post("/book_activity_Itinerary", book_activity_Itinerary);
 router.delete("/cancel_booking", cancel_booking);
 
-router.post('/addComplaint',addComplaint);
+router.post('/addComplaint/:userId',addComplaint);
 router.patch('/updatePointsToWallet/:touristId',updatePointsToWallet);
-router.patch('/payForItinerary',payForItinerary);
-router.patch('/payForActivity',payForActivity);
+router.patch('/payForItinerary/:touristId',payForItinerary);
+router.patch('/payForActivity/:touristId',payForActivity);
 router.get('/tagName/:id', getTagNameById);
 router.get('/categoryName/:id', getCategoryNameById);
+
+router.get('/:touristId', fetchID);
+router.get('/activity/:activityId', fetchActivityID);
+router.get('/itinerary/:itineraryId', fetchItineraryID);
+
 
 module.exports = router;
