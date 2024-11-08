@@ -1106,49 +1106,6 @@ const fetchItineraryID = async (req, res) => {
   }
 }
 
-const fetchID = async (req, res) => {
-  try {
-      const { touristId } = req.params; // Assuming touristId is passed in the URL
-      const tourist = await Tourist.findById(touristId);
-      
-      if (!tourist) {
-          return res.status(404).json({ message: 'Tourist not found' });
-      }
-      res.json(tourist);
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'An error occurred', error });
-  }
-};
-
-const fetchActivityID = async (req, res) => {
-  const { activityId } = req.params;
-  const activity = await Activity.findById(activityId); // Replace Activity with your model
-  
-  try {
-      if (!activity) {
-          return res.status(404).json({ error: 'Activity not found' });
-      }
-      res.json(activity);
-  } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch activity' });
-  }
-}
-
-const fetchItineraryID = async (req, res) => {
-  const { itineraryId } = req.params;
-  const itinerary = await Itinerary.findById(itineraryId); // Replace Itinerary with your model
-  
-  try {
-      if (!itinerary) {
-          return res.status(404).json({ error: 'Itinerary not found' });
-      }
-      res.json(itinerary);
-  } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch itinerary' });
-  }
-}
-
   module.exports = {createTransportBooking, getTransportBooking, deleteTransportBooking, selectPrefrences, getPrefrences,
     searchHistoricalPlaceByTag,searchHistoricalPlaceByName,searchHistoricalPlaceByCategory,
     searchMuseumByTag,searchMuseumByName,searchMuseumByCategory,
