@@ -6,6 +6,7 @@ const Activity = require('../models/AdvertiserActivityModel');
 const Tag = require('../models/TagModel');
 const HistoricalLocationModel = require('../models/HistoricalLocationModel');
 const MuseumModel = require('../models/MuseumModel');
+const Category = require('../models/CategoryModel')
 
 
 
@@ -386,6 +387,17 @@ const searchActivityByCategory = async (req,res) =>{
     res.status(404).json({error:"Activity not found"})
   }
 };
+
+// Get all categories
+const getCategories = async (req, res) => {
+  try {
+    const categories = await Category.find(); // Retrieve all categories
+    res.status(200).json(categories); // Send categories as JSON
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching categories' });
+  }
+};
+
 // Fetch activities by category
 const getActivitiesByCategory = async (req, res) => {
   const { categoryId } = req.params;  // Extract category ID from the request params
@@ -574,4 +586,4 @@ const sortItineraryByRating = async (req, res) => {
     searchItineraryByLanguage, searchItineraryByCategory,searchItineraryByName,searchItineraryByTag,
     getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating,
      getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag,
-     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo,getActivitiesByCategory,};
+     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo,getActivitiesByCategory,getCategories};

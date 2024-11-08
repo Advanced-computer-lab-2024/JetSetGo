@@ -53,6 +53,10 @@ import ActivityPagejohn from './pages/ActivityJohn';
 import Authentication from './pages/Authentication/Authentication';
 import ProfileJohn from './pages/profileJohn.js';
 import TourGuideLayout from './components/TourGuideLayout.js';
+import FlagItinerary from './components/FlagItinerary';
+import ItineraryManagement from './components/ItineraryManagement';
+import CategoriesAndActivities from './components/CategoriesAndActivities';
+import ShareLink from './components/ShareLink';
 
 
 function App() {
@@ -104,6 +108,14 @@ function App() {
             <Route path="/admin/updateProduct/:id" element={<UpdateProducts usertype="admin" />} />
 
             <Route path="/delete/:role" element={<UserList />} />
+
+
+            <Route path="/FlagItinery" element={<FlagItinerary />} />
+            <Route path="/ItineraryManagement" element={<ItineraryManagement />} />
+
+            <Route path="/CategoriesAndActivities" element={<CategoriesAndActivities />} />
+            <Route path="/ShareLink" element={<ShareLink />} />
+
             <Route path="/tour-guide/itineraryManager" element={<ItineraryManager />} />
             <Route path="/admin/profile" element={<AdminProfilePage />} />
             <Route path="/admin/delete-options" element={<DeleteOptions />} />

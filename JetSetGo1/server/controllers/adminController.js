@@ -20,6 +20,17 @@ const mongoose= require('mongoose')
 const models={admin: Admin, seller: Seller, tourguides: TourGuide, tourist: Tourist, advertisers: Advertiser, tourismgoverner: TourismGoverner};
 ////////////////////////////////////////////////////////////////////////////////
 
+// Get All Itineraries
+const getAllItineraries = async (req, res) => {
+    try {
+      const itineraries = await Itinerary.find(); // Fetch all itineraries from the database
+      res.status(200).json({ itineraries });
+    } catch (error) {
+      res.status(500).json({ error: 'Server error while fetching itineraries.', details: error.message });
+    }
+  };
+  
+
 // Flag an Itinerary
 const flagItinerary = async (req, res) => {
     const { itineraryId } = req.params;
@@ -397,5 +408,5 @@ const searchProductName = async(req,res) => {
 
 
 module.exports = { create_pref_tag ,  get_pref_tag , update_pref_tag , delete_pref_tag , create_act_category , get_act_category , update_act_category , delete_act_category , add_tourism_governer , view_tourism_governer,addAdmin, deleteAccount, getAllUsers
-    ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,flagItinerary};
+    ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,flagItinerary,getAllItineraries};
 

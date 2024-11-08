@@ -7,13 +7,16 @@ const {updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByNam
   searchItineraryByLanguage,searchItineraryByName,searchItineraryByTag,
   getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice,
    sortItineraryByRating, getMuseums, filterMuseumsByTag,
-    getHistoricalLocations, filterHistoricalLocationsByTag, getActivitiesByCategory,} = require('../controllers/touristController');
+    getHistoricalLocations, filterHistoricalLocationsByTag, getActivitiesByCategory,getCategories} = require('../controllers/touristController');
 const router = express.Router();
 
 const { changePassword } = require("../controllers/PasswordController");
 
 //choose category of activities
 router.get('/activities/category/:categoryId', getActivitiesByCategory);
+
+// Route to get all categories
+router.get('/categories', getCategories);
 
 router.patch("/change-password/:id/:modelName", changePassword);
 
