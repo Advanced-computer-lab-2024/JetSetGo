@@ -1,3 +1,4 @@
+const TransportBooking = require('../models/TransportationBookingModel');
 const mongoose = require("mongoose");
 const Product = require("../models/ProductModel");
 const Tourist = require("../models/touristModel");
@@ -39,6 +40,89 @@ const getCategoryNameById = async (req, res) => {
       res.status(500).json({ error: 'Failed to fetch category name' });
   }
 };
+
+// Create TransportBooking
+const createTransportBooking = async (req, res) => {
+  const {transportationId, touristId, date} = req.body;
+
+  try {
+    const newTransportBooking = await TransportBooking.create({ transportationId, touristId, date});
+    res.status(201).json(newTransportBooking);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+// Read Transportation
+const getTransportBooking = async (req, res) => {
+// const { id } = req.params;
+
+  try {
+    const TransportBookingProfile = await TransportBooking.find();
+    res.status(200).json(TransportBookingProfile);
+  } catch (err) {
+    res.status(404).json({ error: 'Transportation Booking not found' });
+  }
+};
+
+
+//Delete Transportation
+const deleteTransportBooking = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      const deleteTransportBooking = await TransportBooking.findById(id);
+      
+      if (!deleteTransportBooking) {
+          return res.status(404).json({ message: 'Transportation Booking not found' });
+      } else{
+
+      const bookingDate = deleteTransportBooking.date;
+      const hoursDiff = (new Date(bookingDate) - new Date()) / (1000 * 60 * 60);
+
+  if (hoursDiff < 48) {
+    return res.status(400).json({ message: 'Cannot cancel within 48 hours' });
+  }
+  else{
+
+      await TransportBooking.deleteOne({ _id:deleteTransportBooking._id});
+      res.status(200).json({ message: 'Transportation Booking deleted successfully' });
+
+  }
+
+  } }catch (err) {
+      res.status(500).json({ error: err.message });
+  }
+};
+
+
+
+const selectPrefrences = async (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+
+  try {
+    const myPrefrences = await Tourist.findByIdAndUpdate(id, {$push:{ prefrences :updates}}, { new: true });
+    res.status(200).json(myPrefrences);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+const getPrefrences = async (req, res) => {
+   const { id } = req.params;
+  
+    try {
+      const TouristProfile = await Tourist.findById(id);
+      const PrefrencesProfile = TouristProfile.prefrences;
+      res.status(200).json(PrefrencesProfile);
+    } catch (err) {
+      res.status(404).json({ error: 'Tourist not found' });
+    }
+  };
+
+
+
 
 // get all products
 const getProducts = async (req, res) => {
@@ -1022,7 +1106,50 @@ const fetchItineraryID = async (req, res) => {
   }
 }
 
-  module.exports = {
+const fetchID = async (req, res) => {
+  try {
+      const { touristId } = req.params; // Assuming touristId is passed in the URL
+      const tourist = await Tourist.findById(touristId);
+      
+      if (!tourist) {
+          return res.status(404).json({ message: 'Tourist not found' });
+      }
+      res.json(tourist);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'An error occurred', error });
+  }
+};
+
+const fetchActivityID = async (req, res) => {
+  const { activityId } = req.params;
+  const activity = await Activity.findById(activityId); // Replace Activity with your model
+  
+  try {
+      if (!activity) {
+          return res.status(404).json({ error: 'Activity not found' });
+      }
+      res.json(activity);
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch activity' });
+  }
+}
+
+const fetchItineraryID = async (req, res) => {
+  const { itineraryId } = req.params;
+  const itinerary = await Itinerary.findById(itineraryId); // Replace Itinerary with your model
+  
+  try {
+      if (!itinerary) {
+          return res.status(404).json({ error: 'Itinerary not found' });
+      }
+      res.json(itinerary);
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch itinerary' });
+  }
+}
+
+  module.exports = {createTransportBooking, getTransportBooking, deleteTransportBooking, selectPrefrences, getPrefrences,
     searchHistoricalPlaceByTag,searchHistoricalPlaceByName,searchHistoricalPlaceByCategory,
     searchMuseumByTag,searchMuseumByName,searchMuseumByCategory,
     searchActivityByBudget,searchActivityByDate,searchActivityByRating, searchActivityByTag,searchActivityByCategory,searchActivityByName, 

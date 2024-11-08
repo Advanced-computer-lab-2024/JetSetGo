@@ -1,6 +1,6 @@
 const express = require('express');
 const { getProducts, createProduct, updateProduct,filterProducts,sortByRate, searchProductName,} = require('../controllers/adminController.js');
-const {updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByName,
+const {createTransportBooking, getTransportBooking, deleteTransportBooking,  selectPrefrences, getPrefrences, updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByName,
   searchHistoricalPlaceByCategory, searchMuseumByTag,searchMuseumByName,searchMuseumByCategory,searchActivityByBudget,searchActivityByDate, 
   searchActivityByRating,searchActivityByTag,searchActivityByCategory,
   searchActivityByName, searchItineraryByDate, searchItineraryByBudget, 
@@ -17,6 +17,17 @@ const {updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByNam
     getActivitiesByCategory, fetchID, fetchActivityID, fetchItineraryID} = require('../controllers/touristController');
 
 const router = express.Router();
+
+
+
+
+router.post('/newTransportBooking', createTransportBooking )
+router.get('/showTransportBooking', getTransportBooking )
+router.delete('/deleteTransportBooking/:id', deleteTransportBooking )
+
+router.patch('/selectPrefrences/:id', selectPrefrences )
+router.get('/myPrefrenes/:id', getPrefrences )
+
 
 const { changePassword } = require("../controllers/PasswordController");
 

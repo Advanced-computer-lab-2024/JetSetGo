@@ -1,7 +1,7 @@
-const TourGuide = require("../models/TourGuideModel"); //
-const Tourist = require("../models/touristModel"); //
-const Advertiser = require("../models/AdvertiserModel"); //
-const Seller = require("../models/SellerModel"); //
+const TourGuide = require('../models/TourGuideModel');  //
+const Tourist = require('../models/touristModel');  // 
+const Advertiser = require('../models/AdvertiserModel');  //
+const Seller = require('../models/SellerModel');  //
 
 const registerTourGuide = async (req, res) => {
   const { email, username, password, accepted } = req.body;
