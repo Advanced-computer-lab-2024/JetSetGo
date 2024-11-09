@@ -8,7 +8,7 @@ const Tag = require("../models/TagModel");
 const HistoricalLocationModel = require("../models/HistoricalLocationModel");
 const MuseumModel = require("../models/MuseumModel");
 const Complaint = require('../models/ComplaintModel');
-const Category = require('../models/CategoryModel');
+
 const Category = require('../models/CategoryModel')
 const Booking = require("../models/bookingmodel");
 
