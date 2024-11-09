@@ -1,5 +1,39 @@
 const Advertiser = require('../models/AdvertiserModel');
 const Activity = require('../models/AdvertiserActivityModel');
+const multer = require('multer');
+const path = require('path');
+
+
+
+// Set up storage configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+// Initialize upload with storage configuration
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  fileFilter: (req, file, cb) => {
+    const fileTypes = /jpeg|jpg|png|gif/;
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = fileTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb('Error: Images Only!');
+    }
+  }
+});
+
+
+
 
 const createAdvertiserProfile = async (req, res) => {
   const { id } = req.params;
@@ -33,9 +67,6 @@ const createAdvertiserProfile = async (req, res) => {
   }
 };
 
-
-
-
 // Update Advertiser Profile
 const updateAdvertiserProfile = async (req, res) => {
   const { id } = req.params;
@@ -58,7 +89,6 @@ const updateAdvertiserProfile = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
 
 // Get Advertiser Profile
 const getAdvertiserProfile = async (req, res) => {
@@ -96,7 +126,6 @@ const deleteActivity = async (req, res) => {
       res.status(500).json({ error: err.message });
   }
 };
-
 
 // Create Activity
 const createActivity = async (req, res) => {
@@ -137,7 +166,6 @@ const updateActivity = async (req, res) => {
   }
 };
 
-
 // Get All Activities
 const getActivities = async (req, res) => {
   try {
@@ -147,7 +175,6 @@ const getActivities = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
 
 //Read my Activities
 const showMyActivities = async(req,res) => {
@@ -162,9 +189,6 @@ try{
         res.status(400).json({error:"Id is required"})
     }
 }
-
-
-
 
 const changePassword = async (req, res) => {
   const { id } = req.params; // Get the user ID from the route parameters
@@ -200,4 +224,26 @@ const changePassword = async (req, res) => {
   }
 };
 
-module.exports = {createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities,changePassword};
+const uploadProfileImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const profileImage = req.file ? req.file.path : null;
+
+    // Update the advertiser's profile image in the database
+    const advertiser = await Advertiser.findByIdAndUpdate(
+      id,
+      { profileImage },
+      { new: true }
+    );
+
+    if (!advertiser) {
+      return res.status(404).json({ error: 'Advertiser not found' });
+    }
+
+    res.json({ message: 'Profile image uploaded successfully', imagePath: profileImage });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
+};
+
+module.exports = {upload,createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities,changePassword,uploadProfileImage};
