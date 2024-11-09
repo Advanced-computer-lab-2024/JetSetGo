@@ -67,6 +67,12 @@ const tourGuideSchema = new mongoose.Schema({
       ref: "Tourist", // Assuming you have a Tourist model
     },
   ],
+  Tourists: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tourist", // Assuming you have a Tourist model
+    },
+  ],
 
   createdAt: {
     type: Date,

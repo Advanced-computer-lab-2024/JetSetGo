@@ -76,7 +76,8 @@ app.use((req,res,next)=>{
 app.use('/api/advertisers', advertiserRoutes);
 app.use('/api/sellers', sellerRoutes);
 app.use('/api/tour-guides', tourGuideRoutes);
-//app.use('/api/products',productRoutes)
+app.use('/api/tourism-governer', tourismGovernerRoutes);
+app.use('/api/tourist', touristRoutes);
 
 // app.use('/api/users', guestRoutes);
 

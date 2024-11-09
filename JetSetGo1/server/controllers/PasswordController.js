@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const Admin = require('../models/AdminModel');
 const Advertiser = require('../models/AdvertiserModel');
 const TourGuide = require('../models/TourGuideModel');
-const Tourist = require('../models/TouristModel');
+const Tourist = require('../models/touristModel');
 const TourismGoverner = require('../models/TourismGovernerModel')
 const Seller = require('../models/SellerModel')
 

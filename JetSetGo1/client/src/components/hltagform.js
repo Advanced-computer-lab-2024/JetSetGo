@@ -48,7 +48,7 @@ const HLTagform = () => {
 
             <label>Historical Period:</label>
             <input
-                type="description"
+                type="historicalPeriod"
                 onChange={(e) => sethistoricalPeriod(e.target.value)}
                 value={historicalPeriod}
             />

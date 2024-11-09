@@ -2,6 +2,8 @@ const Advertiser = require('../models/AdvertiserModel');
 const Activity = require('../models/AdvertiserActivityModel');
 const multer = require('multer');
 const path = require('path');
+const Transportation = require('../models/TransportationModel');
+
 
 
 
@@ -34,6 +36,60 @@ const upload = multer({
 
 
 
+
+// Create Transportation
+const createTransportation = async (req, res) => {
+    const {carModel, days, time, location, price, advertiser} = req.body;
+  
+    try {
+      const newTransportation = await Transportation.create({ carModel, days, time, location, price, advertiser});
+      res.status(201).json(newTransportation);
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  };
+  
+  // Read Transportation
+  const getTransportation = async (req, res) => {
+  // const { id } = req.params;
+  
+    try {
+      const TransportationProfile = await Transportation.find();
+      res.status(200).json(TransportationProfile);
+    } catch (err) {
+      res.status(404).json({ error: 'Transportation not found' });
+    }
+  };
+  
+  // Update Transportation 
+  const updateTransportation = async (req, res) => {
+    const { id } = req.params;
+    const updates = req.body;
+  
+    try {
+      const updatedTransportation = await Transportation.findByIdAndUpdate(id, updates, { new: true });
+      res.status(200).json(updatedTransportation);
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  };
+  
+  //Delete Transportation
+  const deleteTransportation = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+        const deletedTransportation = await Transportation.findByIdAndDelete(id);
+        
+        if (!deletedTransportation) {
+            return res.status(404).json({ message: 'Transportation not found' });
+        }
+        
+        res.status(200).json({ message: 'Transportation deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+  };
 
 const createAdvertiserProfile = async (req, res) => {
   const { id } = req.params;
@@ -315,4 +371,4 @@ const uploadDocument = async (req, res) => {
 
 
 
-module.exports = {requestAccountDeletion,upload,createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities,changePassword,uploadProfileImage,uploadDocument,uploadDoc};
+module.exports = {requestAccountDeletion,upload,createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities,changePassword,uploadProfileImage,  createTransportation, getTransportation, updateTransportation, deleteTransportation,uploadDocument,uploadDoc};

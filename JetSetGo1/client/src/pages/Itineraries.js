@@ -41,14 +41,14 @@ const Itineraries2 = () => {
 
     return (
         <div className="itineraries">
-            <nav>
+            {/* <nav>
                 <ul>
                     <li><Link to="/activities">Activities</Link></li>
                     <li><Link to="/itineraries">Itineraries</Link></li>
                     <li><Link to="/museums">Museums</Link></li>
                     <li><Link to="/historicalLocations">Historical Locations</Link></li>
                 </ul>
-            </nav>
+            </nav> */}
             
             {/* Itinerary Filter */}
             <ItineraryFilter onFilter={setFilteredItinerary} /> {/* Pass the state setter to filter */}
@@ -59,10 +59,12 @@ const Itineraries2 = () => {
                 <button onClick={sortByRating}>Sort by Rating</button>
             </div>
 
-            <div className="upcomingItineraries">
+            <div className="product-grid">
                 {itinerariesToShow && itinerariesToShow.length === 0 && <p>No results found</p>}
                 {itinerariesToShow && itinerariesToShow.map((itinerary) => (
-                    <ItineraryDetails key={itinerary._id} Itinerary={itinerary} />
+                    <Link key={itinerary._id} to={`/itinerary/${itinerary._id}/tourist/:touristId`}>
+                    <ItineraryDetails Itinerary={itinerary} />
+                    </Link>
                 ))}
             </div>
         </div>

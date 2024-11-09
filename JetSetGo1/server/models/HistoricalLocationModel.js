@@ -22,7 +22,7 @@ const historicalLocationSchema = new mongoose.Schema({
         native: { type: Number, required: true },
         student: { type: Number, required: true },
     },
-
+    pictures: [{ type: String }],
     tags: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'HistoricalTag' 
