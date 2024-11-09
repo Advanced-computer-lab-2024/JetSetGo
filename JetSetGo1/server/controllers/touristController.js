@@ -99,10 +99,18 @@ const deleteTransportBooking = async (req, res) => {
 
 const selectPrefrences = async (req, res) => {
   const { id } = req.params;
-  const updates = req.body;
+  const {tags,budget} = req.body;
+
+  const updates ={
+    tags, 
+    budget:{
+      from:budget.from,
+      to:budget.to,
+    },
+  };
 
   try {
-    const myPrefrences = await Tourist.findByIdAndUpdate(id, {$push:{ prefrences :updates}}, { new: true });
+    const myPrefrences = await Tourist.findByIdAndUpdate(id, {$set:{ prefrences :updates}}, { new: true });
     res.status(200).json(myPrefrences);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -110,16 +118,19 @@ const selectPrefrences = async (req, res) => {
 };
 
 const getPrefrences = async (req, res) => {
-   const { id } = req.params;
-  
-    try {
-      const TouristProfile = await Tourist.findById(id);
-      const PrefrencesProfile = TouristProfile.prefrences;
-      res.status(200).json(PrefrencesProfile);
-    } catch (err) {
-      res.status(404).json({ error: 'Tourist not found' });
-    }
-  };
+  const { id } = req.params;
+  console.log(id);
+
+   try {
+     const TouristProfile = await Tourist.findById(id);
+     console.log(TouristProfile.preferences);
+     const PrefrencesProfile = TouristProfile.prefrences;
+     res.status(200).json(PrefrencesProfile);
+   } catch (err) {
+     res.status(404).json({ error: 'Tourist not found' });
+   }
+ };
+
 
 
 

@@ -15,10 +15,10 @@ import DeleteOptions from './pages/DeleteOptions';
 import UserList from './pages/UserList';
 import ItineraryManager from './pages/ItineraryManager';
 import ProductListing from './pages/productsPage'
+import MyPrefs from './pages/my_prefrences.js';
 // import Navbar from "./components/Navbar";
 import ProductForm from "./components/ProductForm";
 import UpdateProducts from "./components/UpdateProduct";
-
 import Activities2 from './pages/Activities';
 import Itineraries2 from './pages/Itineraries';
 import Museums from './pages/museums';
@@ -39,6 +39,8 @@ import '@fortawesome/fontawesome-free/css/all.css';
 //pages and components 
 // import Home from './pages/home.js'
 import Tagspage from './pages/my_tags.js'
+import PreferencesSelection from './pages/SelectPrefrences.js'
+import Transportationpage from './pages/Transportation.js'
 import Categorypage from './pages/my_category.js'
 // import Navbar from './components/navbar.js'
 import Tourism_Governer from './pages/Tourism_Governer.js'
@@ -90,13 +92,13 @@ function App() {
         <div>
           <Routes>
             <Route path="/tourguide/:id" element={<TourGuideLayout />} >
-            <Route path="/tourguide/:id/create/tour-guides/:id" element={<CreateProfile />} />
-            <Route path="/tourguide/:id/profile/tour-guides/:id" element={<Profile />} />
-            <Route path="/tourguide/:id/update-profile/tour-guides/:id" element={<UpdateProfile />} />
-            <Route path="/tourguide/:id/Itineraries" element={<Itineraries />} />
-            <Route path="/tourguide/:id/Activities" element={<Activities />} />
-            <Route path="/tourguide/:id/Museum" element={<Museum />} />
-            <Route path="/tourguide/:id/HL" element={<HL />} />
+              <Route path="/tourguide/:id/create/tour-guides/:id" element={<CreateProfile />} />
+              <Route path="/tourguide/:id/profile/tour-guides/:id" element={<Profile />} />
+              <Route path="/tourguide/:id/update-profile/tour-guides/:id" element={<UpdateProfile />} />
+              <Route path="/tourguide/:id/Itineraries" element={<Itineraries />} />
+              <Route path="/tourguide/:id/Activities" element={<Activities />} />
+              <Route path="/tourguide/:id/Museum" element={<Museum />} />
+              <Route path="/tourguide/:id/HL" element={<HL />} />
             </Route>
             <Route path="/" element={<HomePage />} />
             <Route path="/seller/products" element={<ProductListing usertype="seller" />} />
@@ -114,15 +116,15 @@ function App() {
             <Route path="/admin/add" element={<AdminAddPage />} />
             <Route path="/edit/tourist/:id" element={<TouristEditPage />} />
             <Route path="/profile/tourist/:id" element={<TouristProfilePage />} />
-          
-            
-            
+
+
+
             <Route path="/activities2" element={<Activities2 filteredActivities={filteredActivities} />} />
             <Route path="/itineraries2" element={<Itineraries2 filteredItinerary={filteredItinerary} />} />
             <Route path="/museums" element={
               <><MuseumFilter onFilter={handleFilterResultsMusuems} />
                 <Museums filteredMuseum={filteredMuseum} /></>} />
-                
+
             {/* 
             <Route
               path="/"
@@ -136,13 +138,24 @@ function App() {
               path="/my_category"
               element={<Categorypage />}
             />
+
+            <Route path="/myprefs/:id" element={<MyPrefs />} />
+
+            <Route
+              path="/my_prefrences"
+              element={<PreferencesSelection />}
+            />
+
             <Route
               path="/Tourism_Governer"
               element={<Tourism_Governer />}
             />
-            
 
-           
+            <Route
+              path="/Transportation"
+              element={<Transportationpage />}
+            />
+
             <Route
               path="/HLTags"
               element={<HLTags />}
@@ -165,7 +178,7 @@ function App() {
             <Route
               path="/api/admin/viewComplaint"
               element={<AdminViewComplaint />}
-            /> 
+            />
 
             <Route
               path="/Itineraries"
@@ -173,8 +186,8 @@ function App() {
             />{/*johnn* */}
             <Route path='/ActivitiesJohn' element={<ActivityPagejohn />} />
             <Route path='/Authentication' element={<Authentication />} />
-            <Route path='/profileJohn/:id' element={<ProfileJohn/>} />
-              {/*johnn* */}
+            <Route path='/profileJohn/:id' element={<ProfileJohn />} />
+            {/*johnn* */}
             <Route path="/historicalLocations" element={
               <>
                 <HistoricalPlaceFilter onFilter={handleFilterResultsHistoricalPlaces} />

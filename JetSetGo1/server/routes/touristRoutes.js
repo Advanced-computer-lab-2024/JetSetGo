@@ -26,7 +26,7 @@ router.get('/showTransportBooking', getTransportBooking )
 router.delete('/deleteTransportBooking/:id', deleteTransportBooking )
 
 router.patch('/selectPrefrences/:id', selectPrefrences )
-router.get('/myPrefrenes/:id', getPrefrences )
+router.get('/myPrefrences/:id', getPrefrences )
 
 
 const { changePassword } = require("../controllers/PasswordController");
