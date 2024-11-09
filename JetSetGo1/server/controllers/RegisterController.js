@@ -1,5 +1,6 @@
 const TourGuide = require('../models/TourGuideModel');  //
-const Tourist = require('../models/touristModel');  // 
+const Tourist = require('../models/TouristModels');
+  // 
 const Advertiser = require('../models/AdvertiserModel');  //
 const Seller = require('../models/SellerModel');  //
 const multer = require('multer');

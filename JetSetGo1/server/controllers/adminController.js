@@ -5,8 +5,7 @@ const TourismGoverner = require('../models/TourismGovernerModel.js');
 const AdvertiserActivityModel = require('../models/AdvertiserActivityModel.js');
 const Seller = require('../models/SellerModel');
 const TourGuide = require('../models/TourGuideModel');
-const Tourist = require('../models/touristModel.js');
-const Tourist = require('../models/touristModel.js');
+const Tourist = require('../models/TouristModels.js');
 const TourismGovernerModel = require('../models/TourismGovernerModel.js');
 const multer = require('multer');
 const path = require('path');
@@ -14,7 +13,6 @@ const Product= require('../models/ProductModel');
 const Advertiser = require('../models/AdvertiserModel.js');
 const Itinerary = require("../models/ItineraryModel");
 const Complaint = require('../models/ComplaintModel.js')
-const Complaint = require('../models/ComplaintModel');
 const mongoose= require('mongoose')
 
 

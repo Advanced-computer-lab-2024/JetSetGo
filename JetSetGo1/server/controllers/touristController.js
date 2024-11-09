@@ -1,7 +1,7 @@
 const TransportBooking = require('../models/TransportationBookingModel');
 const mongoose = require("mongoose");
 const Product = require("../models/ProductModel");
-const Tourist = require("../models/touristModel");
+const Tourist = require('../models/TouristModels');
 const Itinerary = require("../models/ItineraryModel");
 const Activity = require("../models/AdvertiserActivityModel");
 const Tag = require("../models/TagModel");
@@ -123,7 +123,7 @@ const getPrefrences = async (req, res) => {
   };
 
 const multer = require('multer');
-const TouristModel = require('../models/TouristModel');
+
 
 
 // get all products
@@ -1135,6 +1135,26 @@ const fetchItineraryID = async (req, res) => {
       res.status(500).json({ error: 'Failed to fetch itinerary' });
   }
 }
+
+
+const requestAccountDeletion = async (req, res) => {
+  const {id } = req.params;
+  
+
+  try {
+      const tourist = await Tourist.findById(id);
+      if (!tourist) return res.status(404).json({ error: "User not found" });
+
+      // Update requestedDeletion field
+      tourist.deletionRequested = true;
+      await tourist.save();
+
+      return res.status(200).json({ message: "Deletion request submitted successfully." });
+  } catch (error) {
+      return res.status(500).json({ error: "An error occurred while processing the deletion request." });
+  }
+};
+
 
   module.exports = {createTransportBooking, getTransportBooking, deleteTransportBooking, selectPrefrences, getPrefrences,
     searchHistoricalPlaceByTag,searchHistoricalPlaceByName,searchHistoricalPlaceByCategory,

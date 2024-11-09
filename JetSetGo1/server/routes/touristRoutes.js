@@ -14,12 +14,11 @@ const {createTransportBooking, getTransportBooking, deleteTransportBooking,  sel
     deleteCommentFromActivity,
     book_activity_Itinerary,
     cancel_booking,
-    getActivitiesByCategory, fetchID, fetchActivityID, fetchItineraryID,getCategories} = require('../controllers/touristController');
+    getActivitiesByCategory, fetchID, fetchActivityID, fetchItineraryID,getCategories,requestAccountDeletion} = require('../controllers/touristController');
+
 const TouristController = require('../controllers/touristController');
 
 const router = express.Router();
-
-
 
 
 router.post('/newTransportBooking', createTransportBooking )
