@@ -13,13 +13,6 @@ const {
   showMyItineraries,
   itineraryActivation,
   itineraryDeactivation,
-  addItineraryRating,
-  addItineraryComment,
-  addRating,
-  addComment,
-  followItinerary,
-  unfollowItinerary,
-  compeleteWithTourGuide,
 } = require("../controllers/tourGuideController");
 const tourGuideController = require("../controllers/tourGuideController");
 const router = express.Router();
@@ -66,13 +59,6 @@ router.delete("/deleteItinerary/:id", deleteItinerary);
 router.patch("/itineraries/activate/:id", itineraryActivation);
 //Deactivate an itinerary with bookings
 router.patch("/itineraries/deactivate/:id", itineraryDeactivation);
-router.post("/addRating", addRating);
-router.post("/addComment", addComment);
-router.post("/addItineraryRating", addItineraryRating);
-router.post("/addItineraryComment", addItineraryComment);
-router.post("/follow", followItinerary);
-router.post("/unfollow", unfollowItinerary);
-router.post("/compeleteWithTourGuide", compeleteWithTourGuide);
 
 //66f80af288afe7e5aff3af00
 module.exports = router;

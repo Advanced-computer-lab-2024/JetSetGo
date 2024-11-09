@@ -1,0 +1,35 @@
+.profile-itinerary-container {
+  display: flex;
+  gap: 20px;
+}
+
+.profile-details {
+  flex: 1;
+}
+
+.itineraries-table {
+  flex: 2;
+}
+
+.comments-card {
+  padding: 15px;
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.comments-card h3 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.comments-card ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.comments-card ul li {
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
