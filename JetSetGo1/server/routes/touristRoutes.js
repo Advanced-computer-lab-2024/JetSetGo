@@ -7,7 +7,8 @@ const {updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByNam
   searchItineraryByLanguage,searchItineraryByName,searchItineraryByTag,
   getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice,
    sortItineraryByRating, getMuseums, filterMuseumsByTag,
-    getHistoricalLocations, filterHistoricalLocationsByTag  } = require('../controllers/touristController');
+    getHistoricalLocations, filterHistoricalLocationsByTag  ,getComplaints,ADDRateReview,  
+    addSales} = require('../controllers/touristController');
 const router = express.Router();
 
 
@@ -44,6 +45,10 @@ router.post('/searchItineraryByBudget',searchItineraryByBudget);
 router.post('/searchItineraryByLanguage',searchItineraryByLanguage);
 router.post('/searchItineraryByName',searchItineraryByName);
 router.post('/searchItineraryByTag',searchItineraryByTag);
+
+router.post('/feedback',ADDRateReview);
+router.post('/addSales',addSales);
+router.get('/getComplaints/:id',getComplaints)
 
 
 

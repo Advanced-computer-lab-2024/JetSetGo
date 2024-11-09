@@ -12,11 +12,12 @@ const path = require('path');
 const Product= require('../models/ProductModel')
 const Advertiser = require('../models/AdvertiserModel.js')
 const mongoose= require('mongoose')
+const Complaint = require('../models/ComplaintModel.js')
 
 
 
 
-const models={admin: Admin, seller: Seller, tourguides: TourGuide, tourist: Tourist, advertisers: Advertiser, tourismgoverner: TourismGoverner};
+const models={admin: Admin, seller: Seller, tourguide: TourGuide, tourist: Tourist, advertisers: Advertiser, tourismgoverner: TourismGoverner};
 ////////////////////////////////////////////////////////////////////////////////
 //create preference tags
 const create_pref_tag = async (req, res) => {
@@ -264,7 +265,7 @@ const createProduct = (req, res) => {
             return res.status(400).json({ error: 'Image upload failed' });
         }
         
-        const { name, description, price, quantityAvailable, seller, ratings } = req.body;
+        const { name, description, price, quantityAvailable, seller, ratings,archieved } = req.body;
 
         try {
             // Create a new product with the uploaded image path
@@ -275,7 +276,8 @@ const createProduct = (req, res) => {
                 quantityAvailable,
                 picture: req.file ? req.file.path : null, // Save the image path
                 seller,
-                ratings
+                ratings,
+                archieved
             });
 
             const savedProduct = await newProduct.save();
@@ -343,6 +345,7 @@ const sortByRate = async (req, res) => {
     }
   };
 
+
 const searchProductName = async(req,res) => {
 
     const { name } = req.body;
@@ -358,8 +361,174 @@ const searchProductName = async(req,res) => {
 
 }
 
+const getUploadedDocuments = async (req, res) => {
+    try {
+        const tourGuides = await TourGuide.find({ accepted: false ,rejected:false }).select('_id username documents');
+        const advertisers = await Advertiser.find({ accepted: false ,rejected:false }).select('_id username documents');
+        const sellers = await Seller.find({ accepted: false ,rejected:false }).select('_id username documents');
+    
+        // Combine the results
+        const documents = {
+          tourGuides: tourGuides.map(tourGuide => ({
+            id: tourGuide._id,
+            username: tourGuide.username,
+            documents: tourGuide.documents
+          })),
+          advertisers: advertisers.map(advertiser => ({
+            id: advertiser._id,
+            username: advertiser.username,
+            documents: advertiser.documents
+          })),
+          sellers: sellers.map(seller => ({
+            id: seller._id,
+            username: seller.username,
+            documents: seller.documents
+          }))
+        };
+      // Send the documents as a response
+      res.status(200).json(documents);
+    } 
+    catch (error) {
+      res.status(500).json({ error: 'Failed to retrieve documents.' });
+    }
+  };
+
+
+
+
+
+  const getComplaints = async (req,res) =>{
+    try{
+        const complaint = await Complaint.find();
+
+        if(complaint.length === 0)
+        {
+         return res.status(404).json({error:"No Complaints Found"})
+        }
+        res.status(200).json(complaint)
+    }
+    catch(error)
+    {
+        res.status(400).json({error:error.message})
+    }
+}
+
+const viewComplaint = async (req,res) =>{
+  try{
+     const complaintId = req.query.complaintId
+
+      if(complaintId)
+      {
+          const complaint = await Complaint.findById({_id : complaintId})
+          res.status(200).json(complaint)
+      }
+  }
+  catch(error)
+  {
+      res.status(400).json({error:error.message})
+  }
+}
+
+const resolveComplaint = async (req,res) =>{
+  try{
+      const {complaintId,reply} = req.body
+
+      if(complaintId)
+      {
+          const complaint = await Complaint.findById(complaintId)
+          console.log(reply)
+          complaint.status = 'resolved'
+          complaint.adminResponse = reply
+          await complaint.save();
+          
+          console.log(complaint.status)
+          console.log(complaint.adminResponse)
+          res.status(200).json(complaint) //IN Frontend (if ok then continue to another page which says go back)
+      }
+  }
+  catch(error)
+  {
+      res.status(400).json({error:error.message})
+  }
+}
+
+
+  const AcceptUserStatus = async (req, res) => {
+    const { id, modelName } = req.params;
+     
+    const Model = models[modelName.toLowerCase()];
+  
+    if (!Model) {
+      return res.status(200).json({ message: "Account is accepted", user });
+    }
+    try {
+      const user = await Model.findById(id);
+      if (!user) {
+        return res.status(200).json({ message: "acc does not exist" });
+      }
+      user.accepted = true; // Update the accepted field
+
+      await user.save();
+      res.status(200).json({ message: "Account is accepted", user });
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+};
+
+const RejectUserStatus = async (req, res) => {
+    const { id, modelName } = req.params;
+     
+    const Model = models[modelName.toLowerCase()];
+  
+    if (!Model) {
+      return res.status(400).json({ error: `Model '${modelName}' not found` });
+    }
+    try {
+      const user = await Model.findById(id);
+      if (!user) {
+        return res.status(404).json({ erro: "This account does not exist" });
+      }
+      user.rejected = true; // Update the accepted field
+
+      await user.save();
+      res.status(200).json({ message: "Account is rejected", user });
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+};
+
+const getSales = async (req, res) => {
+  const { id: productId } = req.params;  // Destructure product ID from the route parameters
+
+  try {
+    const sales = await SalesModel.find({ Product: productId }).sort({ createdAt: -1 });      
+    // .populate('Tourists', 'name')  // Optional: populate Tourist's name (if you have this field in Tourist model)
+    // .populate('Seller', 'name')    // Optional: populate Seller's name (if you have this field in Seller model)
+
+    res.status(200).json(sales);     // Send the sales data as JSON
+  } catch (error) {
+    res.status(500).json({ error: 'Error retrieving sales data' });
+  }
+};
+
+
+
+
+const archieved_on= async (req, res) =>{
+  const { id } = req.params
+  console.log(req.body);
+  const archieved= req.body
+  
+
+  const product = await Product.findOneAndUpdate({_id:id},archieved, { new: true })
+
+
+  res.status(200).json(product)
+}
+
 
 
 module.exports = { create_pref_tag ,  get_pref_tag , update_pref_tag , delete_pref_tag , create_act_category , get_act_category , update_act_category , delete_act_category , add_tourism_governer , view_tourism_governer,addAdmin, deleteAccount, getAllUsers
-    ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct};
+    ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,getUploadedDocuments, AcceptUserStatus, RejectUserStatus,getComplaints,getSales,
+    viewComplaint,resolveComplaint,archieved_on};
 

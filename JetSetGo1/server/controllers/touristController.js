@@ -6,14 +6,22 @@ const Activity = require('../models/AdvertiserActivityModel');
 const Tag = require('../models/TagModel');
 const HistoricalLocationModel = require('../models/HistoricalLocationModel');
 const MuseumModel = require('../models/MuseumModel');
+const ComplaintModel = require('../models/ComplaintModel');
+const SalesModel = require('../models/SalesModel');
 
 
 
 // get all products
-const getProducts= async (req,res) => {
-    const products = await Product.find({}).sort({createdAt: -1})
-    res.status(200).json(products)
-}
+const getProducts = async (req, res) => {
+  try {
+      // Fetch products that are not archived
+      const products = await Product.find({ archieved: false }).sort({ createdAt: -1 });
+      res.status(200).json(products); // Return the filtered products
+  } catch (error) {
+      console.error('Error fetching products:', error);
+      res.status(500).json({ message: 'Failed to retrieve products' }); // Handle any errors
+  }
+};
 
 const filterProducts = async(req,res) => {
     
@@ -547,6 +555,109 @@ const sortItineraryByRating = async (req, res) => {
     }
   };
 
+  const getComplaints = async (req, res) => {
+    const { id } = req.params;  // Extract touristId from route parameters
+    try {
+      console.log(id)
+        // Use the correct syntax to create an ObjectId instance
+        const complaints = await ComplaintModel.find({ userId: id }).sort({ createdAt: -1 });
+
+        if (complaints.length === 0) {
+            return res.status(404).json({ message: 'No complaints found for this tourist.' });
+        }
+
+        res.status(200).json(complaints);  // Return the complaints
+    } catch (error) {
+        console.error(error);  // Log error details
+        res.status(500).json({ error: 'Failed to retrieve complaints.' });  // Return error message
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const ADDRateReview = async (req, res) => {
+  const { reviews, ratings, touristId, productId } = req.body;
+  console.log(req.body);
+  
+  try {
+      // Find the sale record based on tourist and product IDs
+      const sale = await SalesModel.findOne({ 
+          Tourists: touristId, 
+          Product: productId 
+      });
+      console.log(sale);
+
+      if (!sale) {
+          return res.status(404).json({ error: 'Sale record not found for this tourist and product.' });
+      }
+
+      // Add the rating and review
+      sale.reviews = reviews;  // Assuming sale.reviews is a single value; if it's an array, use sale.reviews.push(reviews)
+      sale.ratings = ratings;  // Assuming sale.ratings is a single value; if it's an array, use sale.ratings.push(ratings)
+
+      await sale.save();
+
+      res.status(200).json({
+          message: 'Rating and review added successfully!',
+      });
+  } catch (error) {
+      res.status(500).json({ error: `Error adding rating and review: ${error.message}` });
+  }
+};
+
+
+
+  const addSales = async (req, res) => {
+    console.log(req.body)
+    const { price, quantityPurchased,touristId,productId,sellerId,ratings, reviews } = req.body;
+    
+    if (!price || !quantityPurchased || !touristId || !productId || !sellerId) {
+      return res.status(400).json({ error: 'All fields are required: price, quantityPurchased, touristId, productId, and sellerId.' });
+    }
+    
+  
+  try {
+      // Create a new sale
+      const sale = await SalesModel.create({
+          price: price,
+          quantityPurchased: quantityPurchased,
+          Tourists: touristId, // Make sure the field names match your schema
+          Seller: sellerId,
+          Product: productId,
+          reviews:reviews,
+          ratings:ratings
+      });
+
+      res.status(201).json(sale); // Use 201 status for created resource
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+ };
+
 
   module.exports = {
     searchHistoricalPlaceByTag,searchHistoricalPlaceByName,searchHistoricalPlaceByCategory,
@@ -556,4 +667,4 @@ const sortItineraryByRating = async (req, res) => {
     searchItineraryByLanguage, searchItineraryByCategory,searchItineraryByName,searchItineraryByTag,
     getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating,
      getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag,
-     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo};
+     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo,getComplaints,ADDRateReview,addSales};

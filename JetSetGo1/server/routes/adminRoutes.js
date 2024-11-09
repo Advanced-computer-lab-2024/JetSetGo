@@ -1,7 +1,9 @@
 const express = require('express');
 const { create_pref_tag, get_pref_tag, update_pref_tag, delete_pref_tag, create_act_category, get_act_category, update_act_category, delete_act_category, add_tourism_governer, view_tourism_governer
-    ,getProducts, createProduct, updateProduct,filterProducts,sortByRate, searchProductName,deleteAccount,addAdmin,getAllUsers,getSingleProduct} = require('../controllers/adminController.js');
+    ,getProducts, createProduct, updateProduct,filterProducts,sortByRate, searchProductName,deleteAccount,addAdmin,getAllUsers,getSingleProduct,getUploadedDocuments,AcceptUserStatus,RejectUserStatus,getComplaints,
+    getSales,viewComplaint,resolveComplaint,archieved_on} = require('../controllers/adminController.js');
 const router = express.Router();
+const multer = require('multer');
 
 
 
@@ -31,9 +33,32 @@ router.get('/sortByRate',sortByRate)
 router.get('/searchProductName',searchProductName)
 router.post('/createProduct',createProduct)
 // Update workout
+
+router.get('/view-documents', getUploadedDocuments);
+router.patch('/accept/:id/:modelName',AcceptUserStatus)
+router.patch('/reject/:id/:modelName',RejectUserStatus)
+
 router.patch('/product/:id', updateProduct)
 router.get('/getSingleProduct/:id', getSingleProduct)
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + '-' + file.originalname);
+    },
+  });
+  
+const upload = multer({ storage });
+  
+  // Then, use it in your route
+router.post('/createProduct', upload.single('picture'), createProduct);
 
+router.get('/getComplaints', getComplaints)
+router.get('/viewComplaint', viewComplaint)
+router.post('/resolveComplaint', resolveComplaint)
+router.patch('/archieved/:id', archieved_on)
+router.get('/sales/:id',getSales)
 
 
 module.exports = router;

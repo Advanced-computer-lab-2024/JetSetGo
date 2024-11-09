@@ -14,10 +14,11 @@ import AdminProfilePage from './pages/AdminProfilePage';
 import DeleteOptions from './pages/DeleteOptions';
 import UserList from './pages/UserList';
 import ItineraryManager from './pages/ItineraryManager';
-import ProductListing from './pages/productsPage'
+import ProductListing from './pages/Product/productsPage';
+import ViewProduct from './pages/Product/ProductDetails.js';
 // import Navbar from "./components/Navbar";
-import ProductForm from "./components/ProductForm";
-import UpdateProducts from "./components/UpdateProduct";
+import ProductForm from "./pages/Product/ProductForm";
+import UpdateProducts from "./pages/Product/UpdateProduct";
 
 import Activities2 from './pages/Activities';
 import Itineraries2 from './pages/Itineraries';
@@ -33,7 +34,7 @@ import HomePage from './pages/HomePage';
 
 // import { BrowserRouter, Routes, Route } from 'react-router-dom'
 //pages and components 
-// import Home from './pages/home.js'
+ import Home from './pages/home.js'
 import Tagspage from './pages/my_tags.js'
 import Categorypage from './pages/my_category.js'
 // import Navbar from './components/navbar.js'
@@ -49,6 +50,22 @@ import HLTags from './pages/hltag.js'
 import ActivityPagejohn from './pages/ActivityJohn';
 import Authentication from './pages/Authentication/Authentication';
 import ProfileJohn from './pages/profileJohn.js';
+
+//homepages
+import AdminDashboard from './pages/homepages/adminhomepage.js';
+import Layout from './components/Admin/layout.js';
+
+
+import TouristComplaint from './pages/Tourist/TouristComplaints.js';
+import ToursitPage from './pages/Tourist/home.js';
+import TouristLayout from './components/Tourist/TouristLayout.js';
+import { CurrencyProvider  } from './components/Tourist/CurrencyContext.js';
+import GuestPage from './pages/homepages/guestHomepage.js';
+import TermsAndConditionsForm from './components/TermsAndCondition/TermsAndCondition.js';
+import AdminDocumentReview from './pages/Admin/AdminVeiwDocuments.js';
+import AdminComplaints from './pages/Admin/AdminComplaints.js';
+import TouristProductListing from './pages/Tourist/TouristProductPage.js';
+import SalesOverviewChart from './components/Admin/SalesOverviewChart.js';
 
 
 function App() {
@@ -75,18 +92,36 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div >
       <BrowserRouter>
 
-        <div className="pages">
+        <div >
+          <CurrencyProvider>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            
+            <Route path="/" element={<TermsAndConditionsForm />} />
+            <Route path="/admin" element={<Layout />} >
+                <Route path="/admin/requests" element={<AdminDocumentReview />}/> {/*momen */}
+                <Route path="/admin/products" element={<ProductListing usertype="admin" />} />
+                <Route path="/admin/viewproduct" element={<ViewProduct />}/>
+                <Route path="/admin/complaints" element={<AdminComplaints />}/>  {/*momen */}
+                <Route path="/admin/addProduct" element={<ProductForm usertype="admin" />} /> {/* Add product page */}
+                <Route path="/admin/viewComplaint/:complaintId" element={<AdminComplaints />}/>
+                <Route path="/admin/sales" element={<SalesOverviewChart />}/>
+            </Route>
+            <Route path="/tourist" element={<TouristLayout />} >
+                <Route path="/tourist/Complaints" element={<TouristComplaint />}/>
+                <Route path="/tourist/products" element={<TouristProductListing usertype="tourist" />} />
+                <Route path="/tourist/home" element={<ToursitPage />} />
+                <Route path="/tourist/viewproduct" element={<ViewProduct />}/>
+            </Route>
+            <Route path="/guest" element={<GuestPage/>}/>
+                
+            <Route path="/admindashboard" element={<AdminDashboard />} ></Route>
             <Route path="/seller/products" element={<ProductListing usertype="seller" />} />
-            <Route path="/admin/products" element={<ProductListing usertype="admin" />} />
             <Route path="/tourist/products" element={<ProductListing usertype="tourist" />} />
             {/* Other routes can be defined similarly */}
             <Route path="/seller/addProduct" element={<ProductForm usertype="seller" />} /> {/* Add product page */}
-            <Route path="/admin/addProduct" element={<ProductForm usertype="admin" />} /> {/* Add product page */}
             <Route path="/seller/updateProduct/:id" element={<UpdateProducts usertype="seller" />} /> {/* Update product page */}
             <Route path="/admin/updateProduct/:id" element={<UpdateProducts usertype="admin" />} />
 
@@ -106,11 +141,11 @@ function App() {
               <><MuseumFilter onFilter={handleFilterResultsMusuems} />
                 <Museums filteredMuseum={filteredMuseum} /></>} />
                 
-            {/* 
+           
             <Route
-              path="/"
+              path="/hhh"
               element={<Home />}
-            /> */}
+            /> 
             <Route
               path="/my_tags"
               element={<Tagspage />}
@@ -149,7 +184,8 @@ function App() {
             <Route
               path="/Itineraries"
               element={<Itineraries />}
-            />{/*johnn* */}
+            />
+            {/*johnn* */}
             <Route path='/ActivitiesJohn' element={<ActivityPagejohn />} />
             <Route path='/Authentication' element={<Authentication />} />
             <Route path='/profileJohn/:id' element={<ProfileJohn/>} />
@@ -161,6 +197,7 @@ function App() {
               </>
             } />
           </Routes>
+          </CurrencyProvider>
         </div>
       </BrowserRouter>
     </div>
