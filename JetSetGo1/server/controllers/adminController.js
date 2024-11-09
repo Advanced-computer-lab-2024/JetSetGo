@@ -5,13 +5,14 @@ const TourismGoverner = require('../models/TourismGovernerModel.js');
 const AdvertiserActivityModel = require('../models/AdvertiserActivityModel.js');
 const Seller = require('../models/SellerModel');
 const TourGuide = require('../models/TourGuideModel');
-const Tourist = require('../models/TouristModel.js');
+const Tourist = require('../models/touristModel.js');
 const TourismGovernerModel = require('../models/TourismGovernerModel.js');
 const multer = require('multer');
 const path = require('path');
 const Product= require('../models/ProductModel');
 const Advertiser = require('../models/AdvertiserModel.js');
 const Itinerary = require("../models/ItineraryModel");
+const Complaint = require('../models/ComplaintModel.js')
 const mongoose= require('mongoose')
 
 
@@ -404,8 +405,69 @@ const searchProductName = async(req,res) => {
 
 }
 
+//Mahmoud REQUIREMENTS ( 74,75,76,77)
+////////////////////////////////////////////////////////////////////////////////
+const getComplaints = async (req,res) =>{
+    try{
+        const complaint = await Complaint.find();
+
+        if(complaint.length === 0)
+        {
+         return res.status(404).json({error:"No Complaints Found"})
+        }
+        res.status(200).json(complaint)
+    }
+    catch(error)
+    {
+        res.status(400).json({error:error.message})
+    }
+}
+
+const viewComplaint = async (req,res) =>{
+    try{
+       const complaintId = req.query.complaintId
+
+        if(complaintId)
+        {
+            const complaint = await Complaint.findById({_id : complaintId})
+            res.status(200).json(complaint)
+        }
+    }
+    catch(error)
+    {
+        res.status(400).json({error:error.message})
+    }
+}
+
+//Most likely a POST request
+const resolveComplaint = async (req,res) =>{
+    try{
+        const {complaintId,reply} = req.body
+
+        if(complaintId)
+        {
+            const complaint = await Complaint.findById(complaintId)
+            console.log(reply)
+            complaint.status = 'resolved'
+            complaint.adminResponse = reply
+            await complaint.save();
+            
+            console.log(complaint.status)
+            console.log(complaint.adminResponse)
+            res.status(200).json(complaint) //IN Frontend (if ok then continue to another page which says go back)
+        }
+    }
+    catch(error)
+    {
+        res.status(400).json({error:error.message})
+    }
+}
+
+
+
 
 
 module.exports = { create_pref_tag ,  get_pref_tag , update_pref_tag , delete_pref_tag , create_act_category , get_act_category , update_act_category , delete_act_category , add_tourism_governer , view_tourism_governer,addAdmin, deleteAccount, getAllUsers
-    ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,flagItinerary,getAllItineraries};
+    ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,getComplaints,
+    viewComplaint,resolveComplaint,flagItinerary,getAllItineraries};
 

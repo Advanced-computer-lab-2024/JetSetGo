@@ -29,6 +29,7 @@ import HistoricalLocations from './pages/historicallocations';
 import MuseumFilter from './components/MuseumFilter';
 import HistoricalPlaceFilter from './components/HistoricalPlaceFilter';
 
+
 import HomePage from './pages/HomePage';
 
 import '@fortawesome/fontawesome-free/css/all.css';
@@ -57,6 +58,19 @@ import FlagItinerary from './components/FlagItinerary';
 import ItineraryManagement from './components/ItineraryManagement';
 import CategoriesAndActivities from './components/CategoriesAndActivities';
 import ShareLink from './components/ShareLink';
+
+
+import AdminComplaints from './pages/Admin/AdminComplaintsPage.js';
+import AdminViewComplaint from './pages/Admin/AdminViewComplaint.js';
+
+import TouristComplaint from './pages/Tourist/TouristComplaintPage.js';
+import TouristProfile from './pages/Tourist/TouristProfilePage.js';
+
+import ActivityDetailPage from './pages/ActivityDetailPage';
+import ItineraryDetailPage from './pages/ItineraryDetailPage';
+
+
+
 
 
 function App() {
@@ -126,7 +140,9 @@ function App() {
             
             
             <Route path="/activities2" element={<Activities2 filteredActivities={filteredActivities} />} />
+            <Route path="/activity/:activityId/tourist/:touristId" element={<ActivityDetailPage />} /> {/* New route for activity details */}
             <Route path="/itineraries2" element={<Itineraries2 filteredItinerary={filteredItinerary} />} />
+            <Route path="/itinerary/:itineraryId/tourist/:touristId" element={<ItineraryDetailPage />} /> {/* New route for itinerary details */}
             <Route path="/museums" element={
               <><MuseumFilter onFilter={handleFilterResultsMusuems} />
                 <Museums filteredMuseum={filteredMuseum} /></>} />
@@ -160,9 +176,25 @@ function App() {
               element={<HLMs />}
             />
 
-            
+            <Route
+              path="/Activities"
+              element={<Activities />}
+            />
 
-            {/*johnn* */}
+            <Route
+              path="/admin/getComplaints"
+              element={<AdminComplaints />}
+            />
+
+            <Route
+              path="/api/admin/viewComplaint"
+              element={<AdminViewComplaint />}
+            /> 
+
+            <Route
+              path="/Itineraries"
+              element={<Itineraries />}
+            />{/*johnn* */}
             <Route path='/ActivitiesJohn' element={<ActivityPagejohn />} />
             <Route path='/Authentication' element={<Authentication />} />
             <Route path='/profileJohn/:id' element={<ProfileJohn/>} />
@@ -173,6 +205,10 @@ function App() {
                 <HistoricalLocations filteredHistoricalPlace={filteredHistoricalPlace} />
               </>
             } />
+
+            <Route path="/tourist/complaint/:userId" element={<TouristComplaint />} />
+            <Route path="/tourist/touristProfile/:touristId" element={<TouristProfile />} />
+
           </Routes>
         </div>
       </BrowserRouter>

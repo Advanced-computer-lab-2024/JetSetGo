@@ -26,6 +26,10 @@ const  HomePage = () =>  {
           <Link to="/tourist/products"><button> tourist Product Listing</button></Link>
           <Link to="/seller/addProduct"><button>seller add product</button></Link>
           <Link to="/admin/addProduct"><button>admin add product </button></Link>
+          <Link to="/admin/getComplaints"><button>Admin View ALL complaints</button></Link>
+          <Link to="/admin/viewComplaint"><button>Admin View complaint</button></Link>
+          <Link to="/tourist/complaint/:userId"><button>Tourist File Complaint</button></Link>
+          <Link to="/tourist/touristProfile/:id"><button>Tourist Profile Page</button></Link>
           <li>
           <Link to="/my_tags">My Tags</Link>
         </li>

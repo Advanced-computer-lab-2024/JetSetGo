@@ -1,50 +1,33 @@
-const express = require("express");
-const {
-  getProducts,
-  createProduct,
-  updateProduct,
-  filterProducts,
-  sortByRate,
-  searchProductName,
-} = require("../controllers/adminController.js");
-const {
-  updateInfo,
-  getInfo,
-  searchHistoricalPlaceByTag,
-  searchHistoricalPlaceByName,
-  searchHistoricalPlaceByCategory,
-  searchMuseumByTag,
-  searchMuseumByName,
-  searchMuseumByCategory,
-  searchActivityByBudget,
-  searchActivityByDate,
-  searchActivityByRating,
-  searchActivityByTag,
-  searchActivityByCategory,
-  searchActivityByName,
-  searchItineraryByDate,
-  searchItineraryByBudget,
-  searchItineraryByLanguage,
-  searchItineraryByName,
-  searchItineraryByTag,
-  getUpcomingActivities,
-  sortActivityByPrice,
-  sortActivityByRating,
-  getUpcomingItineraries,
-  sortItineraryByPrice,
-  sortItineraryByRating,
-  getMuseums,
-  filterMuseumsByTag,
-  getHistoricalLocations,
-  filterHistoricalLocationsByTag,
-  rateActivity,
-  addCommentToActivity,
-  deleteCommentFromActivity,
-  book_activity_Itinerary,
-  cancel_booking,
-  getActivitiesByCategory,
-getCategories} = require("../controllers/touristController");
+const express = require('express');
+const { getProducts, createProduct, updateProduct,filterProducts,sortByRate, searchProductName,} = require('../controllers/adminController.js');
+const {createTransportBooking, getTransportBooking, deleteTransportBooking,  selectPrefrences, getPrefrences, updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByName,
+  searchHistoricalPlaceByCategory, searchMuseumByTag,searchMuseumByName,searchMuseumByCategory,searchActivityByBudget,searchActivityByDate, 
+  searchActivityByRating,searchActivityByTag,searchActivityByCategory,
+  searchActivityByName, searchItineraryByDate, searchItineraryByBudget, 
+  searchItineraryByLanguage,searchItineraryByName,searchItineraryByTag,
+  getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice,
+   sortItineraryByRating, getMuseums, filterMuseumsByTag,
+    getHistoricalLocations, filterHistoricalLocationsByTag,
+    addComplaint, updatePointsToWallet, payForItinerary, payForActivity, getTagNameById, getCategoryNameById,
+    rateActivity,
+    addCommentToActivity,
+    deleteCommentFromActivity,
+    book_activity_Itinerary,
+    cancel_booking,
+    getActivitiesByCategory, fetchID, fetchActivityID, fetchItineraryIDgetCategories} = require('../controllers/touristController');
+
 const router = express.Router();
+
+
+
+
+router.post('/newTransportBooking', createTransportBooking )
+router.get('/showTransportBooking', getTransportBooking )
+router.delete('/deleteTransportBooking/:id', deleteTransportBooking )
+
+router.patch('/selectPrefrences/:id', selectPrefrences )
+router.get('/myPrefrenes/:id', getPrefrences )
+
 
 const { changePassword } = require("../controllers/PasswordController");
 
@@ -117,5 +100,17 @@ router.delete("/del_comment", deleteCommentFromActivity);
 
 router.post("/book_activity_Itinerary", book_activity_Itinerary);
 router.delete("/cancel_booking", cancel_booking);
+
+router.post('/addComplaint/:userId',addComplaint);
+router.patch('/updatePointsToWallet/:touristId',updatePointsToWallet);
+router.patch('/payForItinerary/:touristId',payForItinerary);
+router.patch('/payForActivity/:touristId',payForActivity);
+router.get('/tagName/:id', getTagNameById);
+router.get('/categoryName/:id', getCategoryNameById);
+
+router.get('/:touristId', fetchID);
+router.get('/activity/:activityId', fetchActivityID);
+router.get('/itinerary/:itineraryId', fetchItineraryID);
+
 
 module.exports = router;
