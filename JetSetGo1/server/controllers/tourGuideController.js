@@ -89,7 +89,6 @@ const updateProfile = async (req, res) => {
   }
 };
 
-
 // Get Tour Guide Profile
 const getProfile = async (req, res) => {
   const { id } = req.params;
@@ -132,7 +131,6 @@ const createItinerary = async (req, res) => {
       dropoffLocation,
       isBooked,
       tags,
-      rating,
     } = req.body;
 
     // Expect activities to be provided as an array of strings
@@ -151,7 +149,6 @@ const createItinerary = async (req, res) => {
       dropoffLocation,
       isBooked,
       tags,
-      rating,
     });
 
     await itinerary.save();
@@ -244,6 +241,74 @@ const uploadProfileImage = async (req, res) => {
     res.status(500).json({ error: 'Failed to upload image' });
   }
 };
+const uploadDoc = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  fileFilter: (req, file, cb) => {
+    const fileTypes = /jpeg|pdf/;
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = fileTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb('Error: Docs Only!');
+    }
+  }
+});
+
+const uploadDocument = async (req, res) => {
+  try {
+      const { id } = req.params;
+
+      // Check if files were uploaded
+      if (!req.files || req.files.length === 0) {
+          return res.status(400).json({ error: "No documents uploaded" });
+      }
+
+      // Map file paths of uploaded documents
+      const documentPaths = req.files.map(file => file.path);
+
+      // Update the documents array in the database
+      const tourGuide = await TourGuide.findByIdAndUpdate(
+          id,
+          { $push: { documents: { $each: documentPaths } } },
+          { new: true }
+      );
+
+      if (!tourGuide) {
+          return res.status(404).json({ error: "TourGuide not found" });
+      }
+
+      res.json({
+          message: "Documents uploaded successfully",
+          documentPaths: documentPaths
+      });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+
+const requestAccountDeletion = async (req, res) => {
+  const {id } = req.params;
+  
+
+  try {
+      const tourGuide = await TourGuide.findById(id);
+      if (!tourGuide) return res.status(404).json({ error: "User not found" });
+
+      // Update requestedDeletion field
+      tourGuide.deletionRequested = true;
+      await tourGuide.save();
+
+      return res.status(200).json({ message: "Deletion request submitted successfully." });
+  } catch (error) {
+      return res.status(500).json({ error: "An error occurred while processing the deletion request." });
+  }
+};
 
 module.exports = {upload,
   createProfile,
@@ -254,7 +319,11 @@ module.exports = {upload,
   updateItinerary,
   deleteItinerary,
   showMyItineraries,
-  uploadProfileImage
+  uploadProfileImage,
+  requestAccountDeletion,
+  uploadDocument,
+  uploadDoc,
+  upload
 };
 
 

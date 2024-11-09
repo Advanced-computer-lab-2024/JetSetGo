@@ -11,8 +11,8 @@ const multer = require('multer');
 const path = require('path');
 const Product= require('../models/ProductModel')
 const Advertiser = require('../models/AdvertiserModel.js')
+const Complaint = require('../models/ComplaintModel');
 const mongoose= require('mongoose')
-
 
 
 const models={admin: Admin, seller: Seller, tourguides: TourGuide, tourist: Tourist, advertisers: Advertiser, tourismgoverner: TourismGoverner};
@@ -358,7 +358,97 @@ const searchProductName = async(req,res) => {
 }
 
 
+const getUploadedDocuments = async (req, res) => {
+  try {
+      const tourGuides = await TourGuide.find({ accepted: false ,rejected:false }).select('_id username documents');
+      const advertisers = await Advertiser.find({ accepted: false ,rejected:false }).select('_id username documents');
+      const sellers = await Seller.find({ accepted: false ,rejected:false }).select('_id username documents');
+  
+      // Combine the results
+      const documents = {
+        tourGuides: tourGuides.map(tourGuide => ({
+          id: tourGuide._id,
+          username: tourGuide.username,
+          documents: tourGuide.documents
+        })),
+        advertisers: advertisers.map(advertiser => ({
+          id: advertiser._id,
+          username: advertiser.username,
+          documents: advertiser.documents
+        })),
+        sellers: sellers.map(seller => ({
+          id: seller._id,
+          username: seller.username,
+          documents: seller.documents
+        }))
+      };
+    // Send the documents as a response
+    res.status(200).json(documents);
+  } 
+  catch (error) {
+    res.status(500).json({ error: 'Failed to retrieve documents.' });
+  }
+};
 
-module.exports = { create_pref_tag ,  get_pref_tag , update_pref_tag , delete_pref_tag , create_act_category , get_act_category , update_act_category , delete_act_category , add_tourism_governer , view_tourism_governer,addAdmin, deleteAccount, getAllUsers
+
+const AcceptUserStatus = async (req, res) => {
+    const { id, modelName } = req.params;
+     
+    const Model = models[modelName.toLowerCase()];
+  
+    if (!Model) {
+      return res.status(200).json({ message: "Account is accepted", user });
+    }
+    try {
+      const user = await Model.findById(id);
+      if (!user) {
+        return res.status(200).json({ message: "acc does not exist" });
+      }
+      user.accepted = true; // Update the accepted field
+
+      await user.save();
+      res.status(200).json({ message: "Account is accepted", user });
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+};
+
+const RejectUserStatus = async (req, res) => {
+    const { id, modelName } = req.params;
+     
+    const Model = models[modelName.toLowerCase()];
+  
+    if (!Model) {
+      return res
+        .status(400)
+        .json({ error: `Model '${modelName}' not found` });
+    }
+    try {
+      const user = await Model.findById(id);
+      if (!user) {
+        return res.status(404).json({ erro: "This account does not exist" });
+      }
+      user.rejected = true; // Update the accepted field
+
+      await user.save();
+      res.status(200).json({ message: "Account is rejected", user });
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+};
+
+
+const getComplaints = async (req, res) => {
+  try {
+      const complaints = await Complaint.find()
+          .populate('userId', 'username') // tourist name 
+          .exec();
+
+      return res.status(200).json(complaints);
+  } catch (error) {
+      return res.status(500).json({ error: "An error occurred while fetching complaints." });
+  }
+}
+module.exports = { getComplaints,RejectUserStatus,AcceptUserStatus,getUploadedDocuments,create_pref_tag ,  get_pref_tag , update_pref_tag , delete_pref_tag , create_act_category , get_act_category , update_act_category , delete_act_category , add_tourism_governer , view_tourism_governer,addAdmin, deleteAccount, getAllUsers
     ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct};
 

@@ -15,9 +15,7 @@ const changePassword = async (req, res) => {
     const Model = models[modelName.toLowerCase()];
     
     if (!Model) {
-        return resizeTo
-          .status(400)
-          .json({ error: `Model '${modelName}' not found` });
+        return res.status(400).json({ error: 'Model Not found' });
       }
 
     if (!oldPassword || !newPassword) {

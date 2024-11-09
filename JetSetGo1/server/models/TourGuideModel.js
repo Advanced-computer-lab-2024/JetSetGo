@@ -28,29 +28,45 @@ const tourGuideSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   }, // If the guide is accepted by the system
-  documents: {//////////////////////////////
-   type: [String]
-  },// Paths to required documents
-    profileImage: {
-      type:String////////////////////
-    },// Path to profile image or logo
-    deletionRequested: {///////////////////////////
-      type: Boolean,
-      default: false
+  rejected :{
+   type:Boolean,
+   default:false
   },
-  rate :{
-    type:[Number],
+  documents: {
+    //////////////////////////////
+    type: [String],
+  }, // Paths to required documents
+  profileImage: {
+    type: String, ////////////////////
+  }, // Path to profile image or logo
+  deletionRequested: {
+    ///////////////////////////
+    type: Boolean,
+    default: false,
   },
-  
+  ratings: [
+    {
+      tourist: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tourist", // Reference to the tourist
+      },
+      rating: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
   comments: {
-      type : [String],
-      required: false
+    type: [String],
+    required: false,
   },
 
-   Tourists: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Tourist', // Assuming you have a Tourist model
-  }],
+  Tourists: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tourist", // Assuming you have a Tourist model
+    },
+  ],
 
   createdAt: {
     type: Date,
@@ -58,4 +74,4 @@ const tourGuideSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('TourGuide', tourGuideSchema);
+module.exports = mongoose.model("TourGuide", tourGuideSchema);

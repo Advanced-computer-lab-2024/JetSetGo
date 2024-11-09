@@ -7,11 +7,15 @@ const {updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByNam
   searchItineraryByLanguage,searchItineraryByName,searchItineraryByTag,
   getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice,
    sortItineraryByRating, getMuseums, filterMuseumsByTag,
-    getHistoricalLocations, filterHistoricalLocationsByTag  } = require('../controllers/touristController');
+    getHistoricalLocations, filterHistoricalLocationsByTag ,requestAccountDeletion } = require('../controllers/touristController');
+const TouristController = require('../controllers/touristController');
+
 const router = express.Router();
 
 const { changePassword } = require("../controllers/PasswordController");
 router.patch("/change-password/:id/:modelName", changePassword);
+
+
 
 router.get('/Products',getProducts )
 router.get('/filterProducts',filterProducts)
@@ -22,6 +26,7 @@ router.get('/searchProductName',searchProductName)
 router.patch('/update/:id', updateInfo);
 router.get('/profile/:id', getInfo);
 
+router.patch('/requestDelete/:id',requestAccountDeletion)
 
 
 // Create or Update Tour Guide Profile

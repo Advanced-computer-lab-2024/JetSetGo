@@ -6,7 +6,8 @@ const Activity = require('../models/AdvertiserActivityModel');
 const Tag = require('../models/TagModel');
 const HistoricalLocationModel = require('../models/HistoricalLocationModel');
 const MuseumModel = require('../models/MuseumModel');
-
+const multer = require('multer');
+const TouristModel = require('../models/TouristModel');
 
 
 // get all products
@@ -85,8 +86,6 @@ const updateInfo = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
-
 
 // Get tourist information
 const getInfo = async (req, res) => {
@@ -421,7 +420,23 @@ const getUpcomingActivities = async (req, res) => {
     }
   };
   
-  
+  const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Folder where images will be stored
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // Save the file with a unique name
+    }
+  });
+
+
+  // Initialize multer with the storage configuration
+const upload = multer({ storage: storage }).single('picture');
+
+
+
+
+
   const sortActivityByPrice = async (req, res) => {
     try {
         const currentDate = new Date(); // Get the current date
@@ -546,6 +561,30 @@ const sortItineraryByRating = async (req, res) => {
       res.status(400).json({ error: err.message });
     }
   };
+  const requestAccountDeletion = async (req, res) => {
+    const {id } = req.params;
+    
+
+    try {
+        const tourist = await Tourist.findById(id);
+        if (!tourist) return res.status(404).json({ error: "User not found" });
+
+        // Update requestedDeletion field
+        tourist.deletionRequested = true;
+        await tourist.save();
+
+        return res.status(200).json({ message: "Deletion request submitted successfully." });
+    } catch (error) {
+        return res.status(500).json({ error: "An error occurred while processing the deletion request." });
+    }
+};
+
+
+
+
+
+
+
 
 
   module.exports = {
@@ -556,4 +595,4 @@ const sortItineraryByRating = async (req, res) => {
     searchItineraryByLanguage, searchItineraryByCategory,searchItineraryByName,searchItineraryByTag,
     getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating,
      getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag,
-     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo};
+     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo,requestAccountDeletion};

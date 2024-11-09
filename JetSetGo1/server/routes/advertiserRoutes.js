@@ -1,5 +1,5 @@
 const express = require('express');
-const { createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile , createActivity, updateActivity, deleteActivity, getActivities } = require('../controllers/advertiserController');
+const { createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile , createActivity, updateActivity, deleteActivity, getActivities ,requestAccountDeletion,uploadDoc,uploadDocument} = require('../controllers/advertiserController');
 const { changePassword } = require("../controllers/PasswordController");
 const router = express.Router();
 
@@ -8,6 +8,11 @@ const advertiserController = require('../controllers/advertiserController');
 const {upload} = require('../controllers/advertiserController');
 
 router.patch('/:id/upload-profile-image', upload.single('image'), advertiserController.uploadProfileImage);
+
+
+router.patch('/:id/upload-Doc', uploadDoc.array('image'), uploadDocument);
+
+
 
 
 router.patch("/change-password/:id/:modelName", changePassword);
@@ -19,6 +24,8 @@ router.patch('/updateActivity/:id', updateActivity);
 router.get('/', getActivities);
 const {showMyActivities} = require('../controllers/advertiserController');
 
+
+router.patch('/requestDelete/:id',requestAccountDeletion)
 
 
 // Create or Update Advertiser Profile

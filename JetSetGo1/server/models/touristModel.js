@@ -43,6 +43,10 @@ const touristSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    products: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product', // Assuming you have a Tourist model
+      }],
        
     createdAt: { 
         type: Date, 
