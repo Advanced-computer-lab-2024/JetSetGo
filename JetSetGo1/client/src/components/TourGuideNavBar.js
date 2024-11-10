@@ -18,7 +18,6 @@ function TourGuideNavBar() {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsDropdownOpen(false);
-                setActiveSubmenu(null);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
