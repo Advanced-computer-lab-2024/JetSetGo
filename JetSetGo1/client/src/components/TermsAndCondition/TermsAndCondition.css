@@ -1,0 +1,56 @@
+/* Full-page centered container */
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  background-color: #f9f9f9;
+}
+
+/* Terms form styling */
+.terms-form {
+  font-family: Arial, sans-serif;
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  text-align: center;
+}
+
+.terms-text {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.checkbox-container {
+  margin-bottom: 20px;
+}
+
+/* Continue button styles */
+.continue-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: not-allowed;
+  background-color: #ccc; /* Initial color when disabled */
+  color: #666;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.continue-button.active {
+  background-color: #4CAF50; /* Active color */
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.8); /* Glowing effect */
+}
+
+.continue-button.active:hover {
+  background-color: #45a049; /* Darker shade on hover */
+}

@@ -1,6 +1,71 @@
 const express = require("express");
 const {
   getProducts,
+  filterProducts,
+  sortByRate,
+  searchProductName,
+} = require("../controllers/adminController.js");
+const {
+  createTransportBooking,
+  getTransportBooking,
+  deleteTransportBooking,
+  selectPrefrences,
+  getPrefrences,
+  updateInfo,
+  getInfo,
+  searchHistoricalPlaceByTag,
+  searchHistoricalPlaceByName,
+  searchHistoricalPlaceByCategory,
+  searchMuseumByTag,
+  searchMuseumByName,
+  searchMuseumByCategory,
+  searchActivityByBudget,
+  searchActivityByDate,
+  searchActivityByRating,
+  searchActivityByTag,
+  searchActivityByCategory,
+  searchActivityByName,
+  searchItineraryByDate,
+  searchItineraryByBudget,
+  searchItineraryByLanguage,
+  searchItineraryByName,
+  searchItineraryByTag,
+  getUpcomingActivities,
+  sortActivityByPrice,
+  sortActivityByRating,
+  getUpcomingItineraries,
+  sortItineraryByPrice,
+  sortItineraryByRating,
+  getMuseums,
+  filterMuseumsByTag,
+  getHistoricalLocations,
+  filterHistoricalLocationsByTag,
+  getComplaints,
+  ADDRateReview,
+  addSales,
+  addComplaint,
+  updatePointsToWallet,
+  payForItinerary,
+  payForActivity,
+  getTagNameById,
+  getCategoryNameById,
+  rateActivity,
+  addCommentToActivity,
+  deleteCommentFromActivity,
+  book_activity_Itinerary,
+  cancel_booking,
+  getActivitiesByCategory,
+  fetchID,
+  fetchActivityID,
+  fetchItineraryID,
+  getCategories,
+  requestAccountDeletion,
+} = require("../controllers/touristController");
+
+const TouristController = require("../controllers/touristController");
+const express = require("express");
+const {
+  getProducts,
   createProduct,
   updateProduct,
   filterProducts,
@@ -102,6 +167,8 @@ router.get("/searchProductName", searchProductName);
 router.patch("/update/:id", updateInfo);
 router.get("/profile/:id", getInfo);
 
+router.patch("/requestDelete/:id", requestAccountDeletion);
+
 // Create or Update Tour Guide Profile
 
 router.post("/searchHistoricalPlaceByName", searchHistoricalPlaceByName);
@@ -127,6 +194,10 @@ router.post("/searchItineraryByBudget", searchItineraryByBudget);
 router.post("/searchItineraryByLanguage", searchItineraryByLanguage);
 router.post("/searchItineraryByName", searchItineraryByName);
 router.post("/searchItineraryByTag", searchItineraryByTag);
+
+router.post("/feedback", ADDRateReview);
+router.post("/addSales", addSales);
+router.get("/getComplaints/:id", getComplaints);
 
 router.get("/getUpcomingActivities", getUpcomingActivities);
 router.get("/sortActivityByPrice", sortActivityByPrice);

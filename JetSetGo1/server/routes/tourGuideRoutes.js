@@ -1,7 +1,6 @@
 // const express = require('express');
 const express = require("express");
 // const multer = require('../config/multer');
-
 const {
   createProfile,
   updateProfile,
@@ -13,6 +12,9 @@ const {
   showMyItineraries,
   itineraryActivation,
   itineraryDeactivation,
+  requestAccountDeletion,
+  uploadDoc,
+  uploadDocument,
 } = require("../controllers/tourGuideController");
 const tourGuideController = require("../controllers/tourGuideController");
 const router = express.Router();
@@ -25,6 +27,8 @@ router.patch(
   tourGuideController.uploadProfileImage
 );
 
+router.patch("/:id/upload-Doc", uploadDoc.array("image"), uploadDocument);
+
 router.post("/test", (req, res) => {
   res.send("Tour Guide Test Route is working!");
 });
@@ -35,6 +39,8 @@ const { changePassword } = require("../controllers/PasswordController");
 router.patch("/change-password/:id/:modelName", changePassword);
 
 // router.patch('/:id/upload-profile-image', multer.single('image'), tourGuideController.uploadProfileImage);
+
+router.patch("/requestDelete/:id", requestAccountDeletion);
 
 // const router = express.Router();
 

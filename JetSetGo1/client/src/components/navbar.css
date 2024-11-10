@@ -99,3 +99,48 @@
     border: none; /* Remove default border */
     border-top: 1px solid #ddd; /* Subtle top border */
 }
+/* Menu item popup styling */
+.menu ul li {
+    position: relative; /* Relative positioning for each menu item */
+}
+
+.menu ul li .popup {
+    position: absolute;
+    top: 100%; /* Position it below the li element */
+    left: 0;
+    width: 200px; /* Set a width for the popup */
+    background-color: #fff; /* Background color for the popup */
+    border: 1px solid #ddd; /* Border for definition */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    border-radius: 8px; /* Rounded corners */
+    z-index: 1000; /* Keep it above other elements */
+    display: none; /* Initially hidden */
+    padding: 10px; /* Padding for content inside the popup */
+}
+
+.menu ul li:hover .popup {
+    display: block; /* Show popup on hover */
+}
+
+/* Popup content styling */
+.popup ul {
+    list-style: none; /* Remove bullet points */
+    padding: 0;
+    margin: 0;
+}
+
+.popup li {
+    padding: 8px 10px; /* Inner padding for items */
+    transition: background-color 0.3s; /* Smooth background transition */
+}
+
+.popup li a {
+    text-decoration: none; /* Remove underline from links */
+    color: #333; /* Set link color */
+    display: block; /* Make the entire item clickable */
+    font-size: 14px; /* Adjust font size */
+}
+
+.popup li:hover {
+    background-color: #f1f1f1; /* Background on hover */
+}

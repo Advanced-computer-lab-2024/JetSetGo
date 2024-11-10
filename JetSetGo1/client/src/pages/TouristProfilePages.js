@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams,useNavigate} from 'react-router-dom'; // For extracting the tourist ID from the URL
 import './TouristProfilePage.css'; // Import the CSS for styling
 
-const TouristProfilePage = () => {
+const TouristProfilePagehazem = () => {
   const { id } = useParams(); // Extract the tourist ID from the URL
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
@@ -46,4 +46,4 @@ const TouristProfilePage = () => {
   );
 };
 
-export default TouristProfilePage;
+export default TouristProfilePagehazem;
