@@ -72,17 +72,6 @@ import TouristProductListing from "./pages/Tourist/TouristProductPage.js";
 import SalesOverviewChart from "./components/Admin/SalesOverviewChart.js";
 
 import AdminViewComplaint from "./pages/Admin/AdminViewComplaint.js";
-import ActivityPagejohn from "./pages/ActivityJohn";
-import Authentication from "./pages/Authentication/Authentication";
-import ProfileJohn from "./pages/profileJohn.js";
-import TourGuideLayout from "./components/TourGuideLayout.js";
-import FlagItinerary from "./components/FlagItinerary";
-import ItineraryManagement from "./components/ItineraryManagement";
-import CategoriesAndActivities from "./components/CategoriesAndActivities";
-import ShareLink from "./components/ShareLink";
-
-import AdminComplaints from "./pages/Admin/AdminComplaintsPage.js";
-import AdminViewComplaint from "./pages/Admin/AdminViewComplaint.js";
 
 import TouristAddComplaintPage from "./pages/Tourist/TouristComplaintPage.js";
 import TouristProfile from "./pages/Tourist/TouristProfilePage.js";
@@ -90,8 +79,14 @@ import TouristProfile from "./pages/Tourist/TouristProfilePage.js";
 import ActivityDetailPage from "./pages/ActivityDetailPage";
 import ItineraryDetailPage from "./pages/ItineraryDetailPage";
 
-// JIMMY
+import ChangePassword from "./components/Admin/changePassword.js";
+import ImageUpload from "./components/Admin/uploadPicture.js";
+import RequestAccountDeletion from "./components/Admin/AccountDeletion.js";
+import ActivityPageJohn from "./pages/Advertiser/ActivityJohn.js";
+import Authentication from "./pages/Authentication/Authentication";
+import ProfileJohn from "./pages/profileJohn.js";
 
+// Jimmy
 import Dashboard2 from "./components/Jimmy/Dashboard2.js";
 import AddRatingComment from "./components/Jimmy/AddRatingComment.js";
 import AddRatingCommentItinerary from "./components/Jimmy/AddRatingCommentItinerary.js";
@@ -106,6 +101,7 @@ function App() {
   const handleViewDocuments = () => {
     setView("viewDocuments");
   };
+
   const handleBackToHome = () => {
     setView("home");
   };
@@ -281,39 +277,7 @@ function App() {
                 path="/tourist/products"
                 element={<ProductListing usertype="tourist" />}
               />
-              <Route path="/" element={<HomePage />} />
-              <Route
-                path="/seller/products"
-                element={<ProductListing usertype="seller" />}
-              />
-              <Route
-                path="/admin/products"
-                element={<ProductListing usertype="admin" />}
-              />
-              <Route
-                path="/tourist/products"
-                element={<ProductListing usertype="tourist" />}
-              />
               {/* Other routes can be defined similarly */}
-              <Route
-                path="/seller/addProduct"
-                element={<ProductForm usertype="seller" />}
-              />{" "}
-              {/* Add product page */}
-              <Route
-                path="/admin/addProduct"
-                element={<ProductForm usertype="admin" />}
-              />{" "}
-              {/* Add product page */}
-              <Route
-                path="/seller/updateProduct/:id"
-                element={<UpdateProducts usertype="seller" />}
-              />{" "}
-              {/* Update product page */}
-              <Route
-                path="/admin/updateProduct/:id"
-                element={<UpdateProducts usertype="admin" />}
-              />
               <Route
                 path="/seller/addProduct"
                 element={<ProductForm usertype="seller" />}
@@ -329,16 +293,6 @@ function App() {
                 element={<UpdateProducts usertype="admin" />}
               />
               <Route path="/delete/:role" element={<UserList />} />
-              <Route path="/FlagItinery" element={<FlagItinerary />} />
-              <Route
-                path="/ItineraryManagement"
-                element={<ItineraryManagement />}
-              />
-              <Route
-                path="/CategoriesAndActivities"
-                element={<CategoriesAndActivities />}
-              />
-              <Route path="/ShareLink" element={<ShareLink />} />
               <Route
                 path="/tour-guide/itineraryManager"
                 element={<ItineraryManager />}
@@ -376,117 +330,34 @@ function App() {
                   </>
                 }
               />
-              <Route
-                path="/profile/tourist/:id"
-                element={<TouristProfilePage />}
-              />
-              <Route
-                path="/activities2"
-                element={
-                  <Activities2 filteredActivities={filteredActivities} />
-                }
-              />
-              <Route
-                path="/activity/:activityId/tourist/:touristId"
-                element={<ActivityDetailPage />}
-              />{" "}
-              {/* New route for activity details */}
-              <Route
-                path="/itineraries2"
-                element={<Itineraries2 filteredItinerary={filteredItinerary} />}
-              />
-              <Route
-                path="/itinerary/:itineraryId/tourist/:touristId"
-                element={<ItineraryDetailPage />}
-              />{" "}
-              {/* New route for itinerary details */}
-              <Route
-                path="/museums"
-                element={
-                  <>
-                    <MuseumFilter onFilter={handleFilterResultsMusuems} />
-                    <Museums filteredMuseum={filteredMuseum} />
-                  </>
-                }
-              />
-              {/* 
-            <Route
-              path="/hhhprofile/tourist/:id"
-              element={<TouristProfilePage />}
-            />
-            {/* JIMMY 
-            <Route path="/touristFollows2" element={<Dashboard2 />} />
-            <Route
-              path="/tourist/viewTourGuideProfile/:id"
-              element={<TouristTourGuideProfile />}
-            />
-            <Route
-              path="/add-rating-comment/:id"
-              element={<AddRatingComment />}
-            />
-            <Route
-              path="/add-rating-comment-itinerary/:id"
-              element={<AddRatingCommentItinerary />}
-            />
-            <Route
-              path="/HL"
-              element={<HL />}
-            />
-
-            <Route
-              path="/Museum"
-              element={<Museum />}
-            />
-            <Route
-              path="/TouristItineraryDetails/:id"
-              element={<TouristItineraryDetails />}
-            />
-            {/* JIMMY END */}
-              <Route
-                path="/activities2"
-                element={
-                  <Activities2 filteredActivities={filteredActivities} />
-                }
-              />
-              <Route path="/Activities" element={<Activities />} />
-              path="/itineraries2" element=
-              {<Itineraries2 filteredItinerary={filteredItinerary} />}
-              />
-              <Route
-                path="/museums"
-                element={
-                  <>
-                    <MuseumFilter onFilter={handleFilterResultsMusuems} />
-                    <Museums filteredMuseum={filteredMuseum} />
-                  </>
-                }
-              />
-              {/* 
-            <Route
-              path="/"
-              element={<Home />}
-            /> */}
+              <Route path="/hhh" element={<Home />} />
               <Route path="/my_tags" element={<Tagspage />} />
               <Route path="/my_category" element={<Categorypage />} />
               <Route path="/Tourism_Governer" element={<Tourism_Governer />} />
+              <Route path="/HL" element={<HL />} />
+              <Route path="/Museum" element={<Museum />} />
               <Route path="/HLTags" element={<HLTags />} />
               <Route path="/HLMs" element={<HLMs />} />
               <Route path="/Activities" element={<Activities />} />
+              <Route path="/Itineraries" element={<Itineraries />} />
+              {/*JIMMY */}
+              <Route path="/touristFollows2" element={<Dashboard2 />} />
               <Route
-                path="/admin/getComplaints"
-                element={<AdminComplaints />}
+                path="/tourist/viewTourGuideProfile/:id"
+                element={<TouristTourGuideProfile />}
               />
               <Route
-                path="/api/admin/viewComplaint"
-                element={<AdminViewComplaint />}
+                path="/add-rating-comment/:id"
+                element={<AddRatingComment />}
               />
-              <Route path="/Itineraries" element={<Itineraries />} />
-              {/*johnn* */}
-              <Route path="/ActivitiesJohn" element={<ActivityPagejohn />} />
-              <Route path="/Authentication" element={<Authentication />} />
-              <Route path="/profileJohn/:id" element={<ProfileJohn />} />
-              {/*johnn* */}
-              <Route path="/Itineraries" element={<Itineraries />} />
+              <Route
+                path="/add-rating-comment-itinerary/:id"
+                element={<AddRatingCommentItinerary />}
+              />
+              <Route
+                path="/TouristItineraryDetails/:id"
+                element={<TouristItineraryDetails />}
+              />
               {/*johnn* */}
               <Route path="/Authentication" element={<Authentication />} />
               <Route path="/profileJohn/:id" element={<ProfileJohn />} />
@@ -503,26 +374,6 @@ function App() {
                     />
                   </>
                 }
-              />
-              path="/historicalLocations" element=
-              {
-                <>
-                  <HistoricalPlaceFilter
-                    onFilter={handleFilterResultsHistoricalPlaces}
-                  />
-                  <HistoricalLocations
-                    filteredHistoricalPlace={filteredHistoricalPlace}
-                  />
-                </>
-              }
-              />
-              <Route
-                path="/tourist/complaint/:userId"
-                element={<TouristComplaint />}
-              />
-              <Route
-                path="/tourist/touristProfile/:touristId"
-                element={<TouristProfile />}
               />
             </Routes>
           </CurrencyProvider>

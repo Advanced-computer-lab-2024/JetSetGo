@@ -1,5 +1,5 @@
 const express = require("express");
-const adminController = require('../controllers/adminController.js')
+const adminController = require("../controllers/adminController.js");
 
 const {
   create_pref_tag,
@@ -21,27 +21,30 @@ const {
   deleteAccount,
   addAdmin,
   getAllUsers,
-  getSingleProduct,getUploadedDocuments,
+  getSingleProduct,
+  getUploadedDocuments,
   getComplaints,
-    getSales,
+  getSales,
   viewComplaint,
-  resolveComplaint,archieved_on,AcceptUserStatus,RejectUserStatus,
-  flagItinerary,,
+  resolveComplaint,
+  archieved_on,
+  AcceptUserStatus,
+  RejectUserStatus,
+  flagItinerary,
   getAllItineraries,
 } = require("../controllers/adminController.js");
 const router = express.Router();
-const multer = require('multer');
+const multer = require("multer");
 const { changePassword } = require("../controllers/PasswordController");
 router.patch("/change-password/:id/:modelName", changePassword);
 
-    router.get('/view-documents', adminController.getUploadedDocuments);
+router.get("/view-documents", adminController.getUploadedDocuments);
 
- 
 //Flag Itinerary
 
 router.patch("/itineraries/:itineraryId/flag", flagItinerary);
 router.get("/itineraries", getAllItineraries);
-    router.get('/viewComplaints',getComplaints)
+router.get("/viewComplaints", getComplaints);
 
 // Advertiser activities
 router.post("/createtag", create_pref_tag);
@@ -68,35 +71,35 @@ router.get("/searchProductName", searchProductName);
 router.post("/createProduct", createProduct);
 // Update workout
 
-router.get('/view-documents', getUploadedDocuments);
-router.patch('/accept/:id/:modelName',AcceptUserStatus)
-router.patch('/reject/:id/:modelName',RejectUserStatus)
+router.get("/view-documents", getUploadedDocuments);
+router.patch("/accept/:id/:modelName", AcceptUserStatus);
+router.patch("/reject/:id/:modelName", RejectUserStatus);
 
 router.patch("/product/:id", updateProduct);
 router.get("/getSingleProduct/:id", getSingleProduct);
 
-router.get('/getComplaints', getComplaints)
-router.get('/viewComplaint/:id', viewComplaint)
+router.get("/getComplaints", getComplaints);
+router.get("/viewComplaint/:id", viewComplaint);
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + '-' + file.originalname);
-    },
-  });
-  
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
 const upload = multer({ storage });
-  
-  // Then, use it in your route
-router.post('/createProduct', upload.single('picture'), createProduct);
 
-router.get('/getComplaints', getComplaints)
+// Then, use it in your route
+router.post("/createProduct", upload.single("picture"), createProduct);
 
-router.post('/resolveComplaint', resolveComplaint)
-router.patch('/archieved/:id', archieved_on)
-router.get('/sales/:id',getSales)
+router.get("/getComplaints", getComplaints);
+
+router.post("/resolveComplaint", resolveComplaint);
+router.patch("/archieved/:id", archieved_on);
+router.get("/sales/:id", getSales);
 
 router.get("/getComplaints", getComplaints);
 router.get("/viewComplaint", viewComplaint);

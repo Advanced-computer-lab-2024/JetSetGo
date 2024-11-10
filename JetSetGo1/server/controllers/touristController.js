@@ -1,19 +1,17 @@
 const TransportBooking = require("../models/TransportationBookingModel");
 const mongoose = require("mongoose");
 const Product = require("../models/ProductModel");
-const Tourist = require('../models/TouristModels');
+const Tourist = require("../models/TouristModels");
 const Itinerary = require("../models/ItineraryModel");
 const Activity = require("../models/AdvertiserActivityModel");
 const Tag = require("../models/TagModel");
 const HistoricalLocationModel = require("../models/HistoricalLocationModel");
 const MuseumModel = require("../models/MuseumModel");
-const Complaint = require('../models/ComplaintModel');
-const Category = require('../models/CategoryModel')
 const Complaint = require("../models/ComplaintModel");
 const Category = require("../models/CategoryModel");
 
 const Booking = require("../models/bookingmodel");
-const SalesModel = require('../models/SalesModel');
+const SalesModel = require("../models/SalesModel");
 
 const TourGuide = require("../models/TourGuideModel.js");
 
@@ -134,40 +132,38 @@ const getPrefrences = async (req, res) => {
   }
 };
 
-const multer = require('multer');
-
-
-
+const multer = require("multer");
 
 // get all products
 const getProducts = async (req, res) => {
   try {
-      // Fetch products that are not archived
-      const products = await Product.find({ archieved: false }).sort({ createdAt: -1 });
-      res.status(200).json(products); // Return the filtered products
+    // Fetch products that are not archived
+    const products = await Product.find({ archieved: false }).sort({
+      createdAt: -1,
+    });
+    res.status(200).json(products); // Return the filtered products
   } catch (error) {
-      console.error('Error fetching products:', error);
-      res.status(500).json({ message: 'Failed to retrieve products' }); // Handle any errors
+    console.error("Error fetching products:", error);
+    res.status(500).json({ message: "Failed to retrieve products" }); // Handle any errors
   }
 };
 
-const filterProducts = async(req,res) => {
-    
-    const{min, max}= req.query;
+const filterProducts = async (req, res) => {
+  const { min, max } = req.query;
 
-    try{
-        const query = {
-            price: {
-              $gte: min, // Greater than or equal to minPrice
-              $lte: max, // Less than or equal to maxPrice
-            },
-          };
-        const products = await Product.find(query)
-        res.status(200).json(products)
-    } catch(error){
-        res.status(400).json({error: error.message})
-    }
-}
+  try {
+    const query = {
+      price: {
+        $gte: min, // Greater than or equal to minPrice
+        $lte: max, // Less than or equal to maxPrice
+      },
+    };
+    const products = await Product.find(query);
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 const sortByRate = async (req, res) => {
   const { flag } = req.query; // Use req.query here
@@ -575,58 +571,53 @@ const searchActivityByTag = async (req, res) => {
 };
 
 const getUpcomingActivities = async (req, res) => {
-    try {
-      const currentDate = new Date(); // Get the current date
-      const upcomingActivities = await Activity.find({
-        date: { $gte: currentDate } // Find activities with a date greater than or equal to the current date
-      });
-  
-      res.status(200).json(upcomingActivities);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
-  };
-  
-  const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // Folder where images will be stored
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname)); // Save the file with a unique name
-    }
-  });
+  try {
+    const currentDate = new Date(); // Get the current date
+    const upcomingActivities = await Activity.find({
+      date: { $gte: currentDate }, // Find activities with a date greater than or equal to the current date
+    });
 
+    res.status(200).json(upcomingActivities);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
 
-  // Initialize multer with the storage configuration
-const upload = multer({ storage: storage }).single('picture');
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Folder where images will be stored
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Save the file with a unique name
+  },
+});
 
+// Initialize multer with the storage configuration
+const upload = multer({ storage: storage }).single("picture");
 
+const sortActivityByPrice = async (req, res) => {
+  try {
+    const currentDate = new Date(); // Get the current date
+    const sortedActivityByPrice = await Activity.find({
+      date: { $gte: currentDate }, // Find activities with a date greater than or equal to the current date
+    }).sort({ price: 1 });
+    res.status(200).json(sortedActivityByPrice);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
 
-
-
-  const sortActivityByPrice = async (req, res) => {
-    try {
-        const currentDate = new Date(); // Get the current date
-        const sortedActivityByPrice = await Activity.find({
-        date: { $gte: currentDate } // Find activities with a date greater than or equal to the current date
-      }).sort({price: 1});
-      res.status(200).json(sortedActivityByPrice);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
-  };
-  
-  const sortActivityByRating = async (req, res) => {
-    try {
-        const currentDate = new Date(); // Get the current date
-        const sortedActivityByRating = await Activity.find({
-        date: { $gte: currentDate } // Find activities with a date greater than or equal to the current date
-      }).sort({rating: 1});
-      res.status(200).json(sortedActivityByRating);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
-  };
+const sortActivityByRating = async (req, res) => {
+  try {
+    const currentDate = new Date(); // Get the current date
+    const sortedActivityByRating = await Activity.find({
+      date: { $gte: currentDate }, // Find activities with a date greater than or equal to the current date
+    }).sort({ rating: 1 });
+    res.status(200).json(sortedActivityByRating);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
 
 const getUpcomingItineraries = async (req, res) => {
   try {
@@ -715,125 +706,120 @@ const getHistoricalLocations = async (req, res) => {
   }
 };
 
-  const filterHistoricalLocationsByTag = async (req, res) => {
-    try {
-      const { id } = req.params;
-      // Query historical locations where the tags array contains the given tagId
-      const historicalLocations = await HistoricalLocationModel.find({ tags: id });
-  
-      if (historicalLocations.length === 0) {
-        return res.status(404).json({ message: 'No historical locations found with the given tag' });
-      }
-  
-      res.status(200).json(historicalLocations);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
+const filterHistoricalLocationsByTag = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Query historical locations where the tags array contains the given tagId
+    const historicalLocations = await HistoricalLocationModel.find({
+      tags: id,
+    });
+
+    if (historicalLocations.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No historical locations found with the given tag" });
     }
-  };
 
-  const getComplaints = async (req, res) => {
-    const { id } = req.params;  // Extract touristId from route parameters
-    try {
-      console.log(id)
-        // Use the correct syntax to create an ObjectId instance
-        const complaints = await ComplaintModel.find({ userId: id }).sort({ createdAt: -1 });
-
-        if (complaints.length === 0) {
-            return res.status(404).json({ message: 'No complaints found for this tourist.' });
-        }
-
-        res.status(200).json(complaints);  // Return the complaints
-    } catch (error) {
-        console.error(error);  // Log error details
-        res.status(500).json({ error: 'Failed to retrieve complaints.' });  // Return error message
-    }
+    res.status(200).json(historicalLocations);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 };
 
+const getComplaints = async (req, res) => {
+  const { id } = req.params; // Extract touristId from route parameters
+  try {
+    console.log(id);
+    // Use the correct syntax to create an ObjectId instance
+    const complaints = await ComplaintModel.find({ userId: id }).sort({
+      createdAt: -1,
+    });
 
+    if (complaints.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No complaints found for this tourist." });
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    res.status(200).json(complaints); // Return the complaints
+  } catch (error) {
+    console.error(error); // Log error details
+    res.status(500).json({ error: "Failed to retrieve complaints." }); // Return error message
+  }
+};
 
 const ADDRateReview = async (req, res) => {
   const { reviews, ratings, touristId, productId } = req.body;
   console.log(req.body);
-  
+
   try {
-      // Find the sale record based on tourist and product IDs
-      const sale = await SalesModel.findOne({ 
-          Tourists: touristId, 
-          Product: productId 
-      });
-      console.log(sale);
+    // Find the sale record based on tourist and product IDs
+    const sale = await SalesModel.findOne({
+      Tourists: touristId,
+      Product: productId,
+    });
+    console.log(sale);
 
-      if (!sale) {
-          return res.status(404).json({ error: 'Sale record not found for this tourist and product.' });
-      }
+    if (!sale) {
+      return res
+        .status(404)
+        .json({ error: "Sale record not found for this tourist and product." });
+    }
 
-      // Add the rating and review
-      sale.reviews = reviews;  // Assuming sale.reviews is a single value; if it's an array, use sale.reviews.push(reviews)
-      sale.ratings = ratings;  // Assuming sale.ratings is a single value; if it's an array, use sale.ratings.push(ratings)
+    // Add the rating and review
+    sale.reviews = reviews; // Assuming sale.reviews is a single value; if it's an array, use sale.reviews.push(reviews)
+    sale.ratings = ratings; // Assuming sale.ratings is a single value; if it's an array, use sale.ratings.push(ratings)
 
-      await sale.save();
+    await sale.save();
 
-      res.status(200).json({
-          message: 'Rating and review added successfully!',
-      });
+    res.status(200).json({
+      message: "Rating and review added successfully!",
+    });
   } catch (error) {
-      res.status(500).json({ error: `Error adding rating and review: ${error.message}` });
+    res
+      .status(500)
+      .json({ error: `Error adding rating and review: ${error.message}` });
   }
 };
 
+const addSales = async (req, res) => {
+  console.log(req.body);
+  const {
+    price,
+    quantityPurchased,
+    touristId,
+    productId,
+    sellerId,
+    ratings,
+    reviews,
+  } = req.body;
 
-
-  const addSales = async (req, res) => {
-    console.log(req.body)
-    const { price, quantityPurchased,touristId,productId,sellerId,ratings, reviews } = req.body;
-    
-    if (!price || !quantityPurchased || !touristId || !productId || !sellerId) {
-      return res.status(400).json({ error: 'All fields are required: price, quantityPurchased, touristId, productId, and sellerId.' });
-    }
-    
-  
-  try {
-      // Create a new sale
-      const sale = await SalesModel.create({
-          price: price,
-          quantityPurchased: quantityPurchased,
-          Tourists: touristId, // Make sure the field names match your schema
-          Seller: sellerId,
-          Product: productId,
-          reviews:reviews,
-          ratings:ratings
+  if (!price || !quantityPurchased || !touristId || !productId || !sellerId) {
+    return res
+      .status(400)
+      .json({
+        error:
+          "All fields are required: price, quantityPurchased, touristId, productId, and sellerId.",
       });
-
-      res.status(201).json(sale); // Use 201 status for created resource
-  } catch (error) {
-      res.status(400).json({ error: error.message });
   }
- };
 
+  try {
+    // Create a new sale
+    const sale = await SalesModel.create({
+      price: price,
+      quantityPurchased: quantityPurchased,
+      Tourists: touristId, // Make sure the field names match your schema
+      Seller: sellerId,
+      Product: productId,
+      reviews: reviews,
+      ratings: ratings,
+    });
+
+    res.status(201).json(sale); // Use 201 status for created resource
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 const addComplaint = async (req, res) => {
   try {
@@ -1253,47 +1239,30 @@ const fetchItineraryID = async (req, res) => {
     }
     res.json(itinerary);
   } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch itinerary' });
-  }
-}
-
-
-const requestAccountDeletion = async (req, res) => {
-  const {id } = req.params;
-  
-
-  try {
-      const tourist = await Tourist.findById(id);
-      if (!tourist) return res.status(404).json({ error: "User not found" });
-
-      // Update requestedDeletion field
-      tourist.deletionRequested = true;
-      await tourist.save();
-
-      return res.status(200).json({ message: "Deletion request submitted successfully." });
-  } catch (error) {
-      return res.status(500).json({ error: "An error occurred while processing the deletion request." });
+    res.status(500).json({ error: "Failed to fetch itinerary" });
   }
 };
 
+const requestAccountDeletion = async (req, res) => {
+  const { id } = req.params;
 
-  module.exports = {createTransportBooking, getTransportBooking, deleteTransportBooking, selectPrefrences, getPrefrences,
-    searchHistoricalPlaceByTag,searchHistoricalPlaceByName,searchHistoricalPlaceByCategory,
-    searchMuseumByTag,searchMuseumByName,searchMuseumByCategory,
-    searchActivityByBudget,searchActivityByDate,searchActivityByRating, searchActivityByTag,searchActivityByCategory,searchActivityByName, 
-    searchItineraryByDate, searchItineraryByBudget, 
-    searchItineraryByLanguage, searchItineraryByCategory,searchItineraryByName,searchItineraryByTag,
-    getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice, sortItineraryByRating,
-     getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag,
-     getProducts, filterProducts, sortByRate, searchProductName,updateInfo, getInfo,getComplaints,ADDRateReview,addSales,requestAccountDeletion,
-     addComplaint, updatePointsToWallet, payForItinerary, payForActivity, getTagNameById, getCategoryNameById,
-     getActivitiesByCategory,getCategories,
-     rateActivity,
-     addCommentToActivity,
-     deleteCommentFromActivity,
-     book_activity_Itinerary,
-     cancel_booking, fetchID, fetchActivityID, fetchItineraryID};
-    res.status(500).json({ error: "Failed to fetch itinerary" });
+  try {
+    const tourist = await Tourist.findById(id);
+    if (!tourist) return res.status(404).json({ error: "User not found" });
+
+    // Update requestedDeletion field
+    tourist.deletionRequested = true;
+    await tourist.save();
+
+    return res
+      .status(200)
+      .json({ message: "Deletion request submitted successfully." });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({
+        error: "An error occurred while processing the deletion request.",
+      });
   }
 };
 
@@ -1730,6 +1699,10 @@ module.exports = {
   searchProductName,
   updateInfo,
   getInfo,
+  getComplaints,
+  ADDRateReview,
+  addSales,
+  requestAccountDeletion,
   addComplaint,
   updatePointsToWallet,
   payForItinerary,
