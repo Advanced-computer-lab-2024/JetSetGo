@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
 
 const ItineraryDetailPage = () => {
-    const { itineraryId, touristId } = useParams(); // Get itineraryId and touristId from URL
+    const { itineraryId, id } = useParams(); // Get itineraryId and id from URL
     const [itinerary, setItinerary] = useState(null);
     const [error, setError] = useState(null);
     const [tagNames, setTagNames] = useState([]);
@@ -58,13 +58,13 @@ const ItineraryDetailPage = () => {
     // Handle Payment
     const handlePayment = async () => {
         try {
-            const response = await fetch(`/api/tourist/payForItinerary/${touristId}`, {
+            const response = await fetch(`/api/tourist/payForItinerary/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    touristId,
+                    id,
                     itineraryId,
                 }),
             });

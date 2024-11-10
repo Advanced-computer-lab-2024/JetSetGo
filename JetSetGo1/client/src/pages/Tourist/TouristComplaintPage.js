@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-const TouristComplaintPage = () => {
-    const { userId } = useParams(); // Get userId from URL params
+const TouristAddComplaintPage = () => {
+    const { id } = useParams(); // Get userId from URL params
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
     const [error, setError] = useState(null);
@@ -16,7 +16,7 @@ const TouristComplaintPage = () => {
         setSuccessMessage('');
 
         try {
-            const response = await fetch(`/api/tourist/addComplaint/${userId}`, {
+            const response = await fetch(`/api/tourist/addComplaint/${id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -68,4 +68,4 @@ const TouristComplaintPage = () => {
     );
 };
 
-export default TouristComplaintPage;
+export default TouristAddComplaintPage;

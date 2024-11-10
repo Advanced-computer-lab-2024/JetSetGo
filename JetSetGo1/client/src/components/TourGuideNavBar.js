@@ -6,15 +6,12 @@ import '@fortawesome/fontawesome-free/css/all.css';
 function TourGuideNavBar() {
     const { id } = useParams();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [activeSubmenu, setActiveSubmenu] = useState(null);
+    const [activePopup, setActivePopup] = useState(null); // State to track which popup is active
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
 
-    // Function to handle navigation
-    const handleNavigation = (path) => {
-        navigate(path);
-        setIsDropdownOpen(false);
-        setActiveSubmenu(null);
+    const toggleDropdown = () => {
+        setIsDropdownOpen((prev) => !prev);
     };
 
     useEffect(() => {
@@ -24,15 +21,20 @@ function TourGuideNavBar() {
                 setActiveSubmenu(null);
             }
         };
-
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
 
-    const toggleSubmenu = (menu) => {
-        setActiveSubmenu((prev) => (prev === menu ? null : menu));
+    const handleNavigation = (path) => {
+        navigate(path);
+        setIsDropdownOpen(false);
+        setActivePopup(null); // Close all popups on navigation
+    };
+
+    const togglePopup = (menuItem) => {
+        setActivePopup((prev) => (prev === menuItem ? null : menuItem));
     };
 
     return (
@@ -45,45 +47,48 @@ function TourGuideNavBar() {
                     <li>
                         <a href="#" onClick={() => handleNavigation(`/tourguide/${id}`)}>Home</a>
                     </li>
-                    <li>
-                        <a href="#" onClick={() => toggleSubmenu('activities')}>Activities</a>
-                        {activeSubmenu === 'activities' && (
-                            <ul className="dropdown-submenu">
-                                <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/Activities/Culture`)}>Culture</a></li>
-                                <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/Activities/Adventure`)}>Adventure</a></li>
-                            </ul>
+                    <li onMouseEnter={() => togglePopup('activities')} onMouseLeave={() => togglePopup(null)}>
+                        <a href="#" onClick={() => handleNavigation(`/tourguide/${id}/Activities`)}>Activities</a>
+                        {activePopup === 'activities' && (
+                            <div className="popup">
+                                <ul>
+                                    <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/activities/adventure`)}>Adventure</a></li>
+                                    <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/activities/relaxation`)}>Relaxation</a></li>
+                                </ul>
+                            </div>
                         )}
                     </li>
-                    <li>
-                        <span onClick={() => toggleSubmenu('itineraries')}>Itineraries</span>
-                        {activeSubmenu === 'itineraries' && (
-                            <ul className="dropdown-submenu">
-                                <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/ItineraryManagement`)}>Categories</a></li>
-                                <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/Itineraries/Day`)}>Day Trips</a></li>
-                                <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/Itineraries/Weekend`)}>Weekend Getaways</a></li>
-                                <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/Itineraries/Long`)}>Long Trips</a></li>
-                                <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/ItineraryManagement`)}>Manage Itineraries</a></li>
-                            </ul>
+                    <li onMouseEnter={() => togglePopup('itineraries')} onMouseLeave={() => togglePopup(null)}>
+                        <a href="#" onClick={() => handleNavigation(`/tourguide/${id}/Itineraries`)}>Itineraries</a>
+                        {activePopup === 'itineraries' && (
+                            <div className="popup">
+                                <ul>
+                                    <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/ItineraryManagement`)}>Categories</a></li>
+                                    <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/itineraries/multi-day`)}>Multi-day Trips</a></li>
+                                </ul>
+                            </div>
                         )}
                     </li>
-                    <li>
-                        <a href="#" onClick={() => toggleSubmenu('museum')}>Museums</a>
-                        {activeSubmenu === 'museum' && (
-                            <ul className="dropdown-submenu">
-                                <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/Museum/Art`)}>Art Museum</a></li>
-                                <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/Museum/History`)}>History Museum</a></li>
-                                <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/Museum/Science`)}>Science Museum</a></li>
-                            </ul>
+                    <li onMouseEnter={() => togglePopup('museum')} onMouseLeave={() => togglePopup(null)}>
+                        <a href="#" onClick={() => handleNavigation(`/tourguide/${id}/Museum`)}>Museums</a>
+                        {activePopup === 'museum' && (
+                            <div className="popup">
+                                <ul>
+                                    <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/museum/history`)}>History</a></li>
+                                    <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/museum/art`)}>Art</a></li>
+                                </ul>
+                            </div>
                         )}
                     </li>
-                    <li>
-                        <a href="#" onClick={() => toggleSubmenu('hl')}>Historical Places</a>
-                        {activeSubmenu === 'hl' && (
-                            <ul className="dropdown-submenu">
-                                <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/HL/Ancient`)}>Ancient Sites</a></li>
-                                <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/HL/Castles`)}>Castles</a></li>
-                                <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/HL/Monuments`)}>Monuments</a></li>
-                            </ul>
+                    <li onMouseEnter={() => togglePopup('historicalPlaces')} onMouseLeave={() => togglePopup(null)}>
+                        <a href="#" onClick={() => handleNavigation(`/tourguide/${id}/HL`)}>Historical Places</a>
+                        {activePopup === 'historicalPlaces' && (
+                            <div className="popup">
+                                <ul>
+                                    <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/hl/castles`)}>Castles</a></li>
+                                    <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/hl/monuments`)}>Monuments</a></li>
+                                </ul>
+                            </div>
                         )}
                     </li>
                 </ul>

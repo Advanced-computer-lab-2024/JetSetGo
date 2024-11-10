@@ -28,6 +28,10 @@ const tourGuideSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   }, // If the guide is accepted by the system
+  rejected :{
+   type:Boolean,
+   default:false
+  },
   documents: {
     //////////////////////////////
     type: [String],
@@ -52,11 +56,29 @@ const tourGuideSchema = new mongoose.Schema({
       },
     },
   ],
-  comments: {
-    type: [String],
-    required: false,
-  },
+  comments: [
+    {
+      tourist: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tourist",
+      },
+      text: {
+        type: String,
+        required: true,
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
 
+  Tourists: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tourist", // Assuming you have a Tourist model
+    },
+  ],
   Tourists: [
     {
       type: mongoose.Schema.Types.ObjectId,

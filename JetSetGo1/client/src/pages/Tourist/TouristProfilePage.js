@@ -6,7 +6,7 @@ import Badge3 from '../../assets/images/Badge3.jpg';
 
 
 function TouristProfilePage() {
-    const { touristId } = useParams();
+    const { id } = useParams();
     const [tourist, setTourist] = useState(null);
     const [message, setMessage] = useState('');
 
@@ -14,7 +14,7 @@ function TouristProfilePage() {
         // Fetch tourist data using fetch
         const fetchTouristData = async () => {
             try {
-                const response = await fetch(`http://localhost:8000/api/tourist/${touristId}`, {
+                const response = await fetch(`http://localhost:8000/api/tourist/${id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'  
@@ -28,12 +28,12 @@ function TouristProfilePage() {
             }
         };
         fetchTouristData();
-    }, [touristId]);
+    }, [id]);
 
     // Function to update points to wallet using fetch
     const handleUpdatePointsToWallet = async () => {
         try {
-            const response = await fetch(`http://localhost:8000/api/tourist/updatePointsToWallet/${touristId}`, {
+            const response = await fetch(`http://localhost:8000/api/tourist/updatePointsToWallet/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
