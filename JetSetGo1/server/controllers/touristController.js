@@ -327,14 +327,12 @@ const searchActivityByDate = async (req,res) =>{
 const searchActivityByRating = async (req,res) =>{
   const ratingReq = req.body
   try{
+    console.log(ratingReq)
     const activty = await Activity.find(ratingReq)
-    if (activty.length === 0) {
-      return res.status(404).json({ error: "No activities found with this rating" });
-    }
     res.status(200).json(activty)
   }
   catch(error){
-    res.status(404).json({error:"Activity not found"})
+    res.status(400).json({error:"Activity not found"})
   }
 };
 
