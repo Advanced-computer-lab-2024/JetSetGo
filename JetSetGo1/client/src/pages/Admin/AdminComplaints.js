@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
@@ -90,11 +91,12 @@ const AdminComplaints = () => {
             <tbody>
               {complaints.map((complaint) => (
                 <tr
-                  onClick={() => window.location.href=`/admin/viewComplaint?complaintId=${complaint._id}`}
+                  
                   key={complaint._id}
                 >
+                  {/* <Link to="/admin/viewComplaint" state={complaint._id}></Link> */}
                   
-                  <td>{complaint.userId}</td>
+                  <td><Link to="/admin/viewComplaint" state={complaint._id}>{complaint.userId}</Link></td>
                   <td>{complaint.title}</td>
                   <td>
                     <span className={`status-badge ${statusClasses[complaint.status]}`}>

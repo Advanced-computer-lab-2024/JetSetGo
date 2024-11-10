@@ -154,6 +154,12 @@
     color: black; /* Color of the rating (and the star) */
 }
 
+.adv-rating {
+    display: flex;
+    margin: 10px 0;
+    color: black; /* Color of the rating (and the star) */
+}
+
 .star-icon {
     margin-left: 5px;
     color: #f39c12; /* Star color */

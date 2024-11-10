@@ -1,5 +1,95 @@
 const Advertiser = require('../models/AdvertiserModel');
 const Activity = require('../models/AdvertiserActivityModel');
+const multer = require('multer');
+const path = require('path');
+const Transportation = require('../models/TransportationModel');
+
+
+
+
+// Set up storage configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+// Initialize upload with storage configuration
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  fileFilter: (req, file, cb) => {
+    const fileTypes = /jpeg|jpg|png|gif/;
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = fileTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb('Error: Images Only!');
+    }
+  }
+});
+
+
+
+
+// Create Transportation
+const createTransportation = async (req, res) => {
+    const {carModel, days, time, location, price, advertiser} = req.body;
+  
+    try {
+      const newTransportation = await Transportation.create({ carModel, days, time, location, price, advertiser});
+      res.status(201).json(newTransportation);
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  };
+  
+  // Read Transportation
+  const getTransportation = async (req, res) => {
+  // const { id } = req.params;
+  
+    try {
+      const TransportationProfile = await Transportation.find();
+      res.status(200).json(TransportationProfile);
+    } catch (err) {
+      res.status(404).json({ error: 'Transportation not found' });
+    }
+  };
+  
+  // Update Transportation 
+  const updateTransportation = async (req, res) => {
+    const { id } = req.params;
+    const updates = req.body;
+  
+    try {
+      const updatedTransportation = await Transportation.findByIdAndUpdate(id, updates, { new: true });
+      res.status(200).json(updatedTransportation);
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  };
+  
+  //Delete Transportation
+  const deleteTransportation = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+        const deletedTransportation = await Transportation.findByIdAndDelete(id);
+        
+        if (!deletedTransportation) {
+            return res.status(404).json({ message: 'Transportation not found' });
+        }
+        
+        res.status(200).json({ message: 'Transportation deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+  };
 
 const createAdvertiserProfile = async (req, res) => {
   const { id } = req.params;
@@ -33,9 +123,6 @@ const createAdvertiserProfile = async (req, res) => {
   }
 };
 
-
-
-
 // Update Advertiser Profile
 const updateAdvertiserProfile = async (req, res) => {
   const { id } = req.params;
@@ -58,7 +145,6 @@ const updateAdvertiserProfile = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
 
 // Get Advertiser Profile
 const getAdvertiserProfile = async (req, res) => {
@@ -96,7 +182,6 @@ const deleteActivity = async (req, res) => {
       res.status(500).json({ error: err.message });
   }
 };
-
 
 // Create Activity
 const createActivity = async (req, res) => {
@@ -137,7 +222,6 @@ const updateActivity = async (req, res) => {
   }
 };
 
-
 // Get All Activities
 const getActivities = async (req, res) => {
   try {
@@ -147,7 +231,6 @@ const getActivities = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
 
 //Read my Activities
 const showMyActivities = async(req,res) => {
@@ -163,5 +246,129 @@ try{
     }
 }
 
+const changePassword = async (req, res) => {
+  const { id } = req.params; // Get the user ID from the route parameters
+  const { oldPassword, newPassword } = req.body; // Get old and new passwords from the body
 
-module.exports = {createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities};
+  // Validate input
+  if (!id || !oldPassword || !newPassword) {
+      return res.status(400).json({ error: "User ID, old password, and new password are required." });
+  }
+
+  try {
+  
+      const user = await Advertiser.findById(id);
+
+      if (!user) {
+          return res.status(404).json({ error: "User not found." });
+      }
+
+      // Compare old password
+      const isMatch = await bcrypt.compare(oldPassword, user.password); // Assuming you're using bcrypt
+
+      if (!isMatch) {
+          return res.status(400).json({ error: "Old password is incorrect." });
+      }
+
+      // Update password
+      user.password = await bcrypt.hash(newPassword, 10);
+      await user.save();
+
+      res.status(200).json({ message: "Password changed successfully." });
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+};
+
+const uploadProfileImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const profileImage = req.file ? req.file.path : null;
+
+    // Update the advertiser's profile image in the database
+    const advertiser = await Advertiser.findByIdAndUpdate(
+      id,
+      { profileImage },
+      { new: true }
+    );
+
+    if (!advertiser) {
+      return res.status(404).json({ error: 'Advertiser not found' });
+    }
+
+    res.json({ message: 'Profile image uploaded successfully', imagePath: profileImage });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
+};
+
+const requestAccountDeletion = async (req, res) => {
+  const {id } = req.params;
+  
+
+  try {
+      const advertiser = await Advertiser.findById(id);
+      if (!advertiser) return res.status(404).json({ error: "User not found" });
+
+      // Update requestedDeletion field
+      advertiser.deletionRequested = true;
+      await advertiser.save();
+
+      return res.status(200).json({ message: "Deletion request submitted successfully." });
+  } catch (error) {
+      return res.status(500).json({ error: "An error occurred while processing the deletion request." });
+  }
+};
+
+const uploadDoc = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  fileFilter: (req, file, cb) => {
+    const fileTypes = /jpeg|pdf/;
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = fileTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb('Error: Docs Only!');
+    }
+  }
+});
+
+const uploadDocument = async (req, res) => {
+  try {
+      const { id } = req.params;
+
+      // Check if files were uploaded
+      if (!req.files || req.files.length === 0) {
+          return res.status(400).json({ error: "No documents uploaded" });
+      }
+
+      // Map file paths of uploaded documents
+      const documentPaths = req.files.map(file => file.path);
+
+      // Update the documents array in the database
+      const advertiser = await Advertiser.findByIdAndUpdate(
+          id,
+          { $push: { documents: { $each: documentPaths } } },
+          { new: true }
+      );
+
+      if (!advertiser) {
+          return res.status(404).json({ error: "TourGuide not found" });
+      }
+
+      res.json({
+          message: "Documents uploaded successfully",
+          documentPaths: documentPaths
+      });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+
+module.exports = {requestAccountDeletion,upload,createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities,changePassword,uploadProfileImage,  createTransportation, getTransportation, updateTransportation, deleteTransportation,uploadDocument,uploadDoc};

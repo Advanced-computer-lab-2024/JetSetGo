@@ -1,7 +1,7 @@
 .complaint-container {
-    width: 80%; /* Original width /
+    width: 80%; /* Original width */
     max-width: 750px;
-    min-height: 90vh; / Increased minimum height /
+    min-height: 90vh; /* Increased minimum height */
     margin: 0 auto;
     padding: 30px;
     background-color: #f9f9f9;
@@ -59,13 +59,13 @@
 
 .response-textarea {
     width: 100%;
-    min-height: 100px; / Adjust for initial height /
+    min-height: 100px; /* Adjust for initial height */
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1em;
-    resize: vertical; / Allows the user to resize the textarea vertically /
-    overflow-wrap: break-word; / Ensures text wraps within the textarea */
+    resize: vertical; /* Allows the user to resize the textarea vertically */
+    overflow-wrap: break-word; /* Ensures text wraps within the textarea */
 }
 
 .form-actions {

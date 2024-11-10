@@ -126,6 +126,22 @@ const storage = multer.diskStorage({
 // Initialize multer with the storage configuration
 const upload = multer({ storage: storage }).single('picture');
 
+const uploadLogo = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  fileFilter: (req, file, cb) => {
+    const fileTypes = /jpeg|jpg|png|gif|pdf/;
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = fileTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb('Error: Images Only!');
+    }
+  }
+});
+
 // Create a new product function
 const createProduct = (req, res) => {
   upload(req, res, async (err) => {
@@ -154,7 +170,6 @@ const createProduct = (req, res) => {
       }
   });
 };
-
 
 //  update a product
 const updateProduct = async (req, res) =>{
@@ -227,4 +242,99 @@ const searchProductName = async(req,res) => {
 
 }
 
-module.exports = { createSellerProfile, updateSellerProfile, getSellerProfile,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct };
+const uploadProfileImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const profileImage = req.file ? req.file.path : null;
+  
+    // Update the advertiser's profile image in the database
+    const seller = await Seller.findByIdAndUpdate(
+      id,
+      { profileImage },
+      { new: true }
+    );
+
+    if (!seller) {
+      return res.status(404).json({ error: 'Seller not found' });
+    }
+
+    res.json({ message: 'Profile image uploaded successfully', imagePath: profileImage });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
+};
+
+const requestAccountDeletion = async (req, res) => {
+  const {id } = req.params;
+  
+  
+  try {
+      const seller = await Seller.findById(id);
+      if (!seller) return res.status(404).json({ error: "User not found" });
+       console.log("found the user")
+      // Update requestedDeletion field
+      seller.deletionRequested = true;
+      console.log("under")
+      await seller.save();
+      console.log("under save")
+
+      return res.status(200).json({ message: "Deletion request submitted successfully." });
+  } catch (error) {
+      return res.status(401).json({ error: error.message});
+  }
+};
+
+const uploadDoc = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  fileFilter: (req, file, cb) => {
+    const fileTypes = /jpeg|pdf/;
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = fileTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb('Error: Docs Only!');
+    }
+  }
+});
+const uploadDocument = async (req, res) => {
+  try {
+      const { id } = req.params;
+
+      // Check if files were uploaded
+      if (!req.files || req.files.length === 0) {
+          return res.status(400).json({ error: "No documents uploaded" });
+      }
+
+      // Map file paths of uploaded documents
+      const documentPaths = req.files.map(file => file.path);
+
+      // Update the documents array in the database
+      const seller = await Seller.findByIdAndUpdate(
+          id,
+          { $push: { documents: { $each: documentPaths } } },
+          { new: true }
+      );
+
+      if (!seller) {
+          return res.status(404).json({ error: "TourGuide not found" });
+      }
+
+      res.json({
+          message: "Documents uploaded successfully",
+          documentPaths: documentPaths
+      });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+
+
+
+
+module.exports = { requestAccountDeletion,uploadLogo,createSellerProfile, updateSellerProfile, getSellerProfile,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,uploadProfileImage, uploadDoc,uploadDocument };
