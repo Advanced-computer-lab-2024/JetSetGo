@@ -110,6 +110,7 @@ function App() {
             <Route path="/tourguide/:id/Activities" element={<Activities />} />
             <Route path="/tourguide/:id/Museum" element={<Museum />} />
             <Route path="/tourguide/:id/HL" element={<HL />} />
+            <Route path="/tourguide/:id/ItineraryManagement" element={<ItineraryManagement />} />
             </Route>
             <Route path="/" element={<HomePage />} />
             <Route path="/seller/products" element={<ProductListing usertype="seller" />} />
@@ -124,8 +125,8 @@ function App() {
 
 
             <Route path="/FlagItinery" element={<FlagItinerary />} />
+           
             <Route path="/ItineraryManagement" element={<ItineraryManagement />} />
-            
 
             <Route path="/CategoriesAndActivities" element={<CategoriesAndActivities />} />
             <Route path="/ShareLink" element={<ShareLink />} />
