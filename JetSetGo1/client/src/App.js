@@ -52,6 +52,19 @@ import ActivityPagejohn from "./pages/ActivityJohn";
 import Authentication from "./pages/Authentication/Authentication";
 import ProfileJohn from "./pages/profileJohn.js";
 import TourGuideLayout from "./components/TourGuideLayout.js";
+import FlagItinerary from "./components/FlagItinerary";
+import ItineraryManagement from "./components/ItineraryManagement";
+import CategoriesAndActivities from "./components/CategoriesAndActivities";
+import ShareLink from "./components/ShareLink";
+
+import AdminComplaints from "./pages/Admin/AdminComplaintsPage.js";
+import AdminViewComplaint from "./pages/Admin/AdminViewComplaint.js";
+
+import TouristComplaint from "./pages/Tourist/TouristComplaintPage.js";
+import TouristProfile from "./pages/Tourist/TouristProfilePage.js";
+
+import ActivityDetailPage from "./pages/ActivityDetailPage";
+import ItineraryDetailPage from "./pages/ItineraryDetailPage";
 
 import AdminComplaints from "./pages/Admin/AdminComplaintsPage.js";
 import AdminViewComplaint from "./pages/Admin/AdminViewComplaint.js";
@@ -151,6 +164,16 @@ function App() {
               element={<UpdateProducts usertype="admin" />}
             />
             <Route path="/delete/:role" element={<UserList />} />
+            <Route path="/FlagItinery" element={<FlagItinerary />} />
+            <Route
+              path="/ItineraryManagement"
+              element={<ItineraryManagement />}
+            />
+            <Route
+              path="/CategoriesAndActivities"
+              element={<CategoriesAndActivities />}
+            />
+            <Route path="/ShareLink" element={<ShareLink />} />
             <Route
               path="/tour-guide/itineraryManager"
               element={<ItineraryManager />}
@@ -159,6 +182,38 @@ function App() {
             <Route path="/admin/delete-options" element={<DeleteOptions />} />
             <Route path="/admin/add" element={<AdminAddPage />} />
             <Route path="/edit/tourist/:id" element={<TouristEditPage />} />
+            <Route
+              path="/profile/tourist/:id"
+              element={<TouristProfilePage />}
+            />
+            <Route
+              path="/activities2"
+              element={<Activities2 filteredActivities={filteredActivities} />}
+            />
+            <Route
+              path="/activity/:activityId/tourist/:touristId"
+              element={<ActivityDetailPage />}
+            />{" "}
+            {/* New route for activity details */}
+            <Route
+              path="/itineraries2"
+              element={<Itineraries2 filteredItinerary={filteredItinerary} />}
+            />
+            <Route
+              path="/itinerary/:itineraryId/tourist/:touristId"
+              element={<ItineraryDetailPage />}
+            />{" "}
+            {/* New route for itinerary details */}
+            <Route
+              path="/museums"
+              element={
+                <>
+                  <MuseumFilter onFilter={handleFilterResultsMusuems} />
+                  <Museums filteredMuseum={filteredMuseum} />
+                </>
+              }
+            />
+            {/* 
             <Route
               path="/profile/tourist/:id"
               element={<TouristProfilePage />}
@@ -233,6 +288,14 @@ function App() {
                   />
                 </>
               }
+            />
+            <Route
+              path="/tourist/complaint/:userId"
+              element={<TouristComplaint />}
+            />
+            <Route
+              path="/tourist/touristProfile/:touristId"
+              element={<TouristProfile />}
             />
           </Routes>
         </div>

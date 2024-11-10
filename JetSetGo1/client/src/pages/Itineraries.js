@@ -62,7 +62,9 @@ const Itineraries2 = () => {
             <div className="product-grid">
                 {itinerariesToShow && itinerariesToShow.length === 0 && <p>No results found</p>}
                 {itinerariesToShow && itinerariesToShow.map((itinerary) => (
-                    <ItineraryDetails key={itinerary._id} Itinerary={itinerary} />
+                    <Link key={itinerary._id} to={`/itinerary/${itinerary._id}/tourist/:touristId`}>
+                    <ItineraryDetails Itinerary={itinerary} />
+                    </Link>
                 ))}
             </div>
         </div>

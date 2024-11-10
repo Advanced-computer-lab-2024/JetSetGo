@@ -9,6 +9,7 @@ const HistoricalLocationModel = require("../models/HistoricalLocationModel");
 const MuseumModel = require("../models/MuseumModel");
 const Complaint = require("../models/ComplaintModel");
 const Category = require("../models/CategoryModel");
+const Category = require("../models/CategoryModel");
 const Booking = require("../models/bookingmodel");
 const TourGuide = require("../models/TourGuideModel.js");
 
@@ -496,6 +497,19 @@ const searchActivityByCategory = async (req, res) => {
     res.status(404).json({ error: "Activity not found" });
   }
 };
+
+// Get all categories
+const getCategories = async (req, res) => {
+  try {
+    const categories = await Category.find(); // Retrieve all categories
+    res.status(200).json(categories); // Send categories as JSON
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching categories" });
+  }
+};
+
 // Fetch activities by category
 const getActivitiesByCategory = async (req, res) => {
   const { categoryId } = req.params; // Extract category ID from the request params
@@ -690,21 +704,23 @@ const filterHistoricalLocationsByTag = async (req, res) => {
 
 const addComplaint = async (req, res) => {
   try {
-    const { title, body, date, userId: bodyUserId } = req.body;
-    const userId = req.user ? req.user._id : bodyUserId; // Fallback to body.userId if req.user is not available
+    const { userId } = req.params; // Assuming touristId is passed in the URL
+    const tourist = await Tourist.findById(userId);
+
+    const { title, body, date } = req.body;
 
     // Validate required fields
     if (!title || !body) {
       return res.status(400).json({ error: "Title and body are required" });
     }
 
-    if (!userId) {
-      return res.status(400).json({ error: "User ID is required" });
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
     }
 
     // Create a new complaint
     const complaint = new Complaint({
-      userId, // Use either req.user._id or req.body.userId
+      userId,
       title,
       body,
       date: date || Date.now(), // If date is not provided, use the current date
@@ -757,7 +773,8 @@ async function updatePointsToWallet(req, res) {
 
 async function payForItinerary(req, res) {
   try {
-    const { touristId, itineraryId } = req.body; // Receive touristId and itineraryId from the body
+    const { touristId } = req.params; // Assuming touristId is passed in the URL
+    const { itineraryId } = req.body; // Receive itineraryId from the body
 
     // Find the tourist by ID
     const tourist = await Tourist.findById(touristId);
@@ -825,7 +842,8 @@ async function payForItinerary(req, res) {
 
 async function payForActivity(req, res) {
   try {
-    const { touristId, activityId } = req.body; // Receive touristId and activityId from the body
+    const { touristId } = req.params; // Assuming touristId is passed in the URL
+    const { activityId } = req.body; // Receive touristId and activityId from the body
 
     // Find the tourist by ID
     const tourist = await Tourist.findById(touristId);
@@ -1060,6 +1078,49 @@ const cancel_booking = async (req, res) => {
     res.status(200).json({ message: "Booking canceled" });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+const fetchID = async (req, res) => {
+  try {
+    const { touristId } = req.params; // Assuming touristId is passed in the URL
+    const tourist = await Tourist.findById(touristId);
+
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+    res.json(tourist);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred", error });
+  }
+};
+
+const fetchActivityID = async (req, res) => {
+  const { activityId } = req.params;
+  const activity = await Activity.findById(activityId); // Replace Activity with your model
+
+  try {
+    if (!activity) {
+      return res.status(404).json({ error: "Activity not found" });
+    }
+    res.json(activity);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch activity" });
+  }
+};
+
+const fetchItineraryID = async (req, res) => {
+  const { itineraryId } = req.params;
+  const itinerary = await Itinerary.findById(itineraryId); // Replace Itinerary with your model
+
+  try {
+    if (!itinerary) {
+      return res.status(404).json({ error: "Itinerary not found" });
+    }
+    res.json(itinerary);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch itinerary" });
   }
 };
 
@@ -1521,4 +1582,62 @@ module.exports = {
   getItinerariesByTourGuide,
   getSingleItinerary,
   getTouristUsername,
+};
+
+module.exports = {
+  createTransportBooking,
+  getTransportBooking,
+  deleteTransportBooking,
+  selectPrefrences,
+  getPrefrences,
+  searchHistoricalPlaceByTag,
+  searchHistoricalPlaceByName,
+  searchHistoricalPlaceByCategory,
+  searchMuseumByTag,
+  searchMuseumByName,
+  searchMuseumByCategory,
+  searchActivityByBudget,
+  searchActivityByDate,
+  searchActivityByRating,
+  searchActivityByTag,
+  searchActivityByCategory,
+  searchActivityByName,
+  searchItineraryByDate,
+  searchItineraryByBudget,
+  searchItineraryByLanguage,
+  searchItineraryByCategory,
+  searchItineraryByName,
+  searchItineraryByTag,
+  getUpcomingActivities,
+  sortActivityByPrice,
+  sortActivityByRating,
+  getUpcomingItineraries,
+  sortItineraryByPrice,
+  sortItineraryByRating,
+  getMuseums,
+  filterMuseumsByTag,
+  getHistoricalLocations,
+  filterHistoricalLocationsByTag,
+  getProducts,
+  filterProducts,
+  sortByRate,
+  searchProductName,
+  updateInfo,
+  getInfo,
+  addComplaint,
+  updatePointsToWallet,
+  payForItinerary,
+  payForActivity,
+  getTagNameById,
+  getCategoryNameById,
+  getActivitiesByCategory,
+  getCategories,
+  rateActivity,
+  addCommentToActivity,
+  deleteCommentFromActivity,
+  book_activity_Itinerary,
+  cancel_booking,
+  fetchID,
+  fetchActivityID,
+  fetchItineraryID,
 };
