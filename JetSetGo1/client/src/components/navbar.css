@@ -161,16 +161,29 @@
     display: block; /* Show popup on hover */
 }
 
+.popup{
+    width: 100px;
+    height: 200px;
+    display: flex;
+    flex-direction: column; /* Arrange items vertically */
+    
+}
+
+
 /* Popup content styling */
 .popup ul {
     list-style: none; /* Remove bullet points */
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-direction: column; /* Arrange items vertically */
 }
 
 .popup li {
     padding: 8px 10px; /* Inner padding for items */
     transition: background-color 0.3s; /* Smooth background transition */
+    display: flex;
+    flex-direction: column; /* Arrange items vertically */
 }
 
 .popup li a {
