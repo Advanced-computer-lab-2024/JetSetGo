@@ -24,6 +24,10 @@ const sellerSchema = new mongoose.Schema({
       type: Boolean, 
       default: false 
     },  // If the seller is accepted by the system
+    rejected :{
+      type:Boolean,
+      default:false
+     },
     documents: {//////////////////////////
       type: [String]
      },// Paths to required documents

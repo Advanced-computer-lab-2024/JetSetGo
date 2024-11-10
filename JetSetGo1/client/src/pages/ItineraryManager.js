@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ItineraryManager.css'; // Add a CSS file for custom styles
 
-axios.defaults.baseURL = 'http://localhost:4000'; // Replace with your actual API URL
+axios.defaults.baseURL = 'http://localhost:8000'; // Replace with your actual API URL
 
 const tourGuide_ID = '67002c827e9690cf35059882';
 

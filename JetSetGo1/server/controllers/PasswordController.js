@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const Admin = require('../models/AdminModel');
 const Advertiser = require('../models/AdvertiserModel');
 const TourGuide = require('../models/TourGuideModel');
-const Tourist = require('../models/TouristModel');
+const Tourist = require('../models/TouristModels');
 const TourismGoverner = require('../models/TourismGovernerModel')
 const Seller = require('../models/SellerModel')
 
@@ -15,9 +15,7 @@ const changePassword = async (req, res) => {
     const Model = models[modelName.toLowerCase()];
     
     if (!Model) {
-        return resizeTo
-          .status(400)
-          .json({ error: `Model '${modelName}' not found` });
+        return res.status(400).json({ error: 'Model Not found' });
       }
 
     if (!oldPassword || !newPassword) {

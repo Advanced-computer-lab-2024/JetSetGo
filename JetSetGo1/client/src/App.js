@@ -24,13 +24,16 @@ import Itineraries2 from './pages/Itineraries';
 import Museums from './pages/museums';
 import HistoricalLocations from './pages/historicallocations';
 
-import ActivityFilter from './components/ActivityFilter';
-import ItineraryFilter from './components/ItineraryFilter';
+// import ActivityFilter from './components/ActivityFilter';
+// import ItineraryFilter from './components/ItineraryFilter';
 import MuseumFilter from './components/MuseumFilter';
 import HistoricalPlaceFilter from './components/HistoricalPlaceFilter';
 
 
 import HomePage from './pages/HomePage';
+
+import '@fortawesome/fontawesome-free/css/all.css';
+
 
 // import { BrowserRouter, Routes, Route } from 'react-router-dom'
 //pages and components 
@@ -50,14 +53,32 @@ import HLTags from './pages/hltag.js'
 import ActivityPagejohn from './pages/ActivityJohn';
 import Authentication from './pages/Authentication/Authentication';
 import ProfileJohn from './pages/profileJohn.js';
+import TourGuideLayout from './components/TourGuideLayout.js';
+import FlagItinerary from './components/FlagItinerary';
+import ItineraryManagement from './components/ItineraryManagement';
+import CategoriesAndActivities from './components/CategoriesAndActivities';
+import ShareLink from './components/ShareLink';
 
 
 import AdminComplaints from './pages/Admin/AdminComplaintsPage.js';
-import AdminViewComplaint from './pages/Admin/AdminViewComplaint.js'
+import AdminViewComplaint from './pages/Admin/AdminViewComplaint.js';
 
+import TouristComplaint from './pages/Tourist/TouristComplaintPage.js';
+import TouristProfile from './pages/Tourist/TouristProfilePage.js';
+
+import ActivityDetailPage from './pages/ActivityDetailPage';
+import ItineraryDetailPage from './pages/ItineraryDetailPage';
 
 function App() {
+  const [view, setView] = useState('home'); // 'home', 'viewDocuments'
 
+  const handleViewDocuments = () => {
+    setView('viewDocuments');
+  };
+
+  const handleBackToHome = () => {
+    setView('home');
+  };
   const [filteredActivities, setFilteredActivities] = useState(null);
   const [filteredItinerary, setFilteredItinerary] = useState(null);
   const [filteredMuseum, setFilteredMuseum] = useState(null);
@@ -152,16 +173,6 @@ function App() {
             />
 
             <Route
-              path="/admin/getComplaints"
-              element={<AdminComplaints />}
-            />
-
-            <Route
-              path="/api/admin/viewComplaint"
-              element={<AdminViewComplaint />}
-            /> 
-
-            <Route
               path="/Itineraries"
               element={<Itineraries />}
             />{/*johnn* */}
@@ -177,8 +188,10 @@ function App() {
             } />
           </Routes>
         </div>
-      </BrowserRouter>
-    </div>
-  );
-}
+        </BrowserRouter>
+        </div>
+      );
+      }
+
+
 export default App;
