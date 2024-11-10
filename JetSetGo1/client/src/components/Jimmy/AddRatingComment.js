@@ -8,8 +8,11 @@ import {
   CircularProgress,
   IconButton,
   Divider,
+  Alert,
 } from "@mui/material";
 import RadioGroupRating from "./RadioGroupRating"; // Assuming this is your custom rating component
+import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Material-UI's back arrow icon
+import "./AddRatingComment.css";
 
 function AddRatingComment() {
   const { id } = useParams();
@@ -18,6 +21,10 @@ function AddRatingComment() {
   const [newRating, setNewRating] = useState(0);
   const [newComment, setNewComment] = useState("");
   const [hasRated, setHasRated] = useState(false);
+  const [ratingError, setRatingError] = useState("");
+  const [commentError, setCommentError] = useState("");
+  const [ratingSuccess, setRatingSuccess] = useState(false);
+  const [commentSuccess, setCommentSuccess] = useState(false);
   const touristId = "670670e70c449b57490188b7";
 
   useEffect(() => {
@@ -27,7 +34,7 @@ function AddRatingComment() {
         setTourGuide(data);
         if (
           data.ratings &&
-          data.ratings.some((rating) => rating.tourist === touristId)
+          data.ratings.some((rating) => rating.tourist._id === touristId)
         ) {
           setHasRated(true);
         } else {
@@ -41,6 +48,9 @@ function AddRatingComment() {
 
   const handleRatingSubmit = () => {
     if (hasRated || !newRating) return;
+    setRatingError("");
+    setRatingSuccess(false);
+
     const ratingData = {
       touristId,
       tourGuideId: id,
@@ -52,10 +62,16 @@ function AddRatingComment() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(ratingData),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to submit rating. Please try again.");
+        }
+        return res.json();
+      })
       .then((data) => {
         if (data.error) {
-          console.error("Error submitting rating:", data.error);
+          setRatingError("Error submitting rating. Please try again.");
+          console.error("Error in response:", data.error);
         } else {
           setTourGuide((prev) => ({
             ...prev,
@@ -63,43 +79,64 @@ function AddRatingComment() {
           }));
           setNewRating(0);
           setHasRated(true);
-          alert("Rating submitted successfully!"); // Alert on success
-          navigate(-1); // Redirect back after success
+          setRatingSuccess(true);
         }
       })
-      .catch((error) => console.error("Error submitting rating:", error));
+      .catch((error) => {
+        setRatingError(error.message);
+        console.error("Error submitting rating:", error);
+      });
   };
 
   const handleCommentSubmit = () => {
     if (!newComment.trim()) return;
+    setCommentError("");
+    setCommentSuccess(false);
+
     const commentData = {
       touristId,
       tourGuideId: id,
       comment: newComment,
     };
 
+    console.log("Submitting comment data:", commentData); // Log the comment data to the console
+
     fetch(`http://localhost:8000/api/tourist/addComment`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(commentData),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to submit comment. Please try again.");
+        }
+        return res.json();
+      })
       .then((data) => {
-        if (!data.error) {
-          setNewComment("");
-          alert("Comment submitted successfully!"); // Alert on success
-          navigate(-1); // Redirect back after success
+        console.log("Comment response:", data); // Log the response to see what comes back
+        if (data.error) {
+          setCommentError("Error submitting comment. Please try again.");
+          console.error("Error in response:", data.error);
         } else {
-          console.error("Error submitting comment:", data.error);
+          setTourGuide((prev) => ({
+            ...prev,
+            comments: [...(prev?.comments || []), data],
+          }));
+          setNewComment("");
+          setCommentSuccess(true);
         }
       })
-      .catch((error) => console.error("Error submitting comment:", error));
+      .catch((error) => {
+        setCommentError(error.message);
+        console.error("Error submitting comment:", error);
+      });
   };
 
   return tourGuide ? (
     <Box sx={{ padding: 3 }}>
-      <IconButton onClick={() => navigate(-1)} className="back-button">
-        &lt; Back
+      {/* Back Button */}
+      <IconButton onClick={() => navigate(-1)} color="primary" sx={{ mb: 2 }}>
+        <ArrowBackIcon /> {/* Back arrow icon */}
       </IconButton>
 
       <Divider sx={{ my: 3 }} />
@@ -111,6 +148,16 @@ function AddRatingComment() {
           onChange={(e, newValue) => setNewRating(newValue)}
           disabled={hasRated}
         />
+        {ratingError && (
+          <Alert severity="error" sx={{ my: 1 }}>
+            {ratingError}
+          </Alert>
+        )}
+        {ratingSuccess && (
+          <Alert severity="success" sx={{ my: 1 }}>
+            Rating submitted successfully!
+          </Alert>
+        )}
         <Button
           variant="contained"
           color="primary"
@@ -127,7 +174,7 @@ function AddRatingComment() {
         <TextField
           fullWidth
           multiline
-          rows={2} // Adjusted for more space
+          rows={2}
           variant="outlined"
           value={newComment}
           onChange={(e) => {
@@ -141,6 +188,16 @@ function AddRatingComment() {
         <Typography variant="body2" color="textSecondary">
           {250 - newComment.length} characters remaining
         </Typography>
+        {commentError && (
+          <Alert severity="error" sx={{ my: 1 }}>
+            {commentError}
+          </Alert>
+        )}
+        {commentSuccess && (
+          <Alert severity="success" sx={{ my: 1 }}>
+            Comment submitted successfully!
+          </Alert>
+        )}
         <Button
           variant="contained"
           color="primary"

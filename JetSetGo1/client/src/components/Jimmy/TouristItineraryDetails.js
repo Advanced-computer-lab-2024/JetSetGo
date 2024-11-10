@@ -1,14 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { Button, Typography, Divider } from "@mui/material";
+import { useParams, Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import { Typography, Divider, IconButton } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Material-UI's back arrow icon
 import "./TouristItineraryDetails.css";
 
 function TouristItineraryDetails() {
   const { id } = useParams(); // Get itineraryId from the URL
   const [itinerary, setItinerary] = useState(null);
+  const [touristUsername, setTouristUsername] = useState(""); // Store the tourist username
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Initialize the navigate function
+
+  // Replace this with the actual touristId
+  const touristId = "670670e70c449b57490188b7";
 
   useEffect(() => {
+    // Fetch the tourist's username
+    fetch("http://localhost:8000/api/tourist/getTouristUsername", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ touristId }), // Send touristId to the backend
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Username fetch error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setTouristUsername(data.username); // Set the fetched username
+      })
+      .catch((error) => {
+        setError("Error fetching tourist username: " + error.message);
+      });
+
     // Fetch the itinerary details by itineraryId
     fetch("http://localhost:8000/api/tourist/getSingleItinerary", {
       method: "POST",
@@ -27,7 +52,7 @@ function TouristItineraryDetails() {
       .catch((error) => {
         setError("Error fetching itinerary details: " + error.message);
       });
-  }, [id]); // Only refetch if itineraryId changes
+  }, [id, touristId]); // Refetch if itineraryId or touristId changes
 
   // Calculate the average rating (if ratings exist)
   const calculateAverageRating = (ratings) => {
@@ -56,6 +81,11 @@ function TouristItineraryDetails() {
 
   return (
     <div className="itinerary-details">
+      {/* Back Button */}
+      <IconButton onClick={() => navigate(-1)} color="primary" sx={{ mb: 2 }}>
+        <ArrowBackIcon /> {/* Back arrow icon */}
+      </IconButton>
+
       <h1>Itinerary Details</h1>
 
       {/* Itinerary Details Card */}
@@ -95,13 +125,15 @@ function TouristItineraryDetails() {
           {calculateAverageRating(itinerary.ratings)}
         </Typography>
       </div>
-      {/* comment/rate Button */}
+
+      {/* Rate/Comment Button */}
       <Link to={`/add-rating-comment-itinerary/${id}`}>
         <button variant="contained" color="primary">
           Rate/Comment
         </button>
       </Link>
       <Divider sx={{ my: 2 }} />
+
       {/* Comments Section Card */}
       {itinerary.comments && itinerary.comments.length > 0 && (
         <div className="comments-card">
@@ -109,7 +141,17 @@ function TouristItineraryDetails() {
           <ul style={{ listStyleType: "none", paddingLeft: 0 }}>
             {itinerary.comments.map((comment, index) => (
               <li key={index} style={{ marginBottom: "10px" }}>
-                {comment}
+                {comment.tourist ? (
+                  <>
+                    <p>
+                      <strong>{touristUsername || "Unknown Tourist"}</strong> -{" "}
+                      {new Date(comment.createdAt).toLocaleString()}
+                    </p>
+                    <p>{comment.text}</p>
+                  </>
+                ) : (
+                  <p>{comment.text}</p>
+                )}
               </li>
             ))}
           </ul>

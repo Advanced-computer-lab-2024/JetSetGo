@@ -57,7 +57,7 @@ import AdminComplaints from "./pages/Admin/AdminComplaintsPage.js";
 import AdminViewComplaint from "./pages/Admin/AdminViewComplaint.js";
 
 // JIMMY
-import TouristDashboard from "./pages/TouristDashboard";
+
 import Dashboard2 from "./components/Jimmy/Dashboard2.js";
 import AddRatingComment from "./components/Jimmy/AddRatingComment.js";
 import AddRatingCommentItinerary from "./components/Jimmy/AddRatingCommentItinerary.js";
@@ -164,16 +164,6 @@ function App() {
               element={<TouristProfilePage />}
             />
             {/* JIMMY */}
-            <Route
-              path="/touristFollows"
-              element={
-                <TouristDashboard
-                  touristId={"670670e70c449b57490188b7"}
-                  tourGuideId={"672a701ce86441a98e73c58b"}
-                  itineraryId={"670665c20c449b57490186fb"}
-                />
-              }
-            />
             <Route path="/touristFollows2" element={<Dashboard2 />} />
             <Route
               path="/tourist/viewTourGuideProfile/:id"

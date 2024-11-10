@@ -66,6 +66,7 @@ const {
   getAllTourGuideProfiles,
   getItinerariesByTourGuide,
   getSingleItinerary,
+  getTouristUsername,
 } = require("../controllers/touristController");
 
 const router = express.Router();
@@ -166,5 +167,6 @@ router.get("/followed/:touristId", getFollowedItineraries);
 router.get("/getAllTourGuideProfiles", getAllTourGuideProfiles);
 router.post("/getItinerariesByTourGuide", getItinerariesByTourGuide);
 router.post("/getSingleItinerary", getSingleItinerary);
+router.post("/getTouristUsername", getTouristUsername);
 
 module.exports = router;

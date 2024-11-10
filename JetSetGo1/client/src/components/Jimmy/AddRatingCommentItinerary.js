@@ -10,6 +10,8 @@ import {
   Divider,
 } from "@mui/material";
 import RadioGroupRating from "./RadioGroupRating"; // Assuming this is your custom rating component
+import "./AddRatingComment.css";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Material-UI's back arrow icon
 
 function AddRatingCommentItinerary() {
   const { id } = useParams();
@@ -103,10 +105,10 @@ function AddRatingCommentItinerary() {
 
   return itinerary ? (
     <Box sx={{ padding: 3 }}>
-      <IconButton onClick={() => navigate(-1)} className="back-button">
-        &lt; Back
+      {/* Back Button */}
+      <IconButton onClick={() => navigate(-1)} color="primary" sx={{ mb: 2 }}>
+        <ArrowBackIcon /> {/* Back arrow icon */}
       </IconButton>
-
       <Divider sx={{ my: 3 }} />
 
       <Box sx={{ my: 3 }}>

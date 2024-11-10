@@ -1113,25 +1113,37 @@ const addRating = async (req, res) => {
   }
 };
 
-// Method to add a comment from a tourist
+// Method to add a comment from a tourist to a tour guide
 const addComment = async (req, res) => {
   const { tourGuideId, touristId, comment } = req.body;
 
   try {
-    // Find the tour guide by ID
-    const tourGuide = await TourGuide.findById(tourGuideId);
+    // Find the tour guide by ID and populate tourists for validation
+    const tourGuide = await TourGuide.findById(tourGuideId).populate(
+      "Tourists"
+    );
 
     if (!tourGuide) {
       return res.status(404).json({ message: "Tour Guide not found." });
     }
 
     // Check if the tourist is associated with the tour guide
-    if (tourGuide.Tourists.includes(touristId)) {
-      tourGuide.comments.push(comment); // Add the comment to the comments array
-      await tourGuide.save(); // Save the updated tour guide
-      return res
-        .status(200)
-        .json({ message: "Comment added successfully.", tourGuide });
+    if (
+      tourGuide.Tourists.some((tourist) => tourist._id.toString() === touristId)
+    ) {
+      // Add the structured comment
+      const newComment = {
+        tourist: touristId,
+        text: comment,
+        createdAt: new Date(),
+      };
+      tourGuide.comments.push(newComment);
+      await tourGuide.save();
+
+      return res.status(200).json({
+        message: "Comment added successfully.",
+        comment: newComment,
+      });
     } else {
       return res
         .status(400)
@@ -1196,20 +1208,32 @@ const addItineraryComment = async (req, res) => {
   const { itineraryId, touristId, comment } = req.body;
 
   try {
-    // Find the itinerary by ID
-    const itinerary = await Itinerary.findById(itineraryId);
+    // Find the itinerary by ID and populate tourists for validation
+    const itinerary = await Itinerary.findById(itineraryId).populate(
+      "Tourists"
+    );
 
     if (!itinerary) {
       return res.status(404).json({ message: "Itinerary not found." });
     }
 
     // Check if the tourist is associated with the itinerary
-    if (itinerary.Tourists.includes(touristId)) {
-      itinerary.comments.push(comment); // Add the comment to the comments array
-      await itinerary.save(); // Save the updated itinerary
-      return res
-        .status(200)
-        .json({ message: "Comment added successfully.", itinerary });
+    if (
+      itinerary.Tourists.some((tourist) => tourist._id.toString() === touristId)
+    ) {
+      // Add the structured comment
+      const newComment = {
+        tourist: touristId,
+        text: comment,
+        createdAt: new Date(),
+      };
+      itinerary.comments.push(newComment);
+      await itinerary.save();
+
+      return res.status(200).json({
+        message: "Comment added successfully.",
+        comment: newComment,
+      });
     } else {
       return res
         .status(400)
@@ -1219,7 +1243,6 @@ const addItineraryComment = async (req, res) => {
     return res.status(500).json({ message: "Error adding comment.", error });
   }
 };
-
 // Method for a tourist to follow an itinerary (add tourist to Itinerary.Tourists)
 const followItinerary = async (req, res) => {
   const { itineraryId, touristId } = req.body;
@@ -1410,6 +1433,29 @@ const getSingleItinerary = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+// Controller function to get tourist username by touristId
+const getTouristUsername = async (req, res) => {
+  try {
+    // Get the touristId from the request parameters
+    const { touristId } = req.body;
+
+    // Find the tourist by the provided touristId
+    const tourist = await Tourist.findById(touristId);
+
+    // If tourist not found, return a 404 error
+    if (!tourist) {
+      return res.status(404).json({ message: "Tourist not found" });
+    }
+
+    // Return the tourist's username
+    return res.status(200).json({ username: tourist.username });
+  } catch (error) {
+    console.error("Error fetching tourist username:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   createTransportBooking,
   getTransportBooking,
@@ -1474,4 +1520,5 @@ module.exports = {
   getAllTourGuideProfiles,
   getItinerariesByTourGuide,
   getSingleItinerary,
+  getTouristUsername,
 };
