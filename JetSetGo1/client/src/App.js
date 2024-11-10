@@ -294,7 +294,7 @@ function App() {
               />
               <Route path="/delete/:role" element={<UserList />} />
               <Route
-                path="/tour-guide/itineraryManager"
+                path="/tour-guide/itineraryManager/:id"
                 element={<ItineraryManager />}
               />
               <Route path="/admin/profile" element={<AdminProfilePage />} />
