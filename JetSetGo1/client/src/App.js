@@ -66,9 +66,6 @@ import TouristProfile from "./pages/Tourist/TouristProfilePage.js";
 import ActivityDetailPage from "./pages/ActivityDetailPage";
 import ItineraryDetailPage from "./pages/ItineraryDetailPage";
 
-import AdminComplaints from "./pages/Admin/AdminComplaintsPage.js";
-import AdminViewComplaint from "./pages/Admin/AdminViewComplaint.js";
-
 // JIMMY
 
 import Dashboard2 from "./components/Jimmy/Dashboard2.js";
