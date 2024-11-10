@@ -63,7 +63,7 @@ function TourGuideNavBar() {
                             <div className="popup">
                                 <ul>
                                     <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/ItineraryManagement`)}>Categories</a></li>
-                                    <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/itineraries/multi-day`)}>Multi-day Trips</a></li>
+                                    <li><a href="#" onClick={() => handleNavigation(`/tour-guide/itineraryManager`)}>Itinerary Manager</a></li>
                                 </ul>
                             </div>
                         )}
