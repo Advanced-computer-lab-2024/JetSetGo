@@ -23,7 +23,7 @@ import UpdateProducts from "./pages/Product/UpdateProduct";
 import Activities2 from "./pages/Activities";
 import Itineraries2 from "./pages/Itineraries";
 import Museums from "./pages/museums";
-import HistoricalLocations from "./pages/historicallocations";
+import HistoricalLocations from "./pages/historicallocations.js";
 
 // import ActivityFilter from './components/ActivityFilter';
 // import ItineraryFilter from './components/ItineraryFilter';

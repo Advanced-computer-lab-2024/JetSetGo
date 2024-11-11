@@ -37,7 +37,7 @@ const ItineraryDetailPage = () => {
                 if (!itinerary?.tags) return;
 
                 const names = [];
-                for (const tagId of itineraryId.tags) {
+                for (const tagId of itinerary.tags) {
                     const response = await fetch(`/api/tourist/tagName/${tagId}`);
                     const data = await response.json();
                     if (response.ok) {
@@ -52,8 +52,8 @@ const ItineraryDetailPage = () => {
             }
         };
 
-        if (itineraryId) fetchTagNames();
-    }, [itineraryId]);
+        if (itinerary) fetchTagNames();
+    }, [itinerary]);
 
 
     // Handle Payment
