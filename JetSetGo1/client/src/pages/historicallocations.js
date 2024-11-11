@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 
 
 //components
@@ -8,6 +8,8 @@ import HistoricalLocationDetails from "../components/HistoricalLocationDetails"
 const HistoricalLocations = ({ filteredHistoricalPlace }) => {
     const [historicalLocations, setHistoricalLocations] = useState(null)
     
+    const {id}= useParams();
+
     useEffect(() => {
         fetchHistoricalLocations()
     }, [])
