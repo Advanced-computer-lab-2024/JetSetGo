@@ -108,7 +108,7 @@ const ActivityFilter = ({ onFilter }) => {
                 <input
                     type="range"
                     min="0"
-                    max="100000"
+                    max="10000"
                     value={budget}
                     onChange={(e) => setBudget(e.target.value)}
                 />

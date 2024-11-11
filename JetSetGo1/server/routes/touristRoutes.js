@@ -14,7 +14,8 @@ const {createTransportBooking, getTransportBooking, deleteTransportBooking,  sel
     deleteCommentFromActivity,
     book_activity_Itinerary,
     cancel_booking,
-    getActivitiesByCategory, fetchID, fetchActivityID, fetchItineraryID,getCategories,requestAccountDeletion} = require('../controllers/touristController');
+    getActivitiesByCategory, fetchID, fetchActivityID, fetchItineraryID,getCategories,requestAccountDeletion,
+    getTagIdByName} = require('../controllers/touristController');
 
 const TouristController = require('../controllers/touristController');
 
@@ -61,6 +62,9 @@ router.post(
   "/searchHistoricalPlaceByCategory",
   searchHistoricalPlaceByCategory
 );
+
+
+router.post("/getTagIdByName",getTagIdByName)
 
 router.post("/searchMuseumByTag", searchMuseumByTag);
 router.post("/searchMuseumByName", searchMuseumByName);

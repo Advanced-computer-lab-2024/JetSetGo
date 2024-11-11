@@ -14,7 +14,7 @@ const AdminViewComplaint = () => {
     }, []);
 
     const viewComplaint = async () => {
-        const response = await fetch(`http://localhost:3000/api/admin/viewComplaint?complaintId=${complaintId}`);
+        const response = await fetch(`http://localhost:8000/api/admin/viewComplaint?complaintId=${complaintId}`);
         const json = await response.json();
         if (response.ok) {
             setComplaint(json);
@@ -23,7 +23,7 @@ const AdminViewComplaint = () => {
 
     const resolveComplaint = async (replyText) => {
         try {
-            const response = await fetch('http://localhost:3000/api/admin/resolveComplaint', {
+            const response = await fetch('http://localhost:8000/api/admin/resolveComplaint', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
