@@ -9,6 +9,7 @@ const MuseumModel = require("../models/MuseumModel");
 const Complaint = require('../models/ComplaintModel');
 const Category = require('../models/CategoryModel');
 const Booking = require("../models/bookingmodel");
+const FlightBooking = require('../models/FlightBooking');
 
 const getTagNameById = async (req, res) => {
   try {
@@ -801,6 +802,19 @@ async function payForActivity(req, res) {
 
 
 
+const getTouristActivities = async (req, res) => {
+  try {
+    const { touristId } = req.params;
+
+    const activities = await Activity.find({ Tourists: touristId }).populate('comments.postedby', 'name');
+
+    res.json(activities);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 
 
 const rateActivity = async (req, res) => {
@@ -808,6 +822,10 @@ const rateActivity = async (req, res) => {
     const { _id, star, activityId } = req.body;
 
     const activity = await Activity.findById(activityId);
+
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
 
     let alreadyRated = activity.ratings.find(
       (rating) => rating.postedby.toString() === _id.toString()
@@ -830,7 +848,12 @@ const rateActivity = async (req, res) => {
         { new: true }
       );
     }
+
     const getAllRatings = await Activity.findById(activityId);
+    if (!getAllRatings) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
     let totalRating = getAllRatings.ratings.length;
     let ratingSum = getAllRatings.ratings
       .map((item) => item.star)
@@ -846,6 +869,55 @@ const rateActivity = async (req, res) => {
     );
 
     res.json(finalActivity);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getUserRating = async (req, res) => {
+  try {
+    const { _id, activityId } = req.params;
+
+    const activity = await Activity.findById(activityId);
+    console.log(activity);
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
+    const userRating = activity.ratings.find(
+      (rating) => rating.postedby.toString() === _id.toString()
+    );
+
+    res.json({ rating: userRating ? userRating.star : null });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+const isCommentByTourist = async (req, res) => {
+  try {
+    const { touristId, commentId } = req.body;
+
+    // Find the activity containing the comment by the commentId
+    const activity = await Activity.findOne({
+      "comments._id": commentId
+    });
+
+    if (!activity) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Find the specific comment
+    const comment = activity.comments.id(commentId);
+
+    // Check if the comment was posted by the given touristId
+    if (comment.postedby.toString() === touristId) {
+      res.json(true); // The comment was posted by the user
+    } else {
+      res.json(false); // The comment was not posted by the user
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -924,11 +996,93 @@ const book_activity_Itinerary = async (req, res) => {
     const booking = new Booking({ tourist, referenceId, referenceType });
     await booking.save();
 
+    if (referenceType === "Activity") {
+      await Activity.findByIdAndUpdate(
+        referenceId,
+        { $push: { Tourists: tourist } },
+        { new: true }
+      );
+    }
+
     res.status(201).json(booking);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
+const getTouristBookedActivities = async (req, res) => {
+  try {
+    const { touristId } = req.params;
+    console.log("jjnjnj"+touristId);
+    // Find all bookings for the tourist
+    const bookings = await Booking.find({ tourist: touristId });
+
+    // Extract reference IDs and types from bookings
+    const activityIds = bookings
+      .filter(booking => booking.referenceType === 'Activity')
+      .map(booking => booking.referenceId);
+
+    const itineraryIds = bookings
+      .filter(booking => booking.referenceType === 'Itinerary')
+      .map(booking => booking.referenceId);
+
+    // Find activities and itineraries based on IDs
+    const activities = await Activity.find({ _id: { $in: activityIds } }).populate('comments.postedby', 'name');
+    const itineraries = await Itinerary.find({ _id: { $in: itineraryIds } }).populate('comments.postedby', 'name');
+
+    res.json({ activities, itineraries });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+// Create a new flight booking
+const createFlightBooking = async (req, res) => {
+  const { touristId, flightId, origin, destination, departureDate, returnDate, price, duration } = req.body;
+
+  try {
+    // Validate touristId format
+    if (!mongoose.Types.ObjectId.isValid(touristId)) {
+      return res.status(400).json({ message: 'Invalid tourist ID format' });
+    }
+
+    // Convert touristId to an ObjectId
+    const touristObjectId = new mongoose.Types.ObjectId(touristId);
+
+    // Check if the tourist exists
+    const tourist = await Tourist.findById(touristObjectId);
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found' });
+    }
+
+    // Create a new flight booking
+    const newBooking = new FlightBooking({
+      touristId: touristObjectId,
+      flightId,
+      origin,
+      destination,
+      departureDate,
+      returnDate,
+      price,
+      duration,
+    });
+
+    // Save the booking to the database
+    await newBooking.save();
+
+    // Respond with success
+    res.status(201).json({ message: 'Flight booking created successfully', booking: newBooking });
+  } catch (error) {
+    console.error('Error creating flight booking:', error);
+    res.status(500).json({ message: 'Failed to create flight booking' });
+  }
+};
+
+
 
 const cancel_booking = async (req, res) => {
   try {
@@ -968,12 +1122,42 @@ const cancel_booking = async (req, res) => {
     if (hoursDiff < 48) {
       return res.status(400).json({ message: "Cannot cancel within 48 hours" });
     }
+
     await Booking.deleteOne({ _id: booking_id });
-    res.status(200).json({ message: "Booking canceled" });
+
+    // Remove the tourist from the Tourists array in the Activity model
+    if (booking.referenceType === "Activity") {
+      await Activity.findByIdAndUpdate(
+        booking.referenceId,
+        { $pull: { Tourists: booking.tourist } },
+        { new: true }
+      );
+    }
+
+    res.status(200).json({ message: "Booking canceled and tourist removed from the activity" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+// controllers/hotelBookingController.js
+// controllers/hotelBookingController.js
+const HotelBooking = require("../models/HotelBooking");
+
+const createBooking = async (req, res) => {
+    const { touristId, ...bookingData } = req.body; // Extract touristId from request body
+    try {
+        const booking = new HotelBooking({ touristId, ...bookingData });
+        await booking.save();
+        res.status(201).json({ message: "Booking saved successfully", booking });
+    } catch (error) {
+        console.error("Error saving booking:", error);
+        res.status(500).json({ message: "Error saving booking", error });
+    }
+};
+
+
 
   module.exports = {
     searchHistoricalPlaceByTag,searchHistoricalPlaceByName,searchHistoricalPlaceByCategory,
@@ -990,4 +1174,4 @@ const cancel_booking = async (req, res) => {
      addCommentToActivity,
      deleteCommentFromActivity,
      book_activity_Itinerary,
-     cancel_booking};
+     cancel_booking,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,createBooking};
