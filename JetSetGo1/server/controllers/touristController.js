@@ -1,4 +1,5 @@
 const TransportBooking = require('../models/TransportationBookingModel');
+const ActivityItineraryBooking =  require('../models/bookingmodel.js');
 const mongoose = require("mongoose");
 const Product = require("../models/ProductModel");
 const Tourist = require("../models/touristModel");
@@ -1070,6 +1071,33 @@ const cancel_booking = async (req, res) => {
   }
 };
 
+
+const myTransportBooking = async (req, res) => {
+  const { touristId } = req.params;
+
+  try {
+    const TransportBookingProfile = await TransportBooking.find({ touristId });
+    res.status(200).json(TransportBookingProfile);
+  } catch (err) {
+    res.status(404).json({ error: 'Transportation Booking not found' });
+  }
+};
+
+
+
+
+const myActivityItineraryBooking = async (req, res) => {
+  const { touristId } = req.params;
+
+  try {
+    const ActivityItineraryBookingProfile = await ActivityItineraryBooking.find({ touristId });
+    res.status(200).json(ActivityItineraryBookingProfile);
+  } catch (err) {
+    res.status(404).json({ error: 'Activity/Itinerary Booking not found' });
+  }
+};
+
+
   module.exports = {createTransportBooking, getTransportBooking, deleteTransportBooking, selectPrefrences, getPrefrences,
     searchHistoricalPlaceByTag,searchHistoricalPlaceByName,searchHistoricalPlaceByCategory,
     searchMuseumByTag,searchMuseumByName,searchMuseumByCategory,
@@ -1085,4 +1113,4 @@ const cancel_booking = async (req, res) => {
      addCommentToActivity,
      deleteCommentFromActivity,
      book_activity_Itinerary,
-     cancel_booking};
+     cancel_booking, myTransportBooking, myActivityItineraryBooking};

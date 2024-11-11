@@ -1,5 +1,5 @@
 const express = require('express');
-const { showMyActivities, createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile , createActivity, updateActivity, deleteActivity, getActivities , createTransportation, getTransportation, updateTransportation, deleteTransportation} = require('../controllers/advertiserController');
+const { showMyActivities, createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile , createActivity, updateActivity, deleteActivity, getActivities , createTransportation, getTransportation, updateTransportation, deleteTransportation, findtransport, findReferenceDetails} = require('../controllers/advertiserController');
 const { changePassword } = require("../controllers/PasswordController");
 const router = express.Router();
 
@@ -23,7 +23,8 @@ router.get('/showTransportation', getTransportation )
 router.patch('/updateTransportation/:id', updateTransportation)
 router.delete('/deleteTransportation/:id', deleteTransportation )
 
-
+router.get('/findtransport/:id', findtransport)
+router.get('/findrefdetails/:id/:type',findReferenceDetails)
 // Create or Update Advertiser Profile
 // router.post('/create', createAdvertiserProfile);
 router.post('/createProfile/:id',createAdvertiserProfile);

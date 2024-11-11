@@ -1,5 +1,6 @@
 const Advertiser = require('../models/AdvertiserModel');
 const Activity = require('../models/AdvertiserActivityModel');
+const Itinerary = require ('../models/ItineraryModel');
 const multer = require('multer');
 const path = require('path');
 const Transportation = require('../models/TransportationModel');
@@ -319,4 +320,41 @@ const uploadProfileImage = async (req, res) => {
   }
 };
 
-module.exports = {upload,createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities,changePassword,uploadProfileImage,  createTransportation, getTransportation, updateTransportation, deleteTransportation};
+
+const findtransport = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const transportData = await Transportation.findById(id);
+    if (!transportData) {
+      return res.status(404).json({ error: 'Transportation post not found' });
+    }
+    res.status(200).json(transportData);
+  } catch (err) {
+    res.status(500).json({ error: 'An error occurred while fetching the transportation post' });
+  }
+};
+
+
+const findReferenceDetails = async (req, res) => {
+  const { id, type } = req.params;
+
+  try {
+    let details;
+    if (type === 'Activity') {
+      details = await Activity.findById(id);
+    } else if (type === 'Itinerary') {
+      details = await Itinerary.findById(id);
+    }
+
+    if (!details) {
+      return res.status(404).json({ error: `${type} not found` });
+    }
+    res.status(200).json(details);
+  } catch (err) {
+    res.status(500).json({ error: `An error occurred while fetching the ${type} details` });
+  }
+};
+
+
+module.exports = {upload,createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities,changePassword,uploadProfileImage,  createTransportation, getTransportation, updateTransportation, deleteTransportation, findtransport, findReferenceDetails};
