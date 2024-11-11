@@ -84,26 +84,40 @@ const HistoricalPlaceFilter = ({ onFilter }) => {
 
         // Fetch results by name
         const results = await fetchResults(name, 'name', '/api/tourist/searchHistoricalPlaceByName');
+        const museumResults = await fetchResults(name, 'name', '/api/tourist/searchMuseumByName');
 
         // Fetch tag ID if tagName is provided
         const tagId = tagName ? await fetchTagIdByName(tagName) : null;
         console.log("Tag ID retrieved in handleSubmit:", tagId);
 
         // Fetch results by tag if tagId is available
-        const resultsByTag = tagId ? await fetchResults(tagId, 'tagId', '/api/tourist/searchItineraryByTag') : results;
+        const resultsByTag = tagId ? await fetchResults(tagId, 'tags', '/api/tourist/searchHistoricalPlaceByTag') : results;
+        const museumResultsByTag = tagId ? await fetchResults(tagId, 'tagId', '/api/tourist/searchMuseumByTag') : museumResults;
 
         let resultsByCategory = results; // Start with the default results (by name)
         if (selectedCategories.length > 0) {
             for (let categoryId of selectedCategories) {
-                const categoryResults = await fetchResults(categoryId, 'category', '/api/tourist/searchActivityByCategory');
+                const categoryResults = await fetchResults(categoryId, 'category', '/api/tourist/searchHistoricalPlaceByCategory');
                 resultsByCategory = resultsByCategory.filter(item => categoryResults.some(cat => cat._id === item._id));
             }
         }
+        let museumResultsByCategory = museumResults; // Start with the default results (by name)
+        if (selectedCategories.length > 0) {
+            for (let categoryId1 of selectedCategories) {
+                const categoryResults1 = await fetchResults(categoryId1, 'category', '/api/tourist/searchMuseumByCategory');
+                museumResultsByCategory = museumResultsByCategory.filter(item => categoryResults1.some(cat => cat._id === item._id));
+            }
+        }
+
 
         // Combine the results by filtering for items that match both tag and category
-        const filteredResults = resultsByCategory.filter((item) =>
+        const filteredResults1 = resultsByCategory.filter((item) =>
             resultsByTag.some((tag) => tag._id === item._id)
         );
+        const filteredResults2 = museumResultsByCategory.filter((item) =>
+            museumResultsByTag.some((tag) => tag._id == item._id))
+        
+        const filteredResults = filteredResults1.concat(filteredResults2)
 
         // Update the common results
         setCommonResults(filteredResults);
