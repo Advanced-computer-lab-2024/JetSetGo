@@ -77,7 +77,7 @@ function NavBar() {
                         <li><Link to={`/tourist/${id}/itineraries2`}>Itineraries</Link></li>
                         <li><Link to={`/tourist/${id}/tourguidelist`}>Tour Guide</Link></li>
                         <li><Link to={`/tourist/${id}/tourguidelist`}>Booking</Link></li>
-                        <li><Link to={`/tourist/${id}/tourguidelist`}>Historical Locations</Link></li>
+                        <li><Link to={`/tourist/${id}/historicalLocations`}>Historical Locations</Link></li>
                     </ul>
                 </div>
                 

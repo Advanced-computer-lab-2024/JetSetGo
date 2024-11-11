@@ -96,6 +96,9 @@ import TouristItineraryDetails from "./components/Jimmy/TouristItineraryDetails.
 
 // JIMMY END
 
+import GuestLayout from "./components/Guest/GuestLayout.js";
+
+
 
 
 function App() {
@@ -206,6 +209,7 @@ function App() {
                 <Route path="/tourist/:id/activities2" element={<Activities2 filteredActivities={filteredActivities} />} />
                 <Route path="/tourist/:id/itineraries2" element={<Itineraries2 filteredItinerary={filteredItinerary} />} />
                 <Route path="/tourist/:id/itinerary/:itineraryId/tourist/:id" element={<ItineraryDetailPage />} /> 
+                <Route path="/tourist/:id/historicalLocations" element={ <> <HistoricalPlaceFilter onFilter={handleFilterResultsHistoricalPlaces} /> <HistoricalLocations filteredHistoricalPlace={filteredHistoricalPlace}/></> } />
                 {/** jimmy */}
                 <Route path="/tourist/:id/tourguidelist" element={<Dashboard2 />} />
                 <Route path="/tourist/:id/viewTourGuideProfile/:guideId" element={<TouristTourGuideProfile />} />
@@ -215,6 +219,20 @@ function App() {
                 <Route path="/tourist/:id/ActivitiesHazem" element={<CategoriesAndActivities />} />
                 
               </Route>
+
+              {/** Guest */}
+              <Route path="/guest" element={<GuestLayout />}>
+                <Route path="/guest/home" element={<GuestPage />} />
+                <Route path="/guest/activity/:activityId" element={<ActivityDetailPage />}/>{/* New route for activity details */}
+                <Route path="/guest/activities2" element={<Activities2 filteredActivities={filteredActivities} />} />
+                <Route path="/guest/itineraries2" element={<Itineraries2 filteredItinerary={filteredItinerary} />} />
+                <Route path="/guest/itinerary/:itineraryId" element={<ItineraryDetailPage />} /> 
+                <Route path="/guest/historicalLocations" element={ <> <HistoricalPlaceFilter onFilter={handleFilterResultsHistoricalPlaces} /> <HistoricalLocations filteredHistoricalPlace={filteredHistoricalPlace}/></> } />
+                {/* <Route path="/guest/authentication" element={<Authentication />} /> */}
+                
+              </Route>
+
+
 
               {/** Tourguide */}
               <Route path="/tourguide/:id" element={<TourGuideLayout />}>
