@@ -13,7 +13,7 @@ const itinerarySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "TourGuide",
     required: true,
-  }, 
+  },
   // Reference to the tour guide who created the itinerary
   // activities: [
   //     {
@@ -92,10 +92,22 @@ const itinerarySchema = new mongoose.Schema({
     },
   ],
 
-  comments: {
-    type: [String],
-    required: true,
-  },
+  comments: [
+    {
+      tourist: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tourist",
+      },
+      text: {
+        type: String,
+        required: true,
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
 
   createdAt: { type: Date, default: Date.now },
 });

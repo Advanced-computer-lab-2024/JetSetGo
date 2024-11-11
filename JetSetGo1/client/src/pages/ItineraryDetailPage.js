@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
+import ShareLink from '../components/ShareLink';
 
 const ItineraryDetailPage = () => {
-    const { itineraryId, touristId } = useParams(); // Get itineraryId and touristId from URL
+    const { itineraryId, id } = useParams(); // Get itineraryId and id from URL
     const [itinerary, setItinerary] = useState(null);
     const [error, setError] = useState(null);
     const [tagNames, setTagNames] = useState([]);
@@ -58,13 +59,13 @@ const ItineraryDetailPage = () => {
     // Handle Payment
     const handlePayment = async () => {
         try {
-            const response = await fetch(`/api/tourist/payForItinerary/${touristId}`, {
+            const response = await fetch(`/api/tourist/payForItinerary/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    touristId,
+                    id,
                     itineraryId,
                 }),
             });
@@ -135,6 +136,7 @@ const ItineraryDetailPage = () => {
                 <button onClick={handlePayment} disabled={itinerary.isBookedYet}>
                     {itinerary.isBookedYet ? 'Already Booked' : 'Pay for Itinerary'}
                 </button>
+                <ShareLink/>
             </div>
 
             {/* Payment Message */}

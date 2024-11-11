@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AdminViewComplaintStyle.css';
+import { useLocation } from 'react-router-dom';
 
 const AdminViewComplaint = () => {
     const [complaint, setComplaint] = useState(null);
-    const params = new URLSearchParams(window.location.search);
-    const complaintId = params.get('complaintId');
+    const location = useLocation();
+    // console.log(location.state )
+    const complaintId = location.state || {};
+    console.log(complaintId)
+    
 
     const navigate = useNavigate();
 
@@ -14,7 +18,7 @@ const AdminViewComplaint = () => {
     }, []);
 
     const viewComplaint = async () => {
-        const response = await fetch(`http://localhost:8000/api/admin/viewComplaint?complaintId=${complaintId}`);
+        const response = await fetch(`http://localhost:8000/api/admin/viewComplaint/${complaintId}`);
         const json = await response.json();
         if (response.ok) {
             setComplaint(json);
@@ -31,7 +35,7 @@ const AdminViewComplaint = () => {
                 body: JSON.stringify({ complaintId, reply: replyText }),
             });
             if (response.ok) {
-                navigate('/admin/getComplaints');
+                navigate('/admin/complaints');
             }
         } catch (error) {
             console.error('Error resolving complaint:', error);

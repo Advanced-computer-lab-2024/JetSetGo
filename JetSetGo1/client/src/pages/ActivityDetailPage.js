@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
+import ShareLink from '../components/ShareLink';
 
 const ActivityDetailPage = () => {
-    const { activityId, touristId } = useParams(); // Get activityId and touristId from URL
+    const { activityId, id } = useParams(); // Get activityId and id from URL
+    console.log({ activityId, id })
     const [activity, setActivity] = useState(null);
     const [error, setError] = useState(null);
     const [tagNames, setTagNames] = useState([]);
@@ -79,13 +81,13 @@ const ActivityDetailPage = () => {
     // Handle Payment
     const handlePayment = async () => {
         try {
-            const response = await fetch(`/api/tourist/payForActivity/${touristId}`, {
+            const response = await fetch(`/api/tourist/payForActivity/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    touristId,
+                    id,
                     activityId,
                 }),
             });
@@ -107,7 +109,7 @@ const ActivityDetailPage = () => {
     };
 
     if (error) {
-        return <p>{error}</p>;
+        return <p>{error}  lol</p>;
     }
 
     if (!activity) {
@@ -137,6 +139,7 @@ const ActivityDetailPage = () => {
                 <button onClick={handlePayment} disabled={activity.isBookedYet}>
                     {activity.isBookedYet ? 'Already Booked' : 'Pay for Activity'}
                 </button>
+                <ShareLink/>
             </div>
 
             {/* Payment Message */}

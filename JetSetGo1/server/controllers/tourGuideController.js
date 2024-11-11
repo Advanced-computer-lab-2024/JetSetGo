@@ -90,6 +90,7 @@ const upload = multer({
     }
   },
 });
+
 const createProfile = async (req, res) => {
   const { id } = req.params;
   const { mobile, experience, previousWork } = req.body;
@@ -278,7 +279,7 @@ const uploadProfileImage = async (req, res) => {
   try {
     const { id } = req.params;
     const profileImage = req.file ? req.file.path : null;
-
+    console.log(id);
     // Update the advertiser's profile image in the database
     const tourGuide = await TourGuide.findByIdAndUpdate(
       id,
@@ -559,67 +560,71 @@ const uploadDoc = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
   fileFilter: (req, file, cb) => {
     const fileTypes = /jpeg|pdf/;
-    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const extname = fileTypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
     const mimetype = fileTypes.test(file.mimetype);
 
     if (mimetype && extname) {
       return cb(null, true);
     } else {
-      cb('Error: Docs Only!');
+      cb("Error: Docs Only!");
     }
-  }
+  },
 });
 
 const uploadDocument = async (req, res) => {
   try {
-      const { id } = req.params;
+    const { id } = req.params;
 
-      // Check if files were uploaded
-      if (!req.files || req.files.length === 0) {
-          return res.status(400).json({ error: "No documents uploaded" });
-      }
+    // Check if files were uploaded
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: "No documents uploaded" });
+    }
 
-      // Map file paths of uploaded documents
-      const documentPaths = req.files.map(file => file.path);
+    // Map file paths of uploaded documents
+    const documentPaths = req.files.map((file) => file.path);
 
-      // Update the documents array in the database
-      const tourGuide = await TourGuide.findByIdAndUpdate(
-          id,
-          { $push: { documents: { $each: documentPaths } } },
-          { new: true }
-      );
+    // Update the documents array in the database
+    const tourGuide = await TourGuide.findByIdAndUpdate(
+      id,
+      { $push: { documents: { $each: documentPaths } } },
+      { new: true }
+    );
 
-      if (!tourGuide) {
-          return res.status(404).json({ error: "TourGuide not found" });
-      }
+    if (!tourGuide) {
+      return res.status(404).json({ error: "TourGuide not found" });
+    }
 
-      res.json({
-          message: "Documents uploaded successfully",
-          documentPaths: documentPaths
-      });
+    res.json({
+      message: "Documents uploaded successfully",
+      documentPaths: documentPaths,
+    });
   } catch (error) {
-      res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-
-
-
 const requestAccountDeletion = async (req, res) => {
-  const {id } = req.params;
-  
+  const { id } = req.params;
 
   try {
-      const tourGuide = await TourGuide.findById(id);
-      if (!tourGuide) return res.status(404).json({ error: "User not found" });
+    const tourGuide = await TourGuide.findById(id);
+    if (!tourGuide) return res.status(404).json({ error: "User not found" });
 
-      // Update requestedDeletion field
-      tourGuide.deletionRequested = true;
-      await tourGuide.save();
+    // Update requestedDeletion field
+    tourGuide.deletionRequested = true;
+    await tourGuide.save();
 
-      return res.status(200).json({ message: "Deletion request submitted successfully." });
+    return res
+      .status(200)
+      .json({ message: "Deletion request submitted successfully." });
   } catch (error) {
-      return res.status(500).json({ error: "An error occurred while processing the deletion request." });
+    return res
+      .status(500)
+      .json({
+        error: "An error occurred while processing the deletion request.",
+      });
   }
 };
 
@@ -641,13 +646,4 @@ module.exports = {
   itineraryActivation,
   itineraryDeactivation,
   uploadProfileImage,
-  addRating,
-  addComment,
-  addItineraryRating,
-  addItineraryComment,
-  followItinerary,
-  unfollowItinerary,
-  compeleteWithTourGuide,
 };
-
-

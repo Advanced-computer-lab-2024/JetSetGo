@@ -92,7 +92,7 @@ const registerTourist = async (req, res) => {
 
 const registerAdvertiser = async (req, res) => {
     const { email, username, password, accepted } = req.body;
-
+    console.log(req.body)
     try {
         const documentPaths = req.files ? req.files.map(file => file.path) : [];
 
