@@ -115,37 +115,59 @@ const ActivityDetailPage = () => {
     if (!activity) {
         return <p>Loading...</p>;
     }
-
-    return (
-        <div className="activity-detail">
-            <h2>{activity.title}</h2>
-            <p><strong> Date: </strong>{activity.date}</p>
-            <p><strong> Time: </strong>{activity.time}</p>
-            <p><strong> Location: </strong>{activity.location}</p>
-            <p><strong>Price:</strong> ${activity.price}</p>
-            <p><strong>Category:</strong> {categoryName}</p>
-            <p><strong>Tags:</strong> {tagNames.map((tag) => `#${tag}`).join(', ')}</p>
-            <p><strong> Advertiser: </strong>{activity.advertiser}</p>
-            <p><strong> Booking Open: </strong>{activity.bookingOpen}</p>
-            <div className="adv-rating">
-              <p  className='rating'><strong> Rating: </strong>{activity.rating}</p>
-               <FaStar className="star-icon" />
+    
+    if (id) {
+        return (
+            <div className="activity-detail">
+                <h2>{activity.title}</h2>
+                <p><strong> Date: </strong>{activity.date}</p>
+                <p><strong> Time: </strong>{activity.time}</p>
+                <p><strong> Location: </strong>{activity.location}</p>
+                <p><strong>Price:</strong> ${activity.price}</p>
+                <p><strong>Category:</strong> {categoryName}</p>
+                <p><strong>Tags:</strong> {tagNames.map((tag) => `#${tag}`).join(', ')}</p>
+                <p><strong> Advertiser: </strong>{activity.advertiser}</p>
+                <p><strong> Booking Open: </strong>{activity.bookingOpen}</p>
+                <div className="adv-rating">
+                  <p  className='rating'><strong> Rating: </strong>{activity.rating}</p>
+                   <FaStar className="star-icon" />
+                </div>
+                <p><strong> Special Discounts: </strong>{activity.specialDiscounts}</p>
+                
+    
+                {/* Payment button */}
+                <div>
+                    <button onClick={handlePayment} disabled={activity.isBookedYet}>
+                        {activity.isBookedYet ? 'Already Booked' : 'Pay for Activity'}
+                    </button>
+                    <ShareLink/>
+                </div>
+    
+                {/* Payment Message */}
+                {paymentMessage && <p>{paymentMessage}</p>}
             </div>
-            <p><strong> Special Discounts: </strong>{activity.specialDiscounts}</p>
-            
-
-            {/* Payment button */}
-            <div>
-                <button onClick={handlePayment} disabled={activity.isBookedYet}>
-                    {activity.isBookedYet ? 'Already Booked' : 'Pay for Activity'}
-                </button>
-                <ShareLink/>
+        );
+    } else{
+        return (
+            <div className="activity-detail">
+                <h2>{activity.title}</h2>
+                <p><strong> Date: </strong>{activity.date}</p>
+                <p><strong> Time: </strong>{activity.time}</p>
+                <p><strong> Location: </strong>{activity.location}</p>
+                <p><strong>Price:</strong> ${activity.price}</p>
+                <p><strong>Category:</strong> {categoryName}</p>
+                <p><strong>Tags:</strong> {tagNames.map((tag) => `#${tag}`).join(', ')}</p>
+                <p><strong> Advertiser: </strong>{activity.advertiser}</p>
+                <p><strong> Booking Open: </strong>{activity.bookingOpen}</p>
+                <div className="adv-rating">
+                  <p  className='rating'><strong> Rating: </strong>{activity.rating}</p>
+                   <FaStar className="star-icon" />
+                </div>
+                <p><strong> Special Discounts: </strong>{activity.specialDiscounts}</p>
+                
             </div>
-
-            {/* Payment Message */}
-            {paymentMessage && <p>{paymentMessage}</p>}
-        </div>
-    );
+        );
+    }
 };
 
 export default ActivityDetailPage;

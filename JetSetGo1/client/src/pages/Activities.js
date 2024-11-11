@@ -91,6 +91,11 @@ const Activities2 = () => {
                         <ActivityDetails Activity={Activity} />
                     </Link>
                 ))}
+                {activitiesToShow  && activitiesToShow.map((Activity) => ( !id &&
+                    <Link key={Activity._id} to={`/guest/activity/${Activity._id}`}>
+                        <ActivityDetails Activity={Activity} />
+                    </Link>
+                ))}
             </div>
         </div>
     );

@@ -81,7 +81,7 @@ function NavBar() {
                         <li><Link to={`/tourist/itineraries2`} state={{ id }}>Itineraries</Link></li>
                         <li><Link to={`/tourist/tourguidelist`} state={{ id }}>Tour Guide</Link></li>
                         <li><Link to={`/tourist/tourguidelist`} state={{ id }}>Booking</Link></li>
-                        <li><Link to={`/tourist/tourguidelist`} state={{ id }}>Locations</Link></li>
+                        <li><Link to={`/tourist/historicalLocations`} state={{ id }}>Locations</Link></li>
                         <li>
                             <Link to={`/tourist/book-hotel`} state={{ id }}>Hotels</Link>
                         </li>

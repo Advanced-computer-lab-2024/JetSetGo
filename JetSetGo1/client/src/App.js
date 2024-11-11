@@ -16,6 +16,9 @@ import UserList from "./pages/UserList";
 import ItineraryManager from "./pages/ItineraryManager";
 import ProductListing from "./pages/Product/productsPage";
 import ViewProduct from "./pages/Product/ProductDetails.js";
+import MyPrefs from './pages/my_prefrences.js';
+import MyBookingsPage from './components/my_bookings.js'
+import TransportBookingPage from './components/TouristTransportationComponent.js';
 // import Navbar from "./components/Navbar";
 import ProductForm from "./pages/Product/ProductForm";
 import UpdateProducts from "./pages/Product/UpdateProduct";
@@ -23,7 +26,7 @@ import UpdateProducts from "./pages/Product/UpdateProduct";
 import Activities2 from "./pages/Activities";
 import Itineraries2 from "./pages/Itineraries";
 import Museums from "./pages/museums";
-import HistoricalLocations from "./pages/historicallocations";
+import HistoricalLocations from "./pages/historicallocations.js";
 
 // import ActivityFilter from './components/ActivityFilter';
 // import ItineraryFilter from './components/ItineraryFilter';
@@ -35,10 +38,15 @@ import HomePage from "./pages/HomePage";
 import "@fortawesome/fontawesome-free/css/all.css";
 
 // import { BrowserRouter, Routes, Route } from 'react-router-dom'
+//pages and components 
+
+import Tagspage from './pages/my_tags.js'
+import PreferencesSelection from './pages/SelectPrefrences.js'
+import Transportationpage from './pages/Transportation.js'
+import Categorypage from './pages/my_category.js'
 //pages and components
 import Home from "./pages/home.js";
-import Tagspage from "./pages/my_tags.js";
-import Categorypage from "./pages/my_category.js";
+
 // import Navbar from './components/navbar.js'
 import Tourism_Governer from "./pages/Tourism_Governer.js";
 import HL from "./pages/HistoricalLocations2.js";
@@ -97,6 +105,9 @@ import TouristItineraryDetails from "./components/Jimmy/TouristItineraryDetails.
 import AdvertiserLayout from "./components/Advertiser/AdvertiserLayout.js"
 import AdvertiserActivities from "./pages/Advertiser/AdvertiserActivities.js";
 // JIMMY END
+
+import GuestLayout from "./components/Guest/GuestLayout.js";
+
 
 
 
@@ -240,6 +251,42 @@ function App() {
                 <Route path="/tourist/book_flight" element={<FlightSearch touristId={"670255f97b12bc9e3f1c7f26"} />} />
 
               </Route>
+              <Route
+                path="/transportbooking"
+                element={<TransportBookingPage />}
+              />
+
+              <Route
+                path="/my_bookings/:id"
+                element={<MyBookingsPage />}
+              />
+
+
+              <Route path="/myprefs/:id" element={<MyPrefs />} />
+
+              <Route
+                path="/my_prefrences"
+                element={<PreferencesSelection />}
+              />
+              <Route
+                path="/Transportation"
+                element={<Transportationpage />}
+              />
+
+
+              {/** Guest */}
+              <Route path="/guest" element={<GuestLayout />}>
+                <Route path="/guest/home" element={<GuestPage />} />
+                <Route path="/guest/activity/:activityId" element={<ActivityDetailPage />} />{/* New route for activity details */}
+                <Route path="/guest/activities2" element={<Activities2 filteredActivities={filteredActivities} />} />
+                <Route path="/guest/itineraries2" element={<Itineraries2 filteredItinerary={filteredItinerary} />} />
+                <Route path="/guest/itinerary/:itineraryId" element={<ItineraryDetailPage />} />
+                <Route path="/guest/historicalLocations" element={<> <HistoricalPlaceFilter onFilter={handleFilterResultsHistoricalPlaces} /> <HistoricalLocations filteredHistoricalPlace={filteredHistoricalPlace} /></>} />
+                {/* <Route path="/guest/authentication" element={<Authentication />} /> */}
+
+              </Route>
+
+
 
               {/** Tourguide */}
               <Route path="/tourguide/:id" element={<TourGuideLayout />}>

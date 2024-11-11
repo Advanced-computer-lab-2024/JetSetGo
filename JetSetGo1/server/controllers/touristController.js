@@ -1,4 +1,5 @@
 const TransportBooking = require("../models/TransportationBookingModel");
+const ActivityItineraryBooking =  require('../models/bookingmodel.js');
 const mongoose = require("mongoose");
 const Product = require("../models/ProductModel");
 const Tourist = require("../models/TouristModels");
@@ -48,14 +49,10 @@ const getCategoryNameById = async (req, res) => {
 
 // Create TransportBooking
 const createTransportBooking = async (req, res) => {
-  const { transportationId, touristId, date } = req.body;
+  const {transportationId, touristId, date, seats} = req.body;
 
   try {
-    const newTransportBooking = await TransportBooking.create({
-      transportationId,
-      touristId,
-      date,
-    });
+    const newTransportBooking = await TransportBooking.create({ transportationId, touristId, date, seats});
     res.status(201).json(newTransportBooking);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -107,14 +104,18 @@ const deleteTransportBooking = async (req, res) => {
 
 const selectPrefrences = async (req, res) => {
   const { id } = req.params;
-  const updates = req.body;
+  const {tags,budget} = req.body;
+
+  const updates ={
+    tags, 
+    budget:{
+      from:budget.from,
+      to:budget.to,
+    },
+  };
 
   try {
-    const myPrefrences = await Tourist.findByIdAndUpdate(
-      id,
-      { $push: { prefrences: updates } },
-      { new: true }
-    );
+    const myPrefrences = await Tourist.findByIdAndUpdate(id, {$set:{ prefrences :updates}}, { new: true });
     res.status(200).json(myPrefrences);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -123,15 +124,17 @@ const selectPrefrences = async (req, res) => {
 
 const getPrefrences = async (req, res) => {
   const { id } = req.params;
+  console.log(id);
 
-  try {
-    const TouristProfile = await Tourist.findById(id);
-    const PrefrencesProfile = TouristProfile.prefrences;
-    res.status(200).json(PrefrencesProfile);
-  } catch (err) {
-    res.status(404).json({ error: "Tourist not found" });
-  }
-};
+   try {
+     const TouristProfile = await Tourist.findById(id);
+     console.log(TouristProfile.preferences);
+     const PrefrencesProfile = TouristProfile.prefrences;
+     res.status(200).json(PrefrencesProfile);
+   } catch (err) {
+     res.status(404).json({ error: 'Tourist not found' });
+   }
+ };
 
 const multer = require("multer");
 
@@ -327,9 +330,6 @@ const searchItineraryByBudget = async (req, res) => {
   const budget = req.body;
   try {
     const itinerary = await Itinerary.find();
-    if (itinerary.length === 0) {
-      return res.status(404).json({ error: "No itinerary found for this tag" });
-    }
     const result = itinerary.filter((el) => el.price <= budget.price);
 
     res.status(200).json(result);
@@ -349,20 +349,14 @@ const searchItineraryByDate = async (req, res) => {
 
     // Find all itineraries where any availableDates in the array matches the search date
     const itineraries = await Itinerary.find({
-      "availableDates.date": searchDate, // Check all availableDates in each itinerary
+       "availableDates.date": searchDate, // Check all availableDates in each itinerary
     });
-
-    if (itineraries.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "No itineraries found for the given date" });
-    }
+    //console.log(req.body)
+    //const itineraries = await Itinerary.find(req.body)
 
     res.status(200).json(itineraries);
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "An error occurred while searching for itineraries" });
+    res.status(500).json({ error: "An error occurred while searching for itineraries" });
   }
 };
 
@@ -371,9 +365,6 @@ const searchItineraryByLanguage = async (req, res) => {
   const languageReq = req.body;
   try {
     const itinerary = await Itinerary.find(languageReq);
-    if (itinerary.length === 0) {
-      return res.status(404).json({ error: "No itinerary found for this tag" });
-    }
     res.status(200).json(itinerary);
   } catch (error) {
     res.status(404).json({ error: "Itinerary not found" });
@@ -385,11 +376,6 @@ const searchItineraryByName = async (req, res) => {
   const name = req.body;
   try {
     const itinerary = await Itinerary.find(name);
-    if (itinerary.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "No itinerary found with this name" });
-    }
     res.status(200).json(itinerary);
   } catch (error) {
     res.status(404).json({ error: "Itinerary not found" });
@@ -401,11 +387,6 @@ const searchItineraryByCategory = async (req, res) => {
   const category = req.body;
   try {
     const itinerary = await Itinerary.find(category);
-    if (itinerary.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "No itinerary found for this category" });
-    }
     res.status(200).json(itinerary);
   } catch (error) {
     res.status(404).json({ error: "Itinerary not found" });
@@ -419,10 +400,6 @@ const searchItineraryByTag = async (req, res) => {
   try {
     // Step 1: Find itineraries that have the tagId in their tags array
     const itineraries = await Itinerary.find({ tags: tagId }).populate("tags"); // Optional: populate 'tags' to return tag details
-
-    if (itineraries.length === 0) {
-      return res.status(404).json({ error: "No itinerary found for this tag" });
-    }
 
     // Step 2: Return the list of itineraries
     res.status(200).json(itineraries);
@@ -450,19 +427,16 @@ const searchActivityByDate = async (req, res) => {
   }
 };
 
-//Seach Activity by rating
-const searchActivityByRating = async (req, res) => {
-  const ratingReq = req.body;
-  try {
-    const activty = await Activity.find(ratingReq);
-    if (activty.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "No activities found with this rating" });
-    }
-    res.status(200).json(activty);
-  } catch (error) {
-    res.status(404).json({ error: "Activity not found" });
+//Seach Activity by rating 
+const searchActivityByRating = async (req,res) =>{
+  const ratingReq = req.body
+  try{
+    console.log(ratingReq)
+    const activty = await Activity.find(ratingReq)
+    res.status(200).json(activty)
+  }
+  catch(error){
+    res.status(400).json({error:"Activity not found"})
   }
 };
 
@@ -547,29 +521,55 @@ const getActivitiesByCategory = async (req, res) => {
   }
 };
 
-//Seach Activity by tag
-const searchActivityByTag = async (req, res) => {
-  const { tagId } = req.body; // Extract tagId from the request body (already an ObjectId)
+
+//Search TagId by Name
+// In your backend file
+
+const getTagIdByName = async (req, res) => {
+  const { name } = req.body;
+  console.log("Received name:", name); // Log to ensure `name` is received correctly
 
   try {
-    // Step 1: Find Activities that have the tagId in their tags array
-    const activities = await Activity.find({ tags: tagId }).populate("tags"); // Optional: populate 'tags' to return tag details
-
-    if (activities.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "No activities found for this tag" });
-    }
-
-    // Step 2: Return the list of activities
-    res.status(200).json(activities);
+      const tag = await Tag.findOne({ tag_name: name }); // Use tag_name instead of name
+      if (tag) {
+          console.log("Tag found:", tag); // Log the tag object if found
+          res.status(200).json({ tagId: tag._id });
+      } else {
+          console.log("No tag found with name:", name); // Log if no match is found
+          res.status(404).json({ error: "Tag not found" });
+      }
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while searching for activities" });
+      console.error("Error fetching tag ID:", error);
+      res.status(500).json({ error: "An error occurred while fetching tag ID" });
   }
 };
+
+
+//Search Activity By Tag
+const searchActivityByTag = async (req, res) => {
+  let { tagId } = req.body; // Expect tagId as a string
+  
+
+  try {
+    // Search for activities with this tagId
+    const activities = await Activity.find({ tags : { $in: [tagId] } }).populate('tags');
+
+    if (activities.length === 0) {
+      return res.status(404).json({ error: "No activities found for this tag" });
+    }
+
+    // Return the list of activities
+    res.status(200).json(activities);
+  } catch (error) {
+    console.error('Error in searchActivityByTag:', error);
+    res.status(500).json({ error: "An error occurred while searching for activities" });
+  }
+};
+
+
+
+
+
 
 const getUpcomingActivities = async (req, res) => {
   try {
@@ -1377,6 +1377,33 @@ const cancel_booking = async (req, res) => {
 };
 
 
+const myTransportBooking = async (req, res) => {
+  const { touristId } = req.params;
+
+  try {
+    const TransportBookingProfile = await TransportBooking.find({ touristId });
+    res.status(200).json(TransportBookingProfile);
+  } catch (err) {
+    res.status(404).json({ error: 'Transportation Booking not found' });
+  }
+};
+
+
+
+
+const myActivityItineraryBooking = async (req, res) => {
+  const { touristId } = req.params;
+
+  try {
+    const ActivityItineraryBookingProfile = await ActivityItineraryBooking.find({ touristId });
+    res.status(200).json(ActivityItineraryBookingProfile);
+  } catch (err) {
+    res.status(404).json({ error: 'Activity/Itinerary Booking not found' });
+  }
+};
+
+
+
 // controllers/hotelBookingController.js
 // controllers/hotelBookingController.js
 const HotelBooking = require("../models/HotelBooking");
@@ -1926,6 +1953,7 @@ module.exports = {
   getAllTourGuideProfiles,
   getItinerariesByTourGuide,
   getSingleItinerary,
-  getTouristUsername,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,createBooking
+  getTouristUsername,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,createBooking,
 
+  getTagIdByName, myTransportBooking, myActivityItineraryBooking, upload
 };
