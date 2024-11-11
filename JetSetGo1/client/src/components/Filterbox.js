@@ -22,7 +22,7 @@ const Filter = ({ isFilterOpen, toggleFilter, children, onSaveFilter }) => {
     <>
       <button className="filter-button" onClick={() => toggleFilter(!isFilterOpen)}>
         <img src={filterIcon} alt="Filter Icon" className="filter-icon" />
-        Filter
+        
       </button>
 
       <div

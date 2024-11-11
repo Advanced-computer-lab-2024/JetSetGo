@@ -36,4 +36,11 @@
     padding: 10px;
     border-radius: 5px;
   }
+
+  .error-message {
+    color: red;
+    font-weight: bold;
+    padding: 10px;
+  }
+  
   

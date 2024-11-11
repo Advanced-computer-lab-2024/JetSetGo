@@ -5,24 +5,39 @@ const Museum = require('../models/MuseumModel');
 const HistoricalLocation = require('../models/HistoricalLocationModel');
 
 
-// Fetch activities by category
-const getActivitiesByCategory = async (req, res) => {
-  const { categoryId } = req.params;  // Extract category ID from the request params
-
+// Get all categories
+const getCategories = async (req, res) => {
   try {
-      // Query activities where the category matches the provided categoryId
-      const activities = await Activity.find({ category: categoryId }).populate('category');  // Optionally populate category details
-
-      if (activities.length === 0) {
-          return res.status(404).json({ error: "No activities found for this category" });
-      }
-
-      res.status(200).json(activities);
+    const categories = await Category.find(); // Retrieve all categories
+    res.status(200).json(categories); // Send categories as JSON
   } catch (error) {
-      res.status(500).json({ error: "An error occurred while fetching activities" });
+    res.status(500).json({ error: 'An error occurred while fetching categories' });
   }
 };
 
+// Fetch activities by category
+const getActivitiesByCategory = async (req, res) => {
+  const { categoryId } = req.params; // Extract category ID from the request params
+
+  try {
+    // Query activities where the category matches the provided categoryId
+    const activities = await Activity.find({ category: categoryId }).populate(
+      "category"
+    ); // Optionally populate category details
+
+    if (activities.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "No activities found for this category" });
+    }
+
+    res.status(200).json(activities);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching activities" });
+  }
+};
 
 //Seach Itinerary by budget
 const searchItineraryByBudget = async (req,res) =>{
@@ -303,4 +318,4 @@ const filterHistoricalLocationsByTag = async (req, res) => {
 
 module.exports = {searchActivityByBudget,searchActivityByDate,searchActivityByCategory,searchActivityByRating,searchItineraryByTag, 
   searchItineraryByDate, searchItineraryByBudget, searchItineraryByLanguage, getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries,
-   sortItineraryByPrice, sortItineraryByRating, getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag,getActivitiesByCategory};
+   sortItineraryByPrice, sortItineraryByRating, getMuseums, filterMuseumsByTag, getHistoricalLocations, filterHistoricalLocationsByTag,getActivitiesByCategory,getCategories};

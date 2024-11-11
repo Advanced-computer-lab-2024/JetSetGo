@@ -5,7 +5,7 @@ const TourismGoverner = require('../models/TourismGovernerModel.js');
 const AdvertiserActivityModel = require('../models/AdvertiserActivityModel.js');
 const Seller = require('../models/SellerModel');
 const TourGuide = require('../models/TourGuideModel');
-const Tourist = require('../models/touristModel.js');
+const Tourist = require('../models/TouristModels.js');
 const TourismGovernerModel = require('../models/TourismGovernerModel.js');
 const multer = require('multer');
 const path = require('path');
@@ -16,9 +16,19 @@ const Complaint = require('../models/ComplaintModel.js')
 const mongoose= require('mongoose')
 
 
-
-const models={admin: Admin, seller: Seller, tourguides: TourGuide, tourist: Tourist, advertisers: Advertiser, tourismgoverner: TourismGoverner};
+const models={admin: Admin, seller: Seller, tourguide: TourGuide, tourist: Tourist, advertisers: Advertiser, tourismgoverner: TourismGoverner};
 ////////////////////////////////////////////////////////////////////////////////
+
+// Get All Itineraries
+const getAllItineraries = async (req, res) => {
+    try {
+      const itineraries = await Itinerary.find(); // Fetch all itineraries from the database
+      res.status(200).json({ itineraries });
+    } catch (error) {
+      res.status(500).json({ error: 'Server error while fetching itineraries.', details: error.message });
+    }
+  };
+  
 
 // Flag an Itinerary
 const flagItinerary = async (req, res) => {
@@ -300,7 +310,7 @@ const createProduct = (req, res) => {
             return res.status(400).json({ error: 'Image upload failed' });
         }
         
-        const { name, description, price, quantityAvailable, seller, ratings } = req.body;
+        const { name, description, price, quantityAvailable, seller, ratings,archieved } = req.body;
 
         try {
             // Create a new product with the uploaded image path
@@ -311,7 +321,8 @@ const createProduct = (req, res) => {
                 quantityAvailable,
                 picture: req.file ? req.file.path : null, // Save the image path
                 seller,
-                ratings
+                ratings,
+                archieved
             });
 
             const savedProduct = await newProduct.save();
@@ -379,6 +390,7 @@ const sortByRate = async (req, res) => {
     }
   };
 
+
 const searchProductName = async(req,res) => {
 
     const { name } = req.body;
@@ -394,9 +406,43 @@ const searchProductName = async(req,res) => {
 
 }
 
-//Mahmoud REQUIREMENTS ( 74,75,76,77)
-////////////////////////////////////////////////////////////////////////////////
-const getComplaints = async (req,res) =>{
+const getUploadedDocuments = async (req, res) => {
+    try {
+        const tourGuides = await TourGuide.find({ accepted: false ,rejected:false }).select('_id username documents');
+        const advertisers = await Advertiser.find({ accepted: false ,rejected:false }).select('_id username documents');
+        const sellers = await Seller.find({ accepted: false ,rejected:false }).select('_id username documents');
+    
+        // Combine the results
+        const documents = {
+          tourGuides: tourGuides.map(tourGuide => ({
+            id: tourGuide._id,
+            username: tourGuide.username,
+            documents: tourGuide.documents
+          })),
+          advertisers: advertisers.map(advertiser => ({
+            id: advertiser._id,
+            username: advertiser.username,
+            documents: advertiser.documents
+          })),
+          sellers: sellers.map(seller => ({
+            id: seller._id,
+            username: seller.username,
+            documents: seller.documents
+          }))
+        };
+      // Send the documents as a response
+      res.status(200).json(documents);
+    } 
+    catch (error) {
+      res.status(500).json({ error: 'Failed to retrieve documents.' });
+    }
+  };
+
+
+
+
+
+  const getComplaints = async (req,res) =>{
     try{
         const complaint = await Complaint.find();
 
@@ -412,13 +458,75 @@ const getComplaints = async (req,res) =>{
     }
 }
 
+
+
+
+
+
+  const AcceptUserStatus = async (req, res) => {
+    const { id, modelName } = req.params;
+     
+    const Model = models[modelName.toLowerCase()];
+  
+    if (!Model) {
+      return res.status(200).json({ message: "Account is accepted", user });
+    }
+    try {
+      const user = await Model.findById(id);
+      if (!user) {
+        return res.status(200).json({ message: "acc does not exist" });
+      }
+      user.accepted = true; // Update the accepted field
+
+      await user.save();
+      res.status(200).json({ message: "Account is accepted", user });
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+};
+
+
+
+const getSales = async (req, res) => {
+  const { id: productId } = req.params;  // Destructure product ID from the route parameters
+
+  try {
+    const sales = await SalesModel.find({ Product: productId }).sort({ createdAt: -1 });      
+    // .populate('Tourists', 'name')  // Optional: populate Tourist's name (if you have this field in Tourist model)
+    // .populate('Seller', 'name')    // Optional: populate Seller's name (if you have this field in Seller model)
+
+    res.status(200).json(sales);     // Send the sales data as JSON
+  } catch (error) {
+    res.status(500).json({ error: 'Error retrieving sales data' });
+  }
+};
+
+
+
+
+const archieved_on= async (req, res) =>{
+  const { id } = req.params
+  console.log(req.body);
+  const archieved= req.body
+  
+
+  const product = await Product.findOneAndUpdate({_id:id},archieved, { new: true })
+
+
+  res.status(200).json(product)
+}
+
+//Mahmoud REQUIREMENTS ( 74,75,76,77)
+////////////////////////////////////////////////////////////////////////////////
+
+
 const viewComplaint = async (req,res) =>{
     try{
-       const complaintId = req.query.complaintId
+       const {id} = req.params
 
-        if(complaintId)
+        if(id)
         {
-            const complaint = await Complaint.findById({_id : complaintId})
+            const complaint = await Complaint.findById({_id : id})
             res.status(200).json(complaint)
         }
     }
@@ -456,7 +564,38 @@ const resolveComplaint = async (req,res) =>{
 
 
 
-module.exports = { create_pref_tag ,  get_pref_tag , update_pref_tag , delete_pref_tag , create_act_category , get_act_category , update_act_category , delete_act_category , add_tourism_governer , view_tourism_governer,addAdmin, deleteAccount, getAllUsers
-    ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,getComplaints,
-    viewComplaint,resolveComplaint,flagItinerary};
+
+
+
+
+const RejectUserStatus = async (req, res) => {
+    const { id, modelName } = req.params;
+     
+    const Model = models[modelName.toLowerCase()];
+  
+    if (!Model) {
+      return res
+        .status(400)
+        .json({ error: `Model '${modelName}' not found` });
+    }
+    try {
+      const user = await Model.findById(id);
+      if (!user) {
+        return res.status(404).json({ erro: "This account does not exist" });
+      }
+      user.rejected = true; // Update the accepted field
+
+      await user.save();
+      res.status(200).json({ message: "Account is rejected", user });
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+};
+
+
+
+module.exports = { getComplaints,RejectUserStatus,getUploadedDocuments,create_pref_tag ,  get_pref_tag , update_pref_tag , delete_pref_tag , create_act_category , get_act_category , update_act_category , delete_act_category , add_tourism_governer , view_tourism_governer,addAdmin, deleteAccount, getAllUsers
+    ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,
+    flagItinerary,getAllItineraries, AcceptUserStatus,getSales,
+    viewComplaint,resolveComplaint,archieved_on};
 

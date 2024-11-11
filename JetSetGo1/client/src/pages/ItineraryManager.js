@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import './ItineraryManager.css'; // Add a CSS file for custom styles
 
 axios.defaults.baseURL = 'http://localhost:8000'; // Replace with your actual API URL
 
-const tourGuide_ID = '67002c827e9690cf35059882';
+
 
 const ItineraryManager = () => {
+  const { id } = useParams();
+  const tourGuide_ID = id;
   const [itineraryData, setItineraryData] = useState({
     title: '',
     description: '',
@@ -41,17 +44,19 @@ const ItineraryManager = () => {
     }
   };
 
-  // Fetch all itineraries
-  const fetchItineraries = async () => {
-    try {
-      const response = await axios.get('/api/tour-guides/getItineraries');
-      setItineraries(response.data);
-      setError(null); // Clear error state on success
-    } catch (error) {
-      console.error('Error fetching itineraries:', error);
-      setError('Error fetching itineraries');
-    }
-  };
+// Fetch itineraries by tour guide ID
+const fetchItineraries = async (tourGuideId) => {
+  try {
+    const response = await axios.post('/api/tourist/getItinerariesByTourGuide', {
+      tourGuideId:id, // Send the ID in the request body
+    });
+    setItineraries(response.data);
+    setError(null); // Clear error state on success
+  } catch (error) {
+    console.error('Error fetching itineraries:', error);
+    setError('Error fetching itineraries');
+  }
+};
 
   useEffect(() => {
     fetchItineraries(); // Fetch itineraries on component mount
@@ -123,6 +128,7 @@ const ItineraryManager = () => {
       setError(null); // Clear error state on success
     } catch (error) {
       console.error('Error submitting itinerary:', error);
+      window.scrollTo(0, 0)
       setError('Error submitting itinerary'); // Display error
     }
   };
@@ -136,6 +142,7 @@ const ItineraryManager = () => {
       setError(null); // Clear error state on success
     } catch (error) {
       console.error('Error deleting itinerary:', error);
+      window.scrollTo(0, 0)
       setError('Error deleting itinerary because it is booked'); // Display error
     }
   };
@@ -151,6 +158,7 @@ const ItineraryManager = () => {
     setItineraryData({ ...itinerary, availableDates: formattedDates });
     setEditMode(true);
     setCurrentItineraryId(itinerary._id);
+    window.scrollTo(0, 0)
   };
 
   // Reset form after submission
@@ -198,12 +206,7 @@ const ItineraryManager = () => {
           <option value="limited accessibility">Limited Accessibility</option>
         </select>
 
-        {/* Rating */}
-        <div className="form-group">
-          <label>Rating:</label>
-          <input type="number" name="rating" value={itineraryData.rating} onChange={handleChange} min="0" max="5" />
-        </div>
-
+        
         {/* Is Booked */}
         <div className="form-group">
           <label>
@@ -341,7 +344,7 @@ const ItineraryManager = () => {
             <p><strong>Price:</strong> ${itinerary.price}</p>
             <p><strong>Pickup Location:</strong> {itinerary.pickupLocation}</p>
             <p><strong>Dropoff Location:</strong> {itinerary.dropoffLocation}</p>
-            <p><strong>Rating:</strong> {itinerary.rating}</p>
+            
             <p><strong>Booked:</strong> {itinerary.isBooked ? 'Yes' : 'No'}</p>
 
             <h4>Activities</h4>

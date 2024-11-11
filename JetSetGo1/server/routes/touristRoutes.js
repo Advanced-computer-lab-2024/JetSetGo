@@ -1,27 +1,98 @@
-const express = require('express');
-const { getProducts, createProduct, updateProduct,filterProducts,sortByRate, searchProductName,} = require('../controllers/adminController.js');
-const {updateInfo, getInfo,searchHistoricalPlaceByTag,searchHistoricalPlaceByName,
-  searchHistoricalPlaceByCategory, searchMuseumByTag,searchMuseumByName,searchMuseumByCategory,searchActivityByBudget,searchActivityByDate, 
-  searchActivityByRating,searchActivityByTag,searchActivityByCategory,
-  searchActivityByName, searchItineraryByDate, searchItineraryByBudget, 
-  searchItineraryByLanguage,searchItineraryByName,searchItineraryByTag,
-  getUpcomingActivities, sortActivityByPrice, sortActivityByRating, getUpcomingItineraries, sortItineraryByPrice,
-   sortItineraryByRating, getMuseums, filterMuseumsByTag,
-    getHistoricalLocations, filterHistoricalLocationsByTag,
-    addComplaint, updatePointsToWallet, payForItinerary, payForActivity, getTagNameById, getCategoryNameById,
-    rateActivity,
-    addCommentToActivity,
-    deleteCommentFromActivity,
-    book_activity_Itinerary,
-    cancel_booking,
-    getActivitiesByCategory,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking, createBooking } = require('../controllers/touristController');
+const express = require("express");
+const {
+  getProducts,
+  filterProducts,
+  sortByRate,
+  searchProductName,
+  createProduct,
+  updateProduct,
+} = require("../controllers/adminController.js");
+const {
+  createTransportBooking,
+  getTransportBooking,
+  deleteTransportBooking,
+  selectPrefrences,
+  getPrefrences,
+  updateInfo,
+  getInfo,
+  searchHistoricalPlaceByTag,
+  searchHistoricalPlaceByName,
+  searchHistoricalPlaceByCategory,
+  searchMuseumByTag,
+  searchMuseumByName,
+  searchMuseumByCategory,
+  searchActivityByBudget,
+  searchActivityByDate,
+  searchActivityByRating,
+  searchActivityByTag,
+  searchActivityByCategory,
+  searchActivityByName,
+  searchItineraryByDate,
+  searchItineraryByBudget,
+  searchItineraryByLanguage,
+  searchItineraryByName,
+  searchItineraryByTag,
+  getUpcomingActivities,
+  sortActivityByPrice,
+  sortActivityByRating,
+  getUpcomingItineraries,
+  sortItineraryByPrice,
+  sortItineraryByRating,
+  getMuseums,
+  filterMuseumsByTag,
+  getHistoricalLocations,
+  filterHistoricalLocationsByTag,
+  getComplaints,
+  ADDRateReview,
+  addSales,
+  addComplaint,
+  updatePointsToWallet,
+  payForItinerary,
+  payForActivity,
+  getTagNameById,
+  getCategoryNameById,
+  rateActivity,
+  addCommentToActivity,
+  deleteCommentFromActivity,
+  book_activity_Itinerary,
+  cancel_booking,
+  getActivitiesByCategory,
+  fetchID,
+  fetchActivityID,
+  fetchItineraryID,
+  getCategories,
+  requestAccountDeletion,
+  addItineraryRating,
+  addItineraryComment,
+  addRating,
+  addComment,
+  followItinerary,
+  unfollowItinerary,
+  compeleteWithTourGuide,
+  getFollowedItineraries,
+  getCompletedTourGuides,
+  getAllTourGuideProfiles,
+  getItinerariesByTourGuide,
+  getSingleItinerary,
+  getTouristUsername,
+  getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking, createBooking } = require("../controllers/touristController");
 
 const router = express.Router();
+
+router.post("/newTransportBooking", createTransportBooking);
+router.get("/showTransportBooking", getTransportBooking);
+router.delete("/deleteTransportBooking/:id", deleteTransportBooking);
+
+router.patch("/selectPrefrences/:id", selectPrefrences);
+router.get("/myPrefrenes/:id", getPrefrences);
 
 const { changePassword } = require("../controllers/PasswordController");
 
 //choose category of activities
 router.get("/activities/category/:categoryId", getActivitiesByCategory);
+
+// Route to get all categories
+router.get("/categories", getCategories);
 
 router.patch("/change-password/:id/:modelName", changePassword);
 
@@ -34,6 +105,8 @@ router.get('/activities/booked/:touristId', getTouristBookedActivities);// Creat
 
 router.patch("/update/:id", updateInfo);
 router.get("/profile/:id", getInfo);
+
+router.patch("/requestDelete/:id", requestAccountDeletion);
 
 // Create or Update Tour Guide Profile
 
@@ -60,6 +133,10 @@ router.post("/searchItineraryByBudget", searchItineraryByBudget);
 router.post("/searchItineraryByLanguage", searchItineraryByLanguage);
 router.post("/searchItineraryByName", searchItineraryByName);
 router.post("/searchItineraryByTag", searchItineraryByTag);
+
+router.post("/feedback", ADDRateReview);
+router.post("/addSales", addSales);
+router.get("/getComplaints/:id", getComplaints);
 
 router.get("/getUpcomingActivities", getUpcomingActivities);
 router.get("/sortActivityByPrice", sortActivityByPrice);
@@ -95,11 +172,30 @@ router.post("/book_activity_Itinerary", book_activity_Itinerary);
 router.delete("/cancel_booking", cancel_booking);
 router.post("/bookhotel", createBooking);
 
-router.post('/addComplaint',addComplaint);
-router.patch('/updatePointsToWallet/:touristId',updatePointsToWallet);
-router.patch('/payForItinerary',payForItinerary);
-router.patch('/payForActivity',payForActivity);
-router.get('/tagName/:id', getTagNameById);
-router.get('/categoryName/:id', getCategoryNameById);
+router.post("/addComplaint/:userId", addComplaint);
+router.patch("/updatePointsToWallet/:touristId", updatePointsToWallet);
+router.patch("/payForItinerary/:touristId", payForItinerary);
+router.patch("/payForActivity/:touristId", payForActivity);
+router.get("/tagName/:id", getTagNameById);
+router.get("/categoryName/:id", getCategoryNameById);
+router.post("/addRating", addRating);
+router.post("/addComment", addComment);
+router.post("/addItineraryRating", addItineraryRating);
+router.post("/addItineraryComment", addItineraryComment);
+router.post("/follow", followItinerary);
+router.post("/unfollow", unfollowItinerary);
+router.post("/compeleteWithTourGuide", compeleteWithTourGuide);
+// Route to get completed tour guides
+router.get("/completed/:touristId", getCompletedTourGuides);
+// Route to get followed itineraries
+router.get("/followed/:touristId", getFollowedItineraries);
+router.get("/getAllTourGuideProfiles", getAllTourGuideProfiles);
+router.post("/getItinerariesByTourGuide", getItinerariesByTourGuide);
+router.post("/getSingleItinerary", getSingleItinerary);
+router.post("/getTouristUsername", getTouristUsername);
+
+router.get("/:touristId", fetchID);
+router.get("/activity/:activityId", fetchActivityID);
+router.get("/itinerary/:itineraryId", fetchItineraryID);
 
 module.exports = router;
