@@ -63,7 +63,7 @@ function TourGuideNavBar() {
                             <div className="popup">
                                 <ul>
                                     <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/ItineraryManagement`)}>Categories</a></li>
-                                    <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/itineraries/multi-day`)}>Multi-day Trips</a></li>
+                                    <li><a href="#" onClick={() => handleNavigation(`/tour-guide/itineraryManager/${id}`)}>Itinerary Manager</a></li>
                                 </ul>
                             </div>
                         )}
@@ -93,18 +93,14 @@ function TourGuideNavBar() {
                 </ul>
             </div>
             <div className="profile" ref={dropdownRef}>
-                <span className="profile-link" onClick={toggleDropdown}>
+                <span className="profile-link" onClick={() => setIsDropdownOpen((prev) => !prev)}>
                     <span className="profile-icon">Z</span>
                 </span>
                 {isDropdownOpen && (
                     <div className="dropdown-menu">
                         <ul>
                             <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/update-profile/tour-guides/${id}`)}><i className="fas fa-cog"></i> Account</a></li>
-                            <li>
-                                <a href="#" onClick={() => handleNavigation(`/tourguide/${id}/profile/tour-guides/${id}`)}>
-                                    <i className="fas fa-user"></i> Profile
-                                </a>
-                            </li>
+                            <li><a href="#" onClick={() => handleNavigation(`/tourguide/${id}/profile/tour-guides/${id}`)}><i className="fas fa-user"></i> Profile</a></li>
                             <li><a href="#" onClick={() => handleNavigation('/settings')}><i className="fas fa-cog"></i> Settings</a></li>
                             <hr />
                             <li><a href="#" onClick={() => handleNavigation('/logout')}><i className="fas fa-sign-out-alt"></i> Log out</a></li>
