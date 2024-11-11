@@ -1955,5 +1955,5 @@ module.exports = {
   getSingleItinerary,
   getTouristUsername,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,createBooking,
 
-  getTagIdByName
+  getTagIdByName, myTransportBooking, myActivityItineraryBooking, upload
 };

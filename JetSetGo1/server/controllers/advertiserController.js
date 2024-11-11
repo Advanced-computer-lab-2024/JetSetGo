@@ -425,5 +425,5 @@ const findReferenceDetails = async (req, res) => {
   }
 };
 
-module.exports = {requestAccountDeletion,upload,createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities,changePassword,uploadProfileImage,  createTransportation, getTransportation, updateTransportation, deleteTransportation,uploadDocument,uploadDoc, findtransport};
+module.exports = {requestAccountDeletion,upload,createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities,changePassword,uploadProfileImage,  createTransportation, getTransportation, updateTransportation, deleteTransportation,uploadDocument,uploadDoc, findReferenceDetails,findtransport};
 
