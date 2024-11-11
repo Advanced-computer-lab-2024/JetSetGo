@@ -75,6 +75,7 @@ const {
   getItinerariesByTourGuide,
   getSingleItinerary,
   getTouristUsername,
+  getTagIdByName
 } = require("../controllers/touristController");
 
 const router = express.Router();

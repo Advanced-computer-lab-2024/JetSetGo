@@ -541,29 +541,31 @@ const getTagIdByName = async (req, res) => {
 };
 
 
-//Seach Activity by tag
+//Search Activity By Tag
 const searchActivityByTag = async (req, res) => {
-  const { tagId } = req.body; // Extract tagId from the request body (already an ObjectId)
+  let { tagId } = req.body; // Expect tagId as a string
+  
 
   try {
-    // Step 1: Find Activities that have the tagId in their tags array
-    const activities = await Activity.find({ tags: tagId }).populate("tags"); // Optional: populate 'tags' to return tag details
+    // Search for activities with this tagId
+    const activities = await Activity.find({ tags : { $in: [tagId] } }).populate('tags');
 
     if (activities.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "No activities found for this tag" });
+      return res.status(404).json({ error: "No activities found for this tag" });
     }
 
-    // Step 2: Return the list of activities
+    // Return the list of activities
     res.status(200).json(activities);
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while searching for activities" });
+    console.error('Error in searchActivityByTag:', error);
+    res.status(500).json({ error: "An error occurred while searching for activities" });
   }
 };
+
+
+
+
+
 
 const getUpcomingActivities = async (req, res) => {
   try {
@@ -1734,4 +1736,5 @@ module.exports = {
   getItinerariesByTourGuide,
   getSingleItinerary,
   getTouristUsername,
+  getTagIdByName
 };
