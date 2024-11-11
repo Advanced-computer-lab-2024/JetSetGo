@@ -85,7 +85,8 @@ import ImageUpload from "./components/Admin/uploadPicture.js";
 import RequestAccountDeletion from "./components/Admin/AccountDeletion.js";
 import ActivityPageJohn from "./pages/Advertiser/ActivityJohn.js";
 import Authentication from "./pages/Authentication/Authentication";
-import ProfileJohn from "./pages/profileJohn.js";
+import SellerProfile from "./components/userDetails/SellerProfile.js";
+import AdvertiserProfile from "./components/userDetails/AdvertiserProfile.js";
 
 // Jimmy
 import Dashboard2 from "./components/Jimmy/Dashboard2.js";
@@ -93,7 +94,8 @@ import AddRatingComment from "./components/Jimmy/AddRatingComment.js";
 import AddRatingCommentItinerary from "./components/Jimmy/AddRatingCommentItinerary.js";
 import TouristTourGuideProfile from "./components/Jimmy/TouristTourGuideProfile.js";
 import TouristItineraryDetails from "./components/Jimmy/TouristItineraryDetails.js";
-
+import AdvertiserLayout from "./components/Advertiser/AdvertiserLayout.js"
+import AdvertiserActivities from "./pages/Advertiser/AdvertiserActivities.js";
 // JIMMY END
 
 
@@ -141,21 +143,34 @@ function App() {
               />
               {/*kol users */}
               <Route
-                path="/upload-image/:id/:controllerName"
+                path="/upload-image/:id/:modelName"
                 element={<ImageUpload />}
               />
               {/*tourguide advertiser seller */}
               <Route
-                path="/RequestDelete/:userType/:userId"
+                path="/RequestDelete/:id/:modelName"
                 element={<RequestAccountDeletion />}
               />
+              <Route path="/:modelName/:id/terms" element={<TermsAndConditionsForm />} />
               {/* tourguide advertiser seller tourist*/}
+              {/* Advertiser */}
+              <Route path="/Advertiser/:id" element={<AdvertiserLayout />}>
+              <Route path='/Advertiser/:id/advertiserprofile' element={<AdvertiserProfile/>} />
               <Route
-                path="/ActivitiesJohn/:id"
+                path="/Advertiser/:id/ActivitiesJohn/:id"
                 element={<ActivityPageJohn />}
               />
+              <Route
+                path="/Advertiser/:id/AdvertiserActivities/:id"
+                element={<AdvertiserActivities />}
+              />
+              
+              </Route>
+              
+              
+              <Route path="/sellerprofile/:userId" element={<SellerProfile />} />
               <Route path="/Authentication" element={<Authentication />} />
-              <Route path="/profileJohn/:id/:role" element={<ProfileJohn />} />
+
               <Route path="/" element={<TermsAndConditionsForm />} />
 
               {/** Admiin */}
@@ -193,7 +208,7 @@ function App() {
 
               {/** Tourist */}
               <Route path="/tourist/:id" element={<TouristLayout />}>
-                <Route path="/tourist/:id/terms" element={<TermsAndConditionsForm />} />
+                {/* <Route path="/tourist/:id/terms" element={<TermsAndConditionsForm />} /> */}
                 <Route path="/tourist/:id/products"element={<TouristProductListing usertype="tourist" />}/>
                 <Route path="/tourist/:id/Complaints" element={<TouristComplaint />}/>{/** lazem takhod id */}
                 <Route path="/tourist/:id/home" element={<ToursitPage />} />
@@ -254,6 +269,7 @@ function App() {
                 path="/seller/products"
                 element={<ProductListing usertype="seller" />}
               />
+              
               
               {/* Other routes can be defined similarly */}
               <Route
@@ -319,11 +335,7 @@ function App() {
               <Route path="/Activities" element={<Activities />} />
               <Route path="/Itineraries" element={<Itineraries />} />
               {/*JIMMY */}
-              
-              {/*johnn* */}
-              
-              <Route path="/profileJohn/:id" element={<ProfileJohn />} />
-              {/*johnn* */}
+
               <Route
                 path="/historicalLocations"
                 element={

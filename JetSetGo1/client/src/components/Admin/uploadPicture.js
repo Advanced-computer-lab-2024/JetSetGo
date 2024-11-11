@@ -4,7 +4,7 @@ import axios from 'axios'
 import './uploadPicture.css'
 
 export default function ImageUpload() {
-  const { id, controllerName } = useParams()
+  const { id, modelName } = useParams()
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -44,7 +44,7 @@ export default function ImageUpload() {
 
     try {
       const response = await axios.patch(
-        `http://localhost:8000/api/${controllerName}/${id}/upload-profile-image`, // this component is for 3 
+        `http://localhost:8000/api/${modelName}/${id}/upload-profile-image`, // this component is for 3 
         formData,
         {
           headers: {
@@ -63,7 +63,7 @@ export default function ImageUpload() {
     }
   }
 
-  const isTourGuide = controllerName === 'tour-guides'
+  const isTourGuide = modelName === 'tour-guides'
 
   return (
     <div className="image-upload-container">

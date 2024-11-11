@@ -236,10 +236,10 @@ const getActivities = async (req, res) => {
 const showMyActivities = async(req,res) => {
 
 
-    const AdvId = req.query.AdvId;
+    const {id} = req.body;
 
 try{
-        const result = await Activity.find({advertiser:(AdvId)})
+        const result = await Activity.find({advertiser:(id)})
         res.status(200).json(result)
     } catch{
         res.status(400).json({error:"Id is required"})
