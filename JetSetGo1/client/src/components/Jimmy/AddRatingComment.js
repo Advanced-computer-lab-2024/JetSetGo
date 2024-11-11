@@ -15,7 +15,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Materi
 import "./AddRatingComment.css";
 
 function AddRatingComment() {
-  const { id } = useParams();
+  const { id,guideId } = useParams();
   const navigate = useNavigate();
   const [tourGuide, setTourGuide] = useState(null);
   const [newRating, setNewRating] = useState(0);
@@ -25,10 +25,10 @@ function AddRatingComment() {
   const [commentError, setCommentError] = useState("");
   const [ratingSuccess, setRatingSuccess] = useState(false);
   const [commentSuccess, setCommentSuccess] = useState(false);
-  const touristId = "670670e70c449b57490188b7";
+  const touristId = id;
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/tour-guides/profile/${id}`)
+    fetch(`http://localhost:8000/api/tour-guides/profile/${guideId}`)
       .then((res) => res.json())
       .then((data) => {
         setTourGuide(data);
@@ -44,7 +44,7 @@ function AddRatingComment() {
       .catch((error) =>
         console.error("Error fetching tour guide details:", error)
       );
-  }, [id, touristId]);
+  }, [guideId, touristId]);
 
   const handleRatingSubmit = () => {
     if (hasRated || !newRating) return;
@@ -53,7 +53,7 @@ function AddRatingComment() {
 
     const ratingData = {
       touristId,
-      tourGuideId: id,
+      tourGuideId: guideId,
       rating: newRating,
     };
 
@@ -95,7 +95,7 @@ function AddRatingComment() {
 
     const commentData = {
       touristId,
-      tourGuideId: id,
+      tourGuideId: guideId,
       comment: newComment,
     };
 

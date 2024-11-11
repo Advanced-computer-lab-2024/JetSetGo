@@ -14,20 +14,21 @@ import "./AddRatingComment.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Material-UI's back arrow icon
 
 function AddRatingCommentItinerary() {
-  const { id } = useParams();
+  const { id,iternaryId } = useParams();
+  console.log(id,iternaryId )
   const navigate = useNavigate();
   const [itinerary, setItinerary] = useState(null);
   const [newRating, setNewRating] = useState(0);
   const [newComment, setNewComment] = useState("");
   const [hasRated, setHasRated] = useState(false);
-  const touristId = "670670e70c449b57490188b7"; // Replace with the actual tourist ID
+  const touristId = id; // Replace with the actual tourist ID
 
   useEffect(() => {
     // Fetch the itinerary details by itineraryId
     fetch(`http://localhost:8000/api/tourist/getSingleItinerary`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ itineraryId: id }), // Send itineraryId to the backend
+      body: JSON.stringify({ itineraryId: iternaryId }), // Send itineraryId to the backend
     })
       .then((res) => res.json())
       .then((data) => {
@@ -44,13 +45,13 @@ function AddRatingCommentItinerary() {
       .catch((error) =>
         console.error("Error fetching itinerary details:", error)
       );
-  }, [id, touristId]);
+  }, [iternaryId, touristId]);
 
   const handleRatingSubmit = () => {
     if (hasRated || !newRating) return;
     const ratingData = {
       touristId,
-      itineraryId: id,
+      itineraryId: iternaryId,
       rating: newRating,
     };
 
@@ -71,7 +72,7 @@ function AddRatingCommentItinerary() {
           setNewRating(0);
           setHasRated(true);
           alert("Rating submitted successfully!"); // Alert on success
-          navigate(-1); // Redirect back after success
+          
         }
       })
       .catch((error) => console.error("Error submitting rating:", error));
@@ -81,7 +82,7 @@ function AddRatingCommentItinerary() {
     if (!newComment.trim()) return;
     const commentData = {
       touristId,
-      itineraryId: id,
+      itineraryId: iternaryId,
       comment: newComment,
     };
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom"; // Import useNavigate
-import { Typography, Divider, IconButton } from "@mui/material";
+import { Button,Typography, Divider, IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Material-UI's back arrow icon
 import "./TouristItineraryDetails.css";
 
@@ -11,7 +11,8 @@ function TouristItineraryDetails() {
   const [touristUsername, setTouristUsername] = useState(""); // Store the tourist username
   const [error, setError] = useState(null);
   const navigate = useNavigate(); // Initialize the navigate function
-
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     // Fetch the tourist's username
@@ -52,6 +53,31 @@ function TouristItineraryDetails() {
         setError("Error fetching itinerary details: " + error.message);
       });
   }, [iternaryId, touristId]); // Refetch if itineraryId or touristId changes
+
+// Function to follow an itinerary
+const handleFollowItinerary = () => {
+  setLoading(true);
+  fetch("http://localhost:8000/api/tourist/follow", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ touristId, itineraryId:iternaryId }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.error) {
+        setMessage("Failed to follow itinerary: " + data.error);
+      } else {
+        
+        setMessage("Successfully followed itinerary!");
+      }
+    })
+    .catch((error) => {
+      console.error("Error following itinerary:", error);
+      setMessage("Error following itinerary.");
+    })
+    .finally(() => setLoading(false));
+};
+
 
   // Calculate the average rating (if ratings exist)
   const calculateAverageRating = (ratings) => {
@@ -131,6 +157,14 @@ function TouristItineraryDetails() {
           Rate/Comment
         </button>
       </Link>
+      <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleFollowItinerary}
+          disabled={loading}
+        >
+          Follow Itinerary
+        </Button>
       <Divider sx={{ my: 2 }} />
 
       {/* Comments Section Card */}
