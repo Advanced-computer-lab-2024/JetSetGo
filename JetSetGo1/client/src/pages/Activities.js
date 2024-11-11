@@ -3,6 +3,7 @@ import ActivityDetails from "../components/ActivityDetails";
 import { Link} from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import ActivityFilter from '../components/ActivityFilter';  // Import ActivityFilter
+import { useLocation } from 'react-router-dom';
 
 const Activities2 = () => {
     const [upcomingActivities, setUpcomingActivities] = useState(null); // All activities fetched from backend
@@ -10,7 +11,10 @@ const Activities2 = () => {
     const [sortedActivities, setSortedActivities] = useState(null); // Holds the currently sorted activities
     const [loading, setLoading] = useState('');
 
-    const {id}= useParams()
+    // const {id}= useParams()
+    const location = useLocation(); // Access the location object
+    const { id } = location.state || {}; // Access the id from state
+
     useEffect(() => {
         fetchActivities();
     }, []);
@@ -83,7 +87,7 @@ const Activities2 = () => {
                 <p>No results found</p>
                 )}
                 {activitiesToShow  && activitiesToShow.map((Activity) => (
-                    <Link key={Activity._id} to={`/tourist/${id}/activity/${Activity._id}/tourist/${id}`}>
+                    <Link key={Activity._id} to={`/tourist/activity/${Activity._id}/tourist/${id}`}>
                         <ActivityDetails Activity={Activity} />
                     </Link>
                 ))}

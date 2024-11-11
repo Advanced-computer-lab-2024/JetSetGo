@@ -47,6 +47,7 @@ app.use('/api/tour-guides', tourGuideRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/tourist',touristRoutes)
 app.use('/api',router);
+app.use("/uploads", express.static("uploads"));
 
 
 

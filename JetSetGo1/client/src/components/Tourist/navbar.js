@@ -9,8 +9,12 @@ import { CurrencyContext } from './CurrencyContext';
 
 const currencies = ["EGP", "EUR", "USD"];
 
+
+
 function NavBar() {
-    const { id } = useParams();
+    const location = useLocation(); // Access state passed via Link
+    const { id } = location.state || {}; // Access id from state
+    // const { id } = useParams();
     const { currency, setCurrency } = useContext(CurrencyContext);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [activePopup, setActivePopup] = useState(null);
@@ -70,19 +74,19 @@ function NavBar() {
                 </div>
                 <div className="menu">
                     <ul>
-                        <li><Link to={`/tourist/${id}/home`}>Home</Link></li>
-                        <li><Link to={`/tourist/${id}/products`}>Products</Link></li>
-                        <li><Link to={`/tourist/${id}/Complaints`}>Complaints</Link></li>
-                        <li><Link to={`/tourist/${id}/activities2`}>Activities</Link></li>
-                        <li><Link to={`/tourist/${id}/itineraries2`}>Itineraries</Link></li>
-                        <li><Link to={`/tourist/${id}/tourguidelist`}>Tour Guide</Link></li>
-                        <li><Link to={`/tourist/${id}/tourguidelist`}>Booking</Link></li>
-                        <li><Link to={`/tourist/${id}/tourguidelist`}>Locations</Link></li>
+                        <li><Link to={`/tourist/home`} state={{ id }}>Home</Link></li>
+                        <li><Link to={`/tourist/products`} state={{ id }}>Products</Link></li>
+                        <li><Link to={`/tourist/Complaints`} state={{ id }}>Complaints</Link></li>
+                        <li><Link to={`/tourist/activities2`} state={{ id }}>Activities</Link></li>
+                        <li><Link to={`/tourist/itineraries2`} state={{ id }}>Itineraries</Link></li>
+                        <li><Link to={`/tourist/tourguidelist`} state={{ id }}>Tour Guide</Link></li>
+                        <li><Link to={`/tourist/tourguidelist`} state={{ id }}>Booking</Link></li>
+                        <li><Link to={`/tourist/tourguidelist`} state={{ id }}>Locations</Link></li>
                         <li>
-                            <Link to={`/book-hotel`} state={{ id }}>Hotels</Link>
+                            <Link to={`/tourist/book-hotel`} state={{ id }}>Hotels</Link>
                         </li>
                         <li>
-                            <Link to={`/book_flight`} state={{ id }}>Flights</Link>
+                            <Link to={`/tourist/book_flight`} state={{ id }}>Flights</Link>
                         </li>
 
                     </ul>
@@ -107,17 +111,17 @@ function NavBar() {
                         <div className="dropdown-menu">
                             <ul>
                                 <li>
-                                    <Link to={`/tourist/${id}/profile/tourist/${id}`}>
+                                    <Link to={`/tourist/profile/tourist/${id}`}>
                                         <i className="fas fa-user"></i> Profile
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to={`/tourist/${id}/change-password/${id}/${modelName}`}>
+                                    <Link to={`/tourist/change-password/${id}/${modelName}`}>
                                         <i className="fas fa-user"></i> Change My password
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to={`/tourist/${id}/RequestDelete/${modelName}/${id}`}>
+                                    <Link to={`/tourist/RequestDelete/${modelName}/${id}`}>
                                         <i className="fas fa-user"></i> Request to delete
                                     </Link>
                                 </li>

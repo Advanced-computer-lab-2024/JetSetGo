@@ -12,7 +12,7 @@ const Booking = ({ touristId }) => {
     return (
         
         <div className="home">
-            <NavBar />
+            {/* <NavBar /> */}
             <br></br>
             <h2>Booking.com</h2>
             <AccommodationApp touristId={touristId} />

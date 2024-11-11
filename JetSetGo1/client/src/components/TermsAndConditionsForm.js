@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './TermsAndConditionsForm.css'; // Import CSS for styling
 
 function TermsAndConditionsForm() {
+  const location = useLocation();
+  const { id } = useParams()
   // State to track whether the terms are accepted
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);

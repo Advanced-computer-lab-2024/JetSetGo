@@ -2,8 +2,12 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
 import ShareLink from '../components/ShareLink';
+import { useLocation } from 'react-router-dom';
+
 
 const ItineraryDetailPage = () => {
+    const location = useLocation(); // Access the location object
+    // const { id } = location.state || {}; // Access the id from state
     const { itineraryId, id } = useParams(); // Get itineraryId and id from URL
     const [itinerary, setItinerary] = useState(null);
     const [error, setError] = useState(null);
