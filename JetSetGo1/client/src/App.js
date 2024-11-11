@@ -229,8 +229,8 @@ function App() {
                 {/** jimmy */}
                 <Route path="/tourist/:id/tourguidelist" element={<Dashboard2 />} />
                 <Route path="/tourist/:id/viewTourGuideProfile/:guideId" element={<TouristTourGuideProfile />} />
-                <Route path="/tourist/:id/add-rating-comment/:id" element={<AddRatingComment />} />
-                <Route path="/tourist/:id/add-rating-comment-itinerary/:id" element={<AddRatingCommentItinerary />} />
+                <Route path="/tourist/:id/add-rating-comment/:guideId" element={<AddRatingComment />} />
+                <Route path="/tourist/:id/add-rating-comment-itinerary/:iternaryId" element={<AddRatingCommentItinerary />} />
                 <Route path="/tourist/:id/TouristItineraryDetails/:iternaryId" element={<TouristItineraryDetails />} />
                 <Route path="/tourist/:id/ActivitiesHazem" element={<CategoriesAndActivities />} />
                 

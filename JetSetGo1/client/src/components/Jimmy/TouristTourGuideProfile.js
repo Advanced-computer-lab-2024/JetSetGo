@@ -7,14 +7,13 @@ import { IconButton } from "@mui/material";
 function TouristTourGuideProfile() {
   const { id,guideId } = useParams();
   const touristId=id
-  console.log(touristId,guideId )
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [itineraries, setItineraries] = useState([]);
   const [followedItineraries, setFollowedItineraries] = useState([]);
   const [error, setError] = useState(null);
   const [touristUsername, setTouristUsername] = useState(""); // Store the tourist username
-
+  const [usernames, setUsernames] = useState({}); // Store usernames for each touristId
   // Replace this with the actual touristId
   
 
@@ -36,21 +35,7 @@ function TouristTourGuideProfile() {
       })
       .catch((error) => setError("Error fetching tourist username: " + error));
 
-    // Fetch the tour guide profile
-    fetch(`http://localhost:8000/api/tour-guides/profile/${guideId}`)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Profile fetch error! status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        console.log("Profile data:", data);
-        setProfile(data);
-      })
-      .catch((error) =>
-        setError("Error fetching tour guide profile: " + error)
-      );
+    
 
     // Fetch itineraries by tour guide ID
     fetch("http://localhost:8000/api/tourist/getItinerariesByTourGuide", {
@@ -88,6 +73,41 @@ function TouristTourGuideProfile() {
         setError("Error fetching followed itineraries: " + error)
       );
   }, [guideId, touristId]);
+
+  useEffect(() => {
+    // Fetch the tour guide profile and itineraries as before
+    fetch(`http://localhost:8000/api/tour-guides/profile/${guideId}`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`Profile fetch error! status: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        setProfile(data);
+        // Extract unique tourist IDs from comments
+        const uniqueTouristIds = [...new Set(data.comments.map(comment => comment.tourist))];
+        // Fetch usernames for these unique tourist IDs
+        Promise.all(
+          uniqueTouristIds.map((touristId) =>
+            fetch("http://localhost:8000/api/tourist/getTouristUsername", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ touristId })
+            })
+              .then(res => res.json())
+              .then(({ username }) => ({ [touristId]: username }))
+          )
+        )
+          .then(results => {
+            const usernamesMap = Object.assign({}, ...results);
+            setUsernames(usernamesMap);
+          })
+          .catch(error => setError("Error fetching usernames: " + error));
+      })
+      .catch((error) => setError("Error fetching tour guide profile: " + error));
+
+    // Fetch itineraries and followed itineraries as before
+  }, [guideId, touristId]);
+
 
   // Check if an itinerary is followed
   const isFollowed = (itineraryId) =>
@@ -168,30 +188,16 @@ function TouristTourGuideProfile() {
 
       {/* Tour Guide Comments Card */}
       {profile.comments && profile.comments.length > 0 && (
-        <div
-          className="comments-card"
-          style={{
-            padding: "15px",
-            border: "1px solid #ccc",
-            borderRadius: "8px",
-            marginBottom: "20px",
-          }}
-        >
+        <div className="comments-card" style={{ padding: "15px", border: "1px solid #ccc", borderRadius: "8px", marginBottom: "20px" }}>
           <h3>Tour Guide Comments</h3>
           <ul style={{ listStyleType: "none", paddingLeft: 0 }}>
             {profile.comments.map((comment, index) => (
               <li key={index} style={{ marginBottom: "10px" }}>
-                {comment.tourist ? (
-                  <>
-                    <p>
-                      <strong>{touristUsername || "Unknown Tourist"}</strong> -{" "}
-                      {new Date(comment.createdAt).toLocaleString()}
-                    </p>
-                    <p>{comment.text}</p>
-                  </>
-                ) : (
-                  <p>{comment.text}</p>
-                )}
+                <p>
+                  <strong>{usernames[comment.tourist] || "Unknown Tourist"}</strong> -{" "}
+                  {new Date(comment.createdAt).toLocaleString()}
+                </p>
+                <p>{comment.text}</p>
               </li>
             ))}
           </ul>
