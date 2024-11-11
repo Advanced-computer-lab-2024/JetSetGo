@@ -150,10 +150,12 @@ const SignupForm = () => {
         const id = userId;
         console.log(selectedOption.value)
         let url;
-        if (selectedOption.value === 'Advertiser' || selectedOption.value === 'Seller') {
-          url = `/profileJohn/${userId}`;
+        if (selectedOption.value === 'Advertiser' ) {
+          navigate(`/${selectedOption.value}/${id}/terms`);
+        }else if (selectedOption.value == 'Seller') {
+          navigate(`/${selectedOption.value.toLowerCase}/${id}/terms`);
         } else if (selectedOption.value == 'Tourist') {
-          navigate(`/tourist/${id}/terms`);
+          navigate(`/${selectedOption.value.toLowerCase}/${id}/terms`);
         } else if (selectedOption.value === 'TourGuide') {
           url = '/tourguide-dashboard';
         } else {

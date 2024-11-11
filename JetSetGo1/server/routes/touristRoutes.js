@@ -75,7 +75,7 @@ const {
   getItinerariesByTourGuide,
   getSingleItinerary,
   getTouristUsername,
-} = require("../controllers/touristController");
+  getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking, createBooking } = require("../controllers/touristController");
 
 const router = express.Router();
 
@@ -100,7 +100,8 @@ router.get("/Products", getProducts);
 router.get("/filterProducts", filterProducts);
 router.get("/sortByRate", sortByRate);
 router.get("/searchProductName", searchProductName);
-// Create or Update Tour Guide Profile
+
+router.get('/activities/booked/:touristId', getTouristBookedActivities);// Create or Update Tour Guide Profile
 
 router.patch("/update/:id", updateInfo);
 router.get("/profile/:id", getInfo);
@@ -158,11 +159,18 @@ router.get(
 
 router.put("/rating", rateActivity);
 
+router.get("/get_rating/:_id/:activityId", getUserRating);
+
+
+router.post("/bookflight", createFlightBooking);
+
 router.post("/comment", addCommentToActivity);
+router.post("/commentcheck/:touristId/:commentId", isCommentByTourist);
 router.delete("/del_comment", deleteCommentFromActivity);
 
 router.post("/book_activity_Itinerary", book_activity_Itinerary);
 router.delete("/cancel_booking", cancel_booking);
+router.post("/bookhotel", createBooking);
 
 router.post("/addComplaint/:userId", addComplaint);
 router.patch("/updatePointsToWallet/:touristId", updatePointsToWallet);
@@ -189,5 +197,6 @@ router.post("/getTouristUsername", getTouristUsername);
 router.get("/:touristId", fetchID);
 router.get("/activity/:activityId", fetchActivityID);
 router.get("/itinerary/:itineraryId", fetchItineraryID);
+router.get("/activities/booked/:touristId",getTouristActivities);
 
 module.exports = router;

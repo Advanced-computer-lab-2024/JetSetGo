@@ -85,7 +85,8 @@ import ImageUpload from "./components/Admin/uploadPicture.js";
 import RequestAccountDeletion from "./components/Admin/AccountDeletion.js";
 import ActivityPageJohn from "./pages/Advertiser/ActivityJohn.js";
 import Authentication from "./pages/Authentication/Authentication";
-import ProfileJohn from "./pages/profileJohn.js";
+import SellerProfile from "./components/userDetails/SellerProfile.js";
+import AdvertiserProfile from "./components/userDetails/AdvertiserProfile.js";
 
 // Jimmy
 import Dashboard2 from "./components/Jimmy/Dashboard2.js";
@@ -93,12 +94,18 @@ import AddRatingComment from "./components/Jimmy/AddRatingComment.js";
 import AddRatingCommentItinerary from "./components/Jimmy/AddRatingCommentItinerary.js";
 import TouristTourGuideProfile from "./components/Jimmy/TouristTourGuideProfile.js";
 import TouristItineraryDetails from "./components/Jimmy/TouristItineraryDetails.js";
-
+import AdvertiserLayout from "./components/Advertiser/AdvertiserLayout.js"
+import AdvertiserActivities from "./pages/Advertiser/AdvertiserActivities.js";
 // JIMMY END
 
 import GuestLayout from "./components/Guest/GuestLayout.js";
 
 
+
+
+import Booking from './pages/bookhotel.js'
+import ActivityList from './components/ActivityList-Rate-Comment.js';
+import FlightSearch from './components/flights.js'; 
 
 
 function App() {
@@ -144,21 +151,34 @@ function App() {
               />
               {/*kol users */}
               <Route
-                path="/upload-image/:id/:controllerName"
+                path="/upload-image/:id/:modelName"
                 element={<ImageUpload />}
               />
               {/*tourguide advertiser seller */}
               <Route
-                path="/RequestDelete/:userType/:userId"
+                path="/RequestDelete/:id/:modelName"
                 element={<RequestAccountDeletion />}
               />
+              <Route path="/:modelName/:id/terms" element={<TermsAndConditionsForm />} />
               {/* tourguide advertiser seller tourist*/}
+              {/* Advertiser */}
+              <Route path="/Advertiser/:id" element={<AdvertiserLayout />}>
+              <Route path='/Advertiser/:id/advertiserprofile' element={<AdvertiserProfile/>} />
               <Route
-                path="/ActivitiesJohn/:id"
+                path="/Advertiser/:id/ActivitiesJohn/:id"
                 element={<ActivityPageJohn />}
               />
+              <Route
+                path="/Advertiser/:id/AdvertiserActivities/:id"
+                element={<AdvertiserActivities />}
+              />
+              
+              </Route>
+              
+              
+              <Route path="/sellerprofile/:userId" element={<SellerProfile />} />
               <Route path="/Authentication" element={<Authentication />} />
-              <Route path="/profileJohn/:id/:role" element={<ProfileJohn />} />
+
               <Route path="/" element={<TermsAndConditionsForm />} />
 
               {/** Admiin */}
@@ -196,7 +216,7 @@ function App() {
 
               {/** Tourist */}
               <Route path="/tourist/:id" element={<TouristLayout />}>
-                <Route path="/tourist/:id/terms" element={<TermsAndConditionsForm />} />
+                {/* <Route path="/tourist/:id/terms" element={<TermsAndConditionsForm />} /> */}
                 <Route path="/tourist/:id/products"element={<TouristProductListing usertype="tourist" />}/>
                 <Route path="/tourist/:id/Complaints" element={<TouristComplaint />}/>{/** lazem takhod id */}
                 <Route path="/tourist/:id/home" element={<ToursitPage />} />
@@ -213,8 +233,8 @@ function App() {
                 {/** jimmy */}
                 <Route path="/tourist/:id/tourguidelist" element={<Dashboard2 />} />
                 <Route path="/tourist/:id/viewTourGuideProfile/:guideId" element={<TouristTourGuideProfile />} />
-                <Route path="/tourist/:id/add-rating-comment/:id" element={<AddRatingComment />} />
-                <Route path="/tourist/:id/add-rating-comment-itinerary/:id" element={<AddRatingCommentItinerary />} />
+                <Route path="/tourist/:id/add-rating-comment/:guideId" element={<AddRatingComment />} />
+                <Route path="/tourist/:id/add-rating-comment-itinerary/:iternaryId" element={<AddRatingCommentItinerary />} />
                 <Route path="/tourist/:id/TouristItineraryDetails/:iternaryId" element={<TouristItineraryDetails />} />
                 <Route path="/tourist/:id/ActivitiesHazem" element={<CategoriesAndActivities />} />
                 
@@ -273,6 +293,7 @@ function App() {
                 element={<ProductListing usertype="seller" />}
               />
               
+              
               {/* Other routes can be defined similarly */}
               <Route
                 path="/seller/addProduct"
@@ -326,6 +347,14 @@ function App() {
                   </>
                 }
               />
+               <Route path="/book-hotel" element={
+              <div style={{ padding: 20 }}>
+                <Booking touristId={"670255f97b12bc9e3f1c7f26"} />
+              </div>} />
+
+            <Route path="/rate-comment-event" element={<ActivityList touristId={"670255f97b12bc9e3f1c7f26"} />} />  ///////////////////////////////////
+            <Route path="/book_flight" element={<FlightSearch touristId={"670255f97b12bc9e3f1c7f26"} />} />
+            
               <Route path="/hhh" element={<Home />} />
               <Route path="/my_tags" element={<Tagspage />} />
               <Route path="/my_category" element={<Categorypage />} />
@@ -337,11 +366,7 @@ function App() {
               <Route path="/Activities" element={<Activities />} />
               <Route path="/Itineraries" element={<Itineraries />} />
               {/*JIMMY */}
-              
-              {/*johnn* */}
-              
-              <Route path="/profileJohn/:id" element={<ProfileJohn />} />
-              {/*johnn* */}
+
               <Route
                 path="/historicalLocations"
                 element={
@@ -364,3 +389,4 @@ function App() {
 }
 
 export default App;
+

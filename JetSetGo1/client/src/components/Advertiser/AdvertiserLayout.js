@@ -1,14 +1,14 @@
 import React from 'react';
-import './boxes.css';
-import { Outlet } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-import NavBar from './navbar';
 
-function TouristLayout() {
+import { Outlet } from 'react-router-dom';
+
+import AdvertiserNavBar from './AdvertiserNavBar';
+
+function AdvertiserLayout() {
   return (
     <div className="admin-dashboard">
       <div className="main-content">
-        <NavBar /> {/* Navbar stays visible */}
+        <AdvertiserNavBar /> {/* Navbar stays visible */}
         <div className="dashboard-data">
           <Outlet /> {/* Renders the page content here */}
         </div>
@@ -17,4 +17,4 @@ function TouristLayout() {
   );
 }
 
-export default TouristLayout;
+export default AdvertiserLayout;
