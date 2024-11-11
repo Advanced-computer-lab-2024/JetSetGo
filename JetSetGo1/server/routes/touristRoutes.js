@@ -75,6 +75,7 @@ const {
   getItinerariesByTourGuide,
   getSingleItinerary,
   getTouristUsername,
+  getTagIdByName
   getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking, createBooking } = require("../controllers/touristController");
 
 const router = express.Router();
@@ -116,6 +117,9 @@ router.post(
   "/searchHistoricalPlaceByCategory",
   searchHistoricalPlaceByCategory
 );
+
+
+router.post("/getTagIdByName",getTagIdByName)
 
 router.post("/searchMuseumByTag", searchMuseumByTag);
 router.post("/searchMuseumByName", searchMuseumByName);
