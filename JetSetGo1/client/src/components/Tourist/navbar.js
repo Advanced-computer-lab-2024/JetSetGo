@@ -16,7 +16,7 @@ function NavBar() {
     const [activePopup, setActivePopup] = useState(null);
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
-    const modelName='tourist'
+    const modelName = 'tourist'
 
     const toggleDropdown = () => {
         setIsDropdownOpen((prev) => !prev);
@@ -77,10 +77,17 @@ function NavBar() {
                         <li><Link to={`/tourist/${id}/itineraries2`}>Itineraries</Link></li>
                         <li><Link to={`/tourist/${id}/tourguidelist`}>Tour Guide</Link></li>
                         <li><Link to={`/tourist/${id}/tourguidelist`}>Booking</Link></li>
-                        <li><Link to={`/tourist/${id}/tourguidelist`}>Historical Locations</Link></li>
+                        <li><Link to={`/tourist/${id}/tourguidelist`}>Locations</Link></li>
+                        <li>
+                            <Link to={`/book-hotel`} state={{ id }}>Hotels</Link>
+                        </li>
+                        <li>
+                            <Link to={`/book_flight`} state={{ id }}>Flights</Link>
+                        </li>
+
                     </ul>
                 </div>
-                
+
                 <div className='currency'>
                     <button className="currencyChanger">
                         {currencies[0]}
@@ -119,7 +126,7 @@ function NavBar() {
                         </div>
                     )}
                 </div>
-	        </div>
+            </div>
         </div>
     );
 }

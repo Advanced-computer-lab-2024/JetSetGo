@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaStar } from 'react-icons/fa';
+import { useLocation } from 'react-router-dom';
 
 const ActivityList = ({ touristId }) => {
+    const location = useLocation(); // Access state passed via Link
+    const { id } = location.state || {}; // Access id from state
+    touristId = id;
+    console.log("touristId in page"+touristId);
     const [activities, setActivities] = useState([]);
     const [ratings, setRatings] = useState({});
     const [comment, setComment] = useState({});
