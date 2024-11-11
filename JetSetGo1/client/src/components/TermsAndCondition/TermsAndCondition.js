@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom';
 
 function TermsAndConditionsForm() {
   const location = useLocation();
-    const  {modelName,id}=useParams() 
+    const  {id}=useParams() 
 
    
  
@@ -53,7 +53,7 @@ function TermsAndConditionsForm() {
                     />
                     <label htmlFor="terms"> I accept the terms and conditions</label>
                   </div>
-                  <Link to={`/${modelName}/${id}`}>
+                  <Link to={`/tourist/${id}/products`}>
                   <button
                     type="submit"
                     disabled={!acceptedTerms}

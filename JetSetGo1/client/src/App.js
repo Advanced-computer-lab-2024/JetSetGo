@@ -102,7 +102,7 @@ import AdvertiserActivities from "./pages/Advertiser/AdvertiserActivities.js";
 
 import Booking from './pages/bookhotel.js'
 import ActivityList from './components/ActivityList-Rate-Comment.js';
-import FlightSearch from './components/flights.js';
+import FlightSearch from './components/flights.js'; 
 
 
 function App() {
@@ -160,19 +160,19 @@ function App() {
               {/* tourguide advertiser seller tourist*/}
               {/* Advertiser */}
               <Route path="/Advertiser/:id" element={<AdvertiserLayout />}>
-                <Route path='/Advertiser/:id/advertiserprofile' element={<AdvertiserProfile />} />
-                <Route
-                  path="/Advertiser/:id/ActivitiesJohn/:id"
-                  element={<ActivityPageJohn />}
-                />
-                <Route
-                  path="/Advertiser/:id/AdvertiserActivities/:id"
-                  element={<AdvertiserActivities />}
-                />
-
+              <Route path='/Advertiser/:id/advertiserprofile' element={<AdvertiserProfile/>} />
+              <Route
+                path="/Advertiser/:id/ActivitiesJohn/:id"
+                element={<ActivityPageJohn />}
+              />
+              <Route
+                path="/Advertiser/:id/AdvertiserActivities/:id"
+                element={<AdvertiserActivities />}
+              />
+              
               </Route>
-
-
+              
+              
               <Route path="/sellerprofile/:userId" element={<SellerProfile />} />
               <Route path="/Authentication" element={<Authentication />} />
 
@@ -214,18 +214,18 @@ function App() {
               {/** Tourist */}
               <Route path="/tourist/:id" element={<TouristLayout />}>
                 {/* <Route path="/tourist/:id/terms" element={<TermsAndConditionsForm />} /> */}
-                <Route path="/tourist/:id/products" element={<TouristProductListing usertype="tourist" />} />
-                <Route path="/tourist/:id/Complaints" element={<TouristComplaint />} />{/** lazem takhod id */}
+                <Route path="/tourist/:id/products"element={<TouristProductListing usertype="tourist" />}/>
+                <Route path="/tourist/:id/Complaints" element={<TouristComplaint />}/>{/** lazem takhod id */}
                 <Route path="/tourist/:id/home" element={<ToursitPage />} />
                 <Route path="/tourist/:id/viewproduct" element={<ViewProduct />} />
-                <Route path="/tourist/:id/addComplaint/:id" element={<TouristAddComplaintPage />} />
-                <Route path="/tourist/:id/change-password/:id/:modelName" element={<ChangePassword />} />
+                <Route path="/tourist/:id/addComplaint/:id"element={<TouristAddComplaintPage />}/>
+                <Route path="/tourist/:id/change-password/:id/:modelName" element={<ChangePassword />}/>
                 <Route path="/tourist/:id/RequestDelete/:modelName/:id" element={<RequestAccountDeletion />} />
                 <Route path="/tourist/:id/profile/tourist/:id" element={<TouristProfile />} />
-                <Route path="/tourist/:id/activity/:activityId/tourist/:id" element={<ActivityDetailPage />} />{/* New route for activity details */}
+                <Route path="/tourist/:id/activity/:activityId/tourist/:id" element={<ActivityDetailPage />}/>{/* New route for activity details */}
                 <Route path="/tourist/:id/activities2" element={<Activities2 filteredActivities={filteredActivities} />} />
                 <Route path="/tourist/:id/itineraries2" element={<Itineraries2 filteredItinerary={filteredItinerary} />} />
-                <Route path="/tourist/:id/itinerary/:itineraryId/tourist/:id" element={<ItineraryDetailPage />} />
+                <Route path="/tourist/:id/itinerary/:itineraryId/tourist/:id" element={<ItineraryDetailPage />} /> 
                 {/** jimmy */}
                 <Route path="/tourist/:id/tourguidelist" element={<Dashboard2 />} />
                 <Route path="/tourist/:id/viewTourGuideProfile/:guideId" element={<TouristTourGuideProfile />} />
@@ -233,7 +233,7 @@ function App() {
                 <Route path="/tourist/:id/add-rating-comment-itinerary/:id" element={<AddRatingCommentItinerary />} />
                 <Route path="/tourist/:id/TouristItineraryDetails/:iternaryId" element={<TouristItineraryDetails />} />
                 <Route path="/tourist/:id/ActivitiesHazem" element={<CategoriesAndActivities />} />
-
+                
               </Route>
 
               {/** Tourguide */}
@@ -274,8 +274,8 @@ function App() {
                 path="/seller/products"
                 element={<ProductListing usertype="seller" />}
               />
-
-
+              
+              
               {/* Other routes can be defined similarly */}
               <Route
                 path="/seller/addProduct"
@@ -329,6 +329,14 @@ function App() {
                   </>
                 }
               />
+               <Route path="/book-hotel" element={
+              <div style={{ padding: 20 }}>
+                <Booking touristId={"670255f97b12bc9e3f1c7f26"} />
+              </div>} />
+
+            <Route path="/rate-comment-event" element={<ActivityList touristId={"670255f97b12bc9e3f1c7f26"} />} />  ///////////////////////////////////
+            <Route path="/book_flight" element={<FlightSearch touristId={"670255f97b12bc9e3f1c7f26"} />} />
+            
               <Route path="/hhh" element={<Home />} />
               <Route path="/my_tags" element={<Tagspage />} />
               <Route path="/my_category" element={<Categorypage />} />
@@ -355,89 +363,10 @@ function App() {
                 }
               />
             </Routes>
-
           </CurrencyProvider>
-          
-            <Route path="/tourguide/:id" element={<TourGuideLayout />} >
-              <Route path="/tourguide/:id/create/tour-guides/:id" element={<CreateProfile />} />
-              <Route path="/tourguide/:id/profile/tour-guides/:id" element={<Profile />} />
-              <Route path="/tourguide/:id/update-profile/tour-guides/:id" element={<UpdateProfile />} />
-              <Route path="/tourguide/:id/Itineraries" element={<Itineraries />} />
-              <Route path="/tourguide/:id/Activities" element={<Activities />} />
-              <Route path="/tourguide/:id/Museum" element={<Museum />} />
-              <Route path="/tourguide/:id/HL" element={<HL />} />
-            </Route>
-            <Route path="/" element={<HomePage />} />
-            
-            
-            <Route path="/tourist/products" element={<ProductListing usertype="tourist" />} />
-            {/* Other routes can be defined similarly */}
-            <Route path="/seller/addProduct" element={<ProductForm usertype="seller" />} /> {/* Add product page */}
-            <Route path="/admin/addProduct" element={<ProductForm usertype="admin" />} /> {/* Add product page */}
-            <Route path="/seller/updateProduct/:id" element={<UpdateProducts usertype="seller" />} /> {/* Update product page */}
-            <Route path="/admin/updateProduct/:id" element={<UpdateProducts usertype="admin" />} />
-            <Route path="/delete/:role" element={<UserList />} />
-            <Route path="/tour-guide/itineraryManager" element={<ItineraryManager />} />
-            <Route path="/admin/profile" element={<AdminProfilePage />} />
-            <Route path="/admin/delete-options" element={<DeleteOptions />} />
-            <Route path="/admin/add" element={<AdminAddPage />} />
-            <Route path="/edit/tourist/:id" element={<TouristEditPage />} />
-            <Route path="/profile/tourist/:id" element={<TouristProfilePage />} />
-
-
-            <Route path="/book-hotel" element={
-              <div style={{ padding: 20 }}>
-                <Booking touristId={"670255f97b12bc9e3f1c7f26"} />
-              </div>} />
-
-            <Route path="/rate-comment-event" element={<ActivityList touristId={"670255f97b12bc9e3f1c7f26"} />} />  ///////////////////////////////////
-            <Route path="/book_flight" element={<FlightSearch touristId={"670255f97b12bc9e3f1c7f26"} />} />
-            <Route path="/activities2" element={<Activities2 filteredActivities={filteredActivities} />} />
-            <Route path="/itineraries2" element={<Itineraries2 filteredItinerary={filteredItinerary} />} />
-            <Route path="/museums" element={
-              <><MuseumFilter onFilter={handleFilterResultsMusuems} />
-                <Museums filteredMuseum={filteredMuseum} /></>} />
-
-            <Route
-              path="/my_tags"
-              element={<Tagspage />}
-            />
-            <Route
-              path="/my_category"
-              element={<Categorypage />}
-            />
-            <Route
-              path="/Tourism_Governer"
-              element={<Tourism_Governer />}
-            />
-            <Route
-              path="/HLTags"
-              element={<HLTags />}
-            />
-            <Route
-              path="/HLMs"
-              element={<HLMs />}
-            />
-
-            <Route
-              path="/Activities"
-              element={<Activities />}
-            />
-            <Route
-              path="/admin/getComplaints"
-              element={<AdminComplaints />}
-            />
-
-            <Route
-              path="/api/admin/viewComplaint"
-              element={<AdminViewComplaint />}
-            />
         </div>
       </BrowserRouter>
     </div>
-    ///////////////////////////
-
-    ///////////////////////////
   );
 }
 

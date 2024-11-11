@@ -197,5 +197,6 @@ router.post("/getTouristUsername", getTouristUsername);
 router.get("/:touristId", fetchID);
 router.get("/activity/:activityId", fetchActivityID);
 router.get("/itinerary/:itineraryId", fetchItineraryID);
+router.get("/activities/booked/:touristId",getTouristActivities);
 
 module.exports = router;

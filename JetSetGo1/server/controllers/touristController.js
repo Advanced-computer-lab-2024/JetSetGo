@@ -1263,8 +1263,10 @@ const getTouristBookedActivities = async (req, res) => {
       .map(booking => booking.referenceId);
 
     // Find activities and itineraries based on IDs
-    const activities = await Activity.find({ _id: { $in: activityIds } }).populate('comments.postedby', 'name');
-    const itineraries = await Itinerary.find({ _id: { $in: itineraryIds } }).populate('comments.postedby', 'name');
+    const activities = await Activity.find({ _id: { $in: activityIds } })
+    //.populate('comments.postedby', 'name');
+    const itineraries = await Itinerary.find({ _id: { $in: itineraryIds } })
+    //.populate('comments.postedby', 'name');
 
     res.json({ activities, itineraries });
   } catch (error) {
