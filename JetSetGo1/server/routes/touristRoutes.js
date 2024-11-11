@@ -75,7 +75,7 @@ const {
   getItinerariesByTourGuide,
   getSingleItinerary,
   getTouristUsername,
-  getTagIdByName
+  getTagIdByName,
   getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking, createBooking } = require("../controllers/touristController");
 
 const router = express.Router();

@@ -1923,7 +1923,7 @@ module.exports = {
   getAllTourGuideProfiles,
   getItinerariesByTourGuide,
   getSingleItinerary,
-  getTouristUsername,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,createBooking
+  getTouristUsername,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,createBooking,
 
   getTagIdByName
 };
