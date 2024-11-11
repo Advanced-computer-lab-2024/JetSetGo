@@ -43,10 +43,10 @@ const getCategoryNameById = async (req, res) => {
 
 // Create TransportBooking
 const createTransportBooking = async (req, res) => {
-  const {transportationId, touristId, date} = req.body;
+  const {transportationId, touristId, date, seats} = req.body;
 
   try {
-    const newTransportBooking = await TransportBooking.create({ transportationId, touristId, date});
+    const newTransportBooking = await TransportBooking.create({ transportationId, touristId, date, seats});
     res.status(201).json(newTransportBooking);
   } catch (err) {
     res.status(400).json({ error: err.message });

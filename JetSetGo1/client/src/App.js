@@ -16,6 +16,8 @@ import UserList from './pages/UserList';
 import ItineraryManager from './pages/ItineraryManager';
 import ProductListing from './pages/productsPage'
 import MyPrefs from './pages/my_prefrences.js';
+import MyBookingsPage from './components/my_bookings.js'
+import TransportBookingPage from './components/TouristTransportationComponent.js';
 // import Navbar from "./components/Navbar";
 import ProductForm from "./components/ProductForm";
 import UpdateProducts from "./components/UpdateProduct";
@@ -138,6 +140,17 @@ function App() {
               path="/my_category"
               element={<Categorypage />}
             />
+
+            <Route
+              path="/transportbooking"
+              element={<TransportBookingPage />}
+            />
+
+<Route
+              path="/my_bookings/:id"
+              element={<MyBookingsPage />}
+            />
+
 
             <Route path="/myprefs/:id" element={<MyPrefs />} />
 
