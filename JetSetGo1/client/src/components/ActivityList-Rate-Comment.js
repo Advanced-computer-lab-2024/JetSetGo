@@ -145,17 +145,6 @@ const ActivityList = ({ touristId }) => {
             marginLeft: '10px'
         }
     };
-    function koko(activity, c) {
-        handleDeleteComment(activity, c)
-        const updatedActivity = response.data;
-        const updatedActivities = activities.map(activity =>
-            activity._id === activity ? updatedActivity : activity
-        );
-        setActivities(updatedActivities);
-        setComment(prevComment => ({ ...prevComment, [activity]: '' }));
-        setDeletedComments(prevState => ({ ...prevState, [c]: true })); // Mark comment as deleted
-
-    }
     const handleComment = async (activityId) => {
         if (!comment[activityId] || comment[activityId].trim() === '') return;
 
@@ -188,11 +177,10 @@ const ActivityList = ({ touristId }) => {
             );
 
             setActivities(updatedActivities);
-            setComment(prevComment => ({ ...prevComment, [activityId]: '' }));
+            setDeletedComments(prevState => ({ ...prevState, [commentId]: true })); // Mark comment as deleted
         } catch (error) {
-            console.error('Error adding comment to activity:', error);
+            console.error('Error deleting comment:', error);
         }
-
     };
 
     return (
@@ -244,7 +232,7 @@ const ActivityList = ({ touristId }) => {
                                         {c.postedby._id === touristId && (
                                             <button
                                                 style={styles.deleteButton}
-                                                onClick={() => koko(activity._id, c._id)}
+                                                onClick={() => handleDeleteComment(activity._id, c._id)}
                                             >
                                                 X
                                             </button>
