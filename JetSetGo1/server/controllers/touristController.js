@@ -1,4 +1,5 @@
 const TransportBooking = require("../models/TransportationBookingModel");
+const ActivityItineraryBooking =  require('../models/bookingmodel.js');
 const mongoose = require("mongoose");
 const Product = require("../models/ProductModel");
 const Tourist = require("../models/TouristModels");
@@ -48,14 +49,10 @@ const getCategoryNameById = async (req, res) => {
 
 // Create TransportBooking
 const createTransportBooking = async (req, res) => {
-  const { transportationId, touristId, date } = req.body;
+  const {transportationId, touristId, date, seats} = req.body;
 
   try {
-    const newTransportBooking = await TransportBooking.create({
-      transportationId,
-      touristId,
-      date,
-    });
+    const newTransportBooking = await TransportBooking.create({ transportationId, touristId, date, seats});
     res.status(201).json(newTransportBooking);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -107,14 +104,18 @@ const deleteTransportBooking = async (req, res) => {
 
 const selectPrefrences = async (req, res) => {
   const { id } = req.params;
-  const updates = req.body;
+  const {tags,budget} = req.body;
+
+  const updates ={
+    tags, 
+    budget:{
+      from:budget.from,
+      to:budget.to,
+    },
+  };
 
   try {
-    const myPrefrences = await Tourist.findByIdAndUpdate(
-      id,
-      { $push: { prefrences: updates } },
-      { new: true }
-    );
+    const myPrefrences = await Tourist.findByIdAndUpdate(id, {$set:{ prefrences :updates}}, { new: true });
     res.status(200).json(myPrefrences);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -123,15 +124,17 @@ const selectPrefrences = async (req, res) => {
 
 const getPrefrences = async (req, res) => {
   const { id } = req.params;
+  console.log(id);
 
-  try {
-    const TouristProfile = await Tourist.findById(id);
-    const PrefrencesProfile = TouristProfile.prefrences;
-    res.status(200).json(PrefrencesProfile);
-  } catch (err) {
-    res.status(404).json({ error: "Tourist not found" });
-  }
-};
+   try {
+     const TouristProfile = await Tourist.findById(id);
+     console.log(TouristProfile.preferences);
+     const PrefrencesProfile = TouristProfile.prefrences;
+     res.status(200).json(PrefrencesProfile);
+   } catch (err) {
+     res.status(404).json({ error: 'Tourist not found' });
+   }
+ };
 
 const multer = require("multer");
 
@@ -1374,6 +1377,33 @@ const cancel_booking = async (req, res) => {
 };
 
 
+const myTransportBooking = async (req, res) => {
+  const { touristId } = req.params;
+
+  try {
+    const TransportBookingProfile = await TransportBooking.find({ touristId });
+    res.status(200).json(TransportBookingProfile);
+  } catch (err) {
+    res.status(404).json({ error: 'Transportation Booking not found' });
+  }
+};
+
+
+
+
+const myActivityItineraryBooking = async (req, res) => {
+  const { touristId } = req.params;
+
+  try {
+    const ActivityItineraryBookingProfile = await ActivityItineraryBooking.find({ touristId });
+    res.status(200).json(ActivityItineraryBookingProfile);
+  } catch (err) {
+    res.status(404).json({ error: 'Activity/Itinerary Booking not found' });
+  }
+};
+
+
+
 // controllers/hotelBookingController.js
 // controllers/hotelBookingController.js
 const HotelBooking = require("../models/HotelBooking");
@@ -1925,5 +1955,5 @@ module.exports = {
   getSingleItinerary,
   getTouristUsername,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,createBooking,
 
-  getTagIdByName
+  getTagIdByName, myTransportBooking, myActivityItineraryBooking, upload
 };

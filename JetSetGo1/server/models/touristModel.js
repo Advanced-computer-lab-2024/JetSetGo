@@ -33,6 +33,17 @@ const touristSchema = new mongoose.Schema({
         enum: ['student', 'employee', 'unemployed'],  // List of allowed job types
         required: true
     },
+    prefrences:{
+        tags: [
+            {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: 'Tag'
+            }],
+        budget:{
+            from:{type: Number},
+            to:{type:Number}
+        }    
+    },
     wallet: { 
         type: Number, 
         default: 0
