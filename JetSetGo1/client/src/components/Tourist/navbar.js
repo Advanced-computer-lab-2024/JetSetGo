@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import Badge1 from '../../assets/images/Badge1.jpg';
 import Badge2 from '../../assets/images/Badge2.jpg';
 import Badge3 from '../../assets/images/Badge3.jpg';
-
+import { useLocation } from 'react-router-dom';
 import './homepage.css';
 import { CurrencyContext } from './CurrencyContext';
 

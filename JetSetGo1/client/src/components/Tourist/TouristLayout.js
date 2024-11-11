@@ -1,7 +1,7 @@
 import React from 'react';
 import './boxes.css';
 import { Outlet } from 'react-router-dom';
-
+import { useLocation } from 'react-router-dom';
 import NavBar from './navbar';
 
 function TouristLayout() {

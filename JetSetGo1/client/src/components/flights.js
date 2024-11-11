@@ -219,6 +219,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
+import NavBar from './Tourist/navbar';
 
 export const FlightSearch = ({ touristId }) => {
     const location = useLocation(); // Access state passed via Link
@@ -278,6 +279,8 @@ export const FlightSearch = ({ touristId }) => {
 
     return (
         <div style={styles.container}>
+            <NavBar />
+            <br />
             {/* Blue Background */}
             <div style={styles.header}>
                 <h1 style={styles.title}>Search Your Flight</h1>
