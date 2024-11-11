@@ -16,6 +16,9 @@ import UserList from "./pages/UserList";
 import ItineraryManager from "./pages/ItineraryManager";
 import ProductListing from "./pages/Product/productsPage";
 import ViewProduct from "./pages/Product/ProductDetails.js";
+import MyPrefs from './pages/my_prefrences.js';
+import MyBookingsPage from './components/my_bookings.js'
+import TransportBookingPage from './components/TouristTransportationComponent.js';
 // import Navbar from "./components/Navbar";
 import ProductForm from "./pages/Product/ProductForm";
 import UpdateProducts from "./pages/Product/UpdateProduct";
@@ -35,10 +38,15 @@ import HomePage from "./pages/HomePage";
 import "@fortawesome/fontawesome-free/css/all.css";
 
 // import { BrowserRouter, Routes, Route } from 'react-router-dom'
+//pages and components 
+
+import Tagspage from './pages/my_tags.js'
+import PreferencesSelection from './pages/SelectPrefrences.js'
+import Transportationpage from './pages/Transportation.js'
+import Categorypage from './pages/my_category.js'
 //pages and components
 import Home from "./pages/home.js";
-import Tagspage from "./pages/my_tags.js";
-import Categorypage from "./pages/my_category.js";
+
 // import Navbar from './components/navbar.js'
 import Tourism_Governer from "./pages/Tourism_Governer.js";
 import HL from "./pages/HistoricalLocations2.js";
