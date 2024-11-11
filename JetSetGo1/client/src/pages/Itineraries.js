@@ -1,6 +1,7 @@
 // Itineraries.js
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 // Components
 import ItineraryDetails from "../components/ItineraryDetails";
@@ -10,6 +11,7 @@ const Itineraries2 = () => {
     const [upcomingItineraries, setUpcomingItineraries] = useState(null);
     const [filteredItinerary, setFilteredItinerary] = useState([]); // State for filtered itineraries
     const [sortOrder, setSortOrder] = useState(''); // State for sorting order
+    const {id}=useParams()
 
     useEffect(() => {
         fetchItineraries();
@@ -57,12 +59,13 @@ const Itineraries2 = () => {
             <div className="sorting-buttons" style={{ textAlign: 'center', marginBottom: '20px' }}>
                 <button onClick={sortByPrice}>Sort by Price</button>
                 <button onClick={sortByRating}>Sort by Rating</button>
+                
             </div>
 
             <div className="product-grid">
                 {itinerariesToShow && itinerariesToShow.length === 0 && <p>No results found</p>}
                 {itinerariesToShow && itinerariesToShow.map((itinerary) => (
-                    <Link key={itinerary._id} to={`/tourist/itinerary/${itinerary._id}/tourist/:id`}>
+                    <Link key={itinerary._id} to={`/tourist/${id}/itinerary/${itinerary._id}/tourist/${id}`}>
                     <ItineraryDetails Itinerary={itinerary} />
                     </Link>
                 ))}

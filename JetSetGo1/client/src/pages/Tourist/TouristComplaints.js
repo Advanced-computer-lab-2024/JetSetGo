@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import './TouristComplaints.css';
@@ -16,7 +16,8 @@ function TouristComplaint() {
   const [statusFilter, setStatusFilter] = useState("All");
 
   const navigate = useNavigate();
-  const id="6702c760367bb353e255fd8b";
+  const { id } = useParams();
+  console.log(id);
 
   useEffect(() => {
     fetchComplaints();
@@ -42,12 +43,14 @@ function TouristComplaint() {
       });
 
       setComplaints(sortedComplaints);
+      setLoading(false);
     }
   };
 
   return (
     <div>
       <button onClick={() => navigate('/')} className="back-button">Go Back</button>
+      <button onClick={() => navigate(`/tourist/${id}/addComplaint/${id}`)} className="back-button">Add Product</button>
       <div className="table-container">
         <div className="table-controls">
           <div className="date-filter">
@@ -94,14 +97,14 @@ function TouristComplaint() {
                   onClick={() => window.location.href=`http://localhost:3000/api/admin/viewComplaint?complaintId=${complaint._id}`}
                   key={complaint._id}
                 >
-                  <td>{complaint.userId}</td>
+                  <td>{complaint.userId ? complaint.userId.username : "N/A"}</td> {/* Display the username */}
                   <td>{complaint.title}</td>
                   <td>
                     <span className={`status-badge ${statusClasses[complaint.status]}`}>
                       {complaint.status.toUpperCase()}
                     </span>
                   </td>
-                  <td>{complaint.date}</td>
+                  <td>{new Date(complaint.date).toLocaleDateString()}</td> {/* Format date */}
                   <td>{complaint.body}</td>
                   <td>{complaint.adminResponse}</td>
                 </tr>

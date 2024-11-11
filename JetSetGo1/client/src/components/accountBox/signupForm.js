@@ -139,26 +139,28 @@ const SignupForm = () => {
             },
           }
         );
+        
       }
-      
-      if (response.status === 200) {
+      console.log(response.status)
+      if (response.status === 201) {
         console.log('Signup successful!');
         localStorage.setItem('id', response.data._id);
         localStorage.setItem('role', selectedOption.value);
         const userId = response.data._id;
-
+        const id = userId;
+        console.log(selectedOption.value)
         let url;
         if (selectedOption.value === 'Advertiser' || selectedOption.value === 'Seller') {
           url = `/profileJohn/${userId}`;
-        } else if (selectedOption.value === 'Tourist') {
-          url = '/';
+        } else if (selectedOption.value == 'Tourist') {
+          navigate(`/tourist/${id}/terms`);
         } else if (selectedOption.value === 'TourGuide') {
           url = '/tourguide-dashboard';
         } else {
           throw new Error('Invalid user role');
         }
 
-        window.location.href = url;
+        // navigate('/tourist/products');
       }
     } catch (error) {
       console.error('Signup failed:', error.response?.data || error.message);

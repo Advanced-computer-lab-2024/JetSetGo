@@ -4,7 +4,7 @@ import axios from 'axios'
 import './changePassword.css'
 
 export default function ChangePassword() {
-  const { id, modelName } = useParams()
+  const { id,id2, modelName } = useParams()
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')

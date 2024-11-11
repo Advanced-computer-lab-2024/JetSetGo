@@ -5,14 +5,13 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Materi
 import "./TouristItineraryDetails.css";
 
 function TouristItineraryDetails() {
-  const { id } = useParams(); // Get itineraryId from the URL
+  const { id,iternaryId } = useParams(); // Get itineraryId from the URL
+  const touristId=id
   const [itinerary, setItinerary] = useState(null);
   const [touristUsername, setTouristUsername] = useState(""); // Store the tourist username
   const [error, setError] = useState(null);
   const navigate = useNavigate(); // Initialize the navigate function
 
-  // Replace this with the actual touristId
-  const touristId = "670670e70c449b57490188b7";
 
   useEffect(() => {
     // Fetch the tourist's username
@@ -38,7 +37,7 @@ function TouristItineraryDetails() {
     fetch("http://localhost:8000/api/tourist/getSingleItinerary", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ itineraryId: id }), // Send itineraryId to the backend
+      body: JSON.stringify({ itineraryId: iternaryId }), // Send itineraryId to the backend
     })
       .then((res) => {
         if (!res.ok) {
@@ -52,7 +51,7 @@ function TouristItineraryDetails() {
       .catch((error) => {
         setError("Error fetching itinerary details: " + error.message);
       });
-  }, [id, touristId]); // Refetch if itineraryId or touristId changes
+  }, [iternaryId, touristId]); // Refetch if itineraryId or touristId changes
 
   // Calculate the average rating (if ratings exist)
   const calculateAverageRating = (ratings) => {
@@ -127,7 +126,7 @@ function TouristItineraryDetails() {
       </div>
 
       {/* Rate/Comment Button */}
-      <Link to={`/add-rating-comment-itinerary/${id}`}>
+      <Link to={`/tourist/${touristId}/add-rating-comment-itinerary/${iternaryId}`}>
         <button variant="contained" color="primary">
           Rate/Comment
         </button>

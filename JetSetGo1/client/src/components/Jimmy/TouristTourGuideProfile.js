@@ -5,7 +5,9 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Materi
 import { IconButton } from "@mui/material";
 
 function TouristTourGuideProfile() {
-  const { id } = useParams();
+  const { id,guideId } = useParams();
+  const touristId=id
+  console.log(touristId,guideId )
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [itineraries, setItineraries] = useState([]);
@@ -14,7 +16,7 @@ function TouristTourGuideProfile() {
   const [touristUsername, setTouristUsername] = useState(""); // Store the tourist username
 
   // Replace this with the actual touristId
-  const touristId = "670670e70c449b57490188b7";
+  
 
   useEffect(() => {
     // Fetch the tourist's username
@@ -35,7 +37,7 @@ function TouristTourGuideProfile() {
       .catch((error) => setError("Error fetching tourist username: " + error));
 
     // Fetch the tour guide profile
-    fetch(`http://localhost:8000/api/tour-guides/profile/${id}`)
+    fetch(`http://localhost:8000/api/tour-guides/profile/${guideId}`)
       .then((res) => {
         if (!res.ok) {
           throw new Error(`Profile fetch error! status: ${res.status}`);
@@ -54,7 +56,7 @@ function TouristTourGuideProfile() {
     fetch("http://localhost:8000/api/tourist/getItinerariesByTourGuide", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tourGuideId: id }),
+      body: JSON.stringify({ tourGuideId: guideId }),
     })
       .then((res) => {
         if (!res.ok) {
@@ -85,7 +87,7 @@ function TouristTourGuideProfile() {
       .catch((error) =>
         setError("Error fetching followed itineraries: " + error)
       );
-  }, [id, touristId]);
+  }, [guideId, touristId]);
 
   // Check if an itinerary is followed
   const isFollowed = (itineraryId) =>
@@ -145,7 +147,7 @@ function TouristTourGuideProfile() {
               marginLeft: "20px",
             }}
           >
-            <Link to={`/add-rating-comment/${id}`}>
+            <Link to={`/tourist/${touristId}/add-rating-comment/${guideId}`}>
               <button
                 style={{
                   padding: "10px 20px",
@@ -221,7 +223,7 @@ function TouristTourGuideProfile() {
                   <td>{itinerary.title}</td>
                   <td>{isFollowed(itinerary._id) ? "Yes" : "No"}</td>
                   <td>
-                    <Link to={`/TouristItineraryDetails/${itinerary._id}`}>
+                    <Link to={`/tourist/${touristId}/TouristItineraryDetails/${itinerary._id}`}>
                       View Description
                     </Link>
                   </td>

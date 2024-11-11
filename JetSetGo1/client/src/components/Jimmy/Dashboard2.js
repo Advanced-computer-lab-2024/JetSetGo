@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import "./Dashboard2.css";
 
 function Dashboard2() {
+  const {id} = useParams()
   const [completedTourGuides, setCompletedTourGuides] = useState([]);
   const [followedItineraries, setFollowedItineraries] = useState([]);
   const [allItineraries, setAllItineraries] = useState([]);
   const [allTourGuides, setAllTourGuides] = useState([]);
-  const touristId = "670670e70c449b57490188b7"; // replace with actual touristId
+  const touristId = id; // replace with actual touristId
 
   useEffect(() => {
     // Fetch completed tour guides
@@ -97,8 +98,8 @@ function Dashboard2() {
                     ? "Yes"
                     : "No"}
                 </td>
-                <td>
-                  <Link to={`/tourist/viewTourGuideProfile/${guide._id}`}>
+                <td>         
+                  <Link to={`/tourist/${touristId}/viewTourGuideProfile/${guide._id}`}>
                     View Profile
                   </Link>
                 </td>

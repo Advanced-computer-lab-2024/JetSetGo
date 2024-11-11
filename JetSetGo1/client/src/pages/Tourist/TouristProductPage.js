@@ -15,7 +15,9 @@ const MAX = 500;
 
 
 const TouristProductListing = ({usertype}) => {
+  const {id}= useParams();
   const { currency } = useContext(CurrencyContext);
+  
   
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -278,7 +280,7 @@ const filteredProducts = products.filter((product) =>
 
             {usertype === "tourist" && (
               <Link 
-               to="/tourist/viewproduct"  state={ [product._id,usertype] }
+               to={`/tourist/${id}/viewproduct`}  state={ [product._id,usertype] }
               >
                 <button className="add-to-cart-btn">View Details</button>
               </Link>

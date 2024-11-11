@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
+import ShareLink from '../components/ShareLink';
 
 const ItineraryDetailPage = () => {
     const { itineraryId, id } = useParams(); // Get itineraryId and id from URL
@@ -135,6 +136,7 @@ const ItineraryDetailPage = () => {
                 <button onClick={handlePayment} disabled={itinerary.isBookedYet}>
                     {itinerary.isBookedYet ? 'Already Booked' : 'Pay for Itinerary'}
                 </button>
+                <ShareLink/>
             </div>
 
             {/* Payment Message */}

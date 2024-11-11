@@ -6,22 +6,22 @@ import './AccountDeletion.css';
 const RequestAccountDeletion = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState(null);
-  const { userType, userId } = useParams();
-  console.log(userId)
-  console.log(userType)
+  const {id ,modelName  } = useParams();
+  console.log(id)
+  console.log(modelName)
 
   const handleDeleteRequest = async () => {
     setIsLoading(true);
     setMessage(null);
 
-    if (!userType || !userId) {
+    if (!modelName || !id) {
       setMessage({ type: 'error', text: 'Missing user type or ID. Please check the URL.' });
       setIsLoading(false);
       return;
     }
 
     try {
-      const response = await axios.patch(`http://localhost:8000/api/${userType}/requestDelete/${userId}`);
+      const response = await axios.patch(`http://localhost:8000/api/${modelName}/requestDelete/${id}`);
       setMessage({ type: 'success', text: response.data.message });
     } catch (error) {
       setMessage({ type: 'error', text: error.response?.data?.error || 'An error occurred while processing your request.' });
@@ -40,7 +40,7 @@ const RequestAccountDeletion = () => {
       <button 
         className="request-deletion-button" 
         onClick={handleDeleteRequest}
-        disabled={isLoading || !userType || !userId}
+        disabled={isLoading || !modelName || !id}
         aria-busy={isLoading}
       >
         {isLoading ? 'Processing...' : 'Request Account Deletion'}

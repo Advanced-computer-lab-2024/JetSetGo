@@ -7,7 +7,7 @@ const Activity = require("../models/AdvertiserActivityModel");
 const Tag = require("../models/TagModel");
 const HistoricalLocationModel = require("../models/HistoricalLocationModel");
 const MuseumModel = require("../models/MuseumModel");
-const Complaint = require("../models/ComplaintModel");
+const ComplaintModel = require("../models/ComplaintModel");
 const Category = require("../models/CategoryModel");
 
 const Booking = require("../models/bookingmodel");
@@ -728,20 +728,25 @@ const filterHistoricalLocationsByTag = async (req, res) => {
 
 const getComplaints = async (req, res) => {
   const { id } = req.params; // Extract touristId from route parameters
+
   try {
-    console.log(id);
-    // Use the correct syntax to create an ObjectId instance
-    const complaints = await ComplaintModel.find({ userId: id }).sort({
-      createdAt: -1,
-    });
+    // Find complaints for the given userId and populate the user's username
+    const complaints = await ComplaintModel.find({ userId: id })
+      .populate({
+        path: 'userId',         // Path to populate, assuming it's named `userId`
+        select: 'username',     // Field to retrieve from the `Tourist` model (the username)
+        model: 'Tourist'        // The referenced model is 'Tourist'
+      })
+      .sort({ createdAt: -1 });  // Sorting complaints by the createdAt date in descending order
 
     if (complaints.length === 0) {
       return res
         .status(404)
         .json({ message: "No complaints found for this tourist." });
     }
+    console.log(complaints)
 
-    res.status(200).json(complaints); // Return the complaints
+    res.status(200).json(complaints); // Return the complaints with populated username
   } catch (error) {
     console.error(error); // Log error details
     res.status(500).json({ error: "Failed to retrieve complaints." }); // Return error message
@@ -838,7 +843,7 @@ const addComplaint = async (req, res) => {
     }
 
     // Create a new complaint
-    const complaint = new Complaint({
+    const complaint = new ComplaintModel({
       userId,
       title,
       body,
