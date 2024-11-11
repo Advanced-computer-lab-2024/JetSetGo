@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import "./TouristTourGuideProfile.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Material-UI's back arrow icon
-import { IconButton } from "@mui/material";
+
+import { Button, Typography, IconButton, CircularProgress, Box } from "@mui/material";
 
 function TouristTourGuideProfile() {
   const { id,guideId } = useParams();
@@ -15,7 +16,8 @@ function TouristTourGuideProfile() {
   const [touristUsername, setTouristUsername] = useState(""); // Store the tourist username
   const [usernames, setUsernames] = useState({}); // Store usernames for each touristId
   // Replace this with the actual touristId
-  
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     // Fetch the tourist's username
@@ -108,7 +110,28 @@ function TouristTourGuideProfile() {
     // Fetch itineraries and followed itineraries as before
   }, [guideId, touristId]);
 
-
+// Function to complete with tour guide
+const handleCompleteWithTourGuide = () => {
+  setLoading(true);
+  fetch("http://localhost:8000/api/tourist/compeleteWithTourGuide", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ touristId, tourGuideId:guideId }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.error) {
+        setMessage("Failed to complete with tour guide: " + data.error);
+      } else {
+        setMessage("Successfully completed with tour guide!");
+      }
+    })
+    .catch((error) => {
+      console.error("Error completing with tour guide:", error);
+      setMessage("Error completing with tour guide.");
+    })
+    .finally(() => setLoading(false));
+};
   // Check if an itinerary is followed
   const isFollowed = (itineraryId) =>
     followedItineraries.some((followed) => followed._id === itineraryId);
@@ -182,6 +205,17 @@ function TouristTourGuideProfile() {
                 Add Rating/Comment
               </button>
             </Link>
+            {/* Action Buttons */}
+      
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleCompleteWithTourGuide}
+          sx={{ mr: 2 }}
+          
+        >
+          Complete with Tour Guide
+        </Button>
           </div>
         </div>
       </div>
