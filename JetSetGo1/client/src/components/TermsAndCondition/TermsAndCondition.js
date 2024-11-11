@@ -1,8 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect  } from 'react';
 import './TermsAndCondition.css'; // Import CSS for styling
-import { Link } from "react-router-dom";
-        
+import { Link, useParams } from "react-router-dom";
+ 
+import { useLocation } from 'react-router-dom';
+
+
+
 function TermsAndConditionsForm() {
+  const location = useLocation();
+    const  {id}=useParams() 
+
+   
+ 
+
           // State to track whether the terms are accepted
           const [acceptedTerms, setAcceptedTerms] = useState(false);
           const [formSubmitted, setFormSubmitted] = useState(false);
@@ -43,7 +53,7 @@ function TermsAndConditionsForm() {
                     />
                     <label htmlFor="terms"> I accept the terms and conditions</label>
                   </div>
-                  <Link to="/tourist/products">
+                  <Link to={`/tourist/${id}/products`}>
                   <button
                     type="submit"
                     disabled={!acceptedTerms}

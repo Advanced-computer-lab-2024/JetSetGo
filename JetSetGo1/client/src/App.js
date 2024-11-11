@@ -48,13 +48,14 @@ import Activities from "./pages/my_activities2.js";
 import Itineraries from "./pages/my_itineraries.js";
 import HLTags from "./pages/hltag.js";
 
-//john
+//johnimport { useTouristId } from '../../pages/Tourist/TouristIdContext';
+//const { id } = useTouristId();
 
 import TourGuideLayout from "./components/TourGuideLayout.js";
 import FlagItinerary from "./components/FlagItinerary";
 import ItineraryManagement from "./components/ItineraryManagement";
 import CategoriesAndActivities from "./components/CategoriesAndActivities";
-import ShareLink from "./components/ShareLink";
+
 
 //homepages
 import AdminDashboard from "./pages/homepages/adminhomepage.js";
@@ -94,6 +95,8 @@ import TouristTourGuideProfile from "./components/Jimmy/TouristTourGuideProfile.
 import TouristItineraryDetails from "./components/Jimmy/TouristItineraryDetails.js";
 
 // JIMMY END
+
+
 
 function App() {
   const [view, setView] = useState("home"); // 'home', 'viewDocuments'
@@ -154,6 +157,8 @@ function App() {
               <Route path="/Authentication" element={<Authentication />} />
               <Route path="/profileJohn/:id/:role" element={<ProfileJohn />} />
               <Route path="/" element={<TermsAndConditionsForm />} />
+
+              {/** Admiin */}
               <Route path="/admin" element={<Layout />}>
                 <Route
                   path="/admin/requests"
@@ -185,57 +190,33 @@ function App() {
                   element={<ChangePassword />}
                 />
               </Route>
-              <Route path="/tourist" element={<TouristLayout />}>
-                <Route
-                  path="/tourist/Complaints"
-                  element={<TouristComplaint />}
-                />
-                {/** lazem takhod id */}
-                <Route
-                  path="/tourist/products"
-                  element={<TouristProductListing usertype="tourist" />}
-                />
-                <Route path="/tourist/home" element={<ToursitPage />} />
-                <Route path="/tourist/viewproduct" element={<ViewProduct />} />
-                <Route
-                  path="/tourist/addComplaint/:id"
-                  element={<TouristAddComplaintPage />}
-                />
-                <Route
-                  path="/tourist/change-password/:id/tourist"
-                  element={<ChangePassword />}
-                />
-                <Route
-                  path="/tourist/RequestDelete/:userType/:userId"
-                  element={<RequestAccountDeletion />}
-                />
-                <Route
-                  path="/tourist/profile/tourist/:id"
-                  element={<TouristProfile />}
-                />
-                <Route
-                  path="/tourist/activity/:activityId/tourist/:id"
-                  element={<ActivityDetailPage />}
-                />{" "}
-                {/* New route for activity details */}
-                <Route
-                  path="/tourist/activities2"
-                  element={
-                    <Activities2 filteredActivities={filteredActivities} />
-                  }
-                />
-                <Route
-                  path="/tourist/itineraries2"
-                  element={
-                    <Itineraries2 filteredItinerary={filteredItinerary} />
-                  }
-                />
-                <Route
-                  path="/tourist/itinerary/:itineraryId/tourist/:id"
-                  element={<ItineraryDetailPage />}
-                />{" "}
-                {/* New route for itinerary details */}
+
+              {/** Tourist */}
+              <Route path="/tourist/:id" element={<TouristLayout />}>
+                <Route path="/tourist/:id/terms" element={<TermsAndConditionsForm />} />
+                <Route path="/tourist/:id/products"element={<TouristProductListing usertype="tourist" />}/>
+                <Route path="/tourist/:id/Complaints" element={<TouristComplaint />}/>{/** lazem takhod id */}
+                <Route path="/tourist/:id/home" element={<ToursitPage />} />
+                <Route path="/tourist/:id/viewproduct" element={<ViewProduct />} />
+                <Route path="/tourist/:id/addComplaint/:id"element={<TouristAddComplaintPage />}/>
+                <Route path="/tourist/:id/change-password/:id/:modelName" element={<ChangePassword />}/>
+                <Route path="/tourist/:id/RequestDelete/:modelName/:id" element={<RequestAccountDeletion />} />
+                <Route path="/tourist/:id/profile/tourist/:id" element={<TouristProfile />} />
+                <Route path="/tourist/:id/activity/:activityId/tourist/:id" element={<ActivityDetailPage />}/>{/* New route for activity details */}
+                <Route path="/tourist/:id/activities2" element={<Activities2 filteredActivities={filteredActivities} />} />
+                <Route path="/tourist/:id/itineraries2" element={<Itineraries2 filteredItinerary={filteredItinerary} />} />
+                <Route path="/tourist/:id/itinerary/:itineraryId/tourist/:id" element={<ItineraryDetailPage />} /> 
+                {/** jimmy */}
+                <Route path="/tourist/:id/tourguidelist" element={<Dashboard2 />} />
+                <Route path="/tourist/:id/viewTourGuideProfile/:guideId" element={<TouristTourGuideProfile />} />
+                <Route path="/tourist/:id/add-rating-comment/:id" element={<AddRatingComment />} />
+                <Route path="/tourist/:id/add-rating-comment-itinerary/:id" element={<AddRatingCommentItinerary />} />
+                <Route path="/tourist/:id/TouristItineraryDetails/:iternaryId" element={<TouristItineraryDetails />} />
+                <Route path="/tourist/:id/ActivitiesHazem" element={<CategoriesAndActivities />} />
+                
               </Route>
+
+              {/** Tourguide */}
               <Route path="/tourguide/:id" element={<TourGuideLayout />}>
                 <Route
                   path="/tourguide/:id/create/tour-guides/:id"
@@ -273,10 +254,7 @@ function App() {
                 path="/seller/products"
                 element={<ProductListing usertype="seller" />}
               />
-              <Route
-                path="/tourist/products"
-                element={<ProductListing usertype="tourist" />}
-              />
+              
               {/* Other routes can be defined similarly */}
               <Route
                 path="/seller/addProduct"
@@ -294,7 +272,7 @@ function App() {
               />
               <Route path="/delete/:role" element={<UserList />} />
               <Route
-                path="/tour-guide/itineraryManager"
+                path="/tour-guide/itineraryManager/:id"
                 element={<ItineraryManager />}
               />
               <Route path="/admin/profile" element={<AdminProfilePage />} />
@@ -341,25 +319,9 @@ function App() {
               <Route path="/Activities" element={<Activities />} />
               <Route path="/Itineraries" element={<Itineraries />} />
               {/*JIMMY */}
-              <Route path="/touristFollows2" element={<Dashboard2 />} />
-              <Route
-                path="/tourist/viewTourGuideProfile/:id"
-                element={<TouristTourGuideProfile />}
-              />
-              <Route
-                path="/add-rating-comment/:id"
-                element={<AddRatingComment />}
-              />
-              <Route
-                path="/add-rating-comment-itinerary/:id"
-                element={<AddRatingCommentItinerary />}
-              />
-              <Route
-                path="/TouristItineraryDetails/:id"
-                element={<TouristItineraryDetails />}
-              />
+              
               {/*johnn* */}
-              <Route path="/Authentication" element={<Authentication />} />
+              
               <Route path="/profileJohn/:id" element={<ProfileJohn />} />
               {/*johnn* */}
               <Route

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
+import ShareLink from '../components/ShareLink';
 
 const ActivityDetailPage = () => {
     const { activityId, id } = useParams(); // Get activityId and id from URL
@@ -138,6 +139,7 @@ const ActivityDetailPage = () => {
                 <button onClick={handlePayment} disabled={activity.isBookedYet}>
                     {activity.isBookedYet ? 'Already Booked' : 'Pay for Activity'}
                 </button>
+                <ShareLink/>
             </div>
 
             {/* Payment Message */}
