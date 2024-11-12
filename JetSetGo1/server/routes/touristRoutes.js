@@ -51,7 +51,7 @@ const {
   addCommentToActivity,
   deleteCommentFromActivity,
   book_activity_Itinerary,
-  cancel_booking,
+  cancel_booking, myTransportBooking, myActivityItineraryBooking,
   getActivitiesByCategory,
   fetchID,
   fetchActivityID,
@@ -71,16 +71,25 @@ const {
   getItinerariesByTourGuide,
   getSingleItinerary,
   getTouristUsername,
+  getTagIdByName,
   getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking, createBooking,getSingleProduct } = require("../controllers/touristController");
 
 const router = express.Router();
 
+
+router.get("/mytransports/:touristId", myTransportBooking);
+router.get("/myactivities/:tourist", myActivityItineraryBooking);
+
+router.post('/newTransportBooking', createTransportBooking )
+router.get('/showTransportBooking', getTransportBooking )
+router.delete('/deleteTransportBooking/:id', deleteTransportBooking )
 router.post("/newTransportBooking", createTransportBooking);
 router.get("/showTransportBooking", getTransportBooking);
 router.delete("/deleteTransportBooking/:id", deleteTransportBooking);
 
-router.patch("/selectPrefrences/:id", selectPrefrences);
-router.get("/myPrefrenes/:id", getPrefrences);
+router.patch("/selectPrefrences/:id", selectPrefrences )
+router.get("/myPrefrences/:id", getPrefrences )
+
 
 const { changePassword } = require("../controllers/PasswordController");
 
@@ -113,6 +122,9 @@ router.post(
   "/searchHistoricalPlaceByCategory",
   searchHistoricalPlaceByCategory
 );
+
+
+router.post("/getTagIdByName",getTagIdByName)
 
 router.post("/searchMuseumByTag", searchMuseumByTag);
 router.post("/searchMuseumByName", searchMuseumByName);

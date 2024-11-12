@@ -3,7 +3,7 @@ import SearchBar from './Searchbar';
 
 const GuestItineraryFilter = () => {
     // States for search terms
-    const [tagId, setTag] = useState('');
+    const [tagName, setTagName] = useState(''); // Change from tagId to tagName
     const [language, setLanguage] = useState('');
     const [date, setDate] = useState('');
     const [budget, setBudget] = useState('');
@@ -11,6 +11,27 @@ const GuestItineraryFilter = () => {
     // State for results
     const [commonResults, setCommonResults] = useState([]);
     const [loading, setLoading] = useState(false);
+
+
+    const fetchTagIdByName = async (tagName) => {
+        try {
+            const response = await fetch('/api/tourist/getTagIdByName', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name : tagName }),
+            });
+            if (response.ok) {
+                const { tagId } = await response.json();
+                return tagId;
+            }
+            return null;
+        } catch (error) {
+            console.error('Error fetching tag ID:', error);
+            return null;
+        }
+    };
 
     // Function to fetch results from the backend
     const fetchResults = async ( query , field , rout ) => {
@@ -53,7 +74,10 @@ const GuestItineraryFilter = () => {
         // 'TITLE' CHANGES DEPENDING ON THE ATTIRBUTE IN THE SCHEMAAA
         //NAME DEPENDS ON THE STATE 
 
-        const results2 = await fetchResults(tagId, 'tagId','/api/tourist/searchItineraryByTag');
+        const tagId = await fetchTagIdByName(tagName);
+            
+        // Only call fetchResults for tag search if tagId is available
+        const results2 = tagName  ? await fetchResults(tagId, 'tagId', '/api/tourist/searchItineraryByTag') : results;
 
         const results3 = await fetchResults(language, 'language','/api/tourist/searchItineraryByLanguage');
 
@@ -76,10 +100,27 @@ const GuestItineraryFilter = () => {
             <h1>Search for Activities or Museums</h1>
 
             {/* Search bars for each search field */}
-            <SearchBar label="Tag" value={tagId} onChange={setTag} />
+            <SearchBar label="Tag Name" value={tagName} onChange={setTagName} /> {/* Use tag name input */}
             <SearchBar label="Language" value={language} onChange={setLanguage} />
-            <SearchBar label="Date" value={date} onChange={setDate} />
-            <SearchBar label="Budget" value={budget} onChange={setBudget} />
+            <div>
+                <label>Date</label>
+                <input
+                    type="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                />
+            </div>
+
+            <div>
+                <label>Budget: {budget} USD</label>
+                <input
+                    type="range"
+                    min="0"
+                    max="1000"
+                    value={budget}
+                    onChange={(e) => setBudget(e.target.value)}
+                />
+            </div>
 
             {/* Submit button */}
             <button onClick={handleSubmit}>Search</button>

@@ -16,6 +16,9 @@ import UserList from "./pages/UserList";
 import ItineraryManager from "./pages/ItineraryManager";
 import ProductListing from "./pages/Product/productsPage";
 import ViewProduct from "./pages/Product/ProductDetails.js";
+import MyPrefs from './pages/my_prefrences.js';
+import MyBookingsPage from './components/my_bookings.js'
+import TransportBookingPage from './components/TouristTransportationComponent.js';
 // import Navbar from "./components/Navbar";
 import ProductForm from "./pages/Product/ProductForm";
 import UpdateProducts from "./pages/Product/UpdateProduct";
@@ -23,7 +26,7 @@ import UpdateProducts from "./pages/Product/UpdateProduct";
 import Activities2 from "./pages/Activities";
 import Itineraries2 from "./pages/Itineraries";
 import Museums from "./pages/museums";
-import HistoricalLocations from "./pages/historicallocations";
+import HistoricalLocations from "./pages/historicallocations.js";
 
 // import ActivityFilter from './components/ActivityFilter';
 // import ItineraryFilter from './components/ItineraryFilter';
@@ -35,10 +38,15 @@ import HomePage from "./pages/HomePage";
 import "@fortawesome/fontawesome-free/css/all.css";
 
 // import { BrowserRouter, Routes, Route } from 'react-router-dom'
+//pages and components 
+
+import Tagspage from './pages/my_tags.js'
+import PreferencesSelection from './pages/SelectPrefrences.js'
+import Transportationpage from './pages/Transportation.js'
+import Categorypage from './pages/my_category.js'
 //pages and components
 import Home from "./pages/home.js";
-import Tagspage from "./pages/my_tags.js";
-import Categorypage from "./pages/my_category.js";
+
 // import Navbar from './components/navbar.js'
 import Tourism_Governer from "./pages/Tourism_Governer.js";
 import HL from "./pages/HistoricalLocations2.js";
@@ -98,13 +106,16 @@ import AdvertiserLayout from "./components/Advertiser/AdvertiserLayout.js"
 import AdvertiserActivities from "./pages/Advertiser/AdvertiserActivities.js";
 // JIMMY END
 
+import GuestLayout from "./components/Guest/GuestLayout.js";
+
 import SellerLayout from "./components/Seller/SellerLayout.js";
 import AdminUpdateProducts from "./pages/Admin/AdminUpdateProduct.js";
 
 
+
 import Booking from './pages/bookhotel.js'
 import ActivityList from './components/ActivityList-Rate-Comment.js';
-import FlightSearch from './components/flights.js'; 
+import FlightSearch from './components/flights.js';
 
 
 function App() {
@@ -162,16 +173,16 @@ function App() {
               {/* tourguide advertiser seller tourist*/}
               {/* Advertiser */}
               <Route path="/Advertiser/:id" element={<AdvertiserLayout />}>
-              <Route path='/Advertiser/:id/advertiserprofile' element={<AdvertiserProfile/>} />
-              <Route
-                path="/Advertiser/:id/ActivitiesJohn/:id"
-                element={<ActivityPageJohn />}
-              />
-              <Route
-                path="/Advertiser/:id/AdvertiserActivities/:id"
-                element={<AdvertiserActivities />}
-              />
-              
+                <Route path='/Advertiser/:id/advertiserprofile' element={<AdvertiserProfile />} />
+                <Route
+                  path="/Advertiser/:id/ActivitiesJohn/:id"
+                  element={<ActivityPageJohn />}
+                />
+                <Route
+                  path="/Advertiser/:id/AdvertiserActivities/:id"
+                  element={<AdvertiserActivities />}
+                />
+
               </Route>
               
               
@@ -179,7 +190,7 @@ function App() {
               <Route path="/Authentication" element={<Authentication />} />
 
               <Route path="/" element={<TermsAndConditionsForm />} />
-
+              
               {/** Admiin */}
               <Route path="/admin" element={<Layout />}>
                 <Route
@@ -224,29 +235,64 @@ function App() {
               </Route>
 
               {/** Tourist */}
-              <Route path="/tourist/:id" element={<TouristLayout />}>
+              <Route path="/tourist" element={<TouristLayout />}>
                 {/* <Route path="/tourist/:id/terms" element={<TermsAndConditionsForm />} /> */}
-                <Route path="/tourist/:id/products"element={<TouristProductListing usertype="tourist" />}/>
-                <Route path="/tourist/:id/Complaints" element={<TouristComplaint />}/>{/** lazem takhod id */}
-                <Route path="/tourist/:id/home" element={<ToursitPage />} />
-                <Route path="/tourist/:id/viewproduct" element={<ViewProduct />} />
-                <Route path="/tourist/:id/addComplaint/:id"element={<TouristAddComplaintPage />}/>
-                <Route path="/tourist/:id/change-password/:id/:modelName" element={<ChangePassword />}/>
-                <Route path="/tourist/:id/RequestDelete/:modelName/:id" element={<RequestAccountDeletion />} />
-                <Route path="/tourist/:id/profile/tourist/:id" element={<TouristProfile />} />
-                <Route path="/tourist/:id/activity/:activityId/tourist/:id" element={<ActivityDetailPage />}/>{/* New route for activity details */}
-                <Route path="/tourist/:id/activities2" element={<Activities2 filteredActivities={filteredActivities} />} />
-                <Route path="/tourist/:id/itineraries2" element={<Itineraries2 filteredItinerary={filteredItinerary} />} />
-                <Route path="/tourist/:id/itinerary/:itineraryId/tourist/:id" element={<ItineraryDetailPage />} /> 
+                <Route path="/tourist/products" element={<TouristProductListing usertype="tourist" />} />            {/*done*/}
+                <Route path="/tourist/Complaints" element={<TouristComplaint />} />{/** lazem takhod id */}         {/*done*/}
+                <Route path="/tourist/home" element={<ToursitPage />} />                                           {/*done*/}
+                <Route path="/tourist/viewproduct" element={<ViewProduct />} />                                    {/*done*/}
+                <Route path="/tourist/addComplaint/:id" element={<TouristAddComplaintPage />} />                     {/*done*/}
+                <Route path="/tourist/change-password/:id/:modelName" element={<ChangePassword />} />               {/*done half*/}
+                <Route path="/tourist/RequestDelete/:modelName/:id" element={<RequestAccountDeletion />} />        {/*done half*/}
+                <Route path="/tourist/profile/tourist/:id" element={<TouristProfile />} />                         {/*done half*/}
+                <Route path="/tourist/activity/:activityId/tourist/:id" element={<ActivityDetailPage />} />{/* New route for activity details */}
+                <Route path="/tourist/activities2" element={<Activities2 filteredActivities={filteredActivities} />} />{/*done*/}
+                <Route path="/tourist/itineraries2" element={<Itineraries2 filteredItinerary={filteredItinerary} />} />{/*done*/}
+                <Route path="/tourist/itinerary/:itineraryId/tourist/:id" element={<ItineraryDetailPage />} />
                 {/** jimmy */}
-                <Route path="/tourist/:id/tourguidelist" element={<Dashboard2 />} />
-                <Route path="/tourist/:id/viewTourGuideProfile/:guideId" element={<TouristTourGuideProfile />} />
-                <Route path="/tourist/:id/add-rating-comment/:guideId" element={<AddRatingComment />} />
-                <Route path="/tourist/:id/add-rating-comment-itinerary/:iternaryId" element={<AddRatingCommentItinerary />} />
-                <Route path="/tourist/:id/TouristItineraryDetails/:iternaryId" element={<TouristItineraryDetails />} />
-                <Route path="/tourist/:id/ActivitiesHazem" element={<CategoriesAndActivities />} />
-                
+                <Route path="/tourist/tourguidelist" element={<Dashboard2 />} />                                    {/*done*/}
+                <Route path="/tourist/viewTourGuideProfile/:guideId" element={<TouristTourGuideProfile />} />{/*done*/}
+                <Route path="/tourist/add-rating-comment/:guideId" element={<AddRatingComment />} />{/*done*/}
+                <Route path="/tourist/add-rating-comment-itinerary/:iternaryId" element={<AddRatingCommentItinerary />} /> {/*done*/}
+                <Route path="/tourist/TouristItineraryDetails/:iternaryId" element={<TouristItineraryDetails />} /> {/*done*/}
+                <Route path="/tourist/ActivitiesHazem" element={<CategoriesAndActivities />} />
+                <Route path="/tourist/book-hotel" element={<div style={{ padding: 20 }}><Booking touristId={"670255f97b12bc9e3f1c7f26"} /></div>} />
+                <Route path="/tourist/book_flight" element={<FlightSearch touristId={"670255f97b12bc9e3f1c7f26"} />} />
+                <Route path="/tourist/my_bookings" element={<MyBookingsPage />} />
+                <Route path="/tourist/historicalLocations" element={<> <HistoricalPlaceFilter onFilter={handleFilterResultsHistoricalPlaces} />
+                  <HistoricalLocations filteredHistoricalPlace={filteredHistoricalPlace} /></>} />
+                <Route path="/tourist/rate-comment-event/:modelName/:id" element={<ActivityList touristId={"670255f97b12bc9e3f1c7f26"} />} />  ///////////////////////////////////
+                <Route
+                  path="/tourist/transportbooking"
+                  element={<TransportBookingPage />}
+                />
+                <Route path="/tourist/myprefs/:id" element={<MyPrefs />} />
+                <Route
+                  path="/tourist/my_prefrences"
+                  element={<PreferencesSelection />}
+                />
+                <Route
+                  path="/tourist/Transportation"
+                  element={<Transportationpage />}
+                />
               </Route>
+              {/* carol */}
+
+              {/* carol */}
+
+              {/** Guest */}
+              <Route path="/guest" element={<GuestLayout />}>
+                <Route path="/guest/home" element={<GuestPage />} />
+                <Route path="/guest/activity/:activityId" element={<ActivityDetailPage />} />{/* New route for activity details */}
+                <Route path="/guest/activities2" element={<Activities2 filteredActivities={filteredActivities} />} />
+                <Route path="/guest/itineraries2" element={<Itineraries2 filteredItinerary={filteredItinerary} />} />
+                <Route path="/guest/itinerary/:itineraryId" element={<ItineraryDetailPage />} />
+                <Route path="/guest/historicalLocations" element={<> <HistoricalPlaceFilter onFilter={handleFilterResultsHistoricalPlaces} /> <HistoricalLocations filteredHistoricalPlace={filteredHistoricalPlace} /></>} />
+                {/* <Route path="/guest/authentication" element={<Authentication />} /> */}
+
+              </Route>
+
+
 
               {/** Tourguide */}
               <Route path="/tourguide/:id" element={<TourGuideLayout />}>
@@ -354,14 +400,9 @@ function App() {
                   </>
                 }
               />
-               <Route path="/book-hotel" element={
-              <div style={{ padding: 20 }}>
-                <Booking touristId={"670255f97b12bc9e3f1c7f26"} />
-              </div>} />
 
-            <Route path="/rate-comment-event" element={<ActivityList touristId={"670255f97b12bc9e3f1c7f26"} />} />  ///////////////////////////////////
-            <Route path="/book_flight" element={<FlightSearch touristId={"670255f97b12bc9e3f1c7f26"} />} />
-            
+              <Route path="/rate-comment-event" element={<ActivityList touristId={"670255f97b12bc9e3f1c7f26"} />} />  ///////////////////////////////////
+
               <Route path="/hhh" element={<Home />} />
               
               

@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import axios from 'axios'
 import './changePassword.css'
-import { useLoadScript } from '@react-google-maps/api'
+
 
 export default function ChangePassword() {
-  const { id, modelName } = useParams()
+  const location = useLocation(); // Access the location object
+  const { id } = location.state || {}; // Access the id from state
+  const {  modelName } = useParams()
   console.log(id, modelName)
   const userId=useLocation().state.id
   const [oldPassword, setOldPassword] = useState('')
@@ -35,17 +37,17 @@ export default function ChangePassword() {
       return
     }
 
-    
-      const userTypeEndpoints = {
-        "advertisers": 'api/advertisers',
-        'tourism-governer': 'api/tourism-governer',
-        "sellers": 'api/sellers',
-        'tourguides': 'api/tour-guides',
-        "admin": 'api/admin',
-        "tourist": 'api/tourist'
-      }
 
-      const endpoint = userTypeEndpoints[modelName];
+    const userTypeEndpoints = {
+      "advertisers": 'api/advertisers',
+      'tourism-governer': 'api/tourism-governer',
+      "sellers": 'api/sellers',
+      'tourguides': 'api/tour-guides',
+      "admin": 'api/admin',
+      "tourist": 'api/tourist'
+    }
+
+    const endpoint = userTypeEndpoints[modelName];
       console.log(endpoint)
 
     try {
@@ -74,21 +76,21 @@ export default function ChangePassword() {
     <div className="change-password-container">
       <div className="change-password-form">
         <h2 className="change-password-title">Change Password</h2>
-        
+
         {error && (
           <div className="alert alert-error" role="alert">
             <strong className="alert-title">Error!</strong>
             <span>{error}</span>
           </div>
         )}
-        
+
         {success && (
           <div className="alert alert-success" role="alert">
             <strong className="alert-title">Success!</strong>
             <span>Your password has been changed successfully.</span>
           </div>
         )}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="oldPassword" className="form-label">
@@ -103,7 +105,7 @@ export default function ChangePassword() {
               className="form-input"
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="newPassword" className="form-label">
               New Password
@@ -117,7 +119,7 @@ export default function ChangePassword() {
               className="form-input"
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="confirmPassword" className="form-label">
               Confirm New Password
@@ -131,7 +133,7 @@ export default function ChangePassword() {
               className="form-input"
             />
           </div>
-          
+
           <button
             type="submit"
             disabled={isLoading}

@@ -12,9 +12,12 @@ import {
 import RadioGroupRating from "./RadioGroupRating"; // Assuming this is your custom rating component
 import "./AddRatingComment.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Material-UI's back arrow icon
+import { useLocation } from 'react-router-dom';
 
 function AddRatingCommentItinerary() {
-  const { id,iternaryId } = useParams();
+  const location = useLocation(); // Access the location object
+  const { id } = location.state || {}; // Access the id from state
+  const { iternaryId } = useParams();
   console.log(id,iternaryId )
   const navigate = useNavigate();
   const [itinerary, setItinerary] = useState(null);

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import './TouristComplaints.css';
+import { useLocation } from 'react-router-dom';
 
 const statusClasses = {
   resolved: 'status-resolved',
@@ -10,13 +11,15 @@ const statusClasses = {
 };
 
 function TouristComplaint() {
+  const location = useLocation(); // Access the location object
+  const { id } = location.state || {};
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dateFilter, setDateFilter] = useState("Recent");
   const [statusFilter, setStatusFilter] = useState("All");
 
   const navigate = useNavigate();
-  const { id } = useParams();
+  // const { id } = useParams();
   console.log(id);
 
   useEffect(() => {
@@ -50,7 +53,7 @@ function TouristComplaint() {
   return (
     <div>
       <button onClick={() => navigate('/')} className="back-button">Go Back</button>
-      <button onClick={() => navigate(`/tourist/${id}/addComplaint/${id}`)} className="back-button">Add Product</button>
+      <button onClick={() => navigate(`/tourist/addComplaint/${id}`, { state:{ id }})} className="back-button">Add Complaint</button>
       <div className="table-container">
         <div className="table-controls">
           <div className="date-filter">
@@ -94,7 +97,7 @@ function TouristComplaint() {
             <tbody>
               {complaints.map((complaint) => (
                 <tr
-                  onClick={() => window.location.href=`http://localhost:3000/api/admin/viewComplaint?complaintId=${complaint._id}`}
+                  onClick={() => window.location.href = `http://localhost:3000/api/admin/viewComplaint?complaintId=${complaint._id}`}
                   key={complaint._id}
                 >
                   <td>{complaint.userId ? complaint.userId.username : "N/A"}</td> {/* Display the username */}

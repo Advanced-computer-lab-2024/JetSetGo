@@ -150,13 +150,14 @@ const SignupForm = () => {
         const id = userId;
         console.log(id)
         console.log(selectedOption.value)
-        let modelName;
+        
+        var modelName;
         if (selectedOption.value === 'Advertiser' ) {
           modelName = 'advertisers';
           navigate(`/${modelName}/${id}/terms`);
         }else if (selectedOption.value == 'Seller') {
           modelName = 'sellers';
-          navigate(`/${modelName}/${id}/terms`, {state:{id}});
+          navigate(`/${modelName}/${id}/terms`);
         } else if (selectedOption.value == 'Tourist') {
           modelName = 'tourist';
           navigate(`/${modelName}/${id}/terms`);
