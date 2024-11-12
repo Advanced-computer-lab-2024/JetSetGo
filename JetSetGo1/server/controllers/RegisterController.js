@@ -130,11 +130,9 @@ const registerSeller = async (req, res) => {
             documents: documentPaths,
         });
 
-        res.status(201).json({
-            message: "Seller registered successfully",
-            user: newSeller,
-            documentPaths: documentPaths,
-        });
+        res.status(201).json(
+            newSeller
+        );
     } catch (error) {
         res.status(500).json({ error: 'Error registering seller' });
     }

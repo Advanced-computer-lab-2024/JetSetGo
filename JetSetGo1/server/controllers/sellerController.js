@@ -69,7 +69,7 @@ const getSellerProfile = async (req, res) => {
 
   try {
     // Find the seller by ID
-    const seller = await Seller.findById(id);
+    const seller = await Seller.findById({_id:id});
 
     // Check if the seller exists and if they are accepted
     if (!seller || !seller.accepted) {
@@ -85,7 +85,8 @@ const getSellerProfile = async (req, res) => {
 };
 
 const getProducts= async (req,res) => {
-  const products = await Product.find({}).sort({createdAt: -1})
+  const {id}=req.params
+  const products = await Product.find({seller:id}).sort({createdAt: -1})
   res.status(200).json(products)
 }
 
@@ -191,7 +192,7 @@ const updateProduct = async (req, res) =>{
 }
 
 const filterProducts = async(req,res) => {
-    
+    const{id}=req.params
   const { min, max } = req.query;
 
     try{
@@ -200,6 +201,7 @@ const filterProducts = async(req,res) => {
               $gte: min, // Greater than or equal to minPrice
               $lte: max, // Less than or equal to maxPrice
             },
+            seller:id
           };
         const products = await Product.find(query)
         res.status(200).json(products)
@@ -219,7 +221,7 @@ const sortByRate = async (req, res) => {
       x=-1
     }
       // Get sorted products by ratings in descending order
-      const products = await Product.find().sort(  {ratings:x} ); // Change to 1 for ascending order and -1 for descending
+      const products = await Product.find({seller:id}).sort(  {ratings:x} ); // Change to 1 for ascending order and -1 for descending
       res.status(200).json(products); // Send the sorted products as JSON
   } catch (error) {
       console.error(error);
@@ -245,6 +247,7 @@ const searchProductName = async(req,res) => {
 const uploadProfileImage = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log(id)
     const profileImage = req.file ? req.file.path : null;
   
     // Update the advertiser's profile image in the database
@@ -265,7 +268,7 @@ const uploadProfileImage = async (req, res) => {
 };
 
 const requestAccountDeletion = async (req, res) => {
-  const {id } = req.params;
+  const {id} = req.params;
   
   
   try {
@@ -331,10 +334,22 @@ const uploadDocument = async (req, res) => {
   }
 };
 
+const archieved_on= async (req, res) =>{
+  const { id } = req.params
+  console.log(req.body);
+  const archieved= req.body
+  
+
+  const product = await Product.findOneAndUpdate({_id:id},archieved, { new: true })
+
+
+  res.status(200).json(product)
+}
 
 
 
 
 
 
-module.exports = { requestAccountDeletion,uploadLogo,createSellerProfile, updateSellerProfile, getSellerProfile,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,uploadProfileImage, uploadDoc,uploadDocument };
+
+module.exports = { requestAccountDeletion,uploadLogo,createSellerProfile, updateSellerProfile, getSellerProfile,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,uploadProfileImage, uploadDoc,uploadDocument ,archieved_on};

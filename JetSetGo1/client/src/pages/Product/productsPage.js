@@ -1,6 +1,6 @@
 import React, { useState, useEffect,useContext } from 'react';
 import './ProductListing.css';
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Filter from '../../components/Filterbox';
 import ViewProduct from './ProductDetails';
 import { Range } from 'react-range';
@@ -15,7 +15,10 @@ const MAX = 500;
 
 
 const ProductListing = ({usertype}) => {
-  
+  const location=useLocation()
+  const userId = location.state.id
+  let id =userId
+  console.log(location.state)
   
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -55,7 +58,7 @@ const ProductListing = ({usertype}) => {
     const fetchProducts = async () => {
       
       try {
-        const response = await fetch('/api/admin/Products');
+        const response = await fetch(`/api/${usertype}/Products/${userId}`);
         const data = await response.json();
         setProducts(data); // Assuming response data is an array of products
       } catch (error) {
@@ -72,7 +75,7 @@ const ProductListing = ({usertype}) => {
   const fetchFilteredProducts = async () => {
     try {
       
-      const response = await fetch(`/api/sellers/filterProducts?min=${values[0]}&max=${values[1]}`, {
+      const response = await fetch(`/api/${usertype}/filterProducts/${userId}?min=${values[0]}&max=${values[1]}`, {
         method: 'GET', 
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +95,7 @@ const ProductListing = ({usertype}) => {
   const fetchSortedProducts = async (order) => {
     try {
       
-        const response = await fetch(`/api/admin/sortByRate?flag=${order}`, {
+        const response = await fetch(`/api/${usertype}/sortByRate/${userId}?flag=${order}`, {
             method: 'GET', // This is correct
             headers: {
                 'Content-Type': 'application/json',
@@ -131,12 +134,14 @@ const toggleArchiveMode = () => {
 
 
 const handleArchiveProducts = async () => {
+  console.log(selectedProducts)
   for (const productId of selectedProducts) {
+    console.log(productId)
     const product = products.find(p => p._id === productId); // Find the product from the current state
     const newArchiveStatus = !product.archieved; // Toggle the archived status
 
     try {
-      await fetch(`/api/admin/archieved/${productId}`, {
+      await fetch(`/api/${usertype}/archieved/${productId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -153,7 +158,7 @@ const handleArchiveProducts = async () => {
     }
   }
   try {
-    const response = await fetch('/api/admin/Products'); // Adjust this endpoint as necessary
+    const response = await fetch(`/api/${usertype}/Products/${userId}`); // Adjust this endpoint as necessary
     const updatedProducts = await response.json();
     setProducts(updatedProducts); // Update the state with the new product list
   } catch (error) {
@@ -266,11 +271,11 @@ const filteredProducts = products.filter((product) =>
           </Filter>
             
         </div>
-          <button className="archivebtn" onClick={archiveMode ? handleArchiveProducts : toggleArchiveMode}>
+        { usertype!== "tourist"  && (<button className="archivebtn" onClick={archiveMode ? handleArchiveProducts : toggleArchiveMode}>
                 {archiveMode ? 'Confirm Archive' : 'Archive Mode'}
-          </button>
+          </button>)}
             
-          { usertype!== "tourist"  &&  (<button className="addproductbtn" onClick={() => navigate(`/${usertype}/addProduct`)}>
+          { usertype!== "tourist"  &&  (<button className="addproductbtn" onClick={() => navigate(`/${usertype}/addProduct`,{state:{userId}})}>
             <FontAwesomeIcon icon={faPlus} style={{height: '18px', width:'18px'}} />  
           </button>)}
 
@@ -301,7 +306,7 @@ const filteredProducts = products.filter((product) =>
 
             {usertype === "admin" && (
                 <Link 
-                    to="/admin/viewproduct"  state={ [product._id,usertype] }
+                    to="/admin/viewproduct"  state={ [product._id,usertype,userId] }
                 >
                   <button className="add-to-cart-btn">View Details</button>
                 </Link>
@@ -309,15 +314,15 @@ const filteredProducts = products.filter((product) =>
 
             
 
-            {usertype === "seller" && (
+            {usertype === "sellers" && (
               <Link 
-              to="/seller/viewproduct"  state={ [product._id,usertype] }
+              to="/sellers/viewproduct"  state={ [product._id,usertype,userId] }
               >
                 <button className="add-to-cart-btn">View Details</button>
               </Link>
             )}
-            {usertype!=="tourist" && (<button className="add-to-cart-btn">Archive product</button>)}
-            {usertype!=="tourist" && (<button  className="add-to-cart-btn" onClick={() => navigate(`../${usertype}/updateProduct/${product._id}`)}>Edit Product</button>)}
+            
+            {usertype!=="tourist" && (<button  className="add-to-cart-btn" onClick={() => navigate(`/${usertype}/updateProduct/${product._id}`,{ state: { userId } })}>Edit Product</button>)}
           </div>
         ))}
       </div>

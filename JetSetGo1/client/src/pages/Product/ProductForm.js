@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import "./addproduct.css";
 // import axios from 'axios'
 
 const ProductForm = ({usertype}) => {
+    const location=useLocation()
+    const {id}= location.state
+    
     const [name, setname] = useState('');
     const [description, setdescription] = useState('');
     const [price, setprice] = useState('');
@@ -24,7 +27,7 @@ const ProductForm = ({usertype}) => {
         if (picture) {
             formData.append('picture', picture); // Append the file
         }
-        formData.append('seller', "66ff152fd87f7729749e8a65");
+        formData.append('seller', id);
         formData.append('ratings', ratings);
 
         // Adjust the URL based on user type

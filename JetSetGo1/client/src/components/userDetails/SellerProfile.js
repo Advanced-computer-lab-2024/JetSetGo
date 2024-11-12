@@ -6,7 +6,7 @@ import axios from 'axios'
 
 export default function SellerProfile() {
   const params = useParams()
-  const userId = params.userId // Ensure we're accessing the correct parameter name
+  const id = params.id // Ensure we're accessing the correct parameter name
   const [formValues, setFormValues] = useState({
     name: '',
     description: '',
@@ -18,13 +18,13 @@ export default function SellerProfile() {
   const navigate = useNavigate()
 
   // Configure axios defaults
-  axios.defaults.baseURL = 'http://localhost:5300'
+  axios.defaults.baseURL = 'http://localhost:8000'
 
   useEffect(() => {
     const fetchUserData = async () => {
       setLoading(true)
       try {
-        const response = await axios.get(`/api/sellers/profile/${userId}`)
+        const response = await axios.get(`/api/sellers/profile/${id}`)
         const data = response.data
         if (!data.accepted) {
           setError('Seller profile creation not allowed: User not accepted.')
@@ -49,10 +49,10 @@ export default function SellerProfile() {
       }
     }
 
-    if (userId) {
+    if (id) {
       fetchUserData()
     }
-  }, [userId])
+  }, [id])
 
   const handleInputChange = (e) => {
     setFormValues({
@@ -67,7 +67,7 @@ export default function SellerProfile() {
     setError(null)
 
     try {
-      await axios.patch(`/api/sellers/update/${userId}`, formValues)
+      await axios.patch(`/api/sellers/update/${id}`, formValues)
 
       setIsEditing(true)
     } catch (err) {

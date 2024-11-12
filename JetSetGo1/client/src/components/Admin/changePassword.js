@@ -1,13 +1,15 @@
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import axios from 'axios'
 import './changePassword.css'
-import { useLocation } from 'react-router-dom';
+
 
 export default function ChangePassword() {
   const location = useLocation(); // Access the location object
   const { id } = location.state || {}; // Access the id from state
-  const { id2, modelName } = useParams()
+  const {  modelName } = useParams()
+  console.log(id, modelName)
+  const userId=useLocation().state.id
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -39,13 +41,14 @@ export default function ChangePassword() {
     const userTypeEndpoints = {
       "advertisers": 'api/advertisers',
       'tourism-governer': 'api/tourism-governer',
-      "seller": 'api/sellers',
+      "sellers": 'api/sellers',
       'tourguides': 'api/tour-guides',
       "admin": 'api/admin',
       "tourist": 'api/tourist'
     }
 
     const endpoint = userTypeEndpoints[modelName];
+      console.log(endpoint)
 
     try {
       const response = await axios.patch(

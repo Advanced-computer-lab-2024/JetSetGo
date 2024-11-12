@@ -160,7 +160,7 @@ const filterProducts = async (req, res) => {
       price: {
         $gte: min, // Greater than or equal to minPrice
         $lte: max, // Less than or equal to maxPrice
-      },
+      },archieved:false
     };
     const products = await Product.find(query);
     res.status(200).json(products);
@@ -179,7 +179,7 @@ const sortByRate = async (req, res) => {
       x = -1;
     }
     // Get sorted products by ratings in descending order
-    const products = await Product.find().sort({ ratings: x }); // Change to 1 for ascending order and -1 for descending
+    const products = await Product.find({archieved:false}).sort({ ratings: x }); // Change to 1 for ascending order and -1 for descending
     res.status(200).json(products); // Send the sorted products as JSON
   } catch (error) {
     console.error(error);
@@ -1881,6 +1881,13 @@ const getTouristUsername = async (req, res) => {
   }
 };
 
+const getSingleProduct= async (req,res) => {
+  const {id}= req.params
+
+  const product = await Product.find({_id:id})
+  res.status(200).json(product)
+}
+
 module.exports = {
   createTransportBooking,
   getTransportBooking,
@@ -1953,7 +1960,7 @@ module.exports = {
   getAllTourGuideProfiles,
   getItinerariesByTourGuide,
   getSingleItinerary,
-  getTouristUsername,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,createBooking,
+  getTouristUsername,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,createBooking,getSingleProduct,
 
   getTagIdByName, myTransportBooking, myActivityItineraryBooking, upload
 };
