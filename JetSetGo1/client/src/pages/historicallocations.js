@@ -27,14 +27,14 @@ const HistoricalLocations = ({ filteredHistoricalPlace }) => {
 
     return (
         <div className="historicalLocations">
-            <nav>
+            {/* <nav>
                 <ul>
                     <li><Link to="/activities">Activities</Link></li>
                     <li><Link to="/itineraries">Itineraries</Link></li>
                     <li><Link to="/museums">Museums</Link></li>
                     <li><Link to="/historicalLocations">Historical Locations</Link></li>
                 </ul>
-            </nav>
+            </nav> */}
             
 
             <div className="upcomingHistoricalLocations">

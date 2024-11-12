@@ -252,7 +252,7 @@ const searchHistoricalPlaceByCategory = async (req, res) => {
   try {
     const Historical = await HistoricalLocationModel.find(nameReq);
     if (Historical.length == 0) {
-      res.status(404).json({ error: "Historical Place not found" });
+      return res.status(404).json({ error: "Historical Place not found" });
     }
     res.status(200).json(Historical);
   } catch (error) {
