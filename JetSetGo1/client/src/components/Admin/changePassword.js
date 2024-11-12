@@ -6,8 +6,8 @@ import './changePassword.css'
 
 export default function ChangePassword() {
   const location = useLocation(); // Access the location object
-  const { id } = location.state || {}; // Access the id from state
-  const {  modelName } = useParams()
+  const { id ,modelName} = location.state || {}; // Access the id from state
+  // const {   } = useParams()
   console.log(id, modelName)
   const userId=useLocation().state.id
   const [oldPassword, setOldPassword] = useState('')
@@ -40,7 +40,7 @@ export default function ChangePassword() {
 
     const userTypeEndpoints = {
       "advertisers": 'api/advertisers',
-      'tourism-governer': 'api/tourism-governer',
+      'tourismgoverner': 'api/tourism-governer',
       "sellers": 'api/sellers',
       'tourguides': 'api/tour-guides',
       "admin": 'api/admin',

@@ -11,12 +11,12 @@ function TourismGovernerNavBar() {
     const location = useLocation(); // Access state passed via Link
     // const { id } = location.state || {}; // Access id from state
     const { id } = useParams();
-    
+   
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [activePopup, setActivePopup] = useState(null);
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
-    const modelName = ""  /** 7ot modelName */
+    const modelName = "tourismgoverner"  /** 7ot modelName */
     const [tourist, setTourist] = useState(null);
 
 
@@ -107,22 +107,22 @@ function TourismGovernerNavBar() {
                         <div className="dropdown-menu">
                             <ul>
                             <li>
-                                    <Link to={`/sellers/change-password/${id}/${modelName}`} state={{id,modelName}}>
+                                    <Link to={`/tourism_governer/${id}/${modelName}/change-password`} state={{id,modelName}}>
                                         <i className="fas fa-user"></i> Change My password
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to={`/sellers/RequestDelete/${id}/${modelName}`} state={{id,modelName}}>
+                                    <Link to={`/tourism_governer/RequestDelete/${id}/${modelName}`} state={{id,modelName}}>
                                         <i className="fas fa-user"></i> Request to delete
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to={`/sellers/upload-image/${id}/${modelName}`} state={{id,modelName}}>
+                                    <Link to={`/tourism_governer/upload-image/${id}/${modelName}`} state={{id,modelName}}>
                                         <i className="fas fa-user"></i> upload Image
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to={`/sellers/sellerprofile/${id}`} state={{id}}>
+                                    <Link to={`/tourism_governer/sellerprofile/${id}`} state={{id}}>
                                         <i className="fas fa-user"></i> seller profile
                                     </Link>
                                 </li>

@@ -193,8 +193,12 @@ function App() {
               <Route path="/tourism_governer/:id" element={<TourismGovernerLayout />}>
                 <Route path="/tourism_governer/:id/HLTags" element={<HLTags />} />{/*tourism governer*/}
                 <Route path="/tourism_governer/:id/HLMs" element={<HLMs />} />{/*tourism governer*/}
+                <Route
+                  path="/tourism_governer/:id/:modelName/change-password"
+                  element={<ChangePassword />}
+                />
                 {/* <Route path="/tourism_governer/:id/Itineraries" element={<Itineraries /> */}
-                
+
 
               </Route>
 
