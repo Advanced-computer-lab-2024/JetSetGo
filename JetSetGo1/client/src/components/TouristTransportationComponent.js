@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const TransportBookingPage = () => {
   const [transports, setTransports] = useState([]);
@@ -7,6 +8,8 @@ const TransportBookingPage = () => {
   const [wallet, setWallet] = useState(3000000000000);
   const [seats, setSeats] = useState(1);
   const [bookingStatus, setBookingStatus] = useState('');
+  const location = useLocation();
+  const { id } = location.state || {}; // Access the id from state
 
   useEffect(() => {
     const fetchTransports = async () => {
@@ -83,7 +86,7 @@ const TransportBookingPage = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           transportationId: transportId,
-          touristId: '670255f97b12bc9e3f1c7f26',
+          touristId: id,
           date: selectedDate,
         })
         
@@ -108,7 +111,7 @@ const TransportBookingPage = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           transportationId: transportId,
-          touristId: '670255f97b12bc9e3f1c7f26',
+          touristId: id,
           seats: seats,
         })
       });

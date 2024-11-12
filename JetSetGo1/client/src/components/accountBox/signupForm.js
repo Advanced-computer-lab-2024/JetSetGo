@@ -150,12 +150,16 @@ const SignupForm = () => {
         const id = userId;
         console.log(selectedOption.value)
         let url;
+        var modelName;
         if (selectedOption.value === 'Advertiser' ) {
-          navigate(`/${selectedOption.value}/${id}/terms`);
+          modelName = 'advertisers';
+          navigate(`/${modelName}/${id}/terms`);
         }else if (selectedOption.value == 'Seller') {
-          navigate(`/${selectedOption.value.toLowerCase}/${id}/terms`);
+          modelName = 'sellers';
+          navigate(`/${modelName}/${id}/terms`);
         } else if (selectedOption.value == 'Tourist') {
-          navigate(`/${selectedOption.value.toLowerCase}/${id}/terms`);
+          modelName = 'tourist';
+          navigate(`/${modelName}/${id}/terms`);
         } else if (selectedOption.value === 'TourGuide') {
           url = '/tourguide-dashboard';
         } else {

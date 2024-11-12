@@ -9,8 +9,6 @@ import { CurrencyContext } from './CurrencyContext';
 
 const currencies = ["EGP", "EUR", "USD"];
 
-
-
 function NavBar() {
     const location = useLocation(); // Access state passed via Link
     const { id } = location.state || {}; // Access id from state
@@ -21,6 +19,27 @@ function NavBar() {
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
     const modelName = 'tourist'
+    const [tourist, setTourist] = useState(null);
+
+
+    useEffect(() => {// Fetch tourist data using fetch
+        const fetchTouristData = async () => {
+            try {
+                const response = await fetch(`http://localhost:8000/api/tourist/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                setTourist(data);
+                console.log(data);
+            } catch (error) {
+                console.error('Error fetching tourist data:', error);
+            }
+        };
+        fetchTouristData();
+    }, [id]);
 
     const toggleDropdown = () => {
         setIsDropdownOpen((prev) => !prev);
@@ -80,7 +99,7 @@ function NavBar() {
                         <li><Link to={`/tourist/activities2`} state={{ id }}>Activities</Link></li>
                         <li><Link to={`/tourist/itineraries2`} state={{ id }}>Itineraries</Link></li>
                         <li><Link to={`/tourist/tourguidelist`} state={{ id }}>Tour Guide</Link></li>
-                        <li><Link to={`/tourist/tourguidelist`} state={{ id }}>Booking</Link></li>
+                        <li><Link to={`/tourist/my_bookings`} state={{ id }}>Booking</Link></li>
                         <li><Link to={`/tourist/historicalLocations`} state={{ id }}>Locations</Link></li>
                         <li>
                             <Link to={`/tourist/book-hotel`} state={{ id }}>Hotels</Link>
@@ -88,7 +107,18 @@ function NavBar() {
                         <li>
                             <Link to={`/tourist/book_flight`} state={{ id }}>Flights</Link>
                         </li>
-
+                        <li>
+                            <Link to={`/tourist/transportbooking`} state={{ id }}>Transport Booking</Link>
+                        </li>
+                        <li>
+                            <Link to={`/tourist/myprefs/${id}`} state={{ id }}>My Preferences</Link>
+                        </li>
+                        <li>
+                            <Link to={`/tourist/my_prefrences`} state={{ id }}>Preferences Selection</Link>
+                        </li>
+                        <li>
+                            <Link to={`/tourist/Transportation`} state={{ id }}>Transportation</Link>
+                        </li>
                     </ul>
                 </div>
 
@@ -105,7 +135,9 @@ function NavBar() {
                 </div>
                 <div className="profile" ref={dropdownRef}>
                     <span className="profile-link" onClick={toggleDropdown}>
-                        {renderLevelImage(1)} {/* Replace 1 with the tourist's level if available */}
+                        {(tourist && renderLevelImage(tourist.Level)) ||
+                            (tourist && renderLevelImage(2)) ||
+                            (tourist && renderLevelImage(3))}
                     </span>
                     {isDropdownOpen && (
                         <div className="dropdown-menu">
@@ -123,6 +155,11 @@ function NavBar() {
                                 <li>
                                     <Link to={`/tourist/RequestDelete/${modelName}/${id}`}>
                                         <i className="fas fa-user"></i> Request to delete
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to={`/tourist/rate-comment-event/${modelName}/${id}`}>
+                                        <i className="fas fa-user"></i> rate/comment_attended
                                     </Link>
                                 </li>
                                 {/* Additional dropdown links can go here */}

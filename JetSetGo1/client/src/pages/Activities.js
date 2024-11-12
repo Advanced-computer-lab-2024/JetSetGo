@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ActivityDetails from "../components/ActivityDetails";
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import ActivityFilter from '../components/ActivityFilter';  // Import ActivityFilter
 import { useLocation } from 'react-router-dom';
@@ -12,9 +12,9 @@ const Activities2 = () => {
     const [loading, setLoading] = useState('');
 
     // const {id}= useParams()
-    const location = useLocation(); // Access the location object
-    const { id } = location.state || {}; // Access the id from state
-
+    const location = useLocation(); // Access state passed via Link
+    const { id } = location.state || {}; // Access id from state
+    console.log("touristId in page" + id);
     useEffect(() => {
         fetchActivities();
     }, []);
@@ -42,7 +42,7 @@ const Activities2 = () => {
     const fetchSortedByRating = () => {
         let activitiesToSort = filteredActivitiesState || upcomingActivities; // Use filtered activities if available, else use all
         if (activitiesToSort) {
-            const sortedByRating = [...activitiesToSort].sort((a, b) => a.rating - b.rating);
+            const sortedByRating = [...activitiesToSort].sort((a, b) => a.totalrating - b.totalrating);
             setSortedActivities(sortedByRating);
         }
     };
@@ -82,16 +82,16 @@ const Activities2 = () => {
             </div>
 
             <div className="product-grid">
-                { activitiesToShow && activitiesToShow.length === 0 && 
-                (
-                <p>No results found</p>
-                )}
-                {activitiesToShow  && activitiesToShow.map((Activity) => (
-                    <Link key={Activity._id} to={`/tourist/activity/${Activity._id}/tourist/${id}`}>
+                {activitiesToShow && activitiesToShow.length === 0 &&
+                    (
+                        <p>No results found</p>
+                    )}
+                {activitiesToShow && activitiesToShow.map((Activity) => (
+                    <Link key={Activity._id} to={`/tourist/activity/${Activity._id}/tourist/${id}`} state={{ id }}>
                         <ActivityDetails Activity={Activity} />
                     </Link>
                 ))}
-                {activitiesToShow  && activitiesToShow.map((Activity) => ( !id &&
+                {activitiesToShow && activitiesToShow.map((Activity) => (!id &&
                     <Link key={Activity._id} to={`/guest/activity/${Activity._id}`}>
                         <ActivityDetails Activity={Activity} />
                     </Link>

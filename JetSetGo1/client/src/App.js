@@ -188,7 +188,7 @@ function App() {
               <Route path="/Authentication" element={<Authentication />} />
 
               <Route path="/" element={<TermsAndConditionsForm />} />
-
+              
               {/** Admiin */}
               <Route path="/admin" element={<Layout />}>
                 <Route
@@ -244,35 +244,29 @@ function App() {
                 <Route path="/tourist/add-rating-comment-itinerary/:iternaryId" element={<AddRatingCommentItinerary />} /> {/*done*/}
                 <Route path="/tourist/TouristItineraryDetails/:iternaryId" element={<TouristItineraryDetails />} /> {/*done*/}
                 <Route path="/tourist/ActivitiesHazem" element={<CategoriesAndActivities />} />
-                <Route path="/tourist/book-hotel" element={
-                  <div style={{ padding: 20 }}>
-                    <Booking touristId={"670255f97b12bc9e3f1c7f26"} />
-                  </div>} />
+                <Route path="/tourist/book-hotel" element={<div style={{ padding: 20 }}><Booking touristId={"670255f97b12bc9e3f1c7f26"} /></div>} />
                 <Route path="/tourist/book_flight" element={<FlightSearch touristId={"670255f97b12bc9e3f1c7f26"} />} />
-
+                <Route path="/tourist/my_bookings" element={<MyBookingsPage />} />
+                <Route path="/tourist/historicalLocations" element={<> <HistoricalPlaceFilter onFilter={handleFilterResultsHistoricalPlaces} />
+                  <HistoricalLocations filteredHistoricalPlace={filteredHistoricalPlace} /></>} />
+                <Route path="/tourist/rate-comment-event/:modelName/:id" element={<ActivityList touristId={"670255f97b12bc9e3f1c7f26"} />} />  ///////////////////////////////////
+                <Route
+                  path="/tourist/transportbooking"
+                  element={<TransportBookingPage />}
+                />
+                <Route path="/tourist/myprefs/:id" element={<MyPrefs />} />
+                <Route
+                  path="/tourist/my_prefrences"
+                  element={<PreferencesSelection />}
+                />
+                <Route
+                  path="/tourist/Transportation"
+                  element={<Transportationpage />}
+                />
               </Route>
-              <Route
-                path="/transportbooking"
-                element={<TransportBookingPage />}
-              />
+              {/* carol */}
 
-              <Route
-                path="/my_bookings/:id"
-                element={<MyBookingsPage />}
-              />
-
-
-              <Route path="/myprefs/:id" element={<MyPrefs />} />
-
-              <Route
-                path="/my_prefrences"
-                element={<PreferencesSelection />}
-              />
-              <Route
-                path="/Transportation"
-                element={<Transportationpage />}
-              />
-
+              {/* carol */}
 
               {/** Guest */}
               <Route path="/guest" element={<GuestLayout />}>

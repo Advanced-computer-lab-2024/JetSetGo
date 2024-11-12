@@ -3,10 +3,11 @@ import './TermsAndCondition.css'; // Import CSS for styling
 import { Link, useParams } from "react-router-dom";
  
 import { useLocation } from 'react-router-dom';
+// import { modelName } from '../../../../server/models/TransportationBookingModel';
 
 function TermsAndConditionsForm() {
   const location = useLocation();
-    const  {id}=useParams() 
+    const  {modelName,id}=useParams() 
 
     console.log("id in terms and conditions",id); 
  
@@ -51,7 +52,7 @@ function TermsAndConditionsForm() {
                     />
                     <label htmlFor="terms"> I accept the terms and conditions</label>
                   </div>
-                  <Link to={`/tourist/products`} state={{ id }}>
+                  <Link to={`/${modelName}/products`} state={{ id }}>
                   <button
                     type="submit"
                     disabled={!acceptedTerms}
