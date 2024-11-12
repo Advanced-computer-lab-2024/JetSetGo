@@ -40,32 +40,33 @@ const upload = multer({
 
 // Create Transportation
 const createTransportation = async (req, res) => {
-    const {vehicle, carModel, days, time, cLocation, bLocation, price, advertiser} = req.body;
+  const {vehicle, carModel, days, time, cLocation, capacity, bLocation, price, advertiser} = req.body;
 
-    const transportData = {
-      vehicle,
-      days,
-      time,
-      price,
-      advertiser,
-    };
-  
-    // Conditionally add fields based on vehicle type
-    if (vehicle === 'car') {
-      transportData.carModel = carModel;
-      transportData.cLocation = cLocation;
-    } else if (vehicle === 'bus') {
-      transportData.bLocation = bLocation;
-    }
-  
-
-    try {
-      const newTransportation = await Transportation.create(transportData);
-      res.status(201).json(newTransportation);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
+  const transportData = {
+    vehicle,
+    days,
+    time,
+    price,
+    advertiser,
   };
+
+  // Conditionally add fields based on vehicle type
+  if (vehicle === 'car') {
+    transportData.carModel = carModel;
+    transportData.cLocation = cLocation;
+  } else if (vehicle === 'bus') {
+    transportData.bLocation = bLocation;
+    transportData.capacity = capacity;
+  }
+
+
+  try {
+    const newTransportation = await Transportation.create(transportData);
+    res.status(201).json(newTransportation);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
   
   // Read Transportation
   const getTransportation = async (req, res) => {

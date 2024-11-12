@@ -1,4 +1,3 @@
-
 const TransportationComponent = ({ transport }) => {
 
     const handleClick = async () => {
@@ -22,8 +21,10 @@ const TransportationComponent = ({ transport }) => {
             <p><strong>Vehicle Type: </strong>{transport.vehicle}</p>
             {transport.vehicle === 'car' && (
                 <>
-                    <p><strong>Car Model:</strong>{transport.carModel}</p>
-                    <p><strong>Car Location (Region):</strong>{transport.cLocation}</p>
+                    <p><strong>Car Model: </strong>{transport.carModel}</p>
+                    <p><strong>Car Location (Region): </strong>{transport.cLocation}</p>
+                    <p><strong>Days Available: </strong>{transport.days}</p>
+                    <p><strong>Timings Available: </strong>{transport.time}</p>
 
                 </>
             )}
@@ -31,13 +32,15 @@ const TransportationComponent = ({ transport }) => {
             {transport.vehicle === 'bus' && (
                 <>
 
-                    <p><strong>Bus Pickup Location:</strong>{transport.bLocation.pickup}</p>
-                    <p><strong>Bus Dropoff Location:</strong>{transport.bLocation.dropoff}</p>
-                    
+                    <p><strong>Bus Pickup Location: </strong>{transport.bLocation.pickup}</p>
+                    <p><strong>Bus Dropoff Location: </strong>{transport.bLocation.dropoff}</p>
+                    <p><strong>Remaining Seats: </strong>{transport.capacity}</p>
+                    <p><strong>Departure Day: </strong>{transport.days}</p>
+                    <p><strong>Departure Time: </strong>{transport.time}</p>
+
                 </>
             )}
-            <p><strong>Days Available: </strong>{transport.days}</p>
-            <p><strong>Timings Available: </strong>{transport.time}</p>
+
             <p><strong>Price: </strong>{transport.price}</p>
             <p><strong>Advertiser: </strong>{transport.advertiser}</p>
             <p>{transport.createdAt}</p>
