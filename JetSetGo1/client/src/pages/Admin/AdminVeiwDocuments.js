@@ -37,6 +37,7 @@ function AdminDocumentReview() {
           <h3>{userType.charAt(0).toUpperCase() + userType.slice(1)}</h3>
           <div>
             {userDocuments[userType].map((user) => (
+              
               <UserCard
                  key={user.id}
                  username={user.username}

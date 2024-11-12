@@ -64,9 +64,9 @@ router.post("/add", addAdmin);
 router.delete("/delete/:modelName/:id", deleteAccount);
 router.get("/:role/list", getAllUsers);
 
-router.get("/Products", getProducts);
-router.get("/filterProducts", filterProducts);
-router.get("/sortByRate", sortByRate);
+router.get("/Products/:id", getProducts);
+router.get("/filterProducts/:id", filterProducts);
+router.get("/sortByRate/:id", sortByRate);
 router.get("/searchProductName", searchProductName);
 router.post("/createProduct", createProduct);
 // Update workout

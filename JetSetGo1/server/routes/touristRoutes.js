@@ -4,10 +4,6 @@ const {
   filterProducts,
   sortByRate,
   searchProductName,
-  createProduct,
-  updateProduct,
-} = require("../controllers/adminController.js");
-const {
   createTransportBooking,
   getTransportBooking,
   deleteTransportBooking,
@@ -75,7 +71,7 @@ const {
   getItinerariesByTourGuide,
   getSingleItinerary,
   getTouristUsername,
-  getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking, createBooking } = require("../controllers/touristController");
+  getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking, createBooking,getSingleProduct } = require("../controllers/touristController");
 
 const router = express.Router();
 
@@ -100,6 +96,7 @@ router.get("/Products", getProducts);
 router.get("/filterProducts", filterProducts);
 router.get("/sortByRate", sortByRate);
 router.get("/searchProductName", searchProductName);
+router.get("/getSingleProduct/:id", getSingleProduct);
 
 router.get('/activities/booked/:touristId', getTouristBookedActivities);// Create or Update Tour Guide Profile
 

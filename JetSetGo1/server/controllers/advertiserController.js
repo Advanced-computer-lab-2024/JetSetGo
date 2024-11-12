@@ -236,7 +236,7 @@ const getActivities = async (req, res) => {
 const showMyActivities = async(req,res) => {
 
 
-    const {id} = req.body;
+    const {id} = req.params;
 
 try{
         const result = await Activity.find({advertiser:(id)})

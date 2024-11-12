@@ -1,10 +1,13 @@
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import axios from 'axios'
 import './changePassword.css'
+import { useLoadScript } from '@react-google-maps/api'
 
 export default function ChangePassword() {
-  const { id,id2, modelName } = useParams()
+  const { id, modelName } = useParams()
+  console.log(id, modelName)
+  const userId=useLocation().state.id
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -36,13 +39,14 @@ export default function ChangePassword() {
       const userTypeEndpoints = {
         "advertisers": 'api/advertisers',
         'tourism-governer': 'api/tourism-governer',
-        "seller": 'api/sellers',
+        "sellers": 'api/sellers',
         'tourguides': 'api/tour-guides',
         "admin": 'api/admin',
         "tourist": 'api/tourist'
       }
 
       const endpoint = userTypeEndpoints[modelName];
+      console.log(endpoint)
 
     try {
       const response = await axios.patch(

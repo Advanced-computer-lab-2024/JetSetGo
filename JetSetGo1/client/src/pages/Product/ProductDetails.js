@@ -10,8 +10,11 @@ function ViewProduct() {
   const location = useLocation();
   console.log(location.state )
   const list = location.state || {};
-  const id =list[0];
+  const productId =list[0];
   const userType=list[1];
+  const id=list[2];
+
+  console.log(productId,userType,id)
   
 
   const [starFilter, setStarFilter] = useState(""); // To filter by star rating
@@ -26,10 +29,10 @@ function ViewProduct() {
 
   // Use useEffect to fetch product details when ID is available
   useEffect(() => {
-    if (id) {
+    if (productId) {
       const fetchProduct = async () => {
         try {
-          const response = await fetch(`/api/admin/getSingleProduct/${id}`, {
+          const response = await fetch(`/api/${userType}/getSingleProduct/${productId}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -49,9 +52,9 @@ function ViewProduct() {
 
       fetchProduct();
     }
-  }, [id]);
+  }, [productId]);
 
-  if (!id) {
+  if (!productId) {
     return <div>No product data available!</div>;
   }
 
@@ -133,9 +136,9 @@ function ViewProduct() {
   const handleSubmitReview = async () => {
     const price=200;
     const quantityPurchased=4343434
-    const touristId="6702c760367bb353e255fd8b";
-    const productId="66ff1538b4b8e6aaa752b086";
-    const sellerId="66ff14e7d87f7729749e8a5f";
+    const touristId=id;
+    const productId=productId;
+    const sellerId=product.seller;
     const ratings=newRating;
     const reviews= newReview;
   

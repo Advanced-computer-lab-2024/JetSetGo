@@ -6,7 +6,7 @@ const Tourist = require('../models/TouristModels');
 const TourismGoverner = require('../models/TourismGovernerModel')
 const Seller = require('../models/SellerModel')
 
-const models={admin: Admin, seller: Seller, tourguides: TourGuide, tourist: Tourist, advertisers: Advertiser, tourismgoverner: TourismGoverner};
+const models={admin: Admin, sellers: Seller, tourguides: TourGuide, tourist: Tourist, advertisers: Advertiser, tourismgoverner: TourismGoverner};
 
 const changePassword = async (req, res) => {
     const { id, modelName } = req.params;

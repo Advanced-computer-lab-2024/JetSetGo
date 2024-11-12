@@ -6,7 +6,8 @@ import { Link } from "react-router-dom";
 
 function Sidebar() {
   const [isMinimized, setIsMinimized] = useState(false);
-
+  const id= "67043d224b400647ae0e235f";
+  const modelName="admin"
   const toggleSidebar = () => {
     setIsMinimized(!isMinimized);
   };
@@ -38,7 +39,7 @@ function Sidebar() {
         <li>
           <FontAwesomeIcon icon={faBox} className="icon" />
           
-          <span><Link to="/admin/products">Product</Link></span>
+          <span><Link to="/admin/products" state={{id}}>Product</Link></span>
         </li>
         
         <li>
@@ -47,11 +48,20 @@ function Sidebar() {
         </li>
         <li>
           <FontAwesomeIcon icon={faUser} className="icon" />
-          <span>User</span>
+          <span><Link to={`/admin/change-password/${id}/${modelName}`}>change Password</Link></span>
         </li>
         <li>
           <FontAwesomeIcon icon={faCog} className="icon" />
-          <span>Settings</span>
+          <span><Link to={`/admin/my_category`}>category</Link></span>
+        </li>
+        
+        <li>
+          <FontAwesomeIcon icon={faCog} className="icon" />
+          <span><Link to={`/admin/my_tags`}>Tags</Link></span>
+        </li>
+        <li>
+          <FontAwesomeIcon icon={faCog} className="icon" />
+          <span><Link to={`/admin/Tourism_Governer`}>tourism governer</Link></span>
         </li>
       </ul>
     </div>

@@ -16,7 +16,7 @@ const Complaint = require('../models/ComplaintModel.js')
 const mongoose= require('mongoose')
 
 
-const models={admin: Admin, seller: Seller, tourguide: TourGuide, tourist: Tourist, advertisers: Advertiser, tourismgoverner: TourismGoverner};
+const models={admin: Admin, seller: Seller, tourguide: TourGuide, tourist: Tourist, advertiser: Advertiser, tourismgoverner: TourismGoverner};
 ////////////////////////////////////////////////////////////////////////////////
 
 // Get All Itineraries
@@ -265,7 +265,8 @@ const deleteAccount = async (req, res) => {
 
   // get all products
 const getProducts= async (req,res) => {
-    const products = await Product.find({}).sort({createdAt: -1})
+    const {id}=req.params
+    const products = await Product.find({seller:id}).sort({createdAt: -1})
     res.status(200).json(products)
 }
 
@@ -354,7 +355,7 @@ const updateProduct = async (req, res) =>{
   }
 
 const filterProducts = async(req,res) => {
-    
+    const {id} =req.params
     const{min, max}= req.query;
 
     try{
@@ -363,6 +364,7 @@ const filterProducts = async(req,res) => {
               $gte: min, // Greater than or equal to minPrice
               $lte: max, // Less than or equal to maxPrice
             },
+            seller:id
           };
         const products = await Product.find(query)
         res.status(200).json(products)
@@ -372,6 +374,7 @@ const filterProducts = async(req,res) => {
 }
 
 const sortByRate = async (req, res) => {
+  const {id}= req.params()
     const  {flag}  = req.query; // Use req.query here
     var x=0
     try {
@@ -382,7 +385,7 @@ const sortByRate = async (req, res) => {
         x=-1
       }
         // Get sorted products by ratings in descending order
-        const products = await Product.find().sort(  {ratings:x} ); // Change to 1 for ascending order and -1 for descending
+        const products = await Product.find({seller:id}).sort(  {ratings:x} ); // Change to 1 for ascending order and -1 for descending
         res.status(200).json(products); // Send the sorted products as JSON
     } catch (error) {
         console.error(error);
@@ -572,7 +575,7 @@ const RejectUserStatus = async (req, res) => {
     const { id, modelName } = req.params;
      
     const Model = models[modelName.toLowerCase()];
-  
+    console.log(Model)
     if (!Model) {
       return res
         .status(400)

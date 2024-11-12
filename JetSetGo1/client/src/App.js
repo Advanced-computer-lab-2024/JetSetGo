@@ -87,7 +87,7 @@ import ActivityPageJohn from "./pages/Advertiser/ActivityJohn.js";
 import Authentication from "./pages/Authentication/Authentication";
 import SellerProfile from "./components/userDetails/SellerProfile.js";
 import AdvertiserProfile from "./components/userDetails/AdvertiserProfile.js";
-
+import AdminAddProduct from "./pages/Admin/AdminAddProduct.js";
 // Jimmy
 import Dashboard2 from "./components/Jimmy/Dashboard2.js";
 import AddRatingComment from "./components/Jimmy/AddRatingComment.js";
@@ -98,6 +98,8 @@ import AdvertiserLayout from "./components/Advertiser/AdvertiserLayout.js"
 import AdvertiserActivities from "./pages/Advertiser/AdvertiserActivities.js";
 // JIMMY END
 
+import SellerLayout from "./components/Seller/SellerLayout.js";
+import AdminUpdateProducts from "./pages/Admin/AdminUpdateProduct.js";
 
 
 import Booking from './pages/bookhotel.js'
@@ -173,7 +175,7 @@ function App() {
               </Route>
               
               
-              <Route path="/sellerprofile/:userId" element={<SellerProfile />} />
+              
               <Route path="/Authentication" element={<Authentication />} />
 
               <Route path="/" element={<TermsAndConditionsForm />} />
@@ -183,7 +185,8 @@ function App() {
                 <Route
                   path="/admin/requests"
                   element={<AdminDocumentReview />}
-                />{" "}
+                />
+                
                 {/*momen */}
                 <Route
                   path="/admin/products"
@@ -197,7 +200,7 @@ function App() {
                 {/*momen */}
                 <Route
                   path="/admin/addProduct"
-                  element={<ProductForm usertype="admin" />}
+                  element={<AdminAddProduct usertype="admin" />}
                 />{" "}
                 {/* Add product page */}
                 <Route
@@ -209,6 +212,15 @@ function App() {
                   path="/admin/change-password/:id/:modelName"
                   element={<ChangePassword />}
                 />
+
+                <Route
+                path="/admin/updateProduct/:id"
+                element={<AdminUpdateProducts usertype="admin" />}
+                />
+
+                <Route path="/admin/my_category" element={<Categorypage />} />
+                <Route path="/admin/my_tags" element={<Tagspage />} />
+                <Route path="/admin/Tourism_Governer" element={<Tourism_Governer />} />
               </Route>
 
               {/** Tourist */}
@@ -265,32 +277,45 @@ function App() {
                   element={<ItineraryManagement />}
                 />
               </Route>
+{/** seller */}
+              <Route path="/sellers" element={<SellerLayout />}>
+                  <Route
+                    path="/sellers/change-password/:id/:modelName"
+                    element={<ChangePassword />}
+                  />
+                  <Route
+                  path="/sellers/upload-image/:id/:modelName"
+                  element={<ImageUpload />}
+                  />
+                  <Route
+                    path="/sellers/RequestDelete/:id/:modelName"
+                    element={<RequestAccountDeletion />}
+                  />
+                  <Route
+                    path="/sellers/products"
+                    element={<ProductListing usertype="sellers" />}
+                  />
+                  <Route
+                    path="/sellers/addProduct"
+                    element={<ProductForm usertype="sellers" />}
+                  />
+                  <Route
+                    path="/sellers/updateProduct/:id"
+                    element={<UpdateProducts usertype="sellers" />}
+                  />
+                  <Route path="/sellers/sellerprofile/:id" element={<SellerProfile />} />
+                  <Route path="/sellers/viewproduct" element={<ViewProduct />} />
+
+              </Route>
+{/** seller */}
               <Route path="/guest" element={<GuestPage />} />
               <Route
                 path="/admindashboard"
                 element={<AdminDashboard />}
               ></Route>
-              <Route
-                path="/seller/products"
-                element={<ProductListing usertype="seller" />}
-              />
               
-              
-              {/* Other routes can be defined similarly */}
-              <Route
-                path="/seller/addProduct"
-                element={<ProductForm usertype="seller" />}
-              />{" "}
-              {/* Add product page */}
-              <Route
-                path="/seller/updateProduct/:id"
-                element={<UpdateProducts usertype="seller" />}
-              />{" "}
               {/* Update product page */}
-              <Route
-                path="/admin/updateProduct/:id"
-                element={<UpdateProducts usertype="admin" />}
-              />
+              
               <Route path="/delete/:role" element={<UserList />} />
               <Route
                 path="/tour-guide/itineraryManager/:id"
@@ -338,9 +363,9 @@ function App() {
             <Route path="/book_flight" element={<FlightSearch touristId={"670255f97b12bc9e3f1c7f26"} />} />
             
               <Route path="/hhh" element={<Home />} />
-              <Route path="/my_tags" element={<Tagspage />} />
-              <Route path="/my_category" element={<Categorypage />} />
-              <Route path="/Tourism_Governer" element={<Tourism_Governer />} />
+              
+              
+              
               <Route path="/HL" element={<HL />} />
               <Route path="/Museum" element={<Museum />} />
               <Route path="/HLTags" element={<HLTags />} />
