@@ -13,7 +13,7 @@ function SellerNavbar() {
     // const { id } = useParams();
     const location=useLocation();
     const {id} = location.state;
-    console.log(id)
+    console.log("at navbar:"+id);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [activePopup, setActivePopup] = useState(null);
     const dropdownRef = useRef(null);

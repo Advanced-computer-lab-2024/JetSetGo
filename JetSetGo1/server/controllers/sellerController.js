@@ -1,7 +1,7 @@
 const Seller = require('../models/SellerModel');
 
-const mongoose= require('mongoose')
-const Product= require('../models/ProductModel')
+const mongoose = require('mongoose')
+const Product = require('../models/ProductModel')
 const multer = require('multer');
 const path = require('path');
 
@@ -11,30 +11,30 @@ const createSellerProfile = async (req, res) => {
   const { name, description } = req.body;
 
   try {
-      // Find the seller by ID
-      const seller = await Seller.findById(id);
+    // Find the seller by ID
+    const seller = await Seller.findById(id);
 
-      // Check if the seller is accepted
-      if (!seller || !seller.accepted) {
-          return res.status(404).json({ error: 'You must be accepted as a seller to create a profile' });
-      }
+    // Check if the seller is accepted
+    if (!seller || !seller.accepted) {
+      return res.status(404).json({ error: 'You must be accepted as a seller to create a profile' });
+    }
 
-      // Check if the profile fields are already set
-      if (seller.name || seller.description) {
-          return res.status(404).json({ error: 'You already created a profile' });
-      }
+    // Check if the profile fields are already set
+    if (seller.name || seller.description) {
+      return res.status(404).json({ error: 'You already created a profile' });
+    }
 
-      // Update the seller profile with new information
-      seller.name = name;
-      seller.description = description;
+    // Update the seller profile with new information
+    seller.name = name;
+    seller.description = description;
 
-      // Save the updated profile
-      await seller.save();
-      res.status(200).json(seller);
+    // Save the updated profile
+    await seller.save();
+    res.status(200).json(seller);
 
   } catch (err) {
     console.log("i am here")
-      res.status(404).json({ error: err.message });
+    res.status(404).json({ error: err.message });
   }
 };
 
@@ -69,7 +69,7 @@ const getSellerProfile = async (req, res) => {
 
   try {
     // Find the seller by ID
-    const seller = await Seller.findById({_id:id});
+    const seller = await Seller.findById({ _id: id });
 
     // Check if the seller exists and if they are accepted
     if (!seller || !seller.accepted) {
@@ -84,10 +84,16 @@ const getSellerProfile = async (req, res) => {
   }
 };
 
-const getProducts= async (req,res) => {
-  const {id}=req.params
-  const products = await Product.find({seller:id}).sort({createdAt: -1})
-  res.status(200).json(products)
+const getProducts = async (req, res) => {
+  try {
+    const { id } = req.params
+    const products = await Product.find({ seller: id }).sort({ createdAt: -1 })
+    res.status(200).json(products)
+  } catch (error) { 
+    res.status(404).json({ error: error.message })
+
+  }
+
 }
 
 // Add new product
@@ -104,23 +110,25 @@ const getProducts= async (req,res) => {
 //   res.json({mssg: 'added a new product'})
 // }
 
-const getSingleProduct= async (req,res) => {
-  const {id}= req.params
+const getSingleProduct = async (req, res) => {
+  const { id } = req.params
+  if (!id) {
+    return
+  }
+  const product = await Product.find({ _id: id })
 
-  const product = await Product.find({_id:id})
-  
-  if(!product){
-    return res.status(404).json({error:'No such product'})
+  if (!product) {
+    return res.status(404).json({ error: 'No such product' })
   }
   res.status(200).json(product)
 }
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-      cb(null, 'uploads/'); // Folder where images will be stored
+    cb(null, 'uploads/'); // Folder where images will be stored
   },
   filename: (req, file, cb) => {
-      cb(null, Date.now() + path.extname(file.originalname)); // Save the file with a unique name
+    cb(null, Date.now() + path.extname(file.originalname)); // Save the file with a unique name
   }
 });
 
@@ -146,101 +154,102 @@ const uploadLogo = multer({
 // Create a new product function
 const createProduct = (req, res) => {
   upload(req, res, async (err) => {
-      if (err) {
-          return res.status(400).json({ error: 'Image upload failed' });
-      }
-      
-      const { name, description, price, quantityAvailable, seller, ratings } = req.body;
+    if (err) {
+      return res.status(400).json({ error: 'Image upload failed' });
+    }
 
-      try {
-          // Create a new product with the uploaded image path
-          const newProduct = new Product({
-              name,
-              description,
-              price,
-              quantityAvailable,
-              picture: req.file ? req.file.path : null, // Save the image path
-              seller,
-              ratings
-          });
+    const { name, description, price, quantityAvailable, seller, ratings } = req.body;
 
-          const savedProduct = await newProduct.save();
-          res.status(201).json(savedProduct);
-      } catch (error) {
-          res.status(400).json({ error: error.message });
-      }
+    try {
+      // Create a new product with the uploaded image path
+      const newProduct = new Product({
+        name,
+        description,
+        price,
+        quantityAvailable,
+        picture: req.file ? req.file.path : null, // Save the image path
+        seller,
+        ratings
+      });
+
+      const savedProduct = await newProduct.save();
+      res.status(201).json(savedProduct);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
   });
 };
 
 //  update a product
-const updateProduct = async (req, res) =>{
-    const { id } = req.params
-    
-    if (!mongoose.Types.ObjectId.isValid(id)){
-        return res.status(404).json({error: 'No such product'})
-    }
+const updateProduct = async (req, res) => {
+  const { id } = req.params
 
-    const product = await Product.findOneAndUpdate({_id:id},{
-        ...req.body
-    },{ new: true })
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ error: 'No such product' })
+  }
 
-    if(!product){
-        return res.status(404).json({error:'No such product'})
-    }
+  const product = await Product.findOneAndUpdate({ _id: id }, {
+    ...req.body
+  }, { new: true })
 
-    res.status(200).json(product)
+  if (!product) {
+    return res.status(404).json({ error: 'No such product' })
+  }
+
+  res.status(200).json(product)
 }
 
-const filterProducts = async(req,res) => {
-    const{id}=req.params
+const filterProducts = async (req, res) => {
+  const { id } = req.params
   const { min, max } = req.query;
 
-    try{
-        const query = {
-            price: {
-              $gte: min, // Greater than or equal to minPrice
-              $lte: max, // Less than or equal to maxPrice
-            },
-            seller:id
-          };
-        const products = await Product.find(query)
-        res.status(200).json(products)
-    } catch(error){
-        res.status(404).json({error: error.message})
-    }
+  try {
+    const query = {
+      price: {
+        $gte: min, // Greater than or equal to minPrice
+        $lte: max, // Less than or equal to maxPrice
+      },
+      seller: id
+    };
+    const products = await Product.find(query)
+    res.status(200).json(products)
+  } catch (error) {
+    res.status(404).json({ error: error.message })
+  }
 }
 
 const sortByRate = async (req, res) => {
-  const  {flag}  = req.query; // Use req.query here
-  var x=0
+  const { flag } = req.query; // Use req.query here
+  const { id } = req.params
+  var x = 0
   try {
-    if (flag=="1") {
-      x=1
+    if (flag == "1") {
+      x = 1
     }
-    else{
-      x=-1
+    else {
+      x = -1
     }
-      // Get sorted products by ratings in descending order
-      const products = await Product.find({seller:id}).sort(  {ratings:x} ); // Change to 1 for ascending order and -1 for descending
-      res.status(200).json(products); // Send the sorted products as JSON
+    // Get sorted products by ratings in descending order
+    const products = await Product.find({ seller: id }).sort({ ratings: x }); // Change to 1 for ascending order and -1 for descending
+    res.status(200).json(products); // Send the sorted products as JSON
   } catch (error) {
-      console.error(error);
-      res.status(500).send('Error fetching products');
+    console.error(error.message);
+    res.status(500).send(error.message,error);
   }
 };
 
-const searchProductName = async(req,res) => {
+const searchProductName = async (req, res) => {
 
-    const { name } = req.body;
-    
-    
-    try{
-        // Use RegEx to match the substring in the product's name (case-insensitive)
-        const productname = await Product.find({name: { $regex: name, $options: 'i' }})
-        res.status(200).json(productname)
-    }catch(error){
-        res.status(404).json({error:error.message})
-    }
+  const { name } = req.body;
+
+
+  try {
+    // Use RegEx to match the substring in the product's name (case-insensitive)
+    const productname = await Product.find({ name: { $regex: name, $options: 'i' } })
+    res.status(200).json(productname)
+  } catch (error) {
+    res.status(404).json({ error: error.message })
+  }
 
 }
 
@@ -249,7 +258,7 @@ const uploadProfileImage = async (req, res) => {
     const { id } = req.params;
     console.log(id)
     const profileImage = req.file ? req.file.path : null;
-  
+
     // Update the advertiser's profile image in the database
     const seller = await Seller.findByIdAndUpdate(
       id,
@@ -268,22 +277,22 @@ const uploadProfileImage = async (req, res) => {
 };
 
 const requestAccountDeletion = async (req, res) => {
-  const {id} = req.params;
-  
-  
-  try {
-      const seller = await Seller.findById(id);
-      if (!seller) return res.status(404).json({ error: "User not found" });
-       console.log("found the user")
-      // Update requestedDeletion field
-      seller.deletionRequested = true;
-      console.log("under")
-      await seller.save();
-      console.log("under save")
+  const { id } = req.params;
 
-      return res.status(200).json({ message: "Deletion request submitted successfully." });
+
+  try {
+    const seller = await Seller.findById(id);
+    if (!seller) return res.status(404).json({ error: "User not found" });
+    console.log("found the user")
+    // Update requestedDeletion field
+    seller.deletionRequested = true;
+    console.log("under")
+    await seller.save();
+    console.log("under save")
+
+    return res.status(200).json({ message: "Deletion request submitted successfully." });
   } catch (error) {
-      return res.status(401).json({ error: error.message});
+    return res.status(401).json({ error: error.message });
   }
 };
 
@@ -304,43 +313,43 @@ const uploadDoc = multer({
 });
 const uploadDocument = async (req, res) => {
   try {
-      const { id } = req.params;
+    const { id } = req.params;
 
-      // Check if files were uploaded
-      if (!req.files || req.files.length === 0) {
-          return res.status(400).json({ error: "No documents uploaded" });
-      }
+    // Check if files were uploaded
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: "No documents uploaded" });
+    }
 
-      // Map file paths of uploaded documents
-      const documentPaths = req.files.map(file => file.path);
+    // Map file paths of uploaded documents
+    const documentPaths = req.files.map(file => file.path);
 
-      // Update the documents array in the database
-      const seller = await Seller.findByIdAndUpdate(
-          id,
-          { $push: { documents: { $each: documentPaths } } },
-          { new: true }
-      );
+    // Update the documents array in the database
+    const seller = await Seller.findByIdAndUpdate(
+      id,
+      { $push: { documents: { $each: documentPaths } } },
+      { new: true }
+    );
 
-      if (!seller) {
-          return res.status(404).json({ error: "TourGuide not found" });
-      }
+    if (!seller) {
+      return res.status(404).json({ error: "TourGuide not found" });
+    }
 
-      res.json({
-          message: "Documents uploaded successfully",
-          documentPaths: documentPaths
-      });
+    res.json({
+      message: "Documents uploaded successfully",
+      documentPaths: documentPaths
+    });
   } catch (error) {
-      res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-const archieved_on= async (req, res) =>{
+const archieved_on = async (req, res) => {
   const { id } = req.params
   console.log(req.body);
-  const archieved= req.body
-  
+  const archieved = req.body
 
-  const product = await Product.findOneAndUpdate({_id:id},archieved, { new: true })
+
+  const product = await Product.findOneAndUpdate({ _id: id }, archieved, { new: true })
 
 
   res.status(200).json(product)
@@ -352,4 +361,4 @@ const archieved_on= async (req, res) =>{
 
 
 
-module.exports = { requestAccountDeletion,uploadLogo,createSellerProfile, updateSellerProfile, getSellerProfile,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,uploadProfileImage, uploadDoc,uploadDocument ,archieved_on};
+module.exports = { requestAccountDeletion, uploadLogo, createSellerProfile, updateSellerProfile, getSellerProfile, getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName, getSingleProduct, uploadProfileImage, uploadDoc, uploadDocument, archieved_on };

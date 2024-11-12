@@ -105,6 +105,7 @@ import TouristItineraryDetails from "./components/Jimmy/TouristItineraryDetails.
 import AdvertiserLayout from "./components/Advertiser/AdvertiserLayout.js"
 import AdvertiserActivities from "./pages/Advertiser/AdvertiserActivities.js";
 // JIMMY END
+import { useNavigate, Navigate } from 'react-router-dom';
 
 import GuestLayout from "./components/Guest/GuestLayout.js";
 
@@ -171,7 +172,9 @@ function App() {
               />
               <Route path="/:modelName/:id/terms" element={<TermsAndConditionsForm />} />
               {/* tourguide advertiser seller tourist*/}
-              {/* Advertiser */}
+              {/* Advertiser//////////////////////////////////////////////////////////////////////////////////////////////// */}
+
+
               <Route path="/Advertiser/:id" element={<AdvertiserLayout />}>
                 <Route path='/Advertiser/:id/advertiserprofile' element={<AdvertiserProfile />} />
                 <Route
@@ -182,6 +185,7 @@ function App() {
                   path="/Advertiser/:id/AdvertiserActivities/:id"
                   element={<AdvertiserActivities />}
                 />
+                <Route path="/Advertiser/:id/Itineraries" element={<Itineraries />} />
 
               </Route>
               
@@ -189,8 +193,8 @@ function App() {
               
               <Route path="/Authentication" element={<Authentication />} />
 
-              <Route path="/" element={<TermsAndConditionsForm />} />
-              
+              <Route path="/terms" element={<TermsAndConditionsForm />} />
+              <Route path="/" element={<Navigate to="/guest/home" replace />} />
               {/** Admiin */}
               <Route path="/admin" element={<Layout />}>
                 <Route
@@ -407,12 +411,12 @@ function App() {
               
               
               
-              <Route path="/HL" element={<HL />} />
-              <Route path="/Museum" element={<Museum />} />
-              <Route path="/HLTags" element={<HLTags />} />
-              <Route path="/HLMs" element={<HLMs />} />
-              <Route path="/Activities" element={<Activities />} />
-              <Route path="/Itineraries" element={<Itineraries />} />
+              <Route path="/HL" element={<HL />} />{/**/}
+              <Route path="/Museum" element={<Museum />} />{/* */}
+              <Route path="/HLTags" element={<HLTags />} />{/*tourism governer*/}
+              <Route path="/HLMs" element={<HLMs />} />{/*tourism governer*/}
+              <Route path="/Activities" element={<Activities />} />{/* */}
+              <Route path="/Itineraries" element={<Itineraries />} />{/*show for all */}
               {/*JIMMY */}
 
               <Route

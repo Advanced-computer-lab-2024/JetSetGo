@@ -52,11 +52,7 @@ const registerTourGuide = async (req, res) => {
             documents: documentPaths,
         });
 
-        res.status(201).json({
-            message: "Tour Guide registered successfully",
-            user: newTourGuide,
-            documentPaths: documentPaths,
-        });
+        res.status(201).json(newTourGuide);
     } catch (error) {
         res.status(500).json({ error: 'Error registering tour guide' });
     }
@@ -104,11 +100,7 @@ const registerAdvertiser = async (req, res) => {
             documents: documentPaths,
         });
 
-        res.status(201).json({
-            message: "Advertiser registered successfully",
-            user: newAdvertiser,
-            documentPaths: documentPaths,
-        });
+        res.status(201).json(newAdvertiser);
     } catch (error) {
         res.status(500).json({ error: 'Error registering advertiser' });
     }

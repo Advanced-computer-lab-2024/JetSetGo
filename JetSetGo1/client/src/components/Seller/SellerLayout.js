@@ -11,9 +11,9 @@ function SellerLayout() {
   return (
     <div className="admin-dashboard">
       <div className="main-content">
-        <SellerNavbar state={id} /> {/* Navbar stays visible */}
+        <SellerNavbar  state={{ id }} /> {/* Navbar stays visible */}
         <div className="dashboard-data">
-          <Outlet state={id} /> {/* Renders the page content here */}
+          <Outlet  state={{ id }} /> {/* Renders the page content here */}
         </div>
       </div>
     </div>

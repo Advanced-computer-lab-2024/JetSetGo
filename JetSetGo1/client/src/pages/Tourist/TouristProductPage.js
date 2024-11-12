@@ -65,7 +65,7 @@ const TouristProductListing = ({ usertype }) => {
     const fetchProducts = async () => {
 
       try {
-        const response = await fetch('/api/admin/Products');
+        const response = await fetch('/api/tourist/Products');
         const data = await response.json();
         setProducts(data); // Assuming response data is an array of products
       } catch (error) {
@@ -82,7 +82,7 @@ const TouristProductListing = ({ usertype }) => {
   const fetchFilteredProducts = async () => {
     try {
 
-      const response = await fetch(`/api/sellers/filterProducts?min=${values[0]}&max=${values[1]}`, {
+      const response = await fetch(`/api/tourist/filterProducts?min=${values[0]}&max=${values[1]}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ const TouristProductListing = ({ usertype }) => {
   const fetchSortedProducts = async (order) => {
     try {
 
-      const response = await fetch(`/api/admin/sortByRate?flag=${order}`, {
+      const response = await fetch(`/api/tourist/sortByRate?flag=${order}`, {
         method: 'GET', // This is correct
         headers: {
           'Content-Type': 'application/json',

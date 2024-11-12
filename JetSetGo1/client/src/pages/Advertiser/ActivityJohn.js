@@ -211,7 +211,7 @@ export default function ActivityPageJohn() {
 
   const fetchActivities = async (id) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/advertisers/showAll`, { id });
+      const response = await axios.post(`${API_BASE_URL}/advertisers/showAll/${ id }`);
       setActivities(response.data);
       setError(null);
     } catch (error) {

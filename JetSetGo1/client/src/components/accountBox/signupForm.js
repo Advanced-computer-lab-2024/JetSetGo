@@ -153,7 +153,7 @@ const SignupForm = () => {
         
         var modelName;
         if (selectedOption.value === 'Advertiser' ) {
-          modelName = 'advertisers';
+          modelName = 'advertiser';
           navigate(`/${modelName}/${id}/terms`);
         }else if (selectedOption.value == 'Seller') {
           modelName = 'sellers';
