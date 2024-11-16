@@ -6,8 +6,8 @@ import './changePassword.css'
 
 export default function ChangePassword() {
   const location = useLocation(); // Access the location object
-  const { id ,modelName} = location.state || {}; // Access the id from state
-  // const {   } = useParams()
+  const { modelName} = location.state || {}; // Access the id from state
+  const {  id  } = useParams()
   console.log(id, modelName)
   const userId=useLocation().state.id
   const [oldPassword, setOldPassword] = useState('')
