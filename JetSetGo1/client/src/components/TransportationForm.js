@@ -8,6 +8,7 @@ const Transportationform = () => {
     const [dropoff, setDropoff] = useState('');
     const [days, setDays] = useState('')
     const [time, setTime] = useState('')
+   
     const [capacity, setCapacity] = useState('')
     const [cLocation, setCLocation] = useState('')
     const [price, setPrice] = useState('')
@@ -22,8 +23,7 @@ const Transportationform = () => {
         const transport = {
             vehicle: vehicle,
             ...(vehicle === 'car' && { carModel: carModel }),
-            ...(vehicle === 'bus' && { bLocation: { pickup, dropoff }}),
-            ...(vehicle === 'bus' && { capacity: capacity }),
+            ...(vehicle === 'bus' && { bLocation: { pickup, dropoff }, capacity: capacity }),
             days: days,
             time: time,
             ...(vehicle === 'car' && { cLocation: cLocation }),
@@ -67,8 +67,7 @@ const Transportationform = () => {
         const transport = {
             vehicle: vehicle,
             ...(vehicle === 'car' && { carModel: carModel }),
-            ...(vehicle === 'bus' && { bLocation: { pickup, dropoff }}),
-            ...(vehicle === 'bus' && {capacity: capacity }),
+            ...(vehicle === 'bus' && { bLocation: { pickup, dropoff }, capacity: capacity }),
             days: days,
             time: time,
             ...(vehicle === 'car' && { cLocation: cLocation }),
