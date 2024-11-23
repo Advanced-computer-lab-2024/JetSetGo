@@ -72,7 +72,7 @@ const {
   getSingleItinerary,
   getTouristUsername,
   getTagIdByName,
-  getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking, createBooking,getSingleProduct } = require("../controllers/touristController");
+  getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking, createBooking,getSingleProduct,shareViaEmail } = require("../controllers/touristController");
 
 const router = express.Router();
 
@@ -89,6 +89,9 @@ router.delete("/deleteTransportBooking/:id", deleteTransportBooking);
 
 router.patch("/selectPrefrences/:id", selectPrefrences )
 router.get("/myPrefrences/:id", getPrefrences )
+
+// Route for sharing via email
+router.post('/api/tourist/shareViaEmail', shareViaEmail);
 
 
 const { changePassword } = require("../controllers/PasswordController");
