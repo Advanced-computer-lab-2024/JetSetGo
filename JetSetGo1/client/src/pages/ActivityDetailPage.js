@@ -157,7 +157,7 @@ const ActivityDetailPage = () => {
                     <button onClick={handlePayment} disabled={activity.isBookedYet}>
                         {activity.isBookedYet ? 'Already Booked' : 'Pay for Activity and book now'}
                     </button>
-
+                    <ShareLink/>
                 </div>
 
                 {/* <div>

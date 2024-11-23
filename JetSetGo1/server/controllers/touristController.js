@@ -16,6 +16,55 @@ const SalesModel = require("../models/SalesModel");
 
 const TourGuide = require("../models/TourGuideModel.js");
 const FlightBooking = require('../models/FlightBooking');
+const nodemailer = require('nodemailer');
+
+
+// Function to share via email using Tourist model
+shareViaEmail = async (req, res) => {
+  const { touristIds, subject, body } = req.body;
+
+  // Validate the request body
+  if (!touristIds || !Array.isArray(touristIds) || touristIds.length === 0) {
+    return res.status(400).json({ error: 'No tourist IDs provided' });
+  }
+  if (!subject || !body) {
+    return res.status(400).json({ error: 'Subject and body are required' });
+  }
+
+  try {
+    // Fetch emails of the specified tourists from the database
+    const tourists = await Tourist.find({ _id: { $in: touristIds } }, 'email');
+    const emails = tourists.map((tourist) => tourist.email);
+
+    if (emails.length === 0) {
+      return res.status(404).json({ error: 'No valid emails found for the given tourist IDs' });
+    }
+
+    // Configure the email transporter
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail', // Use your email service provider
+      auth: {
+        user: 'your-email@example.com', // Your email
+        pass: 'your-email-password', // Your email password or app-specific password
+      },
+    });
+
+    // Send the email
+    const info = await transporter.sendMail({
+      from: 'jetsetgo212@gmail.com', // Sender address
+      to: emails.join(','), // Recipient emails, joined as a string
+      subject, // Subject line
+      text: body, // Plain text body
+    });
+
+    console.log('Email sent: %s', info.messageId);
+    return res.status(200).json({ message: 'Emails sent successfully!' });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    return res.status(500).json({ error: 'Failed to send emails.' });
+  }
+};
+
 
 const getTagNameById = async (req, res) => {
   try {
@@ -1962,5 +2011,5 @@ module.exports = {
   getSingleItinerary,
   getTouristUsername,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,createBooking,getSingleProduct,
 
-  getTagIdByName, myTransportBooking, myActivityItineraryBooking, upload
+  getTagIdByName, myTransportBooking, myActivityItineraryBooking, upload, shareViaEmail
 };
