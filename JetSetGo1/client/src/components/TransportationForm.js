@@ -50,7 +50,6 @@ const Transportationform = () => {
             setDays('')
             setTime('')
             setCapacity('')
-            setCapacity('')
             setVehicle('')
             setPickup('')
             setDropoff('')
