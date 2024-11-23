@@ -8,6 +8,7 @@ const Transportationform = () => {
     const [dropoff, setDropoff] = useState('');
     const [days, setDays] = useState('')
     const [time, setTime] = useState('')
+    const [capacity, setCapacity] = useState('')
     const [cLocation, setCLocation] = useState('')
     const [price, setPrice] = useState('')
     const [advertiser, setAdvertiser] = useState('')
@@ -21,7 +22,7 @@ const Transportationform = () => {
         const transport = {
             vehicle: vehicle,
             ...(vehicle === 'car' && { carModel: carModel }),
-            ...(vehicle === 'bus' && { bLocation: { pickup, dropoff } }),
+            ...(vehicle === 'bus' && { bLocation: { pickup, dropoff }, capacity: capacity }),
             days: days,
             time: time,
             ...(vehicle === 'car' && { cLocation: cLocation }),
@@ -47,6 +48,7 @@ const Transportationform = () => {
             setModel('')
             setDays('')
             setTime('')
+            setCapacity('')
             setVehicle('')
             setPickup('')
             setDropoff('')
@@ -64,7 +66,7 @@ const Transportationform = () => {
         const transport = {
             vehicle: vehicle,
             ...(vehicle === 'car' && { carModel: carModel }),
-            ...(vehicle === 'bus' && { bLocation: { pickup, dropoff } }),
+            ...(vehicle === 'bus' && { bLocation: { pickup, dropoff }, capacity: capacity }),
             days: days,
             time: time,
             ...(vehicle === 'car' && { cLocation: cLocation }),
@@ -89,6 +91,7 @@ const Transportationform = () => {
             setModel('')
             setDays('')
             setTime('')
+            setCapacity('')
             setVehicle('')
             setPickup('')
             setDropoff('')
@@ -132,6 +135,19 @@ const Transportationform = () => {
                         onChange={(e) => setCLocation(e.target.value)}
                         value={cLocation}
                     />
+                    <label>Days Available: </label>
+                    <input
+                        type="days"
+                        onChange={(e) => setDays(e.target.value)}
+                        value={days}
+                    />
+
+                    <label>Timings Available: </label>
+                    <input
+                        type="string"
+                        onChange={(e) => setTime(e.target.value)}
+                        value={time}
+                    />
                 </>
             )}
 
@@ -149,23 +165,30 @@ const Transportationform = () => {
                         onChange={(e) => setDropoff(e.target.value)}
                         value={dropoff}
                     />
+                    <label>Bus Capacity: </label>
+                    <input
+                        type="number"
+                        onChange={(e) => setCapacity(e.target.value)}
+                        value={capacity}
+                    />
+                    <label>Departure Day: </label>
+                    <input
+                        type="days"
+                        onChange={(e) => setDays(e.target.value)}
+                        value={days}
+                    />
+
+                    <label>Departure Time: </label>
+                    <input
+                        type="string"
+                        onChange={(e) => setTime(e.target.value)}
+                        value={time}
+                    />
                 </>
             )}
 
 
-            <label>Days Available: </label>
-            <input
-                type="days"
-                onChange={(e) => setDays(e.target.value)}
-                value={days}
-            />
 
-            <label>Timings Available: </label>
-            <input
-                type="string"
-                onChange={(e) => setTime(e.target.value)}
-                value={time}
-            />
 
 
             <label>Price: </label>

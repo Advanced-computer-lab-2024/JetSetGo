@@ -40,7 +40,7 @@ const upload = multer({
 
 // Create Transportation
 const createTransportation = async (req, res) => {
-    const {vehicle, carModel, days, time, cLocation, bLocation, price, advertiser} = req.body;
+    const {vehicle, carModel, days, time, cLocation, capacity, bLocation, price, advertiser} = req.body;
 
     const transportData = {
       vehicle,
@@ -56,6 +56,7 @@ const createTransportation = async (req, res) => {
       transportData.cLocation = cLocation;
     } else if (vehicle === 'bus') {
       transportData.bLocation = bLocation;
+      transportData.capacity = capacity;
     }
   
 
