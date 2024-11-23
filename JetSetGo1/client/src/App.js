@@ -117,6 +117,7 @@ import AdminUpdateProducts from "./pages/Admin/AdminUpdateProduct.js";
 import Booking from './pages/bookhotel.js'
 import ActivityList from './components/ActivityList-Rate-Comment.js';
 import FlightSearch from './components/flights.js';
+import resetPassword from "./pages/resetpass.js";
 
 
 function App() {
@@ -340,6 +341,10 @@ function App() {
                   element={<ItineraryManagement />}
                 />
               </Route>
+              <Route
+                  path="/sellers/change-password/:id/:modelName"
+                  element={<resetPassword />}
+                />
               {/** seller */}
               <Route path="/sellers" element={<SellerLayout />}>
                 <Route

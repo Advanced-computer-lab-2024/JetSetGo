@@ -1,5 +1,5 @@
 const express = require('express');
-const { logout, populateUserData, login, createUser ,getUsersWithDefaultPassword,deleteAllUsers,fetchAllUsers} = require('../controllers/LoginController.js');
+const { logout, populateUserData, login, createUser ,getUsersWithDefaultPassword,deleteAllUsers,fetchAllUsers,getUserEmailById,getUserEmailByUsername,sendPasswordResetEmail,changePassword} = require('../controllers/LoginController.js');
 
 const Loginrouter = express.Router();
 
@@ -18,6 +18,13 @@ Loginrouter.get('/populate', populateUserData);
 Loginrouter.get('/test', getUsersWithDefaultPassword);
 Loginrouter.get('/del_test', deleteAllUsers);
 Loginrouter.get('/getall', fetchAllUsers);
+
+
+Loginrouter.post('/getmail', getUserEmailByUsername);
+
+Loginrouter.post('/reset', sendPasswordResetEmail);
+
+Loginrouter.post('/change-password', changePassword);
 
 
 
