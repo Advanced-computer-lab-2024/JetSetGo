@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const HLTagform = () => {
+const HLTagform = ({id}) => {
     const [type, setType] = useState('')
     const [historicalPeriod, sethistoricalPeriod] = useState('')
     const [error, setError] = useState(null)

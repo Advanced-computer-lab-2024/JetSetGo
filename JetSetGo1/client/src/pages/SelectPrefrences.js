@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 
 const PreferencesSelection = () => {
-  const [ID, setId] = useState('');
   const [tags, setTags] = useState([]); // Store tags fetched from the database
   const [selectedTags, setSelectedTags] = useState([]);
   const [budget, setBudget] = useState({ from: '', to: '' });
 
+  // Get the ID from the state passed via useLocation
+  const location = useLocation();
+  const { id } = location.state || {}; 
+  console.log(id);
   // Fetch tags from the backend
   const fetchTags = async () => {
     try {
@@ -38,7 +42,6 @@ const PreferencesSelection = () => {
 
   // Submit selected preferences
   const submitPreferences = async () => {
-    console.log("ID:", ID); // Log the ID to verify it is correct
     const preferences = {
       tags: selectedTags,
       budget: {
@@ -49,7 +52,8 @@ const PreferencesSelection = () => {
     console.log(preferences);
 
     try {
-      const response = await axios.patch(`/api/tourist/selectPrefrences/${ID}`, preferences);
+      // Use the ID from the state for the API request
+      const response = await axios.patch(`/api/tourist/selectPrefrences/${id}`, preferences);
       console.log('Preferences updated:', response.data);
     } catch (error) {
       console.error('Error updating preferences:', error);
@@ -59,13 +63,6 @@ const PreferencesSelection = () => {
   return (
     <div>
       <h2>Select Your Preferences</h2>
-
-      <label>ID:</label>
-      <input
-        type="text"
-        onChange={(e) => setId(e.target.value)}
-        value={ID}
-      />
 
       <div>
         <h3>Tags</h3>

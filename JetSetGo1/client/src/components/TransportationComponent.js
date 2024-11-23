@@ -1,4 +1,3 @@
-
 const TransportationComponent = ({ transport }) => {
 
     const handleClick = async () => {

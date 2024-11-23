@@ -76,7 +76,7 @@ const ActivityDetails = ({Activity}) => {
             {/* <p><strong> Advertiser: </strong>{Activity.advertiser}</p> */}
             {/* <p><strong> Booking Open: </strong>{Activity.bookingOpen}</p> */}
             <div className="product-rating">
-              <p  className='rating'>{Activity.rating}</p>
+              <p  className='rating'>{Activity.totalrating}</p>
                <FaStar className="star-icon" />
             </div>
             <p className="product-description"><strong> Special Discounts: </strong>{Activity.specialDiscounts}</p>

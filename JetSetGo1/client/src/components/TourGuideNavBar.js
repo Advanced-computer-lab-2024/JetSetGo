@@ -27,7 +27,7 @@ function TourGuideNavBar() {
     }, []);
 
     const handleNavigation = (path) => {
-        navigate(path);
+        navigate(path , {state:{id}});
         setIsDropdownOpen(false);
         setActivePopup(null); // Close all popups on navigation
     };

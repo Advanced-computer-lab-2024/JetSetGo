@@ -13,9 +13,13 @@ import {
 import RadioGroupRating from "./RadioGroupRating"; // Assuming this is your custom rating component
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Material-UI's back arrow icon
 import "./AddRatingComment.css";
+import { useLocation } from 'react-router-dom';
+
 
 function AddRatingComment() {
-  const { id,guideId } = useParams();
+  const { guideId } = useParams();
+  const location = useLocation(); // Access the location object
+  const { id } = location.state || {}; // Access the id from state
   const navigate = useNavigate();
   const [tourGuide, setTourGuide] = useState(null);
   const [newRating, setNewRating] = useState(0);
@@ -50,13 +54,13 @@ function AddRatingComment() {
     if (hasRated || !newRating) return;
     setRatingError("");
     setRatingSuccess(false);
-
+    console.log("Submitting rating:", newRating);
     const ratingData = {
       touristId,
       tourGuideId: guideId,
       rating: newRating,
     };
-
+    console.log("Submitting rating data:", ratingData);
     fetch(`http://localhost:8000/api/tourist/addRating`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

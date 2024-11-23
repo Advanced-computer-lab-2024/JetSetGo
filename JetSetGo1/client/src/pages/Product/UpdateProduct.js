@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // useParams to get the model and ID from the URL
+import { useParams, useNavigate, useLocation } from 'react-router-dom'; // useParams to get the model and ID from the URL
 import ProductListing from './productsPage';
 
 const UpdateProducts = ({usertype}) => {
-  const { id } = useParams(); // Extract the profile ID and model from the URL
-
+  const location= useLocation()
+  
+  // const { id } = useParams(); // Extract the profile ID and model from the URL
+  let productId=useParams().id
+  const id=location.state.id
+  console.log(location.state)
   // Replacing formValues with individual state variables
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -20,8 +24,8 @@ const UpdateProducts = ({usertype}) => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        console.log(id);
-        const response = await fetch(`/api/sellers/getSingleProduct/${id}`); // Fetch the product data
+        console.log(productId);
+        const response = await fetch(`/api/${usertype}/getSingleProduct/${productId}`); // Fetch the product data
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || 'Failed to fetch product');
@@ -49,7 +53,7 @@ const UpdateProducts = ({usertype}) => {
     };
   
     fetchProfile();
-  }, [id]);
+  }, [productId]);
   
   
   // Handle input changes for individual variables
@@ -94,7 +98,7 @@ const UpdateProducts = ({usertype}) => {
         picture,
         ratings,
       };
-      const response = await fetch(`/api/sellers/product/${id}`, {
+      const response = await fetch(`/api/${usertype}/product/${productId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -105,7 +109,8 @@ const UpdateProducts = ({usertype}) => {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to update product');
       }
-      navigate(`/${usertype}/products`); // Redirect back to the products page after a successful update
+
+      navigate(`/${usertype}/products`,{state:{id}}); // Redirect back to the products page after a successful update
     } catch (err) {
       console.error('Error updating product:', err);
       setError(err.message);

@@ -2,16 +2,20 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 // Components
 import ItineraryDetails from "../components/ItineraryDetails";
 import ItineraryFilter from "../components/ItineraryFilter"; // Import the filter component
 
 const Itineraries2 = () => {
+    const location = useLocation(); // Access the location object
+    const { id } = location.state || {}; // Access the id from state
+
     const [upcomingItineraries, setUpcomingItineraries] = useState(null);
     const [filteredItinerary, setFilteredItinerary] = useState([]); // State for filtered itineraries
     const [sortOrder, setSortOrder] = useState(''); // State for sorting order
-    const {id}=useParams()
+    // const {id}=useParams()
 
     useEffect(() => {
         fetchItineraries();
@@ -64,8 +68,8 @@ const Itineraries2 = () => {
 
             <div className="product-grid">
                 {itinerariesToShow && itinerariesToShow.length === 0 && <p>No results found</p>}
-                {itinerariesToShow && itinerariesToShow.map((itinerary) => ( id &&
-                    <Link key={itinerary._id} to={`/tourist/${id}/itinerary/${itinerary._id}/tourist/${id}`}>
+                {itinerariesToShow && itinerariesToShow.map((itinerary) => (
+                    <Link key={itinerary._id} to={`/tourist/itinerary/${itinerary._id}/tourist/${id}`}>
                     <ItineraryDetails Itinerary={itinerary} />
                     </Link>
                 ))}

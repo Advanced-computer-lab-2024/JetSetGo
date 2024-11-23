@@ -27,7 +27,7 @@ function AdvertiserNavBar() {
     }, []);
 
     const handleNavigation = (path) => {
-        navigate(path);
+        navigate(path,{ state: { id } });
         setIsDropdownOpen(false);
         setActivePopup(null); // Close all popups on navigation
     };
@@ -52,6 +52,17 @@ function AdvertiserNavBar() {
                             <div className="popup">
                                 <ul>
                                     <li><a href="#" onClick={() => handleNavigation(`/Advertiser/${id}/ActivitiesJohn/${id}`)}>Activity Manager</a></li>
+                                    <li><a href="#" onClick={() => handleNavigation(``)}>Relaxation</a></li>
+                                </ul>
+                            </div>
+                        )}
+                    </li>
+                    <li onMouseEnter={() => togglePopup('activities')} onMouseLeave={() => togglePopup(null)}>
+                        <a href="#" onClick={() => handleNavigation(`/Advertiser/${id}/AdvertiserActivities/${id}`)}>Itineraries</a>
+                        {activePopup === 'activities' && (
+                            <div className="popup">
+                                <ul>
+                                    <li><a href="#" onClick={() => handleNavigation(`/Advertiser/${id}/Itineraries`)}>Itineraries</a></li>
                                     <li><a href="#" onClick={() => handleNavigation(``)}>Relaxation</a></li>
                                 </ul>
                             </div>

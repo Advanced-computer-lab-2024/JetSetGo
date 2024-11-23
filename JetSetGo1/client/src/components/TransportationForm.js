@@ -8,6 +8,7 @@ const Transportationform = () => {
     const [dropoff, setDropoff] = useState('');
     const [days, setDays] = useState('')
     const [time, setTime] = useState('')
+   
     const [capacity, setCapacity] = useState('')
     const [cLocation, setCLocation] = useState('')
     const [price, setPrice] = useState('')
@@ -48,6 +49,7 @@ const Transportationform = () => {
             setModel('')
             setDays('')
             setTime('')
+            setCapacity('')
             setCapacity('')
             setVehicle('')
             setPickup('')

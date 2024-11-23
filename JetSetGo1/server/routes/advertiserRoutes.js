@@ -47,6 +47,6 @@ router.patch('/update/:id', updateActivity);
 // router.get('/', getActivities);
 
 
-router.post('/showAll', showMyActivities )
+router.post('/showAll/:id', showMyActivities )
 
 module.exports = router;

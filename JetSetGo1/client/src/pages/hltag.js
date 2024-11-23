@@ -1,29 +1,49 @@
 // import { Link } from "react-router-dom"
-import { useState } from "react"
+import { useState, useEffect } from "react";
+import { useLocation } from 'react-router-dom';
 
 
 //components 
 // import HLTagelement from '../components/hltagcomponent.js'
 import HLTagform from '../components/hltagform.js'
+import HLTagelement from '../components/hltagcomponent.js'
 
-const HLTags = () =>{
-    const [ tags  ] = useState(null)
+const HLTags = () => {
+    const [tags, setTags] = useState(null); // State to store tags
+  const location = useLocation(); // Access the location object
+  const { id } = location.state || {}; // Access id from state
 
-   
 
-    console.log("kokokokokok",tags);
-     return(
+    useEffect(() => {
+        const fetchTags = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/api/tourism-governer/tags'); // Adjust API URL as needed
+                const json = await response.json();
+                if (response.ok) {
+                    setTags(json); // Set fetched tags in state
+                }
+            } catch (error) {
+                console.error('Error fetching tags:', error);
+            }
+        };
+
+        fetchTags();
+    }, []); // Empty dependency array to run only on component mount
+
+    console.log("kokokokokok", tags);
+    return (
         <div className="home">
             <div className="tags">
-                {/* {tags && tags.map((tag)=>(
+                {tags && tags.map((tag) => (
                     // <p key={tag.tag_name}>{tag.tag_name}</p>
                     // <tagelement tag={tag}/>
-                    <HLTagelement tag={tag}/>
-                ))} */}
+                    <HLTagelement tag={tag} />
+                ))}
             </div>
-            <HLTagform/>
+            <HLTagform />
+
         </div>
-     )
+    )
 }
 
 

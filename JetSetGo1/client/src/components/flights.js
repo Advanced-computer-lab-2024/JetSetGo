@@ -279,7 +279,7 @@ export const FlightSearch = ({ touristId }) => {
 
     return (
         <div style={styles.container}>
-            <NavBar />
+            {/* <NavBar /> */}
             <br />
             {/* Blue Background */}
             <div style={styles.header}>

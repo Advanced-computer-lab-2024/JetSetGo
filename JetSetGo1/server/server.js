@@ -20,6 +20,7 @@ const guestRoutes = require('./routes/guestRoutes.js')
 const adminRoutes = require('./routes/adminRoutes.js');
 const registerRoutes = require('./routes/registerRoutes');
 const router = require('./routes/router.js');
+const Loginrouter = require('./routes/UserRoutes.js');
 
 
 
@@ -47,7 +48,8 @@ app.use('/api/tour-guides', tourGuideRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/tourist',touristRoutes)
 app.use('/api',router);
-
+app.use("/uploads", express.static("uploads"));
+app.use('/user',Loginrouter);
 
 
 

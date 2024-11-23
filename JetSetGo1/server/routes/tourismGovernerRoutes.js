@@ -1,5 +1,6 @@
 const express = require('express');
-const {createMuseum, getMuseum, updateMuseum, deleteMuseum, createHistoricalLocation, getHistoricalLocation, updateHistoricalLocation, deleteHistoricalLocation, createTag, showMyMuseumsAndHistoricalPlaces} = require('../controllers/tourismGovernerController');
+const {createMuseum, getMuseum, updateMuseum, deleteMuseum, createHistoricalLocation, 
+    getHistoricalLocation, updateHistoricalLocation, deleteHistoricalLocation, createTag, showMyMuseumsAndHistoricalPlaces,getAllTags} = require('../controllers/tourismGovernerController');
 const router = express.Router();
 
 
@@ -20,6 +21,7 @@ router.delete('/deleteHL/:id', deleteHistoricalLocation )
 
 
 router.post('/newTag', createTag )
+router.get('/tags', getAllTags);
 
 
 router.get('/showAll', showMyMuseumsAndHistoricalPlaces )

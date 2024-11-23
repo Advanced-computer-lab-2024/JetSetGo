@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
-const MyBookingsPage = ({ touristId }) => {
+const MyBookingsPage = () => {
   const [transportBookings, setTransportBookings] = useState([]);
   const [activityBookings, setActivityBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [transportDetails, setTransportDetails] = useState({});
   const [activityDetails, setActivityDetails] = useState({});
+  const location = useLocation(); // Access state passed via Link
+  const { id } = location.state || {}; // Access id from state
+  const tourist = id;
 
   useEffect(() => {
     const fetchBookings = async () => {
       try {
         // Fetch transport bookings
-        const transportResponse = await fetch(`http://localhost:3000/api/tourist/mytransports/670255f97b12bc9e3f1c7f26`);
+        const transportResponse = await fetch(`http://localhost:3000/api/tourist/mytransports/${id}`);
         const transportData = await transportResponse.json();
         setTransportBookings(transportData);
         console.log("fetch 1 done");
 
         // Fetch activity/itinerary bookings
-        const activityResponse = await fetch(`http://localhost:3000/api/tourist/myactivities/670255f97b12bc9e3f1c7f26`);
+        const activityResponse = await fetch(`http://localhost:3000/api/tourist/myactivities/${id}`);
         const activityData = await activityResponse.json();
         setActivityBookings(activityData);
         console.log("fetch 2 done");
@@ -40,7 +44,7 @@ const MyBookingsPage = ({ touristId }) => {
       console.log("fetch 3 done")
       setTransportDetails((prevDetails) => ({
         ...prevDetails,
-        [transportationId]:transportDetails,
+        [transportationId]: transportDetails,
       }));
     } catch (err) {
       console.error('Error fetching transport details:', err);
@@ -68,12 +72,12 @@ const MyBookingsPage = ({ touristId }) => {
 
   const cancelBooking = async (bookingId, type) => {
     try {
-      const url = type === 'transport' 
-        ? `http://localhost:3000/api/tourist/deleteTransportBooking/${bookingId}` 
+      const url = type === 'transport'
+        ? `http://localhost:3000/api/tourist/deleteTransportBooking/${bookingId}`
         : `http://localhost:3000/api/tourist/cancel_booking`;
-      
-        
-        const body = type === 'transport' ? undefined : JSON.stringify({ booking_id: bookingId }); // Only send the body for activities
+
+
+      const body = type === 'transport' ? undefined : JSON.stringify({ booking_id: bookingId }); // Only send the body for activities
 
 
       const response = await fetch(url, {
@@ -83,7 +87,7 @@ const MyBookingsPage = ({ touristId }) => {
       });
 
       const result = await response.json();
-      
+
       if (response.ok) {
         alert(`Booking canceled successfully: ${result.message}`);
         // Remove the cancelled booking from the state
@@ -131,7 +135,7 @@ const MyBookingsPage = ({ touristId }) => {
                 <p>Price: ${transportDetails[booking.transportationId].price}</p>
               </div>
             ) : (
-              
+
               <button onClick={() => fetchTransportDetails(booking.transportationId)}>Load Details</button>
             )}
             <button onClick={() => cancelBooking(booking._id, 'transport')}>Cancel Booking</button>
@@ -145,13 +149,15 @@ const MyBookingsPage = ({ touristId }) => {
       <h2>Activity & Itinerary Bookings</h2>
       {activityBookings.length > 0 ? (
         activityBookings.map((booking) => (
+          
           <div key={booking._id}>
             <h3>Booking Reference Type: {booking.referenceType}</h3>
             {activityDetails[`${booking.referenceId}-${booking.referenceType}`] ? (
               <div>
                 <p>{booking.referenceType} Name: {activityDetails[`${booking.referenceId}-${booking.referenceType}`].title}</p>
                 {/* <p>Details: {activityDetails[`${booking.referenceId}-${booking.referenceType}`].details}</p> */}
-                <p>Date: {new Date(booking.createdAt).toLocaleDateString()}</p>
+                {/* <p>Date: {{activityDetails[${booking.referenceId}-${booking.referenceType}].date}}</p> */}
+                <p>Date: {activityDetails[`${booking.referenceId}-${booking.referenceType}`].date}</p>
               </div>
             ) : (
               <button onClick={() => fetchActivityOrItineraryDetails(booking.referenceId, booking.referenceType)}>

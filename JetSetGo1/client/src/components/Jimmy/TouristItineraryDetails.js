@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom"; // Import useNavigate
-import { Button,Typography, Divider, IconButton } from "@mui/material";
+import { Button, Typography, Divider, IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Material-UI's back arrow icon
 import "./TouristItineraryDetails.css";
+import { useLocation } from 'react-router-dom';
 
 function TouristItineraryDetails() {
-  const { id,iternaryId } = useParams(); // Get itineraryId from the URL
-  const touristId=id
+  const location = useLocation(); // Access the location object
+  const { id } = location.state || {}; // Access the id from state
+
+  const { iternaryId } = useParams(); // Get itineraryId from the URL
+  const touristId = id
   const [itinerary, setItinerary] = useState(null);
   const [touristUsername, setTouristUsername] = useState(""); // Store the tourist username
   const [error, setError] = useState(null);
@@ -54,29 +58,29 @@ function TouristItineraryDetails() {
       });
   }, [iternaryId, touristId]); // Refetch if itineraryId or touristId changes
 
-// Function to follow an itinerary
-const handleFollowItinerary = () => {
-  setLoading(true);
-  fetch("http://localhost:8000/api/tourist/follow", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ touristId, itineraryId:iternaryId }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.error) {
-        setMessage("Failed to follow itinerary: " + data.error);
-      } else {
-        
-        setMessage("Successfully followed itinerary!");
-      }
+  // Function to follow an itinerary
+  const handleFollowItinerary = () => {
+    setLoading(true);
+    fetch("http://localhost:8000/api/tourist/follow", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ touristId, itineraryId: iternaryId }),
     })
-    .catch((error) => {
-      console.error("Error following itinerary:", error);
-      setMessage("Error following itinerary.");
-    })
-    .finally(() => setLoading(false));
-};
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          setMessage("Failed to follow itinerary: " + data.error);
+        } else {
+
+          setMessage("Successfully followed itinerary!");
+        }
+      })
+      .catch((error) => {
+        console.error("Error following itinerary:", error);
+        setMessage("Error following itinerary.");
+      })
+      .finally(() => setLoading(false));
+  };
 
 
   // Calculate the average rating (if ratings exist)
@@ -152,19 +156,19 @@ const handleFollowItinerary = () => {
       </div>
 
       {/* Rate/Comment Button */}
-      <Link to={`/tourist/${touristId}/add-rating-comment-itinerary/${iternaryId}`}>
+      <Link to={`/tourist/add-rating-comment-itinerary/${iternaryId}`} state={{ id }}>
         <button variant="contained" color="primary">
           Rate/Comment
         </button>
       </Link>
       <Button
-          variant="contained"
-          color="secondary"
-          onClick={handleFollowItinerary}
-          disabled={loading}
-        >
-          Follow Itinerary
-        </Button>
+        variant="contained"
+        color="secondary"
+        onClick={handleFollowItinerary}
+        disabled={loading}
+      >
+        Follow Itinerary
+      </Button>
       <Divider sx={{ my: 2 }} />
 
       {/* Comments Section Card */}

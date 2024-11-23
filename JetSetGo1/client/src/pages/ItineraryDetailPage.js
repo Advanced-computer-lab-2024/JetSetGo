@@ -2,8 +2,12 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
 import ShareLink from '../components/ShareLink';
+import { useLocation } from 'react-router-dom';
+
 
 const ItineraryDetailPage = () => {
+    const location = useLocation(); // Access the location object
+    // const { id } = location.state || {}; // Access the id from state
     const { itineraryId, id } = useParams(); // Get itineraryId and id from URL
     const [itinerary, setItinerary] = useState(null);
     const [error, setError] = useState(null);
@@ -37,7 +41,7 @@ const ItineraryDetailPage = () => {
                 if (!itinerary?.tags) return;
 
                 const names = [];
-                for (const tagId of itineraryId.tags) {
+                for (const tagId of itinerary.tags) {
                     const response = await fetch(`/api/tourist/tagName/${tagId}`);
                     const data = await response.json();
                     if (response.ok) {
@@ -52,8 +56,8 @@ const ItineraryDetailPage = () => {
             }
         };
 
-        if (itineraryId) fetchTagNames();
-    }, [itineraryId]);
+        if (itinerary) fetchTagNames();
+    }, [itinerary]);
 
 
     // Handle Payment

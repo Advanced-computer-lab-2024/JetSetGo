@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 import SearchBar from './Searchbar';
 
+import { useLocation } from 'react-router-dom';
+
 const HistoricalPlaceFilter = ({ onFilter }) => {
     // States for search terms
+    const location = useLocation(); // Access state passed via Link
+    const { id } = location.state || {}; // Access id from state
+
     const [name, setName] = useState('');
     const [tagName, setTagName] = useState(''); // Tag name input
     const [selectedCategories, setSelectedCategories] = useState([]); // Track selected categories

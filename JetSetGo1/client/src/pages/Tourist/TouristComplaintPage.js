@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const TouristAddComplaintPage = () => {
-    const { id } = useParams(); // Get userId from URL params
+    // const { id } = useParams(); // Get userId from URL params
+    const location = useLocation(); // Access the location object
+    const { id } = location.state || {}; // Access the id from state
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
     const [error, setError] = useState(null);

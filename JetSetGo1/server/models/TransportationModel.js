@@ -33,7 +33,11 @@ const transportationSchema = new mongoose.Schema({
     required: function () { return this.vehicle === 'bus'; }
   },
 
-
+  capacity: {
+    type: Number,
+    required: function () { return this.vehicle === 'bus'; }
+  },
+  
   days: [{
     type: String,
     required: true
