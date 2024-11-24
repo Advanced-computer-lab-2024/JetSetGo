@@ -5,18 +5,28 @@ import Badge2 from '../../assets/images/Badge2.jpg';
 import Badge3 from '../../assets/images/Badge3.jpg';
 import { useLocation } from 'react-router-dom';
 import './homepage.css';
-
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 function TourismGovernerNavBar() {
     const location = useLocation(); // Access state passed via Link
     // const { id } = location.state || {}; // Access id from state
-    const { id } = useParams();
+   
+    const token = Cookies.get("auth_token");
+    const decodedToken = jwtDecode(token);
+    const id = decodedToken.id;
+    
+    console.log("id:",id);
+    const modelName = decodedToken.userType;
+    console.log("modelName:",modelName);
+
+
    
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [activePopup, setActivePopup] = useState(null);
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
-    const modelName = "tourismgoverner"  /** 7ot modelName */
+   // const modelName = "tourismgoverner"  /** 7ot modelName */
     const [tourist, setTourist] = useState(null);
 
 

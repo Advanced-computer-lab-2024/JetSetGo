@@ -14,6 +14,10 @@ const Advertiser = require('../models/AdvertiserModel.js');
 const Itinerary = require("../models/ItineraryModel");
 const Complaint = require('../models/ComplaintModel.js')
 const mongoose= require('mongoose')
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+
+const User = require('../models/UserModel');
 
 
 const models={admin: Admin, seller: Seller, tourguide: TourGuide, tourist: Tourist, advertiser: Advertiser, tourismgoverner: TourismGoverner};
@@ -198,16 +202,47 @@ const delete_act_category = async (req, res) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 //add tourism gouverner 
-const add_tourism_governer = async (req,res) => {
-    const { username , password , email } = req.body;
-    try{
-        const tourism_governer = await TourismGovernerModel.create({username , password , email});
-        res.status(200).json(tourism_governer);
-    }
-    catch (error) {
-        res.status(400).json({ error: error.message })
+
+
+
+const add_tourism_governer = async (req, res) => {
+    const { username, password, email } = req.body;
+
+    try {
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create the Tourism Governor document
+        const tourism_governer = await TourismGovernerModel.create({
+            username,
+            password: password,
+            email
+        });
+
+        // Create the User document with reference to the governor
+        const user = await User.create({
+            username,
+            password: password,
+            userType: 'TourismGoverner',
+            userDetails: tourism_governer._id
+        });
+
+        // Generate a token
+        const token = jwt.sign(
+            { id: tourism_governer._id, userType: user.userType },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        );
+
+        res.status(200).json({ user, token, tourism_governer });
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ error: error.message });
     }
 };
+
+module.exports = { add_tourism_governer };
+
 
 //for testing
 const view_tourism_governer = async (req,res) => {

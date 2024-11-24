@@ -41,9 +41,13 @@ const changePassword = async (req, res) => {
             return res.status(400).json({ error: 'Incorrect old password.' });
         }
 
+        console.log("after oldPassword != user.password")
+
         // Hash the new password and save it
         user.password = newPassword
         await user.save();
+
+        console.log("ba3d el save")
 
         res.status(200).json({ message: 'Password changed successfully.' });
     } catch (err) {

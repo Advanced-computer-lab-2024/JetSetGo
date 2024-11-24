@@ -15,7 +15,7 @@ export default function ChangePassword() {
   console.log("id:", id);
   const modelName = decodedToken.userType;
   console.log("modelName:", modelName);
-
+  
   console.log(id, modelName)
   // const userId = useLocation().state.id
   const [oldPassword, setOldPassword] = useState('')
@@ -48,7 +48,7 @@ export default function ChangePassword() {
 
     const userTypeEndpoints = {
       "Advertisers": 'api/advertisers',
-      'TourismGovernor': 'api/tourism-governer',
+      'TourismGoverner': 'api/tourism-governer',
       "Seller": 'api/sellers',
       'TourGuide': 'api/tour-guides',
       "Admin": 'api/admin',

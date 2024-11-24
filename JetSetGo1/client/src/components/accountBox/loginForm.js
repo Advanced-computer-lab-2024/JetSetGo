@@ -72,7 +72,7 @@ export function LoginForm(props) {
           } else if (userType === 'Admin') {
             modelName = 'admin';
             navigate(`/${modelName}/products`);
-          } else if (userType === 'TourismGovernor') {
+          } else if (userType === 'TourismGoverner') {
             modelName = 'tourism_governer';
             navigate(`/${modelName}/${id}/HLTags`);
           } else {
