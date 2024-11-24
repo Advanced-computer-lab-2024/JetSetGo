@@ -65,14 +65,14 @@ export function LoginForm(props) {
             navigate(`/${modelName}/${id}/products`);
           } else if (userType === 'Tourist') {
             modelName = 'tourist';
-            navigate(`/${modelName}/${id}/home`);
+            navigate(`/${modelName}/home`);
           } else if (userType === 'TourGuide') {
             modelName = 'tourguide';
             navigate(`/${modelName}/${id}/Itineraries`);
           } else if (userType === 'Admin') {
             modelName = 'admin';
             navigate(`/${modelName}/products`);
-          } else if (userType === 'TourismGovernor') {
+          } else if (userType === 'TourismGoverner') {
             modelName = 'tourism_governer';
             navigate(`/${modelName}/${id}/HLTags`);
           } else {

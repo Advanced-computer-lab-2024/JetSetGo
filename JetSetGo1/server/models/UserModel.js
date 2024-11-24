@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema({
   },
   userType: {
     type: String,
-    enum: ['Tourist', 'Advertisers', 'TourGuide', 'Seller', 'Admin', 'TourismGovernor'],
+    enum: ['Tourist', 'Advertisers', 'TourGuide', 'Seller', 'Admin', 'TourismGoverner'],
     required: true
   },
   userDetails: {
