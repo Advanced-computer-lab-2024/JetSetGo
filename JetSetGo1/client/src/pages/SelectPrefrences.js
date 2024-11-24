@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 const PreferencesSelection = () => {
   const [tags, setTags] = useState([]); // Store tags fetched from the database
+  const token = Cookies.get("auth_token");
+  const decodedToken = jwtDecode(token);
+  const id = decodedToken.id;
+  console.log("id:", id);
+  const modelName = decodedToken.userType;
+  console.log("modelName:", modelName);
   const [selectedTags, setSelectedTags] = useState([]);
   const [budget, setBudget] = useState({ from: '', to: '' });
 
   // Get the ID from the state passed via useLocation
   const location = useLocation();
-  const { id } = location.state || {}; 
+  // const { id } = location.state || {};
   console.log(id);
   // Fetch tags from the backend
   const fetchTags = async () => {

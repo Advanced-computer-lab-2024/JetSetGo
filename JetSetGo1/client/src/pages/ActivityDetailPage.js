@@ -2,9 +2,17 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
 import ShareLink from '../components/ShareLink';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 const ActivityDetailPage = () => {
-    const { activityId, id } = useParams(); // Get activityId and id from URL
+    const token = Cookies.get("auth_token");
+    const decodedToken = jwtDecode(token);
+    const id = decodedToken.id;
+    console.log("id: act", id);
+    const modelName = decodedToken.userType;
+    console.log("modelName:act det", modelName);
+    const { activityId } = useParams(); // Get activityId and id from URL
     console.log({ activityId, id })
     const [activity, setActivity] = useState(null);
     const [error, setError] = useState(null);
@@ -70,14 +78,14 @@ const ActivityDetailPage = () => {
                 } else {
                     console.error(data.error);
                 }
-                
+
 
 
             } catch (error) {
                 console.error("Failed to fetch category name:", error);
             }
-            console.log(activity._id,id);
-            
+            console.log(activity._id, id);
+
         };
 
         if (activity) fetchCategoryName();

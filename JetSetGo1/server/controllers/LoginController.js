@@ -23,8 +23,8 @@ const login = async (req, res) => {
         return res.status(404).json({ error: 'User not found' });
       }
   
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-
+      // const isPasswordValid = await bcrypt.compare(password, user.password);
+      console.log(user.password,password)
       if (user.password!=password) {
         return res.status(401).json({ error: 'Invalid password' });
       }
@@ -59,7 +59,7 @@ const createUser = async (req, res) => {
       return res.status(400).json({ error: 'Invalid user type' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
       username,
@@ -285,7 +285,7 @@ const getUserEmailByUsername = async (req, res) => {
     // res.status(200).json({ email: userDetails.email });
     ///////////
     const email = userDetails.email;
-    const resetToken = jwt.sign({ email: userDetails.email,id: userDetails._id }, JWT_SECRET, { expiresIn: '1h' });
+    const resetToken = jwt.sign({ email: userDetails.email,id: user._id }, JWT_SECRET, { expiresIn: '1h' });
 
     // Generate the password reset link (could also include the token in a URL)
     const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;

@@ -9,6 +9,10 @@ import { faPlus, faStar } from '@fortawesome/free-solid-svg-icons';
 import { CurrencyContext } from '../../components/Tourist/CurrencyContext';
 import { useParams, useNavigate } from 'react-router-dom'; // useParams to get the model and ID from the URL
 import { useLocation } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
+// import { getTokenFromCookies } from '../utils/cookies'; // Adjust the path as necessary
+
 
 const STEP = 1;
 const MIN = 0;
@@ -18,7 +22,10 @@ const MAX = 500;
 const TouristProductListing = ({ usertype }) => {
   // const { id } = useParams();
   const location = useLocation(); // Access the location object
-  const { id } = location.state || {};
+  const token = Cookies.get("auth_token");
+  const decodedToken = jwtDecode(token);
+  const id = decodedToken.id;
+  // const { id } = location.state || {};
   const { currency } = useContext(CurrencyContext);
 
 

@@ -45,7 +45,7 @@
 //                 price: flight.price?.total || 0,
 //                 duration: flight.itineraries[0].duration,
 //             });
-            
+
 //             if (response.status === 201) {
 //                 alert("Flight booked successfully!");
 //             }
@@ -54,7 +54,7 @@
 //             alert(error.message);
 //         }
 //     };
-    
+
 
 //     return (
 //         <div style={styles.container}>
@@ -213,17 +213,25 @@
 //       color: '#888',
 //     },
 //   };
-  
+
 
 // export default FlightSearch;
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import NavBar from './Tourist/navbar';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 export const FlightSearch = ({ touristId }) => {
     const location = useLocation(); // Access state passed via Link
-    const { id } = location.state || {}; // Access id from state
+    const token = Cookies.get("auth_token");
+    const decodedToken = jwtDecode(token);
+    const id = decodedToken.id;
+    console.log("id:", id);
+    const modelName = decodedToken.userType;
+    console.log("modelName:", modelName);
+    // const { id } = location.state || {}; // Access id from state
     touristId = id;
     const [flights, setFlights] = useState([]);
     const [origin, setOrigin] = useState('');
@@ -231,7 +239,7 @@ export const FlightSearch = ({ touristId }) => {
     const [departureDate, setDepartureDate] = useState('');
     const [adults, setAdults] = useState(1);
     const [loading, setLoading] = useState(false);
-    console.log("touristId"+touristId);
+    console.log("touristId" + touristId);
     // Fetch flights from the backend API
     const fetchFlights = async () => {
         setLoading(true); // Show loading indicator
@@ -267,7 +275,7 @@ export const FlightSearch = ({ touristId }) => {
                 price: flight.price?.total || 0,
                 duration: flight.itineraries[0].duration,
             });
-            
+
             if (response.status === 201) {
                 alert("Flight booked successfully!");
             }
@@ -349,84 +357,84 @@ export const FlightSearch = ({ touristId }) => {
 
 const styles = {
     container: {
-      fontFamily: 'Arial, sans-serif',
-      backgroundColor: '#ADD8E6', // Baby blue background
-      padding: '20px',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
+        fontFamily: 'Arial, sans-serif',
+        backgroundColor: '#ADD8E6', // Baby blue background
+        padding: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
     },
     header: {
-      width: '100%',
-      textAlign: 'center',
-      marginBottom: '20px',
-      color: '#fff',
+        width: '100%',
+        textAlign: 'center',
+        marginBottom: '20px',
+        color: '#fff',
     },
     title: {
-      fontSize: '2em',
-      fontWeight: 'bold',
-      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
+        fontSize: '2em',
+        fontWeight: 'bold',
+        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
     },
     searchBar: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      padding: '20px',
-      borderRadius: '8px',
-      background: 'linear-gradient(135deg, #1e3c72, #2a5298)', // Blue gradient background for search bar
-      width: '100%',
-      maxWidth: '600px',
-      color: '#fff',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '20px',
+        borderRadius: '8px',
+        background: 'linear-gradient(135deg, #1e3c72, #2a5298)', // Blue gradient background for search bar
+        width: '100%',
+        maxWidth: '600px',
+        color: '#fff',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     },
     input: {
-      width: '100%',
-      padding: '10px',
-      margin: '5px 0',
-      borderRadius: '4px',
-      border: '1px solid #ddd',
+        width: '100%',
+        padding: '10px',
+        margin: '5px 0',
+        borderRadius: '4px',
+        border: '1px solid #ddd',
     },
     button: {
-      padding: '10px 20px',
-      margin: '10px 5px',
-      backgroundColor: '#0071c2',
-      color: '#fff',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      fontSize: '16px',
+        padding: '10px 20px',
+        margin: '10px 5px',
+        backgroundColor: '#0071c2',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '16px',
     },
     results: {
-      width: '100%',
-      maxWidth: '600px',
-      marginTop: '20px',
+        width: '100%',
+        maxWidth: '600px',
+        marginTop: '20px',
     },
     loading: {
-      color: '#0071c2',
-      fontSize: '1.2em',
-      marginTop: '10px',
+        color: '#0071c2',
+        fontSize: '1.2em',
+        marginTop: '10px',
     },
     flightCard: {
-      border: '1px solid #ddd',
-      borderRadius: '8px',
-      padding: '15px',
-      margin: '10px 0',
-      backgroundColor: '#fff',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.05)',
+        border: '1px solid #ddd',
+        borderRadius: '8px',
+        padding: '15px',
+        margin: '10px 0',
+        backgroundColor: '#fff',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.05)',
     },
     extraButton: {
-      padding: '8px 16px',
-      backgroundColor: '#34a853',
-      color: '#fff',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      fontSize: '14px',
-      marginTop: '10px',
+        padding: '8px 16px',
+        backgroundColor: '#34a853',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '14px',
+        marginTop: '10px',
     },
     noResults: {
-      textAlign: 'center',
-      color: '#888',
+        textAlign: 'center',
+        color: '#888',
     },
 };
 

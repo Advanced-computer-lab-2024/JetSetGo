@@ -4,10 +4,18 @@ import { Button, Typography, Divider, IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Material-UI's back arrow icon
 import "./TouristItineraryDetails.css";
 import { useLocation } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 function TouristItineraryDetails() {
   const location = useLocation(); // Access the location object
-  const { id } = location.state || {}; // Access the id from state
+  const token = Cookies.get("auth_token");
+  const decodedToken = jwtDecode(token);
+  const id = decodedToken.id;
+  console.log("id:", id);
+  const modelName = decodedToken.userType;
+  console.log("modelName:", modelName);
+  // const { id } = location.state || {}; // Access the id from state
 
   const { iternaryId } = useParams(); // Get itineraryId from the URL
   const touristId = id
