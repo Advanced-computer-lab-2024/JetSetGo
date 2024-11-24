@@ -341,10 +341,6 @@ function App() {
                   element={<ItineraryManagement />}
                 />
               </Route>
-              <Route
-                  path="/sellers/change-password/:id/:modelName"
-                  element={<resetPassword />}
-                />
               {/** seller */}
               <Route path="/sellers" element={<SellerLayout />}>
                 <Route

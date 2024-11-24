@@ -3,7 +3,8 @@ import { useNavigate, useParams, Link, useLocation } from 'react-router-dom';
 import Badge1 from '../../assets/images/Badge1.jpg';
 import Badge2 from '../../assets/images/Badge2.jpg';
 import Badge3 from '../../assets/images/Badge3.jpg';
-
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 import './SellerNavbar.css';
 
 
@@ -11,14 +12,25 @@ import './SellerNavbar.css';
 
 function SellerNavbar() {
     // const { id } = useParams();
-    const location=useLocation();
-    const {id} = location.state;
+    //const location=useLocation();
+   // const {id} = location.state;
+
+    const token = Cookies.get("auth_token");
+    const decodedToken = jwtDecode(token);
+
+    const id = decodedToken.id;
+    console.log("ANA GOWA EL NAV BAR")
+    console.log("id:",id);
+    const modelName = decodedToken.userType;
+    console.log("modelName:",modelName);
+
+    
     console.log("at navbar:"+id);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [activePopup, setActivePopup] = useState(null);
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
-    const modelName='sellers'
+   // const modelName='sellers'
 
     const toggleDropdown = () => {
         setIsDropdownOpen((prev) => !prev);

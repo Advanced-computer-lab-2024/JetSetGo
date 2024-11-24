@@ -1,5 +1,7 @@
 import React, { useState, useContext } from "react";
 import axios from 'axios';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 import {
   BoldLink,
   BoxContainer,
@@ -12,6 +14,7 @@ import { Marginer } from "../marginer";
 import { AccountContext } from './accountContext';
 import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
+
 
 const SignupForm = () => {
   const navigate = useNavigate();
@@ -95,86 +98,81 @@ const SignupForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError(null);
-
+  
     const allowedFields = Object.entries(showFields)
       .filter(([key]) => showFields[key])
       .map(([key]) => key);
-
-    // Create data object with only allowed fields
+  
     const data = {};
     for (const field of allowedFields) {
       data[field] = formData[field] || '';
     }
-
+  
     try {
       let response;
-      
+  
       if (selectedOption.value === 'Tourist') {
-        // For Tourist, send as JSON
         response = await axios.post(
           `http://localhost:8000/api/register/registerTourist`,
           data,
           {
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
           }
         );
       } else {
-        // For other roles, use FormData for file uploads
         const formDataObj = new FormData();
-        Object.keys(data).forEach(key => {
+        Object.keys(data).forEach((key) => {
           formDataObj.append(key, data[key]);
         });
-
+  
         if (files.doc1) formDataObj.append('documents', files.doc1);
         if (files.doc2) formDataObj.append('documents', files.doc2);
-
+  
         response = await axios.post(
           `http://localhost:8000/api/register/register${selectedOption.value}`,
           formDataObj,
           {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
+            headers: { 'Content-Type': 'multipart/form-data' },
           }
         );
-        
       }
-      console.log(response.status)
-      if (response.status === 201) {
-        console.log('Signup successful!');
-        localStorage.setItem('id', response.data._id);
-        localStorage.setItem('role', selectedOption.value);
-        const userId = response.data._id;
-        const id = userId;
-        console.log(id)
-        console.log(selectedOption.value)
-        
-        var modelName;
-        if (selectedOption.value === 'Advertiser' ) {
+  
+      if (response.status === 201 && response.data.token) {
+        const { token } = response.data;
+  
+        // Save the token in cookies
+        Cookies.set('auth_token', token, { expires: 7 });
+  
+        // Decode token to get user details
+        const decodedToken = jwtDecode(token);
+        const { id, userType } = decodedToken;
+        console.log("da el model name",userType )
+        // Redirect based on user type
+        let modelName;
+        if (userType === 'Advertisers') {
           modelName = 'advertiser';
-          navigate(`/${modelName}/${id}/terms`);
-        }else if (selectedOption.value == 'Seller') {
+        } else if (userType === 'Seller') {
           modelName = 'sellers';
-          navigate(`/${modelName}/${id}/terms`);
-        } else if (selectedOption.value == 'Tourist') {
+        } else if (userType === 'Tourist') {
           modelName = 'tourist';
-          navigate(`/${modelName}/${id}/terms`);
-        } else if (selectedOption.value === 'TourGuide') {
+        } else if (userType === 'TourGuide') {
           modelName = 'tourguide';
-          navigate(`/${modelName}/${id}/terms`);
+          console.log("ana fe3lan areet el tourguide")
         } else {
           throw new Error('Invalid user role');
         }
-
-        // navigate('/tourist/products');
+  
+        navigate(`/${modelName}/${id}/terms`);
+      } else {
+        alert('Registration failed: No token received.');
       }
     } catch (error) {
       console.error('Signup failed:', error.response?.data || error.message);
       setError(error.response?.data?.message || 'An error occurred during signup');
     }
   };
+  
+  
 
   const renderFileInput = (docKey, label) => (
     <div>
