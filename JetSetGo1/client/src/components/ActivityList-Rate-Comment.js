@@ -3,16 +3,24 @@ import axios from 'axios';
 import { FaStar } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 const ActivityList = () => {
     const [activities, setActivities] = useState([]);
     const [ratings, setRatings] = useState({});
     const [comment, setComment] = useState({});
+    const token = Cookies.get("auth_token");
+    const decodedToken = jwtDecode(token);
+    const id = decodedToken.id;
+    console.log("id:", id);
+    const modelName = decodedToken.userType;
+    console.log("modelName:", modelName);
     // const location = useLocation(); // Access state passed via Link
-    const { id } = useParams(); // Access id from state
+    // const { id } = useParams(); // Access id from state
     const touristId = id;
-    console.log("touristId in page :"+touristId);
-    
+    console.log("touristId in page :" + touristId);
+
     const styles = {
         activityList: {
             display: 'flex',
@@ -94,7 +102,7 @@ const ActivityList = () => {
             try {
                 const response = await axios.get(`http://localhost:8000/api/tourist/activities/booked/${touristId}`);
                 const { activities, itineraries } = response.data;
-                setActivities([...activities ]);
+                setActivities([...activities]);
                 console.log(activities);
                 // Fetch the user rating for each activity
                 const ratingsResponse = await Promise.all(

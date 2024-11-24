@@ -4,16 +4,23 @@ import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import ActivityFilter from '../components/ActivityFilter';  // Import ActivityFilter
 import { useLocation } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 const Activities2 = () => {
     const [upcomingActivities, setUpcomingActivities] = useState(null); // All activities fetched from backend
     const [filteredActivitiesState, setFilteredActivitiesState] = useState(null); // Holds activities after filtering
     const [sortedActivities, setSortedActivities] = useState(null); // Holds the currently sorted activities
     const [loading, setLoading] = useState('');
-
+    const token = Cookies.get("auth_token");
+    const decodedToken = jwtDecode(token);
+    const id = decodedToken.id;
+    console.log("id: act ",id);
+    const modelName = decodedToken.userType;
+    console.log("modelName: act",modelName);
     // const {id}= useParams()
     const location = useLocation(); // Access state passed via Link
-    const { id } = location.state || {}; // Access id from state
+    // const { id } = location.state || {}; // Access id from state
     console.log("touristId in page" + id);
     useEffect(() => {
         fetchActivities();

@@ -2,10 +2,15 @@ import React from 'react';
 import NavBar from '../../components/Tourist/navbar';
 //import './guestHomepage.css';
 import { useLocation } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 function ToursitPage() {
   const location = useLocation(); // Access the location object
-  const { id } = location.state || {}; // Access the id from state
+  const token = Cookies.get("auth_token");
+  const decodedToken = jwtDecode(token);
+  const id = decodedToken.id; // Access the id from state
+  console.log("id home:",id);
 
   return (
     <div>

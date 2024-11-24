@@ -6,24 +6,18 @@ import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
 import Cookies from "js-cookie"; // Import js-cookie
 
 
+
 export default function ChangePassword() {
+  const location = useLocation(); // Access the location object
   const token = Cookies.get("auth_token");
   const decodedToken = jwtDecode(token);
-  //const location = useLocation(); // Access the location object
-  //const { modelName} = location.state || {}; // Access the id from state
-  //const {  id  } = useParams()
+  const id = decodedToken.id;
+  console.log("id:", id);
+  const modelName = decodedToken.userType;
+  console.log("modelName:", modelName);
 
-  //const userId = useLocation().state.id
-  
-  
-  const id = decodedToken.id 
-
-  const modelName = decodedToken.userType || {}; 
-  console.log(modelName)
-  console.log(id)
-
-  
-  
+  console.log(id, modelName)
+  // const userId = useLocation().state.id
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')

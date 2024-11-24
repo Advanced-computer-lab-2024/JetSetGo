@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 const TransportBookingPage = () => {
   const [transports, setTransports] = useState([]);
@@ -9,7 +11,12 @@ const TransportBookingPage = () => {
   const [seats, setSeats] = useState(1);
   const [bookingStatus, setBookingStatus] = useState('');
   const location = useLocation();
-  const { id } = location.state || {}; // Access the id from state
+  const token = Cookies.get("auth_token");
+  const decodedToken = jwtDecode(token);
+  const id = decodedToken.id;
+  console.log("id:",id);
+  const modelName = decodedToken.userType;
+  console.log("modelName:",modelName);
 
   useEffect(() => {
     const fetchTransports = async () => {

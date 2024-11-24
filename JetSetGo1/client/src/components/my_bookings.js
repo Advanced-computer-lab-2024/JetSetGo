@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 const MyBookingsPage = () => {
   const [transportBookings, setTransportBookings] = useState([]);
@@ -8,8 +10,14 @@ const MyBookingsPage = () => {
   const [error, setError] = useState(null);
   const [transportDetails, setTransportDetails] = useState({});
   const [activityDetails, setActivityDetails] = useState({});
+  const token = Cookies.get("auth_token");
+  const decodedToken = jwtDecode(token);
+  const id = decodedToken.id;
+  console.log("id:", id);
+  const modelName = decodedToken.userType;
+  console.log("modelName:", modelName);
   const location = useLocation(); // Access state passed via Link
-  const { id } = location.state || {}; // Access id from state
+  // const { id } = location.state || {}; // Access id from state
   const tourist = id;
 
   useEffect(() => {
@@ -149,7 +157,7 @@ const MyBookingsPage = () => {
       <h2>Activity & Itinerary Bookings</h2>
       {activityBookings.length > 0 ? (
         activityBookings.map((booking) => (
-          
+
           <div key={booking._id}>
             <h3>Booking Reference Type: {booking.referenceType}</h3>
             {activityDetails[`${booking.referenceId}-${booking.referenceType}`] ? (

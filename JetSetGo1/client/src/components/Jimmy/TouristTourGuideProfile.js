@@ -4,11 +4,19 @@ import "./TouristTourGuideProfile.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Material-UI's back arrow icon
 import { useLocation } from 'react-router-dom';
 import { Button, Typography, IconButton, CircularProgress, Box } from "@mui/material";
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 function TouristTourGuideProfile() {
+  const token = Cookies.get("auth_token");
+  const decodedToken = jwtDecode(token);
+  const id = decodedToken.id;
+  console.log("id:", id);
+  const modelName = decodedToken.userType;
+  console.log("modelName:", modelName);
   const { guideId } = useParams();
   const location = useLocation(); // Access the location object
-  const { id } = location.state || {}; // Access the id from state
+  // const { id } = location.state || {}; // Access the id from state
 
   const touristId = id
   const navigate = useNavigate();
@@ -116,7 +124,7 @@ function TouristTourGuideProfile() {
   // Function to complete with tour guide
   const handleCompleteWithTourGuide = () => {
     setLoading(true);
-    console.log("Completing with tour guide...",touristId,guideId);
+    console.log("Completing with tour guide...", touristId, guideId);
     fetch("http://localhost:8000/api/tourist/compeleteWithTourGuide", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

@@ -2,10 +2,17 @@ import React, { useState } from 'react';
 import './TermsAndCondition.css'; // Import CSS for styling
 import { Link, useParams } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 function TermsAndConditionsForm() {
-  const location = useLocation();
-  const { modelName, id } = useParams(); 
+  const token = Cookies.get("auth_token");
+  const decodedToken = jwtDecode(token);
+  const id = decodedToken.id; 
+  const modelName = decodedToken.userType;
+  // const location = useLocation();
+  console.log("terms", modelName, id);
+  // const { modelName, id } = useParams(); 
 
   // State to track whether the terms are accepted
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -29,10 +36,10 @@ function TermsAndConditionsForm() {
 
   // Conditionally set the link path based on the role
   const getLinkPath = () => {
-    if (modelName === 'sellers' || modelName === 'tourist') {
-      return `/${modelName}/products`;  // Lowercase the model name for the URL
+    if (modelName === 'Seller' || modelName === 'Tourist') {
+      return `/${modelName}/home`;  // Lowercase the model name for the URL
     } else {
-      return `/${modelName}/${id}`; // Replace with the link you want for other roles
+      return `/${modelName}`; // Replace with the link you want for other roles
     }
   };
 
