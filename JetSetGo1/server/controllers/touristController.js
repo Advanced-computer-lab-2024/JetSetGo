@@ -16,6 +16,55 @@ const SalesModel = require("../models/SalesModel");
 
 const TourGuide = require("../models/TourGuideModel.js");
 const FlightBooking = require('../models/FlightBooking');
+const nodemailer = require('nodemailer');
+
+
+// Function to share via email using Tourist model
+shareViaEmail = async (req, res) => {
+  const { touristIds, subject, body } = req.body;
+
+  // Validate the request body
+  if (!touristIds || !Array.isArray(touristIds) || touristIds.length === 0) {
+    return res.status(400).json({ error: 'No tourist IDs provided' });
+  }
+  if (!subject || !body) {
+    return res.status(400).json({ error: 'Subject and body are required' });
+  }
+
+  try {
+    // Fetch emails of the specified tourists from the database
+    const tourists = await Tourist.find({ _id: { $in: touristIds } }, 'email');
+    const emails = tourists.map((tourist) => tourist.email);
+
+    if (emails.length === 0) {
+      return res.status(404).json({ error: 'No valid emails found for the given tourist IDs' });
+    }
+
+    // Configure the email transporter
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail', // Use your email service provider
+      auth: {
+        user: 'your-email@example.com', // Your email
+        pass: 'your-email-password', // Your email password or app-specific password
+      },
+    });
+
+    // Send the email
+    const info = await transporter.sendMail({
+      from: 'jetsetgo212@gmail.com', // Sender address
+      to: emails.join(','), // Recipient emails, joined as a string
+      subject, // Subject line
+      text: body, // Plain text body
+    });
+
+    console.log('Email sent: %s', info.messageId);
+    return res.status(200).json({ message: 'Emails sent successfully!' });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    return res.status(500).json({ error: 'Failed to send emails.' });
+  }
+};
+
 
 const getTagNameById = async (req, res) => {
   try {
@@ -329,7 +378,10 @@ const searchMuseumByCategory = async (req, res) => {
 const searchItineraryByBudget = async (req, res) => {
   const budget = req.body;
   try {
-    const itinerary = await Itinerary.find();
+    const itinerary = await Itinerary.find({
+      active: true,
+      flagged: false,
+    });
     const result = itinerary.filter((el) => el.price <= budget.price);
 
     res.status(200).json(result);
@@ -349,7 +401,10 @@ const searchItineraryByDate = async (req, res) => {
 
     // Find all itineraries where any availableDates in the array matches the search date
     const itineraries = await Itinerary.find({
-       "availableDates.date": searchDate, // Check all availableDates in each itinerary
+       "availableDates.date": searchDate,
+        active: true,
+        flagged: false,
+       // Check all availableDates in each itinerary
     });
     //console.log(req.body)
     //const itineraries = await Itinerary.find(req.body)
@@ -364,7 +419,10 @@ const searchItineraryByDate = async (req, res) => {
 const searchItineraryByLanguage = async (req, res) => {
   const languageReq = req.body;
   try {
-    const itinerary = await Itinerary.find(languageReq);
+    const itinerary = await Itinerary.find(languageReq,{
+      active: true,
+      flagged: false,
+    });
     res.status(200).json(itinerary);
   } catch (error) {
     res.status(404).json({ error: "Itinerary not found" });
@@ -375,7 +433,10 @@ const searchItineraryByLanguage = async (req, res) => {
 const searchItineraryByName = async (req, res) => {
   const name = req.body;
   try {
-    const itinerary = await Itinerary.find(name);
+    const itinerary = await Itinerary.find(name,{
+      active: true,
+      flagged: false,
+    });
     res.status(200).json(itinerary);
   } catch (error) {
     res.status(404).json({ error: "Itinerary not found" });
@@ -386,7 +447,10 @@ const searchItineraryByName = async (req, res) => {
 const searchItineraryByCategory = async (req, res) => {
   const category = req.body;
   try {
-    const itinerary = await Itinerary.find(category);
+    const itinerary = await Itinerary.find(category,{
+      active: true,
+      flagged: false,
+    });
     res.status(200).json(itinerary);
   } catch (error) {
     res.status(404).json({ error: "Itinerary not found" });
@@ -399,7 +463,10 @@ const searchItineraryByTag = async (req, res) => {
 
   try {
     // Step 1: Find itineraries that have the tagId in their tags array
-    const itineraries = await Itinerary.find({ tags: tagId }).populate("tags"); // Optional: populate 'tags' to return tag details
+    const itineraries = await Itinerary.find({ tags: tagId,
+      active: true,
+      flagged: false,
+     }).populate("tags"); // Optional: populate 'tags' to return tag details
 
     // Step 2: Return the list of itineraries
     res.status(200).json(itineraries);
@@ -629,7 +696,7 @@ const getUpcomingItineraries = async (req, res) => {
         $elemMatch: {
           date: { $gte: currentDate }, // Check if at least one date is greater than or equal to the current date
         },
-      },
+      },active : true, flagged:false
     });
 
     res.status(200).json(upcomingItineraries);
@@ -647,7 +714,10 @@ const sortItineraryByPrice = async (req, res) => {
           date: { $gte: currentDate }, // Check if at least one date is greater than or equal to the current date
         },
       },
-    }).sort({ price: 1 });
+        active: true,
+        flagged: false,
+      }
+    ).sort({ price: 1 });
     res.status(200).json(sortedItineraryByPrice);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -663,7 +733,10 @@ const sortItineraryByRating = async (req, res) => {
           date: { $gte: currentDate }, // Check if at least one date is greater than or equal to the current date
         },
       },
-    }).sort({ rating: 1 });
+        active: true,
+        flagged: false,
+      }
+    ).sort({ rating: 1 });
     res.status(200).json(sortedItineraryByRating);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -908,7 +981,10 @@ async function payForItinerary(req, res) {
     }
 
     // Find the itinerary the tourist is paying for
-    const itinerary = await Itinerary.findById(itineraryId);
+    const itinerary = await Itinerary.findById(itineraryId,{
+      active: true,
+      flagged: false,
+    });
     if (!itinerary) {
       return res.status(404).json({ message: "Itinerary not found" });
     }
@@ -1217,7 +1293,10 @@ const book_activity_Itinerary = async (req, res) => {
     const { tourist, referenceId } = req.body;
     const reference =
       (await Activity.findById(referenceId)) ||
-      (await Itinerary.findById(referenceId));
+      (await Itinerary.findById(referenceId,{
+        active: true,
+        flagged: false,
+      }));
 
     if (!reference) {
       return res
@@ -1229,6 +1308,9 @@ const book_activity_Itinerary = async (req, res) => {
 
     const booking = new Booking({ tourist, referenceId, referenceType });
     await booking.save();
+    const touristt = await Tourist.findById(tourist);
+    touristt.BookedAnything = true;
+    await touristt.save();
 
     if (referenceType === "Activity") {
       await Activity.findByIdAndUpdate(
@@ -1265,7 +1347,10 @@ const getTouristBookedActivities = async (req, res) => {
     // Find activities and itineraries based on IDs
     const activities = await Activity.find({ _id: { $in: activityIds } })
     //.populate('comments.postedby', 'name');
-    const itineraries = await Itinerary.find({ _id: { $in: itineraryIds } })
+    const itineraries = await Itinerary.find({ _id: { $in: itineraryIds } },{
+      active: true,
+      flagged: false,
+    })
     //.populate('comments.postedby', 'name');
 
     res.json({ activities, itineraries });
@@ -1329,7 +1414,10 @@ const cancel_booking = async (req, res) => {
 
     const reference =
       (await Activity.findById(booking.referenceId)) ||
-      (await Itinerary.findById(booking.referenceId));
+      (await Itinerary.findById(booking.referenceId,{
+        active: true,
+        flagged: false,
+      }));
 
     if (!reference) {
       return res
@@ -1407,6 +1495,7 @@ const myActivityItineraryBooking = async (req, res) => {
 // controllers/hotelBookingController.js
 // controllers/hotelBookingController.js
 const HotelBooking = require("../models/HotelBooking");
+const TouristModels = require("../models/TouristModels");
 
 const createBooking = async (req, res) => {
     const { touristId, ...bookingData } = req.body; // Extract touristId from request body
@@ -1453,7 +1542,10 @@ const fetchActivityID = async (req, res) => {
 
 const fetchItineraryID = async (req, res) => {
   const { itineraryId } = req.params;
-  const itinerary = await Itinerary.findById(itineraryId); // Replace Itinerary with your model
+  const itinerary = await Itinerary.findById(itineraryId,{
+    active: true,
+    flagged: false,
+  }); // Replace Itinerary with your model
 
   try {
     if (!itinerary) {
@@ -1584,7 +1676,10 @@ const addItineraryRating = async (req, res) => {
 
   try {
     // Find the itinerary by ID
-    const itinerary = await Itinerary.findById(itineraryId);
+    const itinerary = await Itinerary.findById(itineraryId,{
+      active: true,
+      flagged: false,
+    });
 
     if (!itinerary) {
       return res.status(404).json({ message: "Itinerary not found." });
@@ -1634,7 +1729,10 @@ const addItineraryComment = async (req, res) => {
 
   try {
     // Find the itinerary by ID and populate tourists for validation
-    const itinerary = await Itinerary.findById(itineraryId).populate(
+    const itinerary = await Itinerary.findById(itineraryId,{
+      active: true,
+      flagged: false,
+    }).populate(
       "Tourists"
     );
 
@@ -1674,7 +1772,10 @@ const followItinerary = async (req, res) => {
 
   try {
     // Find the itinerary by ID
-    const itinerary = await Itinerary.findById(itineraryId);
+    const itinerary = await Itinerary.findById(itineraryId,{
+      active: true,
+      flagged: false,
+    });
 
     if (!itinerary) {
       return res.status(404).json({ message: "Itinerary not found." });
@@ -1707,7 +1808,10 @@ const unfollowItinerary = async (req, res) => {
 
   try {
     // Find the itinerary by ID
-    const itinerary = await Itinerary.findById(itineraryId);
+    const itinerary = await Itinerary.findById(itineraryId,{
+      active: true,
+      flagged: false,
+    });
 
     if (!itinerary) {
       return res.status(404).json({ message: "Itinerary not found." });
@@ -1788,7 +1892,10 @@ const getFollowedItineraries = async (req, res) => {
     const touristId = req.params.touristId;
 
     // Find all itineraries where the given tourist ID is in the 'Tourists' field
-    const followedItineraries = await Itinerary.find({ Tourists: touristId });
+    const followedItineraries = await Itinerary.find({ Tourists: touristId },{
+      active: true,
+      flagged: false,
+    });
 
     res.status(200).json(followedItineraries);
   } catch (error) {
@@ -1826,6 +1933,9 @@ const getItinerariesByTourGuide = async (req, res) => {
     // Find itineraries that belong to the specified tour guide
     const itineraries = await Itinerary.find({
       tourGuide: tourGuideId,
+    },{
+      active: true,
+      flagged: false,
     }).populate("tourGuide");
 
     // Return the filtered itineraries as a response
@@ -1844,7 +1954,10 @@ const getSingleItinerary = async (req, res) => {
 
   try {
     // Find the itinerary by its ID in the database
-    const itinerary = await Itinerary.findById(itineraryId);
+    const itinerary = await Itinerary.findById(itineraryId,{
+      active: true,
+      flagged: false,
+    });
 
     if (!itinerary) {
       return res.status(404).json({ error: "Itinerary not found" });
@@ -1962,5 +2075,5 @@ module.exports = {
   getSingleItinerary,
   getTouristUsername,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,createBooking,getSingleProduct,
 
-  getTagIdByName, myTransportBooking, myActivityItineraryBooking, upload
+  getTagIdByName, myTransportBooking, myActivityItineraryBooking, upload, shareViaEmail
 };
