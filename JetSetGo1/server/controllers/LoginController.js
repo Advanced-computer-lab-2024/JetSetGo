@@ -77,7 +77,6 @@ const createUser = async (req, res) => {
 // Populate User Data
 const populateUserData = async (req, res) => {
   try {
-    // List of models
     const models = {
       Tourist,
       Advertiser,
@@ -87,42 +86,31 @@ const populateUserData = async (req, res) => {
       TourismGoverner,
     };
 
-    // Iterate over each model to populate user data
+    const all = []; // Declare 'all' here
+
     for (const [key, Model] of Object.entries(models)) {
-      // Fetch all data from each model
       const data = await Model.find();
-      const all = [];
-      // For each data item from the model, create a user and populate userDetails
       for (const item of data) {
         try {
-          // Check if a user already exists with the same username
           const existingUser = await User.findOne({ username: item.username });
-
-          // If user exists, skip to the next one
           if (existingUser) {
-            console.log(`User with username ${item.username || item.username} already exists, skipping...`);
-            continue; // Skip the current iteration
+            console.log(`User with username ${item.username} already exists, skipping...`);
+            continue;
           }
 
-          // Set a plain-text password (customize this as needed)
-          // const password = 'defaultPassword123'; // You can set your custom password here
-
-          // Create a new user document with plain-text password
           const newUser = new User({
-            username: item.username , // Or any unique identifier, change based on your model
-            password: item.password,                // Use plain text password
-            userType: key,                     // Assign the model name as the user type
-            userDetails: item._id,             // Link the user to the details from the current model
+            username: item.username,
+            password: item.password,
+            userType: key,
+            userDetails: item._id,
           });
 
-          // Save the user to the database
-          all.push(newUser);
           await newUser.save();
+          all.push(newUser); // Add new user to 'all' array
         } catch (err) {
-          // Handle duplicate key error (E11000)
           if (err.code === 11000) {
             console.log(`Duplicate key error: ${err.keyValue.username}, skipping this item...`);
-            continue; // Skip this item and continue with the next
+            continue;
           } else {
             console.error(`Error while processing item: ${item}`, err);
           }
@@ -130,8 +118,7 @@ const populateUserData = async (req, res) => {
       }
     }
 
-    // After processing all models, send a success message
-    res.status(200).json({ message: 'User data populated successfully' , all ,  count:`count:${all.length}`});
+    res.status(200).json({ message: 'User data populated successfully', all, count: `count: ${all.length}` });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Server error while populating user data' });

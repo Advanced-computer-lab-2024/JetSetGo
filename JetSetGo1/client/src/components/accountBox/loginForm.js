@@ -65,7 +65,7 @@ export function LoginForm(props) {
             navigate(`/${modelName}/${id}/products`);
           } else if (userType === 'Tourist') {
             modelName = 'tourist';
-            navigate(`/${modelName}/${id}/home`);
+            navigate(`/${modelName}/home`);
           } else if (userType === 'TourGuide') {
             modelName = 'tourguide';
             navigate(`/${modelName}/${id}/Itineraries`);
