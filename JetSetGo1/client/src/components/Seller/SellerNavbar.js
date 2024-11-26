@@ -82,8 +82,8 @@ function SellerNavbar() {
                 </div>
                 <div className="menu">
                     <ul>
-                        <li><Link to={`/sellers/home`} state={{id}}>Home</Link></li>
-                        <li><Link to={`/sellers/products`} state={{id}}>Products</Link></li>
+                        <li><Link to={`/Seller/home`} state={{id}}>Home</Link></li>
+                        <li><Link to={`/Seller/products`} state={{id}}>Products</Link></li>
                         <li><Link>Activities</Link></li>
                         <li><Link>Itineraries</Link></li>
                         <li><Link>Tour Guide</Link></li>
@@ -101,22 +101,22 @@ function SellerNavbar() {
                         <div className="dropdown-menu">
                             <ul>
                                 <li>
-                                    <Link to={`/sellers/change-password/${id}/${modelName}`} state={{id,modelName}}>
+                                    <Link to={`/Seller/change-password/${id}/${modelName}`} state={{id,modelName}}>
                                         <i className="fas fa-user"></i> Change My password
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to={`/sellers/RequestDelete/${id}/${modelName}`} state={{id,modelName}}>
+                                    <Link to={`/Seller/RequestDelete/${id}/${modelName}`} state={{id,modelName}}>
                                         <i className="fas fa-user"></i> Request to delete
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to={`/sellers/upload-image/${id}/${modelName}`} state={{id,modelName}}>
+                                    <Link to={`/Seller/upload-image/${id}/${modelName}`} state={{id,modelName}}>
                                         <i className="fas fa-user"></i> upload Image
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to={`/sellers/sellerprofile/${id}`} state={{id}}>
+                                    <Link to={`/Seller/sellerprofile/${id}`} state={{id}}>
                                         <i className="fas fa-user"></i> seller profile
                                     </Link>
                                 </li>

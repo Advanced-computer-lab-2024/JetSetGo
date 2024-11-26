@@ -61,7 +61,7 @@ const uploadDoc = multer({
 
         res.status(201).json({ user, token, tourGuide: newTourGuide });
 
-        res.status(201).json(newTourGuide);
+       // res.status(201).json(newTourGuide);
         console.log("ana tmam fel back")
         } catch (error) {
            // console.log()

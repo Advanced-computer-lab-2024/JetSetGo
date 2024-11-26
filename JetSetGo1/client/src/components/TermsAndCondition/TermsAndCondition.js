@@ -36,13 +36,13 @@ function TermsAndConditionsForm() {
 
   // Conditionally set the link path based on the role
   const getLinkPath = () => {
-    if (modelName === 'Seller' || modelName === 'Tourist') {
-      return `/${modelName}/home`;  // Lowercase the model name for the URL
+    if (modelName === 'Seller' || modelName === 'tourist') {
+      return `/${modelName}/products`;  // Lowercase the model name for the URL
     } else {
-      return `/${modelName}`; // Replace with the link you want for other roles
+      return `/${modelName}/${id}`; // Replace with the link you want for other roles
     }
   };
-
+      
   return (
     <div className="centered-container">
       <div className="terms-form">
