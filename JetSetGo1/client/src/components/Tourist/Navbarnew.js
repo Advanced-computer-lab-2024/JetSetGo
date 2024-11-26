@@ -10,6 +10,10 @@ import Badge3 from '../../assets/images/Badge3.jpg';
 import { CurrencyContext } from './CurrencyContext';
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
+import ProfileDropdown from './ProfileDropdown';
+import CurrencyChanger from './CurrencyChanger';
+
+
 const menuItems = [
   {
     title: "Trips",
@@ -49,6 +53,13 @@ const menuItems = [
     // ]
   }
 ];
+
+
+const currencies = ['EGP', 'USD', 'EUR'];
+const tourist = { Level: 1 }; // Mock data
+// const menuItems = [{ title: 'Home' }, { title: 'About' }, { title: 'Contact' }];
+
+const renderLevelImage = (level) => <span>{`Level ${level}`}</span>; // Mock function
 
 const Navbar2 = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -122,6 +133,19 @@ const Navbar2 = () => {
 
 
   return (
+    // <nav style={styles.navbar}>
+    // <div style={styles.leftSection}>
+    //             <CurrencyChanger currencies={currencies} currency={currency} handleCurrencyChange={handleCurrencyChange} />
+    //             <ProfileDropdown
+    //                 tourist={tourist}
+    //                 id={id}
+    //                 modelName={modelName}
+    //                 isDropdownOpen={isDropdownOpen}
+    //                 toggleDropdown={toggleDropdown}
+    //                 dropdownRef={dropdownRef}
+    //                 renderLevelImage={renderLevelImage}
+    //             />
+    //         </div>
     <nav className={styles.navbar}>
       {menuItems.map((item) => (
         <div key={item.title}

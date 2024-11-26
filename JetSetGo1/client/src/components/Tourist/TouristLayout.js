@@ -24,7 +24,7 @@ function TouristLayout() {
   return (
     <div className="admin-dashboard">
       <div className="main-content">
-        <Navbar2 state={{ id }} /> {/* Navbar stays visible */}
+        <NavBar state={{ id }} /> {/* Navbar stays visible */}
         <div className="dashboard-data">
           <Outlet state={{ id }} /> {/* Renders the page content here */}
         </div>
