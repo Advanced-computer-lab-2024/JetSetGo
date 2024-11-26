@@ -10,11 +10,11 @@ const ItineraryManagement = () => {
     // Fetch all itineraries on component mount
     const fetchItineraries = async () => {
       try {
-        const response = await fetch('/api/tour-guides/getItineraries'); // Adjust this route as per your backend
+        const response = await fetch('/api/tour-guides/showMyItineraries'); // Adjust this route as per your backend
         const data = await response.json();
         setItineraries(data);
       } catch (error) {
-        setError('Error fetching itineraries');
+        setError('You dont have itirenary yet');
       }
     };
 

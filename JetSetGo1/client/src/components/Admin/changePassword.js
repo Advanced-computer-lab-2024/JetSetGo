@@ -10,7 +10,9 @@ import Cookies from "js-cookie"; // Import js-cookie
 export default function ChangePassword() {
   const location = useLocation(); // Access the location object
   const token = Cookies.get("auth_token");
+  
   const decodedToken = jwtDecode(token);
+  //const id = decodedToken.id;
   const id = decodedToken.id;
   console.log("id:", id);
   const modelName = decodedToken.userType;

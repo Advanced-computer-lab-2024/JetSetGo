@@ -176,17 +176,17 @@ function App() {
               {/* Advertiser//////////////////////////////////////////////////////////////////////////////////////////////// */}
 
 
-              <Route path="/Advertiser/:id" element={<AdvertiserLayout />}>
-                <Route path='/Advertiser/:id/advertiserprofile' element={<AdvertiserProfile />} />
+              <Route path="/Advertisers/:id" element={<AdvertiserLayout />}>
+                <Route path='/Advertisers/:id/advertiserprofile' element={<AdvertiserProfile />} />
                 <Route
-                  path="/Advertiser/:id/ActivitiesJohn/:id"
+                  path="/Advertisers/:id/ActivitiesJohn/:id"
                   element={<ActivityPageJohn />}
                 />
                 <Route
-                  path="/Advertiser/:id/AdvertiserActivities/:id"
+                  path="/Advertisers/:id/AdvertiserActivities/:id"
                   element={<AdvertiserActivities />}
                 />
-                <Route path="/Advertiser/:id/Itineraries" element={<Itineraries />} />
+                <Route path="/Advertisers/:id/Itineraries" element={<Itineraries />} />
 
               </Route>
 
@@ -211,7 +211,7 @@ function App() {
 
               <Route path="/terms" element={<TermsAndConditionsForm />} />
               <Route path="/" element={<Navigate to="/guest/home" replace />} />
-              {/** Admiin */}
+              {/* Admiin */}
               <Route path="/admin" element={<Layout />}>
                 <Route
                   path="/admin/requests"
@@ -315,62 +315,62 @@ function App() {
 
 
               {/** Tourguide */}
-              <Route path="/tourguide/:id" element={<TourGuideLayout />}>
+              <Route path="/Tourguide/:id" element={<TourGuideLayout />}>
                 <Route
-                  path="/tourguide/:id/create/tour-guides/:id"
+                  path="/Tourguide/:id/create/tour-guides/:id"
                   element={<CreateProfile />}
                 />
                 <Route
-                  path="/tourguide/:id/profile/tour-guides/:id"
+                  path="/Tourguide/:id/profile/tour-guides/:id"
                   element={<Profile />}
                 />
                 <Route
-                  path="/tourguide/:id/update-profile/tour-guides/:id"
+                  path="/Tourguide/:id/update-profile/tour-guides/:id"
                   element={<UpdateProfile />}
                 />
                 <Route
-                  path="/tourguide/:id/Itineraries"
+                  path="/Tourguide/:id/Itineraries"
                   element={<Itineraries />}
                 />
                 <Route
-                  path="/tourguide/:id/Activities"
+                  path="/Tourguide/:id/Activities"
                   element={<Activities />}
                 />
-                <Route path="/tourguide/:id/Museum" element={<Museum />} />
-                <Route path="/tourguide/:id/HL" element={<HL />} />
+                <Route path="/Tourguide/:id/Museum" element={<Museum />} />
+                <Route path="/Tourguide/:id/HL" element={<HL />} />
                 <Route
-                  path="/tourguide/:id/ItineraryManagement"
+                  path="/Tourguide/:id/ItineraryManagement"
                   element={<ItineraryManagement />}
-                />
+                />  
               </Route>
               {/** seller */}
-              <Route path="/sellers" element={<SellerLayout />}>
+              <Route path="/Seller" element={<SellerLayout />}>
                 <Route
-                  path="/sellers/change-password/:id/:modelName"
+                  path="/Seller/change-password/:id/:modelName"
                   element={<ChangePassword />}
                 />
                 <Route
-                  path="/sellers/upload-image/:id/:modelName"
+                  path="/Seller/upload-image/:id/:modelName"
                   element={<ImageUpload />}
                 />
                 <Route
-                  path="/sellers/RequestDelete/:id/:modelName"
+                  path="/Seller/RequestDelete/:id/:modelName"
                   element={<RequestAccountDeletion />}
                 />
                 <Route
-                  path="/sellers/products"
+                  path="/Seller/products"
                   element={<ProductListing usertype="sellers" />}
                 />
                 <Route
-                  path="/sellers/addProduct"
+                  path="/Seller/addProduct"
                   element={<ProductForm usertype="sellers" />}
                 />
                 <Route
-                  path="/sellers/updateProduct/:id"
+                  path="/Seller/updateProduct/:id"
                   element={<UpdateProducts usertype="sellers" />}
                 />
-                <Route path="/sellers/sellerprofile/:id" element={<SellerProfile />} />
-                <Route path="/sellers/viewproduct" element={<ViewProduct />} />
+                <Route path="/Seller/sellerprofile/:id" element={<SellerProfile />} />
+                <Route path="/Seller/viewproduct" element={<ViewProduct />} />
 
               </Route>
               {/** seller */}
@@ -426,10 +426,6 @@ function App() {
               <Route path="/hhh" element={<Home />} />
 
 
-
-              <Route path="/HL" element={<HL />} />{/**/}
-              <Route path="/Museum" element={<Museum />} />{/* */}
-              <Route path="/Activities" element={<Activities />} />{/* */}
               <Route path="/Itineraries" element={<Itineraries />} />{/*show for all */}
               {/*JIMMY */}
 

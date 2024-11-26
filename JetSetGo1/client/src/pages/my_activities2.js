@@ -6,12 +6,13 @@ import { useEffect , useState } from "react"
 import Myactivitieselement from '../components/myactivitiescomponent.js'
 import axios from "axios"
 
+
 const Myactivitiespage = () =>{
     const [ tags , get_tags ] = useState(null)
 
     useEffect (()=>{
         const fetchtags = async () =>{
-            const response = await axios.post('http://localhost:8000/api/advertisers/showAll/66ff03e2f99d83cc77b8cb27')
+            const response = await axios.get('http://localhost:8000/api/guests/getUpcomingActivities')
             const json = await response.json
             console.log("kokokokokok",response);
             if (response.ok){
