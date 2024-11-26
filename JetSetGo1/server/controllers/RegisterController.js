@@ -102,7 +102,7 @@ const registerTourist = async (req, res) => {
       
           // Generate JWT
           const token = jwt.sign(
-            { id: newTourist.userDetails, userType: user.userType },
+            { id: newTourist._id, userType: user.userType },
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
           );
