@@ -12,9 +12,12 @@ import {
 } from "./common";
 import { Marginer } from "../marginer";
 import { AccountContext } from './accountContext';
+import { useNavigate } from 'react-router-dom'; // Add this import
+
 
 export function LoginForm(props) {
   const { switchToSignup } = useContext(AccountContext);
+  const navigate = useNavigate(); // Initialize useNavigate hook for redirection
 
   // State for login
   const [email, setEmail] = useState("");
@@ -51,24 +54,47 @@ export function LoginForm(props) {
           const { id, userType } = decodedToken;
           console.log("User ID:", id);
           console.log("User Type:", userType);
+
+          // Redirection logic based on user type
+          let modelName;
+          if (userType === 'Advertiser') {
+            modelName = 'advertiser';
+            navigate(`/${modelName}/${id}/Itineraries`);
+          } else if (userType === 'Seller') {
+            modelName = 'sellers';
+            navigate(`/${modelName}/${id}/products`);
+          } else if (userType === 'Tourist') {
+            modelName = 'tourist';
+            navigate(`/${modelName}/home`);
+          } else if (userType === 'TourGuide') {
+            modelName = 'tourguide';
+            navigate(`/${modelName}/${id}/Itineraries`);
+          } else if (userType === 'Admin') {
+            modelName = 'admin';
+            navigate(`/${modelName}/products`);
+          } else if (userType === 'TourismGoverner') {
+            modelName = 'tourism_governer';
+            navigate(`/${modelName}/${id}/HLTags`);
+          } else {
+            throw new Error('Invalid user role');
+          }
         } else {
           alert("Login failed: No token received.");
         }
       })
-      .catch(error => console.error("Error logging in:", error));
+      
   };
 
   // Forgot Password handler
   const handleForgotPassword = async () => {
     setForgotPasswordMessage("");
     try {
-      // Fetch email by username
       const emailResponse = await fetch('http://localhost:8000/user/getmail', {
-        method: "POST", // Use POST instead of GET
+        method: "POST", 
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username: email }), // Include username in the body
+        body: JSON.stringify({ username: forgotUsername }), 
       });
       if (!emailResponse.ok) {
         throw new Error("Failed to fetch email for username");
@@ -81,7 +107,6 @@ export function LoginForm(props) {
       setForgotPasswordMessage(error.message || "Error during password reset process.");
     }
   };
-
 
   return (
     <BoxContainer>

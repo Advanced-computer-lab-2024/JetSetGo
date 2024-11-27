@@ -1,14 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
-
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 //components
 import HistoricalLocationDetails from "../components/HistoricalLocationDetails"
 
 const HistoricalLocations = ({ filteredHistoricalPlace }) => {
     const [historicalLocations, setHistoricalLocations] = useState(null)
-    
-    const {id}= useParams();
+    const token = Cookies.get("auth_token");
+    const decodedToken = jwtDecode(token);
+    const id = decodedToken.id;
+    console.log("id:",id);
+    const modelName = decodedToken.userType;
+    console.log("modelName:",modelName);
+    // const {id}= useParams();
 
     useEffect(() => {
         fetchHistoricalLocations()

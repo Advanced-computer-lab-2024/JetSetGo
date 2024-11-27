@@ -2,14 +2,24 @@ import { useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import axios from 'axios'
 import './changePassword.css'
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
+
 
 
 export default function ChangePassword() {
   const location = useLocation(); // Access the location object
-  const { modelName} = location.state || {}; // Access the id from state
-  const {  id  } = useParams()
+  const token = Cookies.get("auth_token");
+  
+  const decodedToken = jwtDecode(token);
+  //const id = decodedToken.id;
+  const id = decodedToken.id;
+  console.log("id:", id);
+  const modelName = decodedToken.userType;
+  console.log("modelName:", modelName);
+  
   console.log(id, modelName)
-  const userId=useLocation().state.id
+  // const userId = useLocation().state.id
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -39,16 +49,17 @@ export default function ChangePassword() {
 
 
     const userTypeEndpoints = {
-      "advertisers": 'api/advertisers',
-      'tourismgoverner': 'api/tourism-governer',
-      "sellers": 'api/sellers',
-      'tourguides': 'api/tour-guides',
-      "admin": 'api/admin',
-      "tourist": 'api/tourist'
+      "Advertisers": 'api/advertisers',
+      'TourismGoverner': 'api/tourism-governer',
+      "Seller": 'api/sellers',
+      'TourGuide': 'api/tour-guides',
+      "Admin": 'api/admin',
+      "Tourist": 'api/tourist'
     }
 
     const endpoint = userTypeEndpoints[modelName];
-      console.log(endpoint)
+      
+       console.log(endpoint)
 
     try {
       const response = await axios.patch(

@@ -3,10 +3,19 @@ import { useParams } from 'react-router-dom';
 import Badge1 from '../../assets/images/Badge1.jpg';
 import Badge2 from '../../assets/images/Badge2.jpg';
 import Badge3 from '../../assets/images/Badge3.jpg';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 
 function TouristProfilePage() {
-    const { id } = useParams();
+    const token = Cookies.get("auth_token");
+    const decodedToken = jwtDecode(token);
+    const id = decodedToken.id;
+    console.log("id:", id);
+    const modelName = decodedToken.userType;
+    console.log("modelName:", modelName);
+
+    // const { id } = useParams();
     const [tourist, setTourist] = useState(null);
     const [message, setMessage] = useState('');
 
@@ -17,7 +26,7 @@ function TouristProfilePage() {
                 const response = await fetch(`http://localhost:8000/api/tourist/${id}`, {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json'  
+                        'Content-Type': 'application/json'
                     }
                 });
                 const data = await response.json();
@@ -47,15 +56,15 @@ function TouristProfilePage() {
         }
     };
 
-     // Render level-specific image based on the tourist's level
-     const renderLevelImage = (level) => {
+    // Render level-specific image based on the tourist's level
+    const renderLevelImage = (level) => {
         switch (level) {
             case 1:
-                return <img src={Badge1} alt="Level 1 Badge" className="badge-image" style={{ width: '150px', height: '150px' }}/>;
+                return <img src={Badge1} alt="Level 1 Badge" className="badge-image" style={{ width: '150px', height: '150px' }} />;
             case 2:
-                return <img src={Badge2} alt="Level 2 Badge" className="badge-image" style={{ width: '150px', height: '150px' }}/>;
+                return <img src={Badge2} alt="Level 2 Badge" className="badge-image" style={{ width: '150px', height: '150px' }} />;
             case 3:
-                return <img src={Badge3} alt="Level 3 Badge" className="badge-image" style={{ width: '150px', height: '150px' }}/>;
+                return <img src={Badge3} alt="Level 3 Badge" className="badge-image" style={{ width: '150px', height: '150px' }} />;
             default:
                 return null;
         }

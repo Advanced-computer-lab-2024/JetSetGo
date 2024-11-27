@@ -6,12 +6,20 @@ import Badge3 from '../../assets/images/Badge3.jpg';
 import { useLocation } from 'react-router-dom';
 import './homepage.css';
 import { CurrencyContext } from './CurrencyContext';
-
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 const currencies = ["EGP", "EUR", "USD"];
+
 
 function NavBar() {
     const location = useLocation(); // Access state passed via Link
-    const { id } = location.state || {}; // Access id from state
+    const token = Cookies.get("auth_token");
+    const decodedToken = jwtDecode(token);
+    const id = decodedToken.id;
+    console.log("id:", id);
+    // const modelName = decodedToken.userType;
+    // console.log("modelName:", modelName);
+    // const { id } = location.state || {}; // Access id from state
     // const { id } = useParams();
     const { currency, setCurrency } = useContext(CurrencyContext);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);

@@ -44,25 +44,25 @@ function AdvertiserNavBar() {
             <div className="menu">
                 <ul>
                     <li>
-                        <a href="#" onClick={() => handleNavigation(`/Advertiser/${id}`)}>Home</a>
+                        <a href="#" onClick={() => handleNavigation(`/Advertisers/${id}`)}>Home</a>
                     </li>
                     <li onMouseEnter={() => togglePopup('activities')} onMouseLeave={() => togglePopup(null)}>
-                        <a href="#" onClick={() => handleNavigation(`/Advertiser/${id}/AdvertiserActivities/${id}`)}>Activities</a>
+                        <a href="#" onClick={() => handleNavigation(`/Advertisers/${id}/AdvertiserActivities/${id}`)}>Activities</a>
                         {activePopup === 'activities' && (
                             <div className="popup">
                                 <ul>
-                                    <li><a href="#" onClick={() => handleNavigation(`/Advertiser/${id}/ActivitiesJohn/${id}`)}>Activity Manager</a></li>
+                                    <li><a href="#" onClick={() => handleNavigation(`/Advertisers/${id}/ActivitiesJohn/${id}`)}>Activity Manager</a></li>
                                     <li><a href="#" onClick={() => handleNavigation(``)}>Relaxation</a></li>
                                 </ul>
                             </div>
                         )}
                     </li>
                     <li onMouseEnter={() => togglePopup('activities')} onMouseLeave={() => togglePopup(null)}>
-                        <a href="#" onClick={() => handleNavigation(`/Advertiser/${id}/AdvertiserActivities/${id}`)}>Itineraries</a>
+                        <a href="#" onClick={() => handleNavigation(`/Advertisers/${id}/AdvertiserActivities/${id}`)}>Itineraries</a>
                         {activePopup === 'activities' && (
                             <div className="popup">
                                 <ul>
-                                    <li><a href="#" onClick={() => handleNavigation(`/Advertiser/${id}/Itineraries`)}>Itineraries</a></li>
+                                    <li><a href="#" onClick={() => handleNavigation(`/Advertisers/${id}/Itineraries`)}>Itineraries</a></li>
                                     <li><a href="#" onClick={() => handleNavigation(``)}>Relaxation</a></li>
                                 </ul>
                             </div>
@@ -110,7 +110,7 @@ function AdvertiserNavBar() {
                 {isDropdownOpen && (
                     <div className="dropdown-menu">
                         <ul>
-                            <li><a href="#" onClick={() => handleNavigation(`/Advertiser/${id}/advertiserprofile`)}><i className="fas fa-cog"></i> Account</a></li>
+                            <li><a href="#" onClick={() => handleNavigation(`/Advertisers/${id}/advertiserprofile`)}><i className="fas fa-cog"></i> Account</a></li>
                             <li><a href="#" onClick={() => handleNavigation(``)}><i className="fas fa-user"></i> Profile</a></li>
                             <li><a href="#" onClick={() => handleNavigation('')}><i className="fas fa-cog"></i> Settings</a></li>
                             <hr />

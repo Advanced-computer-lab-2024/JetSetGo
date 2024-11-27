@@ -13,12 +13,20 @@ import RadioGroupRating from "./RadioGroupRating"; // Assuming this is your cust
 import "./AddRatingComment.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Material-UI's back arrow icon
 import { useLocation } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 function AddRatingCommentItinerary() {
+  const token = Cookies.get("auth_token");
+  const decodedToken = jwtDecode(token);
+  const id = decodedToken.id;
+  console.log("id:", id);
+  const modelName = decodedToken.userType;
+  console.log("modelName:", modelName);
   const location = useLocation(); // Access the location object
-  const { id } = location.state || {}; // Access the id from state
+  // const { id } = location.state || {}; // Access the id from state
   const { iternaryId } = useParams();
-  console.log(id,iternaryId )
+  console.log(id, iternaryId)
   const navigate = useNavigate();
   const [itinerary, setItinerary] = useState(null);
   const [newRating, setNewRating] = useState(0);
@@ -75,7 +83,7 @@ function AddRatingCommentItinerary() {
           setNewRating(0);
           setHasRated(true);
           alert("Rating submitted successfully!"); // Alert on success
-          
+
         }
       })
       .catch((error) => console.error("Error submitting rating:", error));

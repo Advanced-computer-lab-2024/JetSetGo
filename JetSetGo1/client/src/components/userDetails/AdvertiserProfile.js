@@ -3,10 +3,21 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 export default function AdvertiserProfile() {
-  const params = useParams()
-  const userId = params.id
+  // const params = useParams()
+  // const userId = params.id
+  const token = Cookies.get("auth_token");
+  const decodedToken = jwtDecode(token);
+  const userId = decodedToken.id;
+  console.log("ana hena 3ayz a3raf el ID")
+  console.log(userId)
+
+
+
+
   console.log(userId)  
   const [formValues, setFormValues] = useState({
     companyProfile: '',

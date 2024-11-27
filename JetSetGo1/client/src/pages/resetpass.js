@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-// import jwt_decode from "jwt-decode"; // Install with npm install jwt-decode
-import { jwtDecode } from "jwt-decode";
+import {jwt_decode} from "jwt-decode"; // Correct import for jwt-decode
+import { jwtDecode } from "jwt-decode"; // Corrected import
 
 const urlParams = new URLSearchParams(window.location.search);
 const token = urlParams.get("token");
-
 
 // Styled components for the form
 const ChangePasswordContainer = styled.div`
@@ -76,7 +75,7 @@ const SuccessMessage = styled.div`
   font-size: 14px;
 `;
 
-export default function ChangePassword() {
+const ResetPassword = () => { // Component name now starts with uppercase
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -103,22 +102,22 @@ export default function ChangePassword() {
       return;
     }
 
-    // Simulate API call
-    const decodedToken = jwtDecode(token);
-    const userId = decodedToken.id; // Extract the user ID from the token payload
-    
-    // Make the POST request
     try {
+      const decodedToken = jwtDecode(token); // Decode the token
+      const userId = decodedToken.id; // Extract the user ID from the token payload
+
       const response = await fetch("http://localhost:8000/user/change-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          id: userId,        // Include the ID from the decoded token
-          newPassword,       // Assuming newPassword is defined elsewhere
+          id: userId, // Include the ID from the decoded token
+          newPassword, // Use the state variable
         }),
       });
+
       if (!response.ok) {
-        throw new Error("Failed to change password. Please try again.");
+        const data = await response.json();
+        throw new Error(data.error || "Failed to change password. Please try again.");
       }
 
       setSuccess("Password changed successfully.");
@@ -137,7 +136,7 @@ export default function ChangePassword() {
       <FormContainer onSubmit={handleSubmit}>
         <Label htmlFor="newPassword">New Password</Label>
         <Input
-          type="password"
+          type="password1"
           id="newPassword"
           placeholder="Enter new password"
           value={newPassword}
@@ -145,7 +144,7 @@ export default function ChangePassword() {
         />
         <Label htmlFor="confirmPassword">Confirm New Password</Label>
         <Input
-          type="password"
+          type="password1"
           id="confirmPassword"
           placeholder="Re-enter new password"
           value={confirmPassword}
@@ -155,4 +154,6 @@ export default function ChangePassword() {
       </FormContainer>
     </ChangePasswordContainer>
   );
-}
+};
+
+export default ResetPassword; // Ensure default export matches the uppercase name
