@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import '../pages/ToursimGovernor.css';
+
 
 const HLTagform = ({id}) => {
     const [type, setType] = useState('')
@@ -48,7 +50,7 @@ const HLTagform = ({id}) => {
 
             <label>Historical Period:</label>
             <input
-                type="historicalPeriod"
+                type="text"
                 onChange={(e) => sethistoricalPeriod(e.target.value)}
                 value={historicalPeriod}
             />

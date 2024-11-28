@@ -1,11 +1,28 @@
+import '../pages/ToursimGovernor.css';
+
 const HLTagElement = ({ tag }) => {
 
     return (
-        <div className="tag-details">
-            <h4>{tag.title}</h4>
-            <p><strong>Type: </strong>{tag.type}</p>
-            <p><strong>Historical Period: </strong>{tag.historicalPeriod}</p>
+
+        <div className="container" style={{ marginTop: '50px' }}>
+            
+            <div className="card-sl">
+            <div className="row">
+
+                <div className="card-row">
+                    <div className="card-heading">Type:</div>
+                    <div className="card-text">{tag.type}</div>
+                </div>
+                <div className="card-row">
+                    <div className="card-heading">Historical Period:</div>
+                    <div className="card-text">{tag.historicalPeriod}</div>
+                </div>
+                </div>
+            </div>
         </div>
+
+
+
     );
 };
 
