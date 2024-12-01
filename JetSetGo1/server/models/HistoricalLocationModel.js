@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { format } = require('path');
 
 const historicalLocationSchema = new mongoose.Schema({
     name: { 
@@ -14,8 +15,8 @@ const historicalLocationSchema = new mongoose.Schema({
         required: true,
     },
     openingHours: {
-        type: String,
-        required: true,
+        from: { type: Number, required: true },
+        to: { type: Number, required: true },
     },
     ticketPrices: {
         foreigner: { type: Number, required: true },
@@ -27,7 +28,7 @@ const historicalLocationSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'HistoricalTag' 
     },
-        // ref: 'HistoricalTag' ,
+        
     
     category: {
         type: mongoose.Schema.Types.ObjectId,

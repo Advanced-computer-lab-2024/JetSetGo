@@ -27,6 +27,7 @@ import Activities2 from "./pages/Activities";
 import Itineraries2 from "./pages/Itineraries";
 import Museums from "./pages/museums";
 import HistoricalLocations from "./pages/historicallocations.js";
+import TourismGovernerHomepage from './pages/tourismgoverner/tourismgovernerhome.js';
 
 // import ActivityFilter from './components/ActivityFilter';
 // import ItineraryFilter from './components/ItineraryFilter';
@@ -191,7 +192,8 @@ function App() {
               </Route>
 
               {/*///////////////////////////////////////////tg//////////////////////////////////////////////////////////////*/}
-              <Route path="/tourism_governer/:id" element={<TourismGovernerLayout />}>
+              <Route path="/tourism_governer/:id" element={<TourismGovernerHomepage />}>
+              {/*TourismGovernerLayout */}
                 <Route path="/tourism_governer/:id/HLTags" element={<HLTags />} />{/*tourism governer*/}
                 <Route path="/tourism_governer/:id/HLMs" element={<HLMs />} />{/*tourism governer*/}
                 <Route
