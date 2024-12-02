@@ -49,6 +49,7 @@ import Categorypage from './pages/my_category.js'
 import Home from "./pages/home.js";
 
 // import Navbar from './components/navbar.js'
+import TourismGovTags from "./pages/tourismgoverner/tourismgovernortags.js";
 import Tourism_Governer from "./pages/Tourism_Governer.js";
 import HL from "./pages/HistoricalLocations2.js";
 import Museum from "./pages/Museums2.js";
@@ -192,10 +193,11 @@ function App() {
               </Route>
 
               {/*///////////////////////////////////////////tg//////////////////////////////////////////////////////////////*/}
-              <Route path="/tourism_governer/:id" element={<TourismGovernerHomepage />}>
+              <Route path="/tourism_governer/:id" element={<TourismGovernerHomepage />}>              </Route>
               {/*TourismGovernerLayout */}
                 <Route path="/tourism_governer/:id/HLTags" element={<HLTags />} />{/*tourism governer*/}
                 <Route path="/tourism_governer/:id/HLMs" element={<HLMs />} />{/*tourism governer*/}
+                <Route path="/tourism_governer/:id/Tags" element = {<TourismGovTags/>}/>
                 <Route
                   path="/tourism_governer/:id/:modelName/change-password"
                   element={<ChangePassword />}
@@ -203,7 +205,7 @@ function App() {
                 {/* <Route path="/tourism_governer/:id/Itineraries" element={<Itineraries /> */}
 
 
-              </Route>
+
 
 
 
