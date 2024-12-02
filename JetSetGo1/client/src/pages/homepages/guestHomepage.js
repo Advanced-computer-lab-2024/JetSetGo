@@ -1,11 +1,11 @@
 import React from 'react';
-import NavBar from '../../components/Tourist/navbar';
+//import NavBar from '../../components/Tourist/navbar';
 import './homepage.css';
 
 function GuestPage() {
   return (
     <div>
-        <NavBar />
+        {/* <NavBar /> */}
 	<div className="body">
 		<div className="heaading">
 			<h1>Plan your next trip with us</h1>

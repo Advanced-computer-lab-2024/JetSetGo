@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
+
 
 const TouristAddComplaintPage = () => {
-    const { id } = useParams(); // Get userId from URL params
+    // const { id } = useParams(); // Get userId from URL params
+    const location = useLocation(); // Access the location object
+    const token = Cookies.get("auth_token");
+    const decodedToken = jwtDecode(token);
+    const id = decodedToken.id;
+    console.log("id:", id); // Access the id from state
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
     const [error, setError] = useState(null);

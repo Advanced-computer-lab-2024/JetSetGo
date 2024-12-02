@@ -1,5 +1,6 @@
 const Advertiser = require('../models/AdvertiserModel');
 const Activity = require('../models/AdvertiserActivityModel');
+const Itinerary = require ('../models/ItineraryModel');
 const multer = require('multer');
 const path = require('path');
 const Transportation = require('../models/TransportationModel');
@@ -39,15 +40,33 @@ const upload = multer({
 
 // Create Transportation
 const createTransportation = async (req, res) => {
-    const {carModel, days, time, location, price, advertiser} = req.body;
+    const {vehicle, carModel, days, time, cLocation, capacity, bLocation, price, advertiser} = req.body;
+
+    const transportData = {
+      vehicle,
+      days,
+      time,
+      price,
+      advertiser,
+    };
   
-    try {
-      const newTransportation = await Transportation.create({ carModel, days, time, location, price, advertiser});
-      res.status(201).json(newTransportation);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
+    // Conditionally add fields based on vehicle type
+    if (vehicle === 'car') {
+      transportData.carModel = carModel;
+      transportData.cLocation = cLocation;
+    } else if (vehicle === 'bus') {
+      transportData.bLocation = bLocation;
+      transportData.capacity = capacity;
     }
-  };
+  
+
+  try {
+    const newTransportation = await Transportation.create(transportData);
+    res.status(201).json(newTransportation);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
   
   // Read Transportation
   const getTransportation = async (req, res) => {
@@ -236,10 +255,10 @@ const getActivities = async (req, res) => {
 const showMyActivities = async(req,res) => {
 
 
-    const AdvId = req.query.AdvId;
+    const {id} = req.params;
 
 try{
-        const result = await Activity.find({advertiser:(AdvId)})
+        const result = await Activity.find({advertiser:(id)})
         res.status(200).json(result)
     } catch{
         res.status(400).json({error:"Id is required"})
@@ -371,4 +390,41 @@ const uploadDocument = async (req, res) => {
 
 
 
-module.exports = {requestAccountDeletion,upload,createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities,changePassword,uploadProfileImage,  createTransportation, getTransportation, updateTransportation, deleteTransportation,uploadDocument,uploadDoc};
+
+const findtransport = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const transportData = await Transportation.findById(id);
+    if (!transportData) {
+      return res.status(404).json({ error: 'Transportation post not found' });
+    }
+    res.status(200).json(transportData);
+  } catch (err) {
+    res.status(500).json({ error: 'An error occurred while fetching the transportation post' });
+  }
+};
+
+
+const findReferenceDetails = async (req, res) => {
+  const { id, type } = req.params;
+
+  try {
+    let details;
+    if (type === 'Activity') {
+      details = await Activity.findById(id);
+    } else if (type === 'Itinerary') {
+      details = await Itinerary.findById(id);
+    }
+
+    if (!details) {
+      return res.status(404).json({ error: `${type} not found` });
+    }
+    res.status(200).json(details);
+  } catch (err) {
+    res.status(500).json({ error: `An error occurred while fetching the ${type} details` });
+  }
+};
+
+module.exports = {requestAccountDeletion,upload,createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities,changePassword,uploadProfileImage,  createTransportation, getTransportation, updateTransportation, deleteTransportation,uploadDocument,uploadDoc, findReferenceDetails,findtransport};
+

@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
 import './TermsAndConditionsForm.css'; // Import CSS for styling
 
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 function TermsAndConditionsForm() {
+  // const location = useLocation();
+  // const { id } = useParams()
   // State to track whether the terms are accepted
+  const token = Cookies.get("auth_token");
+const decodedToken = jwtDecode(token);
+const id = decodedToken.id;
+console.log("id:",id);
+const modelName = decodedToken.userType;
+console.log("modelName:",modelName);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
 

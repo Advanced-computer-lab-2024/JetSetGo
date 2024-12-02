@@ -1,4 +1,5 @@
 const TransportBooking = require("../models/TransportationBookingModel");
+const ActivityItineraryBooking =  require('../models/bookingmodel.js');
 const mongoose = require("mongoose");
 const Product = require("../models/ProductModel");
 const Tourist = require("../models/TouristModels");
@@ -14,6 +15,413 @@ const Booking = require("../models/bookingmodel");
 const SalesModel = require("../models/SalesModel");
 
 const TourGuide = require("../models/TourGuideModel.js");
+const FlightBooking = require('../models/FlightBooking');
+const nodemailer = require('nodemailer');
+const jwt = require("jsonwebtoken"); 
+
+const stripe = require("stripe")("sk_test_4eC39HqLyjWDarjtT1zdp7dc"); // Use your Stripe secret key (Needs to changed and in .env file)
+
+
+
+// Function to share via email using Tourist model
+shareViaEmail = async (req, res) => {
+  const { touristIds, subject, body } = req.body;
+
+  // Validate the request body
+  if (!touristIds || !Array.isArray(touristIds) || touristIds.length === 0) {
+    return res.status(400).json({ error: 'No tourist IDs provided' });
+  }
+  if (!subject || !body) {
+    return res.status(400).json({ error: 'Subject and body are required' });
+  }
+
+  try {
+    // Fetch emails of the specified tourists from the database
+    const tourists = await Tourist.find({ _id: { $in: touristIds } }, 'email');
+    const emails = tourists.map((tourist) => tourist.email);
+
+    if (emails.length === 0) {
+      return res.status(404).json({ error: 'No valid emails found for the given tourist IDs' });
+    }
+
+    // Configure the email transporter
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail', // Use your email service provider
+      auth: {
+        user: 'your-email@example.com', // Your email
+        pass: 'your-email-password', // Your email password or app-specific password
+      },
+    });
+
+    // Send the email
+    const info = await transporter.sendMail({
+      from: 'jetsetgo212@gmail.com', // Sender address
+      to: emails.join(','), // Recipient emails, joined as a string
+      subject, // Subject line
+      text: body, // Plain text body
+    });
+
+    console.log('Email sent: %s', info.messageId);
+    return res.status(200).json({ message: 'Emails sent successfully!' });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    return res.status(500).json({ error: 'Failed to send emails.' });
+  }
+};
+
+//Send Payment Receipt via email
+const sendReceiptViaMail = async (req,res) =>
+{
+  const {touristId, EventId, type} = req.body
+
+  try{
+    console.log(touristId)
+    const tourist = await Tourist.findById(touristId);
+
+    let eventPaidFor;
+    if(type == 'Activity')
+    {
+       eventPaidFor = await Activity.findById(EventId);
+    }
+    else
+    {
+       eventPaidFor = await Itinerary.findById(EventId);
+    }
+
+    // Configure the email transporter
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail', // Use your email service provider
+      auth: {
+        user: process.env.EMAIL_USER, // Your email
+        pass: process.env.EMAIL_PASS, // Your email password or app-specific password
+      },
+    });
+
+    // Create email content
+    const emailContent = `
+      Hello ${tourist.name},
+
+      Thank you for your payment! Here are the details of your event:
+
+      Event Title: ${eventPaidFor.title}
+      Event Date: ${eventPaidFor.date}
+      Amount Paid: ${eventPaidFor.price}
+
+      We hope you enjoy your experience!
+
+      Best regards,
+      JetSetGo
+    `;
+
+    // Send email
+    await transporter.sendMail({
+      from: "jetsetgo212@gmail.com",
+      to: tourist.email,
+      subject: "Payment Receipt",
+      text: emailContent,
+    });
+
+    res.status(200).json({ message: "Receipt sent successfully" });
+  } catch (error) {
+    console.error("Error sending receipt:", error);
+    res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+};
+
+const viewCancelledEventAmount = async (req, res) => {
+  try {
+    // Extract userId and eventId from parameters or token
+    const { userId: paramUserId, eventId: paramEventId, type } = req.params;
+    let userId = paramUserId;
+    let eventId = paramEventId;
+
+    if (!userId || !eventId) {
+      // Extract from token if not provided in params
+      const token = req.headers.authorization?.split(" ")[1]; // Authorization: Bearer <token>
+      if (!token) {
+        return res.status(401).json({ message: "Token required or missing parameters" });
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      userId = decoded.userId || userId;
+      eventId = decoded.eventId || eventId;
+
+      if (!userId || !eventId) {
+        return res.status(400).json({ message: "Invalid token or missing event information" });
+      }
+    }
+
+    // Find the user
+    const user = await Tourist.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if the event exists and get its price
+    let cancelledEvent;
+    if (type === "Activity") {
+      cancelledEvent = await Activity.findById(eventId);
+    } else if (type === "Itinerary") {
+      cancelledEvent = await Itinerary.findById(eventId);
+    } else {
+      return res.status(400).json({ message: "Invalid event type" });
+    }
+
+    if (!cancelledEvent) {
+      return res.status(404).json({ message: "Cancelled event not found" });
+    }
+
+    const eventPrice = cancelledEvent.price;
+
+    // Check if the event was previously paid for
+    const isPaidFor =
+      (type === "Activity" && user.ActivitiesPaidForList?.includes(eventId)) ||
+      (type === "Itinerary" && user.ItinerariesPaidForList?.includes(eventId));
+
+    if (!isPaidFor) {
+      return res.status(400).json({ message: "Event was not paid for or is invalid" });
+    }
+
+    // Add the amount back to the user's wallet
+    user.wallet += eventPrice;
+
+    // Remove the event from the paid list
+    if (type === "Activity") {
+      user.ActivitiesPaidForList = user.ActivitiesPaidForList.filter((id) => id !== eventId);
+    } else if (type === "Itinerary") {
+      user.ItinerariesPaidForList = user.ItinerariesPaidForList.filter((id) => id !== eventId);
+    }
+
+    // Save user details
+    await user.save();
+
+    res.status(200).json({
+      message: `Amount from canceled ${type.toLowerCase()} has been added to your wallet`,
+      addedBalance: eventPrice,
+    });
+  } catch (error) {
+    console.error("Error processing canceled event:", error);
+    res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+};
+
+
+const viewUpcomingPaidEvents = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Fetch the tourist (user) details
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Get the list of activity IDs the user has paid for
+    const activitiesPaidForList = tourist.ActivitiesPaidForList || [];
+    const itinerariesPaidForList = tourist.ItinerariesPaidForList || [];
+
+    // Fetch details for each activity
+    const activitiesList = await Promise.all(
+      activitiesPaidForList.map(async (activityId) => {
+        const activity = await Activity.findById(activityId);
+        return activity && new Date(activity.date) > new Date() ? activity : null; // Filter only upcoming activities
+      })
+    );
+
+    // Fetch details for each itinerary
+    const itinerariesList = await Promise.all(
+      itinerariesPaidForList.map(async (itineraryId) => {
+        const itinerary = await Itinerary.findById(itineraryId);
+        return itinerary && new Date(itinerary.date) > new Date() ? itinerary : null; // Filter only upcoming itineraries
+      })
+    );
+
+    // Combine and filter null values
+    const upcomingEvents = [...activitiesList, ...itinerariesList].filter(Boolean);
+
+    res.status(200).json({
+      message: "Upcoming activities and itineraries retrieved successfully",
+      upcomingEvents,
+    });
+  } catch (error) {
+    console.error("Error fetching upcoming events:", error);
+    res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+};
+
+const viewPastPaidEvents = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Fetch the tourist (user) details
+    const tourist = await Tourist.findById(userId);
+    if (!tourist) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Get the list of activity and itinerary IDs the user has paid for
+    const ActivitiesPaidForList = tourist.ActivitiesPaidForList || [];
+    const ItinerariesPaidForList = tourist.ItinerariesPaidForList || [];
+
+    // Fetch details for each activity
+    const activitiesList = await Promise.all(
+      ActivitiesPaidForList.map(async (activityId) => {
+        const activity = await Activity.findById(activityId);
+        return activity && new Date(activity.date) < new Date() ? activity : null; // Filter only past activities
+      })
+    );
+
+    // Fetch details for each itinerary
+    const itinerariesList = await Promise.all(
+      ItinerariesPaidForList.map(async (itineraryId) => {
+        const itinerary = await Itinerary.findById(itineraryId);
+        return itinerary && new Date(itinerary.date) < new Date() ? itinerary : null; // Filter only past itineraries
+      })
+    );
+
+    // Combine and filter null values
+    const pastEvents = [...activitiesList, ...itinerariesList].filter(Boolean);
+
+    res.status(200).json({
+      message: "Past activities and itineraries retrieved successfully",
+      pastEvents,
+    });
+  } catch (error) {
+    console.error("Error fetching past events:", error);
+    res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+};
+
+//View Bookmarked events
+const viewSavedEvents = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Find the user
+    const user = await Tourist.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Fetch bookmarked activities
+    const bookmarkedActivities = await Promise.all(
+      (user.ActivitiesBookmarked || []).map(async (activityId) => {
+        const activity = await Activity.findById(activityId);
+        return activity ? activity : null; // Ensure only valid activities are returned
+      })
+    );
+
+    // Fetch bookmarked itineraries
+    const bookmarkedItineraries = await Promise.all(
+      (user.ItinerariesBookmarked || []).map(async (itineraryId) => {
+        const itinerary = await Itinerary.findById(itineraryId);
+        return itinerary ? itinerary : null; // Ensure only valid itineraries are returned
+      })
+    );
+
+    // Combine and filter out null values
+    const savedEvents = [...bookmarkedActivities, ...bookmarkedItineraries].filter(Boolean);
+
+    res.status(200).json({
+      message: "Saved events retrieved successfully",
+      savedEvents,
+    });
+  } catch (error) {
+    console.error("Error fetching saved events:", error);
+    res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+};
+
+
+
+
+//Pay for event
+const payForEvent = async (req, res) => {
+  try {
+    const { eventId, paymentMethod, paymentType, type } = req.body;
+
+    // Get user ID from token or params
+    let userId;
+    if (req.params.userId) {
+      userId = req.params.userId;
+    } else if (req.headers.authorization) {
+      const token = req.headers.authorization.split(" ")[1]; // Assuming 'Bearer <token>'
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET); // Replace with your secret
+      userId = decodedToken.userId;
+    } else {
+      return res.status(401).json({ message: "User ID is missing from parameters or token" });
+    }
+
+    // Find the user
+    const user = await Tourist.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if the event exists and get its price
+    let eventReq;
+    if (type === "Activity") {
+      eventReq = await Activity.findById(eventId);
+    } else if (type === "Itinerary") {
+      eventReq = await Itinerary.findById(eventId);
+    } else {
+      return res.status(400).json({ message: "Invalid event type" });
+    }
+
+    if (!eventReq) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    const eventPrice = eventReq.price;
+
+    // Process payment
+    if (paymentType === "wallet") {
+      // Wallet payment
+      if (user.wallet >= eventPrice) {
+        // Deduct from wallet
+        user.wallet -= eventPrice;
+      } else {
+        return res.status(400).json({ message: "Insufficient wallet balance" });
+      }
+    } else if (paymentType === "card" && paymentMethod) {
+      // Stripe payment (Credit/Debit card)
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: eventPrice * 100, // Stripe expects amounts in cents
+        currency: "egp",
+        payment_method: paymentMethod,
+        confirmation_method: "manual",
+        confirm: true,
+      });
+
+      if (paymentIntent.status !== "succeeded") {
+        return res.status(400).json({ message: "Payment failed via card" });
+      }
+    } else {
+      return res.status(400).json({ message: "Invalid payment type or missing payment method" });
+    }
+
+    // Add the event to the appropriate list
+    if (type === "Activity") {
+      user.ActivitiesPaidForList = user.ActivitiesPaidForList || [];
+      user.ActivitiesPaidForList.push(eventId);
+    } else if (type === "Itinerary") {
+      user.ItinerariesPaidForList = user.ItinerariesPaidForList || [];
+      user.ItinerariesPaidForList.push(eventId);
+    }
+
+    // Save the user details
+    await user.save();
+
+    res.status(200).json({ message: "Payment successful and event added to your list!" });
+  } catch (error) {
+    console.error("Payment error:", error);
+    res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+};
+
+
+
+
 
 const getTagNameById = async (req, res) => {
   try {
@@ -47,14 +455,10 @@ const getCategoryNameById = async (req, res) => {
 
 // Create TransportBooking
 const createTransportBooking = async (req, res) => {
-  const { transportationId, touristId, date } = req.body;
+  const {transportationId, touristId, date, seats} = req.body;
 
   try {
-    const newTransportBooking = await TransportBooking.create({
-      transportationId,
-      touristId,
-      date,
-    });
+    const newTransportBooking = await TransportBooking.create({ transportationId, touristId, date, seats});
     res.status(201).json(newTransportBooking);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -106,14 +510,18 @@ const deleteTransportBooking = async (req, res) => {
 
 const selectPrefrences = async (req, res) => {
   const { id } = req.params;
-  const updates = req.body;
+  const {tags,budget} = req.body;
+
+  const updates ={
+    tags, 
+    budget:{
+      from:budget.from,
+      to:budget.to,
+    },
+  };
 
   try {
-    const myPrefrences = await Tourist.findByIdAndUpdate(
-      id,
-      { $push: { prefrences: updates } },
-      { new: true }
-    );
+    const myPrefrences = await Tourist.findByIdAndUpdate(id, {$set:{ prefrences :updates}}, { new: true });
     res.status(200).json(myPrefrences);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -122,15 +530,17 @@ const selectPrefrences = async (req, res) => {
 
 const getPrefrences = async (req, res) => {
   const { id } = req.params;
+  console.log(id);
 
-  try {
-    const TouristProfile = await Tourist.findById(id);
-    const PrefrencesProfile = TouristProfile.prefrences;
-    res.status(200).json(PrefrencesProfile);
-  } catch (err) {
-    res.status(404).json({ error: "Tourist not found" });
-  }
-};
+   try {
+     const TouristProfile = await Tourist.findById(id);
+     console.log(TouristProfile.preferences);
+     const PrefrencesProfile = TouristProfile.prefrences;
+     res.status(200).json(PrefrencesProfile);
+   } catch (err) {
+     res.status(404).json({ error: 'Tourist not found' });
+   }
+ };
 
 const multer = require("multer");
 
@@ -156,7 +566,7 @@ const filterProducts = async (req, res) => {
       price: {
         $gte: min, // Greater than or equal to minPrice
         $lte: max, // Less than or equal to maxPrice
-      },
+      },archieved:false
     };
     const products = await Product.find(query);
     res.status(200).json(products);
@@ -175,7 +585,7 @@ const sortByRate = async (req, res) => {
       x = -1;
     }
     // Get sorted products by ratings in descending order
-    const products = await Product.find().sort({ ratings: x }); // Change to 1 for ascending order and -1 for descending
+    const products = await Product.find({archieved:false}).sort({ ratings: x }); // Change to 1 for ascending order and -1 for descending
     res.status(200).json(products); // Send the sorted products as JSON
   } catch (error) {
     console.error(error);
@@ -247,6 +657,9 @@ const searchHistoricalPlaceByCategory = async (req, res) => {
   const nameReq = req.body;
   try {
     const Historical = await HistoricalLocationModel.find(nameReq);
+    if (Historical.length == 0) {
+      return res.status(404).json({ error: "Historical Place not found" });
+    }
     res.status(200).json(Historical);
   } catch (error) {
     res.status(404).json({ error: "Historical Place not found" });
@@ -322,7 +735,10 @@ const searchMuseumByCategory = async (req, res) => {
 const searchItineraryByBudget = async (req, res) => {
   const budget = req.body;
   try {
-    const itinerary = await Itinerary.find();
+    const itinerary = await Itinerary.find({
+      active: true,
+      flagged: false,
+    });
     const result = itinerary.filter((el) => el.price <= budget.price);
 
     res.status(200).json(result);
@@ -342,7 +758,10 @@ const searchItineraryByDate = async (req, res) => {
 
     // Find all itineraries where any availableDates in the array matches the search date
     const itineraries = await Itinerary.find({
-       "availableDates.date": searchDate, // Check all availableDates in each itinerary
+       "availableDates.date": searchDate,
+        active: true,
+        flagged: false,
+       // Check all availableDates in each itinerary
     });
     //console.log(req.body)
     //const itineraries = await Itinerary.find(req.body)
@@ -357,7 +776,10 @@ const searchItineraryByDate = async (req, res) => {
 const searchItineraryByLanguage = async (req, res) => {
   const languageReq = req.body;
   try {
-    const itinerary = await Itinerary.find(languageReq);
+    const itinerary = await Itinerary.find(languageReq,{
+      active: true,
+      flagged: false,
+    });
     res.status(200).json(itinerary);
   } catch (error) {
     res.status(404).json({ error: "Itinerary not found" });
@@ -368,7 +790,10 @@ const searchItineraryByLanguage = async (req, res) => {
 const searchItineraryByName = async (req, res) => {
   const name = req.body;
   try {
-    const itinerary = await Itinerary.find(name);
+    const itinerary = await Itinerary.find(name,{
+      active: true,
+      flagged: false,
+    });
     res.status(200).json(itinerary);
   } catch (error) {
     res.status(404).json({ error: "Itinerary not found" });
@@ -379,7 +804,10 @@ const searchItineraryByName = async (req, res) => {
 const searchItineraryByCategory = async (req, res) => {
   const category = req.body;
   try {
-    const itinerary = await Itinerary.find(category);
+    const itinerary = await Itinerary.find(category,{
+      active: true,
+      flagged: false,
+    });
     res.status(200).json(itinerary);
   } catch (error) {
     res.status(404).json({ error: "Itinerary not found" });
@@ -392,7 +820,10 @@ const searchItineraryByTag = async (req, res) => {
 
   try {
     // Step 1: Find itineraries that have the tagId in their tags array
-    const itineraries = await Itinerary.find({ tags: tagId }).populate("tags"); // Optional: populate 'tags' to return tag details
+    const itineraries = await Itinerary.find({ tags: tagId,
+      active: true,
+      flagged: false,
+     }).populate("tags"); // Optional: populate 'tags' to return tag details
 
     // Step 2: Return the list of itineraries
     res.status(200).json(itineraries);
@@ -622,7 +1053,7 @@ const getUpcomingItineraries = async (req, res) => {
         $elemMatch: {
           date: { $gte: currentDate }, // Check if at least one date is greater than or equal to the current date
         },
-      },
+      },active : true, flagged:false
     });
 
     res.status(200).json(upcomingItineraries);
@@ -640,7 +1071,10 @@ const sortItineraryByPrice = async (req, res) => {
           date: { $gte: currentDate }, // Check if at least one date is greater than or equal to the current date
         },
       },
-    }).sort({ price: 1 });
+        active: true,
+        flagged: false,
+      }
+    ).sort({ price: 1 });
     res.status(200).json(sortedItineraryByPrice);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -656,7 +1090,10 @@ const sortItineraryByRating = async (req, res) => {
           date: { $gte: currentDate }, // Check if at least one date is greater than or equal to the current date
         },
       },
-    }).sort({ rating: 1 });
+        active: true,
+        flagged: false,
+      }
+    ).sort({ rating: 1 });
     res.status(200).json(sortedItineraryByRating);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -901,7 +1338,10 @@ async function payForItinerary(req, res) {
     }
 
     // Find the itinerary the tourist is paying for
-    const itinerary = await Itinerary.findById(itineraryId);
+    const itinerary = await Itinerary.findById(itineraryId,{
+      active: true,
+      flagged: false,
+    });
     if (!itinerary) {
       return res.status(404).json({ message: "Itinerary not found" });
     }
@@ -1029,11 +1469,30 @@ async function payForActivity(req, res) {
 
 
 
+const getTouristActivities = async (req, res) => {
+  try {
+    const { touristId } = req.params;
+
+    const activities = await Activity.find({ Tourists: touristId }).populate('comments.postedby', 'name');
+
+    res.json(activities);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+
 const rateActivity = async (req, res) => {
   try {
     const { _id, star, activityId } = req.body;
 
     const activity = await Activity.findById(activityId);
+
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
 
     let alreadyRated = activity.ratings.find(
       (rating) => rating.postedby.toString() === _id.toString()
@@ -1056,7 +1515,12 @@ const rateActivity = async (req, res) => {
         { new: true }
       );
     }
+
     const getAllRatings = await Activity.findById(activityId);
+    if (!getAllRatings) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
     let totalRating = getAllRatings.ratings.length;
     let ratingSum = getAllRatings.ratings
       .map((item) => item.star)
@@ -1072,6 +1536,55 @@ const rateActivity = async (req, res) => {
     );
 
     res.json(finalActivity);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getUserRating = async (req, res) => {
+  try {
+    const { _id, activityId } = req.params;
+
+    const activity = await Activity.findById(activityId);
+    console.log(activity);
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
+    const userRating = activity.ratings.find(
+      (rating) => rating.postedby.toString() === _id.toString()
+    );
+
+    res.json({ rating: userRating ? userRating.star : null });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+const isCommentByTourist = async (req, res) => {
+  try {
+    const { touristId, commentId } = req.body;
+
+    // Find the activity containing the comment by the commentId
+    const activity = await Activity.findOne({
+      "comments._id": commentId
+    });
+
+    if (!activity) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Find the specific comment
+    const comment = activity.comments.id(commentId);
+
+    // Check if the comment was posted by the given touristId
+    if (comment.postedby.toString() === touristId) {
+      res.json(true); // The comment was posted by the user
+    } else {
+      res.json(false); // The comment was not posted by the user
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -1137,7 +1650,10 @@ const book_activity_Itinerary = async (req, res) => {
     const { tourist, referenceId } = req.body;
     const reference =
       (await Activity.findById(referenceId)) ||
-      (await Itinerary.findById(referenceId));
+      (await Itinerary.findById(referenceId,{
+        active: true,
+        flagged: false,
+      }));
 
     if (!reference) {
       return res
@@ -1149,12 +1665,102 @@ const book_activity_Itinerary = async (req, res) => {
 
     const booking = new Booking({ tourist, referenceId, referenceType });
     await booking.save();
+    const touristt = await Tourist.findById(tourist);
+    touristt.BookedAnything = true;
+    await touristt.save();
+
+    if (referenceType === "Activity") {
+      await Activity.findByIdAndUpdate(
+        referenceId,
+        { $push: { Tourists: tourist } },
+        { new: true }
+      );
+    }
 
     res.status(201).json(booking);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
+const getTouristBookedActivities = async (req, res) => {
+  try {
+    const { touristId } = req.params;
+    console.log("jjnjnj"+touristId);
+    // Find all bookings for the tourist
+    const bookings = await Booking.find({ tourist: touristId });
+
+    // Extract reference IDs and types from bookings
+    const activityIds = bookings
+      .filter(booking => booking.referenceType === 'Activity')
+      .map(booking => booking.referenceId);
+
+    const itineraryIds = bookings
+      .filter(booking => booking.referenceType === 'Itinerary')
+      .map(booking => booking.referenceId);
+
+    // Find activities and itineraries based on IDs
+    const activities = await Activity.find({ _id: { $in: activityIds } })
+    //.populate('comments.postedby', 'name');
+    const itineraries = await Itinerary.find({ _id: { $in: itineraryIds } },{
+      active: true,
+      flagged: false,
+    })
+    //.populate('comments.postedby', 'name');
+
+    res.json({ activities, itineraries });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+// Create a new flight booking
+const createFlightBooking = async (req, res) => {
+  const { touristId, flightId, origin, destination, departureDate, returnDate, price, duration } = req.body;
+
+  try {
+    // Validate touristId format
+    if (!mongoose.Types.ObjectId.isValid(touristId)) {
+      return res.status(400).json({ message: 'Invalid tourist ID format' });
+    }
+
+    // Convert touristId to an ObjectId
+    const touristObjectId = new mongoose.Types.ObjectId(touristId);
+
+    // Check if the tourist exists
+    const tourist = await Tourist.findById(touristObjectId);
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found' });
+    }
+
+    // Create a new flight booking
+    const newBooking = new FlightBooking({
+      touristId: touristObjectId,
+      flightId,
+      origin,
+      destination,
+      departureDate,
+      returnDate,
+      price,
+      duration,
+    });
+
+    // Save the booking to the database
+    await newBooking.save();
+
+    // Respond with success
+    res.status(201).json({ message: 'Flight booking created successfully', booking: newBooking });
+  } catch (error) {
+    console.error('Error creating flight booking:', error);
+    res.status(500).json({ message: 'Failed to create flight booking' });
+  }
+};
+
+
 
 const cancel_booking = async (req, res) => {
   try {
@@ -1165,7 +1771,10 @@ const cancel_booking = async (req, res) => {
 
     const reference =
       (await Activity.findById(booking.referenceId)) ||
-      (await Itinerary.findById(booking.referenceId));
+      (await Itinerary.findById(booking.referenceId,{
+        active: true,
+        flagged: false,
+      }));
 
     if (!reference) {
       return res
@@ -1194,12 +1803,70 @@ const cancel_booking = async (req, res) => {
     if (hoursDiff < 48) {
       return res.status(400).json({ message: "Cannot cancel within 48 hours" });
     }
+
     await Booking.deleteOne({ _id: booking_id });
-    res.status(200).json({ message: "Booking canceled" });
+
+    // Remove the tourist from the Tourists array in the Activity model
+    if (booking.referenceType === "Activity") {
+      await Activity.findByIdAndUpdate(
+        booking.referenceId,
+        { $pull: { Tourists: booking.tourist } },
+        { new: true }
+      );
+    }
+
+    res.status(200).json({ message: "Booking canceled and tourist removed from the activity" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+const myTransportBooking = async (req, res) => {
+  const { touristId } = req.params;
+
+  try {
+    const TransportBookingProfile = await TransportBooking.find({ touristId });
+    res.status(200).json(TransportBookingProfile);
+  } catch (err) {
+    res.status(404).json({ error: 'Transportation Booking not found' });
+  }
+};
+
+
+
+
+const myActivityItineraryBooking = async (req, res) => {
+  const { touristId } = req.params;
+
+  try {
+    const ActivityItineraryBookingProfile = await ActivityItineraryBooking.find({ touristId });
+    res.status(200).json(ActivityItineraryBookingProfile);
+  } catch (err) {
+    res.status(404).json({ error: 'Activity/Itinerary Booking not found' });
+  }
+};
+
+
+
+// controllers/hotelBookingController.js
+// controllers/hotelBookingController.js
+const HotelBooking = require("../models/HotelBooking");
+const TouristModels = require("../models/TouristModels");
+
+const createBooking = async (req, res) => {
+    const { touristId, ...bookingData } = req.body; // Extract touristId from request body
+    try {
+        const booking = new HotelBooking({ touristId, ...bookingData });
+        await booking.save();
+        res.status(201).json({ message: "Booking saved successfully", booking });
+    } catch (error) {
+        console.error("Error saving booking:", error);
+        res.status(500).json({ message: "Error saving booking", error });
+    }
+};
+
+
 
 const fetchID = async (req, res) => {
   try {
@@ -1232,7 +1899,10 @@ const fetchActivityID = async (req, res) => {
 
 const fetchItineraryID = async (req, res) => {
   const { itineraryId } = req.params;
-  const itinerary = await Itinerary.findById(itineraryId); // Replace Itinerary with your model
+  const itinerary = await Itinerary.findById(itineraryId,{
+    active: true,
+    flagged: false,
+  }); // Replace Itinerary with your model
 
   try {
     if (!itinerary) {
@@ -1318,7 +1988,7 @@ const addRating = async (req, res) => {
 };
 
 // Method to add a comment from a tourist to a tour guide
-const addComment = async (req, res) => {
+const addComment = async (req, res) => { //////////// add it in query
   const { tourGuideId, touristId, comment } = req.body;
 
   try {
@@ -1348,11 +2018,11 @@ const addComment = async (req, res) => {
         message: "Comment added successfully.",
         comment: newComment,
       });
-    } else {
+    } //else {
       return res
         .status(400)
         .json({ message: "Tourist not associated with this tour guide." });
-    }
+    //}
   } catch (error) {
     return res.status(500).json({ message: "Error adding comment.", error });
   }
@@ -1363,7 +2033,10 @@ const addItineraryRating = async (req, res) => {
 
   try {
     // Find the itinerary by ID
-    const itinerary = await Itinerary.findById(itineraryId);
+    const itinerary = await Itinerary.findById(itineraryId,{
+      active: true,
+      flagged: false,
+    });
 
     if (!itinerary) {
       return res.status(404).json({ message: "Itinerary not found." });
@@ -1413,7 +2086,10 @@ const addItineraryComment = async (req, res) => {
 
   try {
     // Find the itinerary by ID and populate tourists for validation
-    const itinerary = await Itinerary.findById(itineraryId).populate(
+    const itinerary = await Itinerary.findById(itineraryId,{
+      active: true,
+      flagged: false,
+    }).populate(
       "Tourists"
     );
 
@@ -1453,7 +2129,10 @@ const followItinerary = async (req, res) => {
 
   try {
     // Find the itinerary by ID
-    const itinerary = await Itinerary.findById(itineraryId);
+    const itinerary = await Itinerary.findById(itineraryId,{
+      active: true,
+      flagged: false,
+    });
 
     if (!itinerary) {
       return res.status(404).json({ message: "Itinerary not found." });
@@ -1486,7 +2165,10 @@ const unfollowItinerary = async (req, res) => {
 
   try {
     // Find the itinerary by ID
-    const itinerary = await Itinerary.findById(itineraryId);
+    const itinerary = await Itinerary.findById(itineraryId,{
+      active: true,
+      flagged: false,
+    });
 
     if (!itinerary) {
       return res.status(404).json({ message: "Itinerary not found." });
@@ -1567,7 +2249,10 @@ const getFollowedItineraries = async (req, res) => {
     const touristId = req.params.touristId;
 
     // Find all itineraries where the given tourist ID is in the 'Tourists' field
-    const followedItineraries = await Itinerary.find({ Tourists: touristId });
+    const followedItineraries = await Itinerary.find({ Tourists: touristId },{
+      active: true,
+      flagged: false,
+    });
 
     res.status(200).json(followedItineraries);
   } catch (error) {
@@ -1600,11 +2285,14 @@ const getAllTourGuideProfiles = async (req, res) => {
 const getItinerariesByTourGuide = async (req, res) => {
   try {
     // Extract the tour guide's ID from the request parameters
-    const { tourGuideId } = req.body;
+    const { tourGuideId } = req.params;
 
     // Find itineraries that belong to the specified tour guide
     const itineraries = await Itinerary.find({
       tourGuide: tourGuideId,
+    },{
+      active: true,
+      flagged: false,
     }).populate("tourGuide");
 
     // Return the filtered itineraries as a response
@@ -1623,7 +2311,10 @@ const getSingleItinerary = async (req, res) => {
 
   try {
     // Find the itinerary by its ID in the database
-    const itinerary = await Itinerary.findById(itineraryId);
+    const itinerary = await Itinerary.findById(itineraryId,{
+      active: true,
+      flagged: false,
+    });
 
     if (!itinerary) {
       return res.status(404).json({ error: "Itinerary not found" });
@@ -1659,6 +2350,15 @@ const getTouristUsername = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
+
+
+const getSingleProduct= async (req,res) => {
+  const {id}= req.params
+
+  const product = await Product.find({_id:id})
+  res.status(200).json(product)
+}
 
 module.exports = {
   createTransportBooking,
@@ -1732,6 +2432,8 @@ module.exports = {
   getAllTourGuideProfiles,
   getItinerariesByTourGuide,
   getSingleItinerary,
-  getTouristUsername,
-  getTagIdByName
+  getTouristUsername,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,createBooking,getSingleProduct,
+
+  getTagIdByName, myTransportBooking, myActivityItineraryBooking, upload, shareViaEmail,sendReceiptViaMail,viewSavedEvents,
+  viewPastPaidEvents,viewUpcomingPaidEvents,payForEvent,viewCancelledEventAmount
 };

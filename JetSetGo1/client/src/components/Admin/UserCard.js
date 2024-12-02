@@ -31,7 +31,7 @@ function UserCard({ username, documents, Id, modelName, onStatusChange }) {
     const handleReject = async () => {
       try {
         
-
+        console.log(Id)
 
         const response = await fetch(`/api/admin/reject/${Id}/${modelName}`, {
           method: 'PATCH', // Assuming DELETE for reject

@@ -269,6 +269,7 @@ const showMyItineraries = async (req, res) => {
   const guideId = req.query.guideId;
   try {
     const result = await Itinerary.find({ tourGuide: guideId });
+    console.log(guideId)
     res.status(200).json(result);
   } catch {
     res.status(400).json({ error: "Id is required" });
@@ -627,6 +628,9 @@ const requestAccountDeletion = async (req, res) => {
       });
   }
 };
+
+
+
 
 module.exports = {
   upload,

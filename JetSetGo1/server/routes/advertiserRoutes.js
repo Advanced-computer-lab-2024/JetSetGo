@@ -1,5 +1,5 @@
 const express = require('express');
-const { showMyActivities, createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile , createActivity, updateActivity, deleteActivity, getActivities , createTransportation, getTransportation, updateTransportation, deleteTransportation,requestAccountDeletion,uploadDoc,uploadDocument} = require('../controllers/advertiserController');
+const { showMyActivities, createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile , createActivity, updateActivity, deleteActivity, getActivities , createTransportation, getTransportation, updateTransportation, deleteTransportation,requestAccountDeletion,uploadDoc,uploadDocument, findtransport, findReferenceDetails} = require('../controllers/advertiserController');
 const { changePassword } = require("../controllers/PasswordController");
 const router = express.Router();
 
@@ -30,7 +30,8 @@ router.delete('/deleteTransportation/:id', deleteTransportation )
 
 router.patch('/requestDelete/:id',requestAccountDeletion)
 
-
+router.get('/findtransport/:id', findtransport)
+router.get('/findrefdetails/:id/:type',findReferenceDetails)
 // Create or Update Advertiser Profile
 // router.post('/create', createAdvertiserProfile);
 router.post('/createProfile/:id',createAdvertiserProfile);
@@ -38,7 +39,7 @@ router.patch('/updateProfile/:id', updateAdvertiserProfile);
 router.get('/profile/:id', getAdvertiserProfile);
 router.delete('/deleteAct/delete/:id', deleteActivity); // Delete an activity
 router.patch('/update/:id', updateAdvertiserProfile);
-router.get('/profile/:id', getAdvertiserProfile);
+
 router.delete('/:id', deleteActivity); // Delete an activity
 // Advertiser activities 
 router.post('/create', createActivity);
@@ -46,6 +47,6 @@ router.patch('/update/:id', updateActivity);
 // router.get('/', getActivities);
 
 
-router.get('/showAll', showMyActivities )
+router.post('/showAll/:id', showMyActivities )
 
 module.exports = router;

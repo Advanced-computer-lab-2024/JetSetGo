@@ -2,16 +2,28 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 // Components
 import ItineraryDetails from "../components/ItineraryDetails";
 import ItineraryFilter from "../components/ItineraryFilter"; // Import the filter component
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 const Itineraries2 = () => {
+    const location = useLocation(); // Access the location object
+    const token = Cookies.get("auth_token");
+    const decodedToken = jwtDecode(token);
+    const id = decodedToken.id;
+    console.log("id: ITE", id);
+    const modelName = decodedToken.userType;
+    console.log("modelName: ite", modelName);
+    // const { id } = location.state || {}; // Access the id from state
+
     const [upcomingItineraries, setUpcomingItineraries] = useState(null);
     const [filteredItinerary, setFilteredItinerary] = useState([]); // State for filtered itineraries
     const [sortOrder, setSortOrder] = useState(''); // State for sorting order
-    const {id}=useParams()
+    // const {id}=useParams()
 
     useEffect(() => {
         fetchItineraries();
@@ -51,7 +63,7 @@ const Itineraries2 = () => {
                     <li><Link to="/historicalLocations">Historical Locations</Link></li>
                 </ul>
             </nav> */}
-            
+
             {/* Itinerary Filter */}
             <ItineraryFilter onFilter={setFilteredItinerary} /> {/* Pass the state setter to filter */}
 
@@ -59,14 +71,19 @@ const Itineraries2 = () => {
             <div className="sorting-buttons" style={{ textAlign: 'center', marginBottom: '20px' }}>
                 <button onClick={sortByPrice}>Sort by Price</button>
                 <button onClick={sortByRating}>Sort by Rating</button>
-                
+
             </div>
 
             <div className="product-grid">
                 {itinerariesToShow && itinerariesToShow.length === 0 && <p>No results found</p>}
                 {itinerariesToShow && itinerariesToShow.map((itinerary) => (
-                    <Link key={itinerary._id} to={`/tourist/${id}/itinerary/${itinerary._id}/tourist/${id}`}>
-                    <ItineraryDetails Itinerary={itinerary} />
+                    <Link key={itinerary._id} to={`/tourist/itinerary/${itinerary._id}/tourist/${id}`}>
+                        <ItineraryDetails Itinerary={itinerary} />
+                    </Link>
+                ))}
+                {itinerariesToShow && itinerariesToShow.map((itinerary) => (!id &&
+                    <Link key={itinerary._id} to={`/guest/itinerary/${itinerary._id}`}>
+                        <ItineraryDetails Itinerary={itinerary} />
                     </Link>
                 ))}
             </div>

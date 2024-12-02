@@ -5,6 +5,8 @@ const Advertiser = require('../models/AdvertiserModel');  //
 const Seller = require('../models/SellerModel');  //
 const multer = require('multer');
 const path = require('path');
+const jwt = require('jsonwebtoken');
+const User = require('../models/UserModel');
 
 
 const storage = multer.diskStorage({
@@ -31,36 +33,42 @@ const uploadDoc = multer({
         }
     }
 });
+    const registerTourGuide = async (req, res) => {
+        const { email, username, password, accepted } = req.body;
 
+        try {
+            // Check if files were uploaded
+            const documentPaths = req.files ? req.files.map(file => file.path) : [];
 
-
-
-
-const registerTourGuide = async (req, res) => {
-    const { email, username, password, accepted } = req.body;
-
-    try {
-        // Check if files were uploaded
-        const documentPaths = req.files ? req.files.map(file => file.path) : [];
-
-        // Create new tour guide with documents
-        const newTourGuide = await TourGuide.create({
-            email,
+            // Create new tour guide with documents
+            const newTourGuide = await TourGuide.create({
+                email,
+                username,
+                password,
+                accepted,
+                documents: documentPaths,
+            });
+                    // Create User
+        const user = await User.create({
             username,
-            password,
-            accepted,
-            documents: documentPaths,
+            password: password,
+            userType: 'TourGuide',
+            userDetails: newTourGuide._id,
         });
 
-        res.status(201).json({
-            message: "Tour Guide registered successfully",
-            user: newTourGuide,
-            documentPaths: documentPaths,
-        });
-    } catch (error) {
-        res.status(500).json({ error: 'Error registering tour guide' });
-    }
-};
+        // Generate token
+        const token = jwt.sign({ id: newTourGuide._id, userType: user.userType }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+        res.status(201).json({ user, token, tourGuide: newTourGuide });
+
+       // res.status(201).json(newTourGuide);
+        console.log("ana tmam fel back")
+        } catch (error) {
+           // console.log()
+            res.status(500).json({ error: error.message });
+            
+        }
+    };
 
 
 
@@ -84,7 +92,22 @@ const registerTourist = async (req, res) => {
       job,
       mobile,
     });
-    res.status(201).json(newTourist);
+        // Create the user entry
+        const user = await User.create({
+            username,
+            password,
+            userType: 'Tourist',
+            userDetails: newTourist._id,
+          });
+      
+          // Generate JWT
+          const token = jwt.sign(
+            { id: newTourist._id, userType: user.userType },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+          );
+
+          res.status(201).json({ token, message: 'Registration successful' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -103,14 +126,20 @@ const registerAdvertiser = async (req, res) => {
             accepted,
             documents: documentPaths,
         });
+     // Create User
+     const user = await User.create({
+        username,
+        password: password,
+        userType: 'Advertisers',
+        userDetails: newAdvertiser._id,
+    });
 
-        res.status(201).json({
-            message: "Advertiser registered successfully",
-            user: newAdvertiser,
-            documentPaths: documentPaths,
-        });
+    // Generate token
+    const token = jwt.sign({ id: newAdvertiser._id, userType: user.userType }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+    res.status(201).json({ user, token, advertiser: newAdvertiser });
     } catch (error) {
-        res.status(500).json({ error: 'Error registering advertiser' });
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -130,11 +159,18 @@ const registerSeller = async (req, res) => {
             documents: documentPaths,
         });
 
-        res.status(201).json({
-            message: "Seller registered successfully",
-            user: newSeller,
-            documentPaths: documentPaths,
+          // Create User
+          const user = await User.create({
+            username,
+            password: password,
+            userType: 'Seller',
+            userDetails: newSeller._id,
         });
+
+        // Generate token
+        const token = jwt.sign({ id: newSeller._id, userType: user.userType }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+        res.status(201).json({ user, token, seller: newSeller });
     } catch (error) {
         res.status(500).json({ error: 'Error registering seller' });
     }

@@ -1,5 +1,7 @@
 import React, { useState, useContext } from "react";
 import axios from 'axios';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 import {
   BoldLink,
   BoxContainer,
@@ -7,6 +9,7 @@ import {
   Input,
   LineText,
   SubmitButton,
+  
 } from "./common";
 import { Marginer } from "../marginer";
 import { AccountContext } from './accountContext';
@@ -23,6 +26,90 @@ const SignupForm = () => {
     { value: 'TourGuide', label: 'Tour Guide' },
   ];
 
+  // New job options for the dropdown
+  const jobOptions = [
+    { value: 'student', label: 'Student' },
+    { value: 'employee', label: 'Employee' },
+    { value: 'unemployed', label: 'Unemployed' }
+  ];
+
+  
+  // Static list of countries (you can replace it with a dynamic API or a more complete list)
+  const countryOptions = [
+    { value: 'US', label: 'United States' },
+    { value: 'IN', label: 'India' },
+    { value: 'GB', label: 'United Kingdom' },
+    { value: 'CA', label: 'Canada' },
+    { value: 'AU', label: 'Australia' },
+    { value: 'DE', label: 'Germany' },
+    { value: 'FR', label: 'France' },
+    { value: 'IT', label: 'Italy' },
+    { value: 'ES', label: 'Spain' },
+    { value: 'BR', label: 'Brazil' },
+    { value: 'JP', label: 'Japan' },
+    { value: 'MX', label: 'Mexico' },
+    { value: 'CN', label: 'China' },
+    { value: 'RU', label: 'Russia' },
+    { value: 'ZA', label: 'South Africa' },
+    { value: 'KR', label: 'South Korea' },
+    { value: 'NG', label: 'Nigeria' },
+    { value: 'PK', label: 'Pakistan' },
+    { value: 'SA', label: 'Saudi Arabia' },
+    { value: 'AE', label: 'United Arab Emirates' },
+    { value: 'EG', label: 'Egypt' },
+    { value: 'NG', label: 'Nigeria' },
+    { value: 'KE', label: 'Kenya' },
+    { value: 'PH', label: 'Philippines' },
+    { value: 'TH', label: 'Thailand' },
+    { value: 'ID', label: 'Indonesia' },
+    { value: 'MY', label: 'Malaysia' },
+    { value: 'NG', label: 'Nigeria' },
+    { value: 'AR', label: 'Argentina' },
+    { value: 'CL', label: 'Chile' },
+    { value: 'CO', label: 'Colombia' },
+    { value: 'PE', label: 'Peru' },
+    { value: 'VE', label: 'Venezuela' },
+    { value: 'TR', label: 'Turkey' },
+    { value: 'SE', label: 'Sweden' },
+    { value: 'NO', label: 'Norway' },
+    { value: 'FI', label: 'Finland' },
+    { value: 'DK', label: 'Denmark' },
+    { value: 'PL', label: 'Poland' },
+    { value: 'PT', label: 'Portugal' },
+    { value: 'AT', label: 'Austria' },
+    { value: 'CH', label: 'Switzerland' },
+    { value: 'BE', label: 'Belgium' },
+    { value: 'NL', label: 'Netherlands' },
+    { value: 'GR', label: 'Greece' },
+    { value: 'CZ', label: 'Czech Republic' },
+    { value: 'SK', label: 'Slovakia' },
+    { value: 'HU', label: 'Hungary' },
+    { value: 'RO', label: 'Romania' },
+    { value: 'BG', label: 'Bulgaria' },
+    { value: 'HR', label: 'Croatia' },
+    { value: 'SI', label: 'Slovenia' },
+    { value: 'BA', label: 'Bosnia and Herzegovina' },
+    { value: 'RS', label: 'Serbia' },
+    { value: 'MK', label: 'North Macedonia' },
+    { value: 'AL', label: 'Albania' },
+    { value: 'ME', label: 'Montenegro' },
+    { value: 'AM', label: 'Armenia' },
+    { value: 'AZ', label: 'Azerbaijan' },
+    { value: 'BY', label: 'Belarus' },
+    { value: 'UA', label: 'Ukraine' },
+    { value: 'MD', label: 'Moldova' },
+    { value: 'LT', label: 'Lithuania' },
+    { value: 'LV', label: 'Latvia' },
+    { value: 'EE', label: 'Estonia' },
+    { value: 'IS', label: 'Iceland' },
+    { value: 'MT', label: 'Malta' },
+    { value: 'LI', label: 'Liechtenstein' },
+    { value: 'FO', label: 'Faroe Islands' },
+    { value: 'IM', label: 'Isle of Man' },
+    { value: 'JE', label: 'Jersey' },
+    { value: 'GG', label: 'Guernsey' },
+  ];
+  
   const [selectedOption, setSelectedOption] = useState(options[0]);
   const [showFields, setShowFields] = useState({
     username: true,
@@ -42,6 +129,35 @@ const SignupForm = () => {
     dob: '',
     job: '',
   });
+  const [errorMessages, setErrorMessages] = useState({
+    username: '',
+    email: '',
+    password: '',
+    mobile: '',
+    nationality: '',
+    dob: '',
+    job: ''
+  });
+  const validateForm = () => {
+  const newErrorMessages = { ...errorMessages };
+
+  // Check for empty fields and add error message
+  if (!formData.username) newErrorMessages.username = 'Please fill out this field!';
+  if (!formData.email) newErrorMessages.email = 'Please fill out this field!';
+  if (!formData.password) newErrorMessages.password = 'Please fill out this field!';
+  if (showFields.mobile && !formData.mobile) newErrorMessages.mobile = 'Please fill out this field!';
+  if (showFields.nationality && !formData.nationality) newErrorMessages.nationality = 'Please select a nationality!';
+  if (showFields.dob && !formData.dob) newErrorMessages.dob = 'Please fill out this field!';
+  if (showFields.job && !formData.job) newErrorMessages.job = 'Please fill out this field!';
+
+  // Update the error state
+  setErrorMessages(newErrorMessages);
+
+  // Return if the form is valid (no error messages)
+  return Object.values(newErrorMessages).every((message) => !message);
+};
+
+  
   const [files, setFiles] = useState({ doc1: null, doc2: null });
   const [error, setError] = useState(null);
 
@@ -100,7 +216,6 @@ const SignupForm = () => {
       .filter(([key]) => showFields[key])
       .map(([key]) => key);
 
-    // Create data object with only allowed fields
     const data = {};
     for (const field of allowedFields) {
       data[field] = formData[field] || '';
@@ -108,22 +223,18 @@ const SignupForm = () => {
 
     try {
       let response;
-      
+
       if (selectedOption.value === 'Tourist') {
-        // For Tourist, send as JSON
         response = await axios.post(
           `http://localhost:8000/api/register/registerTourist`,
           data,
           {
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
           }
         );
       } else {
-        // For other roles, use FormData for file uploads
         const formDataObj = new FormData();
-        Object.keys(data).forEach(key => {
+        Object.keys(data).forEach((key) => {
           formDataObj.append(key, data[key]);
         });
 
@@ -134,33 +245,39 @@ const SignupForm = () => {
           `http://localhost:8000/api/register/register${selectedOption.value}`,
           formDataObj,
           {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
+            headers: { 'Content-Type': 'multipart/form-data' },
           }
         );
-        
       }
-      console.log(response.status)
-      if (response.status === 201) {
-        console.log('Signup successful!');
-        localStorage.setItem('id', response.data._id);
-        localStorage.setItem('role', selectedOption.value);
-        const userId = response.data._id;
-        const id = userId;
-        console.log(selectedOption.value)
-        let url;
-        if (selectedOption.value === 'Advertiser' || selectedOption.value === 'Seller') {
-          url = `/profileJohn/${userId}`;
-        } else if (selectedOption.value == 'Tourist') {
-          navigate(`/tourist/${id}/terms`);
-        } else if (selectedOption.value === 'TourGuide') {
-          url = '/tourguide-dashboard';
+
+      if (response.status === 201 && response.data.token) {
+        const { token } = response.data;
+
+        // Save the token in cookies
+        Cookies.set('auth_token', token, { expires: 7 });
+
+        // Decode token to get user details
+        const decodedToken = jwtDecode(token);
+        const { id, userType } = decodedToken;
+        console.log("da el model name",userType )
+        // Redirect based on user type
+        let modelName;
+        if (userType === 'Advertisers') {
+          modelName = 'advertiser';
+        } else if (userType === 'Seller') {
+          modelName = 'sellers';
+        } else if (userType === 'Tourist') {
+          modelName = 'tourist';
+        } else if (userType === 'TourGuide') {
+          modelName = 'tourguide';
+          console.log("ana fe3lan areet el tourguide")
         } else {
           throw new Error('Invalid user role');
         }
 
-        // navigate('/tourist/products');
+        navigate(`/${modelName}/${id}/terms`);
+      } else {
+        alert('Registration failed: No token received.');
       }
     } catch (error) {
       console.error('Signup failed:', error.response?.data || error.message);
@@ -191,28 +308,111 @@ const SignupForm = () => {
   return (
     <BoxContainer>
       <FormContainer>
-        <label>Sign up as:</label>
+        <div>
+        <label>Role:</label>
         <Select
           options={options}
           value={selectedOption}
+          placeholder="Role"
           onChange={handleChange}
+          required // Ensures the user selects a role
         />
-        {showFields.username && <Input type="text" name="username" placeholder="User name" onChange={handleInputChange} value={formData.username} />}
-        {showFields.email && <Input type="email" name="email" placeholder="Email" onChange={handleInputChange} value={formData.email} />}
-        {showFields.password && <Input type="password" name="password" placeholder="Password" onChange={handleInputChange} value={formData.password} />}
-        {showFields.mobile && <Input type="tel" name="mobile" placeholder="Mobile number" onChange={handleInputChange} value={formData.mobile} />}
-        {showFields.nationality && <Input type="text" name="nationality" placeholder="Nationality" onChange={handleInputChange} value={formData.nationality} />}
+        </div>
+        {showFields.username && (
+          <Input
+            type="text"
+            name="username"
+            placeholder="User name"
+            onChange={handleInputChange}
+            value={formData.username}
+            required // Adds validation for this field
+          />
+        )}
+        
+        {showFields.email && (
+          <Input
+            type="email"
+            name="email"
+            placeholder="Email"
+            onChange={handleInputChange}
+            value={formData.email}
+            required
+          />
+        )}
+        
+        {showFields.password && (
+          <Input
+            type="password"
+            name="password"
+            placeholder="Password"
+            onChange={handleInputChange}
+            value={formData.password}
+            required
+          />
+        )}
+        
+        {showFields.mobile && (
+          <Input
+            type="tel"
+            name="mobile"
+            placeholder="Mobile number"
+            onChange={handleInputChange}
+            value={formData.mobile}
+            required
+          />
+        )}
+        
+        {/* Nationality dropdown */}
+        {showFields.nationality && (
+          <>
+            {/* <label>Nationality</label> */}
+            <Select
+              options={countryOptions}
+              value={countryOptions.find(option => option.value === formData.nationality)}
+              placeholder="Nationality"
+              onChange={(selected) => setFormData({ ...formData, nationality: selected.value })}
+              required // Adds validation for nationality selection
+            />
+          </>
+        )}
+        <div>
         {showFields.dob && <label htmlFor="dob">Date of Birth:</label>}
-        {showFields.dob && <Input type="date" name="dob" placeholder="Date of Birth" onChange={handleInputChange} value={formData.dob} />}
-        {showFields.job && <label>Please enter whether you are a student/employee/unemployed</label>}
-        {showFields.job && <Input type="text" name="job" placeholder="Job" onChange={handleInputChange} value={formData.job} />}
+        {showFields.dob && (
+          <Input
+            type="date"
+            name="dob"
+            placeholder="Date of Birth"
+            onChange={handleInputChange}
+            value={formData.dob}
+            required
+          />
+        )}
+        </div>
+        {showFields.job && (
+          <>
+            {/* <label>Job Status:</label> */}
+            <Select
+              options={jobOptions}
+              onChange={(selected) => setFormData({ ...formData, job: selected.value })}
+              placeholder = "Job Status"
+              value={jobOptions.find(option => option.value === formData.job)}
+              required // Ensures job selection is mandatory
+            />
+          </>
+        )}
+        
+        {/* Conditional fields for certain roles */}
         {['Advertiser', 'Seller', 'TourGuide'].includes(selectedOption.value) && (
           <>
             {renderFileInput('doc1', 'Upload ID')}
-            {renderFileInput('doc2', selectedOption.value === 'TourGuide' ? 'Upload Certificates' : 'Upload Taxation Registry Card')}
+            {renderFileInput(
+              'doc2',
+              selectedOption.value === 'TourGuide' ? 'Upload Certificates' : 'Upload Taxation Registry Card'
+            )}
           </>
         )}
       </FormContainer>
+      
       {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
       <Marginer direction="vertical" margin={10} />
       <SubmitButton onClick={handleSubmit} type="submit">Signup</SubmitButton>
@@ -225,6 +425,7 @@ const SignupForm = () => {
       </LineText>
     </BoxContainer>
   );
+  
 }
 
 export { SignupForm };

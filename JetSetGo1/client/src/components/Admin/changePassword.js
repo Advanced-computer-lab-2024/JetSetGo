@@ -1,10 +1,25 @@
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import axios from 'axios'
 import './changePassword.css'
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
+
+
 
 export default function ChangePassword() {
-  const { id,id2, modelName } = useParams()
+  const location = useLocation(); // Access the location object
+  const token = Cookies.get("auth_token");
+  
+  const decodedToken = jwtDecode(token);
+  //const id = decodedToken.id;
+  const id = decodedToken.id;
+  console.log("id:", id);
+  const modelName = decodedToken.userType;
+  console.log("modelName:", modelName);
+  
+  console.log(id, modelName)
+  // const userId = useLocation().state.id
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -32,17 +47,19 @@ export default function ChangePassword() {
       return
     }
 
-    
-      const userTypeEndpoints = {
-        "advertisers": 'api/advertisers',
-        'tourism-governer': 'api/tourism-governer',
-        "seller": 'api/sellers',
-        'tourguides': 'api/tour-guides',
-        "admin": 'api/admin',
-        "tourist": 'api/tourist'
-      }
 
-      const endpoint = userTypeEndpoints[modelName];
+    const userTypeEndpoints = {
+      "Advertisers": 'api/advertisers',
+      'TourismGoverner': 'api/tourism-governer',
+      "Seller": 'api/sellers',
+      'TourGuide': 'api/tour-guides',
+      "Admin": 'api/admin',
+      "Tourist": 'api/tourist'
+    }
+
+    const endpoint = userTypeEndpoints[modelName];
+      
+       console.log(endpoint)
 
     try {
       const response = await axios.patch(
@@ -70,21 +87,21 @@ export default function ChangePassword() {
     <div className="change-password-container">
       <div className="change-password-form">
         <h2 className="change-password-title">Change Password</h2>
-        
+
         {error && (
           <div className="alert alert-error" role="alert">
             <strong className="alert-title">Error!</strong>
             <span>{error}</span>
           </div>
         )}
-        
+
         {success && (
           <div className="alert alert-success" role="alert">
             <strong className="alert-title">Success!</strong>
             <span>Your password has been changed successfully.</span>
           </div>
         )}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="oldPassword" className="form-label">
@@ -99,7 +116,7 @@ export default function ChangePassword() {
               className="form-input"
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="newPassword" className="form-label">
               New Password
@@ -113,7 +130,7 @@ export default function ChangePassword() {
               className="form-input"
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="confirmPassword" className="form-label">
               Confirm New Password
@@ -127,7 +144,7 @@ export default function ChangePassword() {
               className="form-input"
             />
           </div>
-          
+
           <button
             type="submit"
             disabled={isLoading}

@@ -2,14 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import './ItineraryManager.css'; // Add a CSS file for custom styles
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 axios.defaults.baseURL = 'http://localhost:8000'; // Replace with your actual API URL
 
 
 
-const ItineraryManager = () => {
-  const { id } = useParams();
-  const tourGuide_ID = id;
+const   ItineraryManager = () => {
+const token = Cookies.get("auth_token");
+const decodedToken = jwtDecode(token);
+const tourGuide_ID = decodedToken.id;
+
+const modelName = decodedToken.userType;
+console.log("modelName:",modelName);
+
   const [itineraryData, setItineraryData] = useState({
     title: '',
     description: '',
@@ -47,8 +54,8 @@ const ItineraryManager = () => {
 // Fetch itineraries by tour guide ID
 const fetchItineraries = async (tourGuideId) => {
   try {
-    const response = await axios.post('/api/tourist/getItinerariesByTourGuide', {
-      tourGuideId:id, // Send the ID in the request body
+    const response = await axios.post(`http://localhost:8000/api/tourist/getItinerariesByTourGuide/${tourGuide_ID}`, {
+      tourGuideId:tourGuide_ID, // Send the ID in the request body
     });
     setItineraries(response.data);
     setError(null); // Clear error state on success

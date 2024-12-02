@@ -1,20 +1,31 @@
 // import { Link } from "react-router-dom"
 import { useEffect, useState } from "react"
-
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 //components 
 import HLMselement from '../components/HLMscomponent.js'
 import HistoricalLocationElement from '../components/RDHistoricalLocations.js'
 import MuseumElement from '../components/RDMuseum.js'
+import { useLocation } from 'react-router-dom';
 
 
 const HLMSpage = () => {
     const [tags, get_tags] = useState(null)
     const [hl, get_hl] = useState(null)
+    const location = useLocation(); // Access the location object
+    //const { id } = location.state || {}; 
+    const token = Cookies.get("auth_token");
+    const decodedToken = jwtDecode(token);
+    const id = decodedToken.id;
+    console.log("id:",id);
+    const modelName = decodedToken.userType;
+    console.log("modelName:",modelName);
+
 
     useEffect(() => {
         const fetchtags = async () => {
-            const response = await fetch('http://localhost:8000/api/tourism-governer/showAll?govId=67000cb1df7b256d80587f8a')
+            const response = await fetch(`http://localhost:8000/api/tourism-governer/showAll?govId=${id}`)
             const data = await response.json();
 
             // Access the arrays from the parsed JSON

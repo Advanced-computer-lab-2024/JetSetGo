@@ -13,9 +13,20 @@ import {
 import RadioGroupRating from "./RadioGroupRating"; // Assuming this is your custom rating component
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // You can use Material-UI's back arrow icon
 import "./AddRatingComment.css";
+import { useLocation } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 function AddRatingComment() {
-  const { id } = useParams();
+  const { guideId } = useParams();
+  const token = Cookies.get("auth_token");
+  const decodedToken = jwtDecode(token);
+  const id = decodedToken.id;
+  console.log("id:", id);
+  const modelName = decodedToken.userType;
+  console.log("modelName:", modelName);
+  const location = useLocation(); // Access the location object
+  // const { id } = location.state || {}; // Access the id from state
   const navigate = useNavigate();
   const [tourGuide, setTourGuide] = useState(null);
   const [newRating, setNewRating] = useState(0);
@@ -25,10 +36,10 @@ function AddRatingComment() {
   const [commentError, setCommentError] = useState("");
   const [ratingSuccess, setRatingSuccess] = useState(false);
   const [commentSuccess, setCommentSuccess] = useState(false);
-  const touristId = "670670e70c449b57490188b7";
+  const touristId = id;
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/tour-guides/profile/${id}`)
+    fetch(`http://localhost:8000/api/tour-guides/profile/${guideId}`)
       .then((res) => res.json())
       .then((data) => {
         setTourGuide(data);
@@ -44,19 +55,19 @@ function AddRatingComment() {
       .catch((error) =>
         console.error("Error fetching tour guide details:", error)
       );
-  }, [id, touristId]);
+  }, [guideId, touristId]);
 
   const handleRatingSubmit = () => {
     if (hasRated || !newRating) return;
     setRatingError("");
     setRatingSuccess(false);
-
+    console.log("Submitting rating:", newRating);
     const ratingData = {
       touristId,
-      tourGuideId: id,
+      tourGuideId: guideId,
       rating: newRating,
     };
-
+    console.log("Submitting rating data:", ratingData);
     fetch(`http://localhost:8000/api/tourist/addRating`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -95,7 +106,7 @@ function AddRatingComment() {
 
     const commentData = {
       touristId,
-      tourGuideId: id,
+      tourGuideId: guideId,
       comment: newComment,
     };
 

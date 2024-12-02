@@ -116,6 +116,14 @@ const deleteHistoricalLocation = async (req, res) => {
   }
 };
 
+const getAllTags = async (req, res) => {
+  try {
+    const tags = await HistoricalTag.find();
+    res.status(200).json(tags);
+  } catch (err) {
+    res.status(404).json({ error: 'Tags not found' });
+  }
+};
 
 // Create a tag
 const createTag = async (req, res) => {
@@ -149,4 +157,4 @@ const createTag = async (req, res) => {
   
 
 
-module.exports = { createMuseum, getMuseum, updateMuseum, deleteMuseum, createHistoricalLocation, getHistoricalLocation, updateHistoricalLocation, deleteHistoricalLocation, createTag, showMyMuseumsAndHistoricalPlaces};
+module.exports = { createMuseum, getMuseum, updateMuseum, deleteMuseum, createHistoricalLocation, getHistoricalLocation, updateHistoricalLocation, deleteHistoricalLocation, createTag, showMyMuseumsAndHistoricalPlaces,getAllTags};

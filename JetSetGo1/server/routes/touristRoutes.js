@@ -4,10 +4,6 @@ const {
   filterProducts,
   sortByRate,
   searchProductName,
-  createProduct,
-  updateProduct,
-} = require("../controllers/adminController.js");
-const {
   createTransportBooking,
   getTransportBooking,
   deleteTransportBooking,
@@ -55,7 +51,7 @@ const {
   addCommentToActivity,
   deleteCommentFromActivity,
   book_activity_Itinerary,
-  cancel_booking,
+  cancel_booking, myTransportBooking, myActivityItineraryBooking,
   getActivitiesByCategory,
   fetchID,
   fetchActivityID,
@@ -75,17 +71,38 @@ const {
   getItinerariesByTourGuide,
   getSingleItinerary,
   getTouristUsername,
-  getTagIdByName
-} = require("../controllers/touristController");
+  getTagIdByName,
+  getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,
+   createBooking,getSingleProduct,shareViaEmail,sendReceiptViaMail,
+   viewSavedEvents, viewPastPaidEvents,viewUpcomingPaidEvents,payForEvent,viewCancelledEventAmount } = require("../controllers/touristController");
 
 const router = express.Router();
 
+
+router.get("/events/upcoming/:userId", viewUpcomingPaidEvents); // View upcoming paid events
+router.get("/events/past/:userId", viewPastPaidEvents);         // View past paid events
+router.get("/events/saved/:userId", viewSavedEvents); 
+router.post("/pay/:userId?", payForEvent);
+router.get("/events/cancel/:type/:userId?/:eventId?", viewCancelledEventAmount);
+
+router.get("/mytransports/:touristId", myTransportBooking);
+router.get("/myactivities/:tourist", myActivityItineraryBooking);
+
+router.post('/newTransportBooking', createTransportBooking )
+router.get('/showTransportBooking', getTransportBooking )
+router.delete('/deleteTransportBooking/:id', deleteTransportBooking )
 router.post("/newTransportBooking", createTransportBooking);
 router.get("/showTransportBooking", getTransportBooking);
 router.delete("/deleteTransportBooking/:id", deleteTransportBooking);
 
-router.patch("/selectPrefrences/:id", selectPrefrences);
-router.get("/myPrefrenes/:id", getPrefrences);
+router.patch("/selectPrefrences/:id", selectPrefrences )
+router.get("/myPrefrences/:id", getPrefrences )
+
+// Route for sharing via email
+router.post('/api/tourist/shareViaEmail', shareViaEmail);
+
+router.post('/sendReceiptViaMail', sendReceiptViaMail);
+
 
 const { changePassword } = require("../controllers/PasswordController");
 
@@ -101,7 +118,9 @@ router.get("/Products", getProducts);
 router.get("/filterProducts", filterProducts);
 router.get("/sortByRate", sortByRate);
 router.get("/searchProductName", searchProductName);
-// Create or Update Tour Guide Profile
+router.get("/getSingleProduct/:id", getSingleProduct);
+
+router.get('/activities/booked/:touristId', getTouristBookedActivities);// Create or Update Tour Guide Profile
 
 router.patch("/update/:id", updateInfo);
 router.get("/profile/:id", getInfo);
@@ -162,11 +181,18 @@ router.get(
 
 router.put("/rating", rateActivity);
 
+router.get("/get_rating/:_id/:activityId", getUserRating);
+
+
+router.post("/bookflight", createFlightBooking);
+
 router.post("/comment", addCommentToActivity);
+router.post("/commentcheck/:touristId/:commentId", isCommentByTourist);
 router.delete("/del_comment", deleteCommentFromActivity);
 
 router.post("/book_activity_Itinerary", book_activity_Itinerary);
 router.delete("/cancel_booking", cancel_booking);
+router.post("/bookhotel", createBooking);
 
 router.post("/addComplaint/:userId", addComplaint);
 router.patch("/updatePointsToWallet/:touristId", updatePointsToWallet);
@@ -186,12 +212,13 @@ router.get("/completed/:touristId", getCompletedTourGuides);
 // Route to get followed itineraries
 router.get("/followed/:touristId", getFollowedItineraries);
 router.get("/getAllTourGuideProfiles", getAllTourGuideProfiles);
-router.post("/getItinerariesByTourGuide", getItinerariesByTourGuide);
+router.post("/getItinerariesByTourGuide/:id", getItinerariesByTourGuide);
 router.post("/getSingleItinerary", getSingleItinerary);
 router.post("/getTouristUsername", getTouristUsername);
 
 router.get("/:touristId", fetchID);
 router.get("/activity/:activityId", fetchActivityID);
 router.get("/itinerary/:itineraryId", fetchItineraryID);
+router.get("/activities/booked/:touristId",getTouristActivities);
 
 module.exports = router;

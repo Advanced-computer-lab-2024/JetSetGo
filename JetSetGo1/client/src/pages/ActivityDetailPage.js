@@ -2,9 +2,17 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
 import ShareLink from '../components/ShareLink';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 const ActivityDetailPage = () => {
-    const { activityId, id } = useParams(); // Get activityId and id from URL
+    const token = Cookies.get("auth_token");
+    const decodedToken = jwtDecode(token);
+    const id = decodedToken.id;
+    console.log("id: act", id);
+    const modelName = decodedToken.userType;
+    console.log("modelName:act det", modelName);
+    const { activityId } = useParams(); // Get activityId and id from URL
     console.log({ activityId, id })
     const [activity, setActivity] = useState(null);
     const [error, setError] = useState(null);
@@ -70,9 +78,14 @@ const ActivityDetailPage = () => {
                 } else {
                     console.error(data.error);
                 }
+
+
+
             } catch (error) {
                 console.error("Failed to fetch category name:", error);
             }
+            console.log(activity._id, id);
+
         };
 
         if (activity) fetchCategoryName();
@@ -91,7 +104,16 @@ const ActivityDetailPage = () => {
                     activityId,
                 }),
             });
-            
+            const response2 = await fetch('http://localhost:8000/api/tourist/book_activity_Itinerary', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    referenceId: activityId,
+                    tourist: id
+                })
+
+            });
+
             const data = await response.json();
             if (response.ok) {
                 setPaymentMessage(data.message);
@@ -107,6 +129,9 @@ const ActivityDetailPage = () => {
             setPaymentMessage('An error occurred during payment');
         }
     };
+    const handlerate = async () => {
+
+    };
 
     if (error) {
         return <p>{error}  lol</p>;
@@ -116,36 +141,65 @@ const ActivityDetailPage = () => {
         return <p>Loading...</p>;
     }
 
-    return (
-        <div className="activity-detail">
-            <h2>{activity.title}</h2>
-            <p><strong> Date: </strong>{activity.date}</p>
-            <p><strong> Time: </strong>{activity.time}</p>
-            <p><strong> Location: </strong>{activity.location}</p>
-            <p><strong>Price:</strong> ${activity.price}</p>
-            <p><strong>Category:</strong> {categoryName}</p>
-            <p><strong>Tags:</strong> {tagNames.map((tag) => `#${tag}`).join(', ')}</p>
-            <p><strong> Advertiser: </strong>{activity.advertiser}</p>
-            <p><strong> Booking Open: </strong>{activity.bookingOpen}</p>
-            <div className="adv-rating">
-              <p  className='rating'><strong> Rating: </strong>{activity.rating}</p>
-               <FaStar className="star-icon" />
-            </div>
-            <p><strong> Special Discounts: </strong>{activity.specialDiscounts}</p>
-            
+    if (id) {
+        return (
+            <div className="activity-detail">
+                <h2>{activity.title}</h2>
+                <p><strong> Date: </strong>{activity.date}</p>
+                <p><strong> Time: </strong>{activity.time}</p>
+                <p><strong> Location: </strong>{activity.location}</p>
+                <p><strong>Price:</strong> ${activity.price}</p>
+                <p><strong>Category:</strong> {categoryName}</p>
+                <p><strong>Tags:</strong> {tagNames.map((tag) => `#${tag}`).join(', ')}</p>
+                <p><strong> Advertiser: </strong>{activity.advertiser}</p>
+                <p><strong> Booking Open: </strong>{activity.bookingOpen}</p>
+                <div className="adv-rating">
+                    <p className='rating'><strong> Rating: </strong>{activity.totalrating}</p>
+                    <FaStar className="star-icon" />
+                </div>
+                <p><strong> Special Discounts: </strong>{activity.specialDiscounts}</p>
 
-            {/* Payment button */}
-            <div>
-                <button onClick={handlePayment} disabled={activity.isBookedYet}>
-                    {activity.isBookedYet ? 'Already Booked' : 'Pay for Activity'}
-                </button>
-                <ShareLink/>
-            </div>
 
-            {/* Payment Message */}
-            {paymentMessage && <p>{paymentMessage}</p>}
-        </div>
-    );
+                {/* Payment button */}
+                <div>
+                    <button onClick={handlePayment} disabled={activity.isBookedYet}>
+                        {activity.isBookedYet ? 'Already Booked' : 'Pay for Activity and book now'}
+                    </button>
+                    <ShareLink/>
+                </div>
+
+                {/* <div>
+                    <button onClick={handlerate}>
+                       rate / comment
+                    </button>
+                    <ShareLink/>
+                </div>
+     */}
+                {/* Payment Message */}
+                {paymentMessage && <p>{paymentMessage}</p>}
+            </div>
+        );
+    } else {
+        return (
+            <div className="activity-detail">
+                <h2>{activity.title}</h2>
+                <p><strong> Date: </strong>{activity.date}</p>
+                <p><strong> Time: </strong>{activity.time}</p>
+                <p><strong> Location: </strong>{activity.location}</p>
+                <p><strong>Price:</strong> ${activity.price}</p>
+                <p><strong>Category:</strong> {categoryName}</p>
+                <p><strong>Tags:</strong> {tagNames.map((tag) => `#${tag}`).join(', ')}</p>
+                <p><strong> Advertiser: </strong>{activity.advertiser}</p>
+                <p><strong> Booking Open: </strong>{activity.bookingOpen}</p>
+                <div className="adv-rating">
+                    <p className='rating'><strong> Rating: </strong>{activity.totalrating}</p>
+                    <FaStar className="star-icon" />
+                </div>
+                <p><strong> Special Discounts: </strong>{activity.specialDiscounts}</p>
+
+            </div>
+        );
+    }
 };
 
 export default ActivityDetailPage;

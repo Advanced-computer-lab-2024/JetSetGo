@@ -52,7 +52,7 @@ const tourGuideSchema = new mongoose.Schema({
       },
       rating: {
         type: Number,
-        required: true,
+        required: false,
       },
     },
   ],
@@ -64,7 +64,7 @@ const tourGuideSchema = new mongoose.Schema({
       },
       text: {
         type: String,
-        required: true,
+        required: false,
       },
       createdAt: {
         type: Date,

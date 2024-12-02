@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./UpdateProfile.css";
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 
 const UpdateProfile = () => {
-  const { id } = useParams();
+  const token = Cookies.get("auth_token");
+const decodedToken = jwtDecode(token);
+const id = decodedToken.id;
+console.log("id:",id);
+const modelName = decodedToken.userType;
+console.log("modelName:",modelName);
+
   const [formValues, setFormValues] = useState({
     username: "",
     email: "",

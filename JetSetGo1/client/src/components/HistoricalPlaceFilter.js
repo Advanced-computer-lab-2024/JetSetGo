@@ -1,8 +1,20 @@
 import { useState, useEffect } from 'react';
 import SearchBar from './Searchbar';
 
+import { useLocation } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
 const HistoricalPlaceFilter = ({ onFilter }) => {
     // States for search terms
+    const location = useLocation(); // Access state passed via Link
+    const token = Cookies.get("auth_token");
+    const decodedToken = jwtDecode(token);
+    const id = decodedToken.id;
+    console.log("id:", id);
+    const modelName = decodedToken.userType;
+    console.log("modelName:", modelName);
+    // const { id } = location.state || {}; // Access id from state
+
     const [name, setName] = useState('');
     const [tagName, setTagName] = useState(''); // Tag name input
     const [selectedCategories, setSelectedCategories] = useState([]); // Track selected categories
@@ -116,7 +128,7 @@ const HistoricalPlaceFilter = ({ onFilter }) => {
         );
         const filteredResults2 = museumResultsByCategory.filter((item) =>
             museumResultsByTag.some((tag) => tag._id == item._id))
-        
+
         const filteredResults = filteredResults1.concat(filteredResults2)
 
         // Update the common results
@@ -152,7 +164,7 @@ const HistoricalPlaceFilter = ({ onFilter }) => {
             {/* Search bars for each search field */}
             <SearchBar label="Name" value={name} onChange={setName} />
             <SearchBar label="Tag Name" value={tagName} onChange={setTagName} /> {/* Use tag name input */}
-            
+
             <div>
                 <h6>Categories</h6>
                 {categoryList.length > 0 ? (
