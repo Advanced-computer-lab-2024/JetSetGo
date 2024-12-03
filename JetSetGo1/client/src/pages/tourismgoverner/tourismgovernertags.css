@@ -163,3 +163,14 @@
     justify-content: center;
 }
 
+
+.custom-add-button {
+    max-height: 50px;
+    max-width: 50px;
+    position: absolute;
+    top: 125px; /* Adjust distance from the top */
+    right: 10px; /* Adjust distance from the right */
+    z-index: 1000; /* Ensure it's above other elements */
+}
+
+

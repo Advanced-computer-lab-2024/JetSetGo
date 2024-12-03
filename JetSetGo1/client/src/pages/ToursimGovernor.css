@@ -33,7 +33,7 @@
         margin-top: -25px;
         margin-right: 20px;
         z-index: 2;
-        color: #E26D5C;
+        color: #0839b5;
         background: #fff;
         border-radius: 100%;
         padding: 15px;
@@ -43,7 +43,7 @@
 
     .card-action:hover {
         color: #fff;
-        background: #E26D5C;
+        background: #0839b5;
         -webkit-animation: pulse 1.5s infinite;
     }
 

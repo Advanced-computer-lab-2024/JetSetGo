@@ -74,7 +74,7 @@ export function LoginForm(props) {
             navigate(`/${modelName}/products`);
           } else if (userType === 'TourismGoverner') {
             modelName = 'tourism_governer';
-            navigate(`/${modelName}/${id}`);
+            navigate(`/${modelName}`);
           } else {
             throw new Error('Invalid user role');
           }

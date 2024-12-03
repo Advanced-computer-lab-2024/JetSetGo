@@ -193,17 +193,22 @@ function App() {
               </Route>
 
               {/*///////////////////////////////////////////tg//////////////////////////////////////////////////////////////*/}
-              <Route path="/tourism_governer/:id" element={<TourismGovernerHomepage />}>              </Route>
-              {/*TourismGovernerLayout */}
-                <Route path="/tourism_governer/:id/HLTags" element={<HLTags />} />{/*tourism governer*/}
-                <Route path="/tourism_governer/:id/HLMs" element={<HLMs />} />{/*tourism governer*/}
+              {/* <Route path="/tourism_governer/:id" element={<TourismGovernerHomepage />}>              </Route> */}
+              {/* TourismGovernerLayout
+                <Route path="/tourism_governer/:id/HLTags" element={<HLTags />} />
+                <Route path="/tourism_governer/:id/HLMs" element={<HLMs />} />
                 <Route path="/tourism_governer/:id/Tags" element = {<TourismGovTags/>}/>
                 <Route
                   path="/tourism_governer/:id/:modelName/change-password"
                   element={<ChangePassword />}
-                />
-                {/* <Route path="/tourism_governer/:id/Itineraries" element={<Itineraries /> */}
+                /> */}
+              <Route path="/tourism_governer" element={<TourismGovernerLayout />}>
+                <Route path="/tourism_governer" element={<TourismGovernerHomepage />}></Route>
+                <Route path="/tourism_governer/Tags" element={<TourismGovTags />} />
+                <Route path="/tourism_governer/:modelName/change-password" element={<ChangePassword />} />
 
+
+              </Route>
 
 
 
@@ -345,7 +350,7 @@ function App() {
                 <Route
                   path="/Tourguide/:id/ItineraryManagement"
                   element={<ItineraryManagement />}
-                />  
+                />
               </Route>
               {/** seller */}
               <Route path="/Seller" element={<SellerLayout />}>

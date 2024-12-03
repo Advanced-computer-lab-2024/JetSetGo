@@ -81,7 +81,7 @@ const TourismGovTags = () => {
             
             {/* Button at the top right */}
             <button
-                className="btn btn-primary position-absolute top-0 end-0 m-5"
+                className="btn btn-primary custom-add-button"
                 onClick={() => setShowModal(true)}
             >
                 +
