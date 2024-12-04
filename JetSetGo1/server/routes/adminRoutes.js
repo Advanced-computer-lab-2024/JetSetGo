@@ -48,12 +48,12 @@ router.get("/viewComplaints", getComplaints);
 
 // Advertiser activities
 router.post("/createtag", create_pref_tag);
-router.patch("/updatetag", update_pref_tag);
+router.patch("/updatetag/:id", update_pref_tag);
 router.delete("/deletetag/:id", delete_pref_tag);
 router.get("/tag", get_pref_tag);
 
 router.post("/create_category", create_act_category);
-router.patch("/update_category", update_act_category);
+router.patch("/update_category/:id", update_act_category);
 router.delete("/delete_category/:id", delete_act_category);
 router.get("/category", get_act_category);
 

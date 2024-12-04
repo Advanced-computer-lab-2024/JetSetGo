@@ -1,84 +1,345 @@
-// import { Link } from "react-router-dom"
-import { useEffect , useState } from "react"
+import React, { useEffect, useState } from "react";
+import './admintags.css';
+const UserManagement = () => {
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [selectedRole, setSelectedRole] = useState("admin");
+    const [showModal1, setShowModal1] = useState(false);
+    const [showModal2, setShowModal2] = useState(false);
+    const [newAdmin, setNewAdmin] = useState({ username: '', email: '', password: '' });
+    const [newGov, setNewGov] = useState({ username: '', email: '', password: '' });
 
+    const [modalError, setModalError] = useState(null);
 
-//components 
-import Tourism_Governercomp from '../components/Tourism_Governercomp.js'
-import Tourism_Governerform from '../components/Tourism_Governerform.js'
+    const roles = [
+        { value: "admin", label: "Admin" },
+        { value: "seller", label: "Seller" },
+        { value: "tourguide", label: "Tour Guide" },
+        { value: "tourist", label: "Tourist" },
+        { value: "advertiser", label: "Advertiser" },
+        { value: "tourismgoverner", label: "Tourism Governer" },
+    ];
 
-const Tourism_Governer = () =>{
-    const [ Tourism_Governer , get_tags ] = useState(null)
-
-    useEffect (()=>{
-        const fetchtags = async () =>{
-            const response = await fetch('http://localhost:8000/api/admin/')
-            const json = await response.json()
-            console.log("kokokokokok",response);
-            if (response.ok){
-                get_tags(json);
-            }
+    const fetchUsers = async () => {
+        if (!selectedRole) {
+            setError("Please select a role to fetch users.");
+            return;
         }
-        fetchtags()
-    }, [])
 
-    console.log("kokokokokok",Tourism_Governer);
-     return(
-        <div className="home">
-            <div className="tags">
-                {Tourism_Governer && Tourism_Governer.map((Tourism_Governer)=>(
-                    // <p key={tag.tag_name}>{tag.tag_name}</p>
-                    // <tagelement tag={tag}/>
-                    <Tourism_Governercomp tag={Tourism_Governer}/>
-                ))}
+        const url = `http://localhost:8000/api/admin/${selectedRole}/list`;
+
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setUsers(data);
+            setError(null);
+        } catch (error) {
+            setError("Failed to fetch users. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        setLoading(true);
+        fetchUsers();
+    }, [selectedRole]);
+
+    const handleDeleteUser = async (userId) => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/admin/delete/${selectedRole}/${userId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to delete user");
+            }
+
+            setUsers(users.filter((user) => user._id !== userId));
+        } catch (error) {
+            alert("Failed to delete user. Please try again.");
+        }
+    };
+
+    const handleAddAdmin = async () => {
+        if (!newAdmin.username || !newAdmin.email || !newAdmin.password) {
+            setModalError('Please fill out all fields.');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:8000/api/admin/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newAdmin),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add new admin');
+            }
+
+            const result = await response.json(); // Extracting the full response
+            const Admin = result.admin;
+            setUsers([...users, Admin]);
+            setShowModal1(false);
+            setNewAdmin({ username: '', email: '', password: '' });
+            setModalError(null);
+        } catch (error) {
+            console.error('Error adding admin:', error);
+            setModalError('Failed to add admin. Please try again.');
+        }
+    };
+
+    const handleAddGov = async () => {
+        if (!newGov.username || !newGov.email || !newGov.password) {
+            setModalError('Please fill out all fields.');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:8000/api/admin/create_tourism_governer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newGov),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add new Tourism Governer');
+            }
+
+
+            const result = await response.json(); // Extracting the full response
+            const Gov = result.tourism_governer;
+            setUsers([...users, Gov]);
+            setShowModal2(false);
+            setNewGov({ username: '', email: '', password: '' });
+            setModalError(null);
+        } catch (error) {
+            console.error('Error adding Tourism Governer:', error);
+            setModalError('Failed to add Tourism Governer. Please try again.');
+        }
+    };
+
+    const cancelCreate = () => {
+        setShowModal2(false);
+        setShowModal1(false); // Close the modal without deleting
+        setModalError(null);
+    };
+
+
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div className="alert alert-danger">{error}</div>;
+
+    return (
+        <div className="d-flex justify-content-center mt-4">
+            <div className="container">
+                <h1 className="mb-4 text-center">User Management</h1>
+
+                <div className="d-flex justify-content-between mb-3">
+                    <select
+                        value={selectedRole}
+                        onChange={(e) => setSelectedRole(e.target.value)}
+                        className="form-select w-25"
+                    >
+                        {roles.map((role) => (
+                            <option key={role.value} value={role.value}>
+                                {role.label}
+                            </option>
+                        ))}
+                    </select>
+
+                    {(selectedRole === "admin") && (
+                        <button
+                            className="btn btn-primary"
+                            onClick={() => setShowModal1(true)}
+                        >
+                            +
+                        </button>
+                    )}
+
+                    {(selectedRole === "tourismgoverner") && (
+                        <button
+                            className="btn btn-primary"
+                            onClick={() => setShowModal2(true)}
+                        >
+                            +
+                        </button>
+                    )}
+                </div>
+
+                <div className="d-flex justify-content-center mt-4">
+                    <table className="table table-striped text-center w-100">
+                        <thead>
+                            <tr>
+                                <th className="buttons-container"></th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Password</th>
+                                <th>Created at</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {users.map((user) => (
+                                <tr key={user._id} className="table-row">
+                                                <td className="buttons-container">
+                <div className="action-buttons">
+                    
+                    <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleDeleteUser(user._id)}
+                    >
+                        <i className="fa-regular fa-trash-can"></i>
+                    </button>
+                </div>
+            </td>
+
+                                    <td>{user.username}</td>
+                                    <td>{user.email}</td>
+                                    <td>{user.password}</td>
+                                    <td>
+                                        {new Date(user.createdAt).toLocaleDateString()}
+                                    </td>
+
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <Tourism_Governerform/>
+
+            {showModal1 && (
+                <div className="modal-overlay">
+                    <div className="modal">
+                        <h2>Add New Admin</h2>
+
+                        <div className="mb-3">
+                            <input
+                                type="text"
+                                placeholder="Username"
+                                className="form-control"
+                                value={newAdmin.username}
+                                onChange={(e) =>
+                                    setNewAdmin({ ...newAdmin, username: e.target.value })
+                                }
+                            />
+                        </div>
+
+                        <div className="mb-3">
+                            <input
+                                type="text"
+                                placeholder="Email"
+                                className="form-control"
+                                value={newAdmin.email}
+                                onChange={(e) =>
+                                    setNewAdmin({ ...newAdmin, email: e.target.value })
+                                }
+                            />
+                        </div>
+
+
+                        <div className="mb-3">
+                            <input
+                                type="text"
+                                placeholder="Password"
+                                className="form-control"
+                                value={newAdmin.password}
+                                onChange={(e) =>
+                                    setNewAdmin({ ...newAdmin, password: e.target.value })
+                                }
+                            />
+                        </div>
+                        {modalError && <div className="alert alert-danger">{modalError}</div>}
+
+                        <div className="modal-footer">
+                            <button className="btn btn-primary" onClick={handleAddAdmin}>
+                                Submit
+                            </button>
+                            <button
+                                className="btn btn-secondary"
+                                onClick={cancelCreate}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showModal2 && (
+                <div className="modal-overlay">
+                    <div className="modal">
+                        <h2>Add New Tourism Governer</h2>
+                        <div className="mb-3">
+                            <input
+                                type="text"
+                                placeholder="Username"
+                                className="form-control"
+                                value={newGov.username}
+                                onChange={(e) =>
+                                    setNewGov({ ...newGov, username: e.target.value })
+                                }
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <input
+                                type="text"
+                                placeholder="Email"
+                                className="form-control"
+                                value={newGov.email}
+                                onChange={(e) =>
+                                    setNewGov({ ...newGov, email: e.target.value })
+                                }
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <input
+                                type="text"
+                                placeholder="Password"
+                                className="form-control"
+                                value={newGov.password}
+                                onChange={(e) =>
+                                    setNewGov({ ...newGov, password: e.target.value })
+                                }
+                            />
+                        </div>
+                        {modalError && <div className="alert alert-danger">{modalError}</div>}
+
+                        <div className="modal-footer">
+                            <button className="btn btn-primary" onClick={handleAddGov}>
+                                Submit
+                            </button>
+                            <button
+                                className="btn btn-secondary"
+                                onClick={cancelCreate}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
-     )
-}
+    );
+};
 
-
-export default Tourism_Governer
-
-
-
-
-// // import { Link } from "react-router-dom"
-// import { useEffect , useState } from "react"
-
-
-// //components 
-// import Tourism_Governercomp from '../components/Tourism_Governercomp.js'
-// import Tourism_Governerform from '../components/Tourism_Governerform.js'
-
-// const Tourism_Governer = () =>{
-//     const [ tags , get_tags ] = useState(null)
-
-//     useEffect (()=>{
-//         const fetchtags = async () =>{
-//             const response = await fetch('http://localhost:8000/api/admin/')
-//             const json = await response.json()
-//             console.log("kokokokokok",response);
-//             if (response.ok){
-//                 get_tags(json);
-//             }
-//         }
-//         fetchtags()
-//     }, [])
-
-//     console.log("kokokokokok",tags);
-//      return(
-//         <div className="home">
-//             <div className="tags">
-//                 {tags && tags.map((tag)=>(
-//                     // <p key={tag.tag_name}>{tag.tag_name}</p>
-//                     // <tagelement tag={tag}/>
-//                     <Categoryelement tag={tag}/>
-//                 ))}
-//             </div>
-//             <Categoryform/>
-//         </div>
-//      )
-// }
-
-
-// export default Categorypage
+export default UserManagement;

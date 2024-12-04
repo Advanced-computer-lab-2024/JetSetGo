@@ -94,15 +94,15 @@ const get_pref_tag = async (req, res) => {
 
 // Add Admin
 const addAdmin = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, email, password } = req.body;
 
   // Validate that the required fields are provided
-  if (!username || !password) {
-    return res.status(400).json({ error: 'Username and password are required.' });
+  if (!username || !email || !password) {
+    return res.status(400).json({ error: 'Username email, and password are required.' });
   }
 
   try {
-    const newAdmin = await Admin.create({ username, password });
+    const newAdmin = await Admin.create({ username, email, password });
 
     // Send both a success message and the new admin object in the response
     return res.status(201).json({
@@ -116,14 +116,20 @@ const addAdmin = async (req, res) => {
 }
 //update preference tags
 const update_pref_tag = async (req, res) => {
-    const { tag_name, description } = req.body;
+
+  const { id } = req.params;
+  const updates = req.body;
     try {
-        const tag = await preferencetags.findOneAndUpdate({ tag_name }, { description }, { new: true });
-        res.status(200).json(tag);
+        const updatedTag = await preferencetags.findByIdAndUpdate(id, updates, { new: true });
+        res.status(200).json(updatedTag);
     }
     catch (error) {
         res.status(400).json({ error: error.message })
     }
+
+
+
+    
 };
 
 //Delete preference tags
@@ -175,10 +181,11 @@ const get_act_category = async (req, res) => {
 
 //update activity category
 const update_act_category = async (req, res) => {
-    const { name, description } = req.body;
+  const { id } = req.params;
+  const updates = req.body;
     try {
-        const category = await CategoryModel.findOneAndUpdate({ name }, { description }, { new: true });
-        res.status(200).json(category);
+        const updatedCategory = await CategoryModel.findByIdAndUpdate(id, updates, { new: true });
+        res.status(200).json(updatedCategory);
     }
     catch (error) {
         res.status(400).json({ error: error.message })

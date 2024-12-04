@@ -25,7 +25,7 @@ const AdminAddPage = () => {
   const handleAddAdmin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
+    setError(null); 
     try {
       const response = await fetch('/api/admin/add', {
         method: 'POST',
