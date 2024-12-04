@@ -9,7 +9,8 @@ const UserManagement = () => {
     const [showModal2, setShowModal2] = useState(false);
     const [newAdmin, setNewAdmin] = useState({ username: '', email: '', password: '' });
     const [newGov, setNewGov] = useState({ username: '', email: '', password: '' });
-
+    const [deletingId, setDeletingId] = useState(null); // State to store the id of the item to be deleted
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [modalError, setModalError] = useState(null);
 
     const roles = [
@@ -68,7 +69,7 @@ const UserManagement = () => {
             if (!response.ok) {
                 throw new Error("Failed to delete user");
             }
-
+            setIsDeleteModalOpen(false); // Close the modal without deleting
             setUsers(users.filter((user) => user._id !== userId));
         } catch (error) {
             alert("Failed to delete user. Please try again.");
@@ -144,6 +145,24 @@ const UserManagement = () => {
         setModalError(null);
     };
 
+    const handleDeleteClick = (id) => {
+        setDeletingId(id); // Store the ID of the item to be deleted
+        setIsDeleteModalOpen(true); // Show the confirmation modal
+    };
+
+    const confirmDelete = () => {
+        if (deletingId) {
+            handleDeleteUser(deletingId); // Perform the delete operation
+        }
+    };
+
+
+    const cancelDelete = () => {
+        setIsDeleteModalOpen(false); // Close the modal without deleting
+        setModalError(null);
+        setDeletingId(null); // Clear the stored ID
+    };
+
 
 
     if (loading) return <div>Loading...</div>;
@@ -205,7 +224,7 @@ const UserManagement = () => {
                     
                     <button
                         className="btn btn-sm btn-danger"
-                        onClick={() => handleDeleteUser(user._id)}
+                        onClick={() => handleDeleteClick(user._id)}
                     >
                         <i className="fa-regular fa-trash-can"></i>
                     </button>
@@ -337,6 +356,24 @@ const UserManagement = () => {
                     </div>
                 </div>
             )}
+
+                        {/* Modal for Deletion */}
+                        {isDeleteModalOpen && (
+
+<div className="modal-overlay">
+    <div className="modal">
+        <h2>Confirm Deletion</h2>
+        <p>Are you sure you want to delete this User?</p>
+        <div className="modal-actions">
+        {modalError && <div className="alert alert-danger">{modalError}</div>}
+
+            <button onClick={confirmDelete}>Delete</button>
+            <button onClick={cancelDelete}>Cancel</button>
+        </div>
+    </div>
+</div>
+)}
+
 
         </div>
     );
