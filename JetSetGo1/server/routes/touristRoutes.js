@@ -74,7 +74,8 @@ const {
   getTagIdByName,
   getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,
    createBooking,getSingleProduct,shareViaEmail,sendReceiptViaMail,
-   viewSavedEvents, viewPastPaidEvents,viewUpcomingPaidEvents,payForEvent,viewCancelledEventAmount } = require("../controllers/touristController");
+   viewSavedEvents, viewPastPaidEvents,viewUpcomingPaidEvents,payForEvent,viewCancelledEventAmount,getTourist,getTags
+   } = require("../controllers/touristController");
 
 const router = express.Router();
 
@@ -84,6 +85,8 @@ router.get("/events/past/:userId", viewPastPaidEvents);         // View past pai
 router.get("/events/saved/:userId", viewSavedEvents); 
 router.post("/pay/:userId?", payForEvent);
 router.get("/events/cancel/:type/:userId?/:eventId?", viewCancelledEventAmount);
+router.get('/getTourist', getTourist);
+router.get('/getTags', getTags);
 
 router.get("/mytransports/:touristId", myTransportBooking);
 router.get("/myactivities/:tourist", myActivityItineraryBooking);

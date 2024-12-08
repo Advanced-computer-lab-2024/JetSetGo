@@ -149,3 +149,38 @@
 .back-button:hover {
     background-color: #0056b3;
 }
+
+.table-container {
+    position: relative; /* Ensure the button's position is relative to this container */
+    padding-top: 50px; /* Add padding to avoid overlap */
+  }
+  
+  .top-left-button {
+    position: absolute; /* Ensure the button is positioned relative to the table container */
+    top: 10px; /* Space from the top of the container */
+    left: 10px; /* Space from the left of the container */
+    background-color: #007bff; /* Button background color */
+    color: white; /* Text color */
+    border: none;
+    padding: 8px 15px; /* Adjust padding for better appearance */
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 10; /* Ensure it appears above other elements */
+  }
+  
+  .top-left-button:hover {
+    background-color: #0056b3; /* Hover effect */
+  }
+  
+    
+
+.user-table th {
+    background-color: #007bff; /* Blue header */
+    color: white; /* White text */
+    font-weight: 600;
+    padding: 14px 20px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 0.95em;
+}

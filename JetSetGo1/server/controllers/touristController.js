@@ -10,6 +10,7 @@ const HistoricalLocationModel = require("../models/HistoricalLocationModel");
 const MuseumModel = require("../models/MuseumModel");
 const ComplaintModel = require("../models/ComplaintModel");
 const Category = require("../models/CategoryModel");
+const Tags = require("../models/TagModel.js")
 
 const Booking = require("../models/bookingmodel");
 const SalesModel = require("../models/SalesModel");
@@ -69,6 +70,31 @@ shareViaEmail = async (req, res) => {
   }
 };
 
+const getTourist = async (req, res) => {
+  try {
+    // Fetch all tourists from the database
+    const tourists = await Tourist.find();
+    
+    // Return the data as JSON
+    res.status(200).json(tourists);
+  } catch (error) {
+    console.error("Error fetching tourists:", error.message);
+    res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+};
+
+const getTags = async (req,res) =>{
+  try{
+    const tags = await Tags.find();
+    res.status(200).json(tags);
+  }
+  catch(error)
+  {
+    console.error("Error sending receipt:", error);
+    res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+}
+
 //Send Payment Receipt via email
 const sendReceiptViaMail = async (req,res) =>
 {
@@ -127,6 +153,8 @@ const sendReceiptViaMail = async (req,res) =>
     res.status(500).json({ message: "An error occurred", error: error.message });
   }
 };
+
+
 
 const viewCancelledEventAmount = async (req, res) => {
   try {
@@ -946,6 +974,8 @@ const getActivitiesByCategory = async (req, res) => {
 };
 
 
+
+
 //Search TagId by Name
 // In your backend file
 
@@ -972,8 +1002,7 @@ const getTagIdByName = async (req, res) => {
 //Search Activity By Tag
 const searchActivityByTag = async (req, res) => {
   let { tagId } = req.body; // Expect tagId as a string
-  
-
+  console.log(tagId);
   try {
     // Search for activities with this tagId
     const activities = await Activity.find({ tags : { $in: [tagId] } }).populate('tags');
@@ -2435,5 +2464,5 @@ module.exports = {
   getTouristUsername,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,createBooking,getSingleProduct,
 
   getTagIdByName, myTransportBooking, myActivityItineraryBooking, upload, shareViaEmail,sendReceiptViaMail,viewSavedEvents,
-  viewPastPaidEvents,viewUpcomingPaidEvents,payForEvent,viewCancelledEventAmount
+  viewPastPaidEvents,viewUpcomingPaidEvents,payForEvent,viewCancelledEventAmount,getTourist,getTags
 };

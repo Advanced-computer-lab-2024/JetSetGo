@@ -220,6 +220,11 @@ function App() {
                   element={<AdminDocumentReview />}
                 />
 
+                <Route 
+                path="/admin/flagITI" 
+                element ={<FlagItinerary />} 
+                />
+
                 {/*momen */}
                 <Route
                   path="/admin/products"

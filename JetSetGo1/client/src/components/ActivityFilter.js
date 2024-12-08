@@ -3,36 +3,18 @@ import SearchBar from './Searchbar';
 
 const ActivityFilter = ({ onFilter }) => {
     const [name, setName] = useState('');
-    const [tagName, setTagName] = useState(''); // Use tag name for input
-    const [selectedCategories, setSelectedCategories] = useState([]); // Track selected categories
+    const [selectedTags, setSelectedTags] = useState([]); // Track selected tag IDs
+    const [selectedCategories, setSelectedCategories] = useState([]);
     const [rating, setRating] = useState('');
     const [date, setDate] = useState('');
     const [budget, setBudget] = useState(0);
-    const [categoryList, setCategoryList] = useState([]); // List of all categories to use for checkbox
+    const [categoryList, setCategoryList] = useState([]);
+    const [tagList, setTagList] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isCategoryListVisible, setCategoryListVisible] = useState(false);
+    const [isTagListVisible, setTagListVisible] = useState(false);
 
-    // Fetch the tag ID by name from the backend
-    const fetchTagIdByName = async (tagName) => {
-        try {
-            const response = await fetch('/api/tourist/getTagIdByName', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name: tagName }),
-            });
-            if (response.ok) {
-                const { tagId } = await response.json();
-                return tagId;
-            }
-            return null;
-        } catch (error) {
-            console.error('Error fetching tag ID:', error);
-            return null;
-        }
-    };
-
-    // Fetch all categories from the backend
+    // Fetch all categories
     const fetchCategories = async () => {
         try {
             const response = await fetch('/api/admin/category');
@@ -43,7 +25,27 @@ const ActivityFilter = ({ onFilter }) => {
         }
     };
 
-    // Fetch search results from the backend
+    const toggleCategoryList = () => {
+        setCategoryListVisible(!isCategoryListVisible);
+    };
+
+    // Toggle the visibility of the tag list
+    const toggleTagList = () => {
+        setTagListVisible(!isTagListVisible);
+    };
+
+    // Fetch all tags
+    const fetchTags = async () => {
+        try {
+            const response = await fetch('/api/tourist/getTags');
+            const json = await response.json();
+            setTagList(json);
+        } catch (error) {
+            console.error('Error fetching tags:', error);
+        }
+    };
+
+    // Fetch search results logic remains unchanged
     const fetchResults = async (query, field, route) => {
         setLoading(true);
         try {
@@ -74,39 +76,39 @@ const ActivityFilter = ({ onFilter }) => {
         }
     };
 
-    // Handle form submission
     const handleSubmit = async () => {
         try {
             setLoading(true);
 
-            // Fetch the search results
             const results = await fetchResults(name, 'title', '/api/tourist/searchActivityByName');
 
-            // Fetch the tagId as an ObjectId
-            const tagId = await fetchTagIdByName(tagName);
-            console.log("Tag ID for given Tag name", tagId);
-            const results2 = tagName ? await fetchResults(tagId, 'tagId', '/api/tourist/searchActivityByTag') : results;
+            // Fetch results for each selected tag by tag ID
+            let results2 = results; // Start with default results
+            if (selectedTags.length > 0) {
+                for (let tagId of selectedTags) {
+                    const tagResults = await fetchResults(tagId, 'tagId', '/api/tourist/searchActivityByTag');
+                    results2 = results2.filter((item) => tagResults.some((tag) => tag._id === item._id));
+                }
+            }
 
-            // Fetch results for each selected category one by one and merge
-            let results3 = results; // Start with the default results
+            let results3 = results;
             if (selectedCategories.length > 0) {
                 for (let categoryId of selectedCategories) {
                     const categoryResults = await fetchResults(categoryId, 'category', '/api/tourist/searchActivityByCategory');
-                    results3 = results3.filter(item => categoryResults.some(cat => cat._id === item._id));
+                    results3 = results3.filter((item) => categoryResults.some((cat) => cat._id === item._id));
                 }
             }
 
             const results4 = rating !== '' ? await fetchResults(Number(rating), 'rating', '/api/tourist/searchActivityByRating') : results;
             const results5 = await fetchResults(date, 'date', '/api/tourist/searchActivityByDate');
-            const results6 = await fetchResults(budget, 'price', '/api/tourist/searchActivityByBudget');
+            const results6 = budget > 0 ? await fetchResults(budget, 'price', '/api/tourist/searchActivityByBudget') : results;
 
-            // Filter common results across all criteria
             const common = results.filter((item) =>
-                (!tagName || results2.some((loc) => loc._id === item._id)) &&
+                (selectedTags.length === 0 || results2.some((tag) => tag._id === item._id)) &&
                 (selectedCategories.length === 0 || results3.some((cat) => cat._id === item._id)) &&
                 (!rating || results4.some((rat) => rat._id === item._id)) &&
                 (!date || results5.some((dat) => dat._id === item._id)) &&
-                (!budget || results6.some((bud) => bud._id === item._id))
+                (budget === 0 || results6.some((bud) => bud._id === item._id))
             );
 
             onFilter(common.length ? common : []);
@@ -118,7 +120,6 @@ const ActivityFilter = ({ onFilter }) => {
         }
     };
 
-    // Handle checkbox change for categories
     const handleCategoryChange = (event) => {
         const { value, checked } = event.target;
         if (checked) {
@@ -128,36 +129,79 @@ const ActivityFilter = ({ onFilter }) => {
         }
     };
 
-    // Fetch categories when the component mounts
+    const handleTagChange = (event) => {
+        const { value, checked } = event.target;
+        if (checked) {
+            setSelectedTags((prev) => [...prev, value]);
+        } else {
+            setSelectedTags((prev) => prev.filter((tag) => tag !== value));
+        }
+    };
+
     useEffect(() => {
         fetchCategories();
+        fetchTags();
     }, []);
 
     return (
-        <div>
+        <div style={{ height: '500px', overflowY: 'scroll', border: '1px solid #ccc', padding: '1rem' }}>
             <h1>Search for Activities</h1>
 
             <SearchBar label="Name" value={name} onChange={setName} />
-            <SearchBar label="Tag Name" value={tagName} onChange={setTagName} />
 
             <div>
-                <h6>Categories</h6>
-                {categoryList.length > 0 ? (
+            <h6 onClick={toggleCategoryList} style={{ cursor: 'pointer' }}>
+                    Categories
+                    <span style={{ marginLeft: '8px', fontSize: '0.9em' }}>
+                        {isCategoryListVisible ? '▲' : '▼'}
+                    </span>
+                </h6>
+                {isCategoryListVisible && categoryList.length > 0 && (categoryList.length > 0 ? (
                     categoryList.map((category) => (
                         <div key={category._id}>
-                            <label>
-                                <input
+                           <input
                                     type="checkbox"
                                     value={category._id}
                                     onChange={handleCategoryChange}
                                     checked={selectedCategories.includes(category._id)}
-                                />
+                                /> <label>
+                                
                                 {category.name}
                             </label>
                         </div>
                     ))
                 ) : (
                     <p>Loading categories...</p>
+                )
+                  
+                )}
+            </div>
+
+            <div>
+                <h6 onClick={toggleTagList} style={{ cursor: 'pointer' }}>
+                    Tags
+                    <span style={{ marginLeft: '8px', fontSize: '0.9em' }}>
+                        {isTagListVisible ? '▲' : '▼'}
+                    </span>
+                </h6>
+                {isTagListVisible && tagList.length > 0 && (tagList.length > 0 ? (
+                    tagList.map((tag) => (
+                        <div key={tag._id}>
+                           <input
+                                    type="checkbox"
+                                    value={tag._id}
+                                    onChange={handleTagChange}
+                                    checked={selectedTags.includes(tag._id)}
+                                /> <label>
+                                
+                                {tag.tag_name}
+                            </label>
+                        </div>
+                    ))
+                ) : (
+                    <p>Loading categories...</p>
+                )
+                  
                 )}
             </div>
 

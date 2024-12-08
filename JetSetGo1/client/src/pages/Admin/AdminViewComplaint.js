@@ -58,21 +58,27 @@ const AdminViewComplaint = () => {
                 </p>
                 <p>{complaint ? new Date(complaint.date).toLocaleDateString() : "Not found"}</p>
             </div>
-        <form onSubmit={handleSubmit} className="response-form">
-            <label htmlFor="response" className="response-label">Admin Response:</label>
-            <textarea
-                id="response"
-                className="response-textarea"
-                placeholder="Enter your response here..."
-            />
-            <div className="form-actions">
-                <button onClick={() => navigate(-1)} className="back-button">Go Back</button>
-                <button type="submit" className="submit-button">Submit Response</button>
-            </div>
-        </form>
-
+            <form onSubmit={handleSubmit} className="response-form">
+                <label htmlFor="response" className="response-label">Admin Response:</label>
+                <textarea
+                    id="response"
+                    className="response-textarea"
+                    placeholder="Enter your response here..."
+                />
+                <div className="form-actions">
+                    <button type="submit" className="submit-button">Submit Response</button>
+                    <button
+                        type="button"
+                        onClick={() => navigate('/admin/complaints')}
+                        className="cancel-button"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </form>
         </div>
     );
+    
 };
 
 export default AdminViewComplaint;

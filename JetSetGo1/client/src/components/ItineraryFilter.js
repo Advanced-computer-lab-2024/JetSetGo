@@ -114,9 +114,7 @@ const ItineraryFilter = ({ onFilter }) => {
 
     return (
         <div>
-            <h1>Search for Itinerary</h1>
-
-            <SearchBar label="Name" value={name} onChange={setName} />
+            <h1>Filter</h1>
             <SearchBar label="Tag Name" value={tagName} onChange={setTagName} /> {/* Use tag name input */}
             <SearchBar label="Language" value={language} onChange={setLanguage} />
 

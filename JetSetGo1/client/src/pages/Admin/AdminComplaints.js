@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import './AdminComplaintsPageStyle.css';
 
+
 const statusClasses = {
   resolved: 'status-resolved',
   pending: 'status-pending',
@@ -15,66 +16,98 @@ const AdminComplaints = () => {
   const [loading, setLoading] = useState(true);
   const [dateFilter, setDateFilter] = useState("Recent");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [tourists, setTourists] = useState([]);
 
   const navigate = useNavigate();
-
   useEffect(() => {
-    fetchComplaints();
-  }, [dateFilter, statusFilter]); // Re-fetch complaints when filters change
-
-  const fetchComplaints = async () => {
-    const response = await fetch('/api/admin/getComplaints');
-    const json = await response.json();
-
-    if (response.ok) {
-      let filteredComplaints = json;
-
-      // Filter by status if a specific status is selected
-      if (statusFilter !== "All") {
-        filteredComplaints = filteredComplaints.filter(complaint => complaint.status === statusFilter);
+    const fetchComplaintsAndTourists = async () => {
+      try {
+        // Fetch complaints
+        const complaintsResponse = await fetch('/api/admin/getComplaints');
+        const complaintsData = await complaintsResponse.json();
+  
+        // Fetch tourists
+        const touristsResponse = await fetch('/api/tourist/getTourist');
+        const touristsData = await touristsResponse.json();
+  
+        // Check if touristsData is an array
+        const touristsArray = Array.isArray(touristsData) ? touristsData : touristsData.data || [];
+  
+        // Map tourists by their IDs
+        const touristsMap = touristsArray.reduce((map, tourist) => {
+          map[tourist._id] = tourist.username;
+          return map;
+        }, {});
+  
+        // Attach the tourist name to each complaint
+        let complaintsWithNames = complaintsData.map((complaint) => ({
+          ...complaint,
+          touristName: touristsMap[complaint.userId] || 'Unknown Tourist',
+        }));
+  
+        // Apply status filter
+        if (statusFilter !== 'All') {
+          complaintsWithNames = complaintsWithNames.filter(
+            (complaint) => complaint.status === statusFilter
+          );
+        }
+  
+        // Apply date filter
+        if (dateFilter === 'Recent') {
+          complaintsWithNames = complaintsWithNames.sort(
+            (a, b) => new Date(b.date) - new Date(a.date)
+          );
+        } else if (dateFilter === 'Oldest') {
+          complaintsWithNames = complaintsWithNames.sort(
+            (a, b) => new Date(a.date) - new Date(b.date)
+          );
+        }
+  
+        setComplaints(complaintsWithNames);
+      } catch (error) {
+        console.error('Error fetching complaints or tourists:', error);
+      } finally {
+        setLoading(false);
       }
+    };
+  
+    fetchComplaintsAndTourists();
+  }, [dateFilter, statusFilter]); // Dependencies ensure filters trigger a re-fetch
+  
 
-      // Sort complaints based on the date filter
-      const sortedComplaints = filteredComplaints.sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-        return dateFilter === "Recent" ? dateB - dateA : dateA - dateB;
-      });
-
-      setComplaints(sortedComplaints);
-    }
-  };
 
   return (
     <div>
-      <button onClick={() => navigate('/')} className="back-button">Go Back</button>
       <div className="table-container">
-        <div className="table-controls">
-          <div className="date-filter">
-            <span>Date:</span>
-            <select
-              className="date-select"
-              value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
-            >
-              <option value="Recent">Recent</option>
-              <option value="Oldest">Oldest</option>
-            </select>
-          </div>
+  <button onClick={() => navigate('/')} className="top-left-button">
+    Go Back
+  </button>
+  <div className="table-controls">
+    <div className="date-filter">
+      <span>Date:</span>
+      <select
+        className="date-select"
+        value={dateFilter}
+        onChange={(e) => setDateFilter(e.target.value)}
+      >
+        <option value="Recent">Recent</option>
+        <option value="Oldest">Oldest</option>
+      </select>
+    </div>
 
-          <div className="status-filter">
-            <span>Status:</span>
-            <select
-              className="status-select"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              <option value="All">All</option>
-              <option value="pending">Pending</option>
-              <option value="resolved">Resolved</option>
-            </select>
-          </div>
-        </div>
+    <div className="status-filter">
+      <span>Status:</span>
+      <select
+        className="status-select"
+        value={statusFilter}
+        onChange={(e) => setStatusFilter(e.target.value)}
+      >
+        <option value="All">All</option>
+        <option value="pending">Pending</option>
+        <option value="resolved">Resolved</option>
+      </select>
+    </div>
+  </div>
 
         <div className="table-wrapper">
           <table className="user-table">
@@ -90,13 +123,8 @@ const AdminComplaints = () => {
             </thead>
             <tbody>
               {complaints.map((complaint) => (
-                <tr
-                  
-                  key={complaint._id}
-                >
-                  {/* <Link to="/admin/viewComplaint" state={complaint._id}></Link> */}
-                  
-                  <td><Link to="/admin/viewComplaint" state={complaint._id}>{complaint.userId}</Link></td>
+                <tr key={complaint._id}>
+                <td><Link to="/admin/viewComplaint" state={complaint._id}>{complaint.touristName}</Link></td>
                   <td>{complaint.title}</td>
                   <td>
                     <span className={`status-badge ${statusClasses[complaint.status]}`}>
@@ -109,6 +137,7 @@ const AdminComplaints = () => {
                 </tr>
               ))}
             </tbody>
+
           </table>
 
           <div className="table-pagination">
