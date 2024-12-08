@@ -42,6 +42,7 @@ import "@fortawesome/fontawesome-free/css/all.css";
 //pages and components 
 
 import Tagspage from './pages/my_tags.js'
+import PromoCodespage from './pages/Admin/AdminPromoCode.js'
 import PreferencesSelection from './pages/SelectPrefrences.js'
 import Transportationpage from './pages/Transportation.js'
 import Categorypage from './pages/my_category.js'
@@ -266,6 +267,7 @@ function App() {
 
                 <Route path="/admin/my_category" element={<Categorypage />} />
                 <Route path="/admin/my_tags" element={<Tagspage />} />
+                <Route path="/admin/promocodes" element={<PromoCodespage />} />
                 <Route path="/admin/users" element={<Tourism_Governer />} />
               </Route>
 

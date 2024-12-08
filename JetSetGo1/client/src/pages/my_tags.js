@@ -1,5 +1,5 @@
 // import { Link } from "react-router-dom"
-import { useEffect, useState } from "react"
+import { useEffect, useState,useRef } from "react"
 import './admintags.css'; // Import the custom CSS for the modal
 //import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
@@ -17,6 +17,8 @@ const Tagspage = () => {
     const [editingTag, setEditingTag] = useState(null);
     const [deletingId, setDeletingId] = useState(null); // State to store the id of the item to be deleted
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+    const modalRef = useRef(null); // Create a ref for the modal
 
     // const token = Cookies.get("auth_token");
     //const decodedToken = jwtDecode(token);
@@ -48,6 +50,24 @@ const Tagspage = () => {
         };
 
         fetchTags();
+
+        const handleOutsideClick = (e) => {
+            if (modalRef.current && !modalRef.current.contains(e.target)) {
+                setShowModal(false);
+                setIsEditModalOpen(false);
+                setIsDeleteModalOpen(false);
+                setEditingTag(null);
+                setDeletingId(null)
+                setNewTag({ tag_name: '', description: '' });
+                setModalError(null);
+            }
+        };
+
+        document.addEventListener("mousedown", handleOutsideClick);
+
+        return () => {
+            document.removeEventListener("mousedown", handleOutsideClick);
+        };
     }, []);
 
     const handleAddTag = async () => {
@@ -276,7 +296,7 @@ const Tagspage = () => {
 
             {showModal && (
                 <div className="modal-overlay">
-                    <div className="modal">
+                    <div className="modal"ref={modalRef}>
                         <h2>Add New Prefrence Tag</h2>
                         <div className="mb-3">
                             <label className="form-label">Name</label>
@@ -319,7 +339,7 @@ const Tagspage = () => {
 
             {isEditModalOpen && (
                 <div className="modal-overlay">
-                    <div className="modal">
+                    <div className="modal"ref={modalRef}>
 
                         <h2>Edit Prefrence Tag</h2>
 
@@ -367,7 +387,7 @@ const Tagspage = () => {
             {isDeleteModalOpen && (
 
                 <div className="modal-overlay">
-                    <div className="modal">
+                    <div className="modal" ref={modalRef}>
                         <h2>Confirm Deletion</h2>
                         <p>Are you sure you want to delete this Tag?</p>
                         <div className="modal-actions">

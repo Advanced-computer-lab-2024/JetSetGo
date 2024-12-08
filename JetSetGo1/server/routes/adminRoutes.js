@@ -34,7 +34,10 @@ const {
   flagActivity,
   getAllItineraries,
   getAllActivities,
-  getUsers
+  getUsers, 
+  createPromoCode,
+  showUsers,
+  getPromoCodes
 } = require("../controllers/adminController.js");
 const router = express.Router();
 const multer = require("multer");
@@ -51,6 +54,7 @@ router.get("/itineraries", getAllItineraries);
 router.get("/activities", getAllActivities);
 router.get("/viewComplaints", getComplaints);
 router.get("/users", getUsers);
+router.get("/showUsers", showUsers);
 
 // Advertiser activities
 router.post("/createtag", create_pref_tag);
@@ -86,6 +90,10 @@ router.get("/getSingleProduct/:id", getSingleProduct);
 
 router.get("/getComplaints", getComplaints);
 router.get("/viewComplaint/:id", viewComplaint);
+
+// Route to create a promo code
+router.post('/createPromoCode', createPromoCode);
+router.get('/PromoCodes', getPromoCodes);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

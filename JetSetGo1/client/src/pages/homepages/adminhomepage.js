@@ -6,6 +6,10 @@ import './adminhomepage.css'; // Style the dashboard
 function AdminDashboard() {
   const [totalUsers, setTotalUsers] = useState(0);
   const [usersThisMonth, setUsersThisMonth] = useState(0);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
 
   useEffect(() => {
     // Fetch stats when the component mounts
@@ -28,6 +32,36 @@ function AdminDashboard() {
 
     fetchStats();
   }, []); // Empty dependency array means this runs once after component mounts
+
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/admin/showUsers');
+      const data = await response.json();
+  
+      // Check if the response contains the `users` property
+      if (data && Array.isArray(data.users)) {
+        setUsers(data.users); // Use the `users` array from the response
+      } else {
+        console.error('Unexpected response format:', data);
+        setUsers([]); // Set an empty array if the response format is unexpected
+      }
+      setError(null);
+    } catch (error) {
+      setError("Failed to fetch users. Please try again.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    setLoading(true);
+    fetchUsers();
+}, []);
+
+if (loading) return <div>Loading...</div>;
+    if (error) return <div className="alert alert-danger">{error}</div>;
+
 
   return (
     <div className="admin-dashboard">
@@ -66,6 +100,39 @@ function AdminDashboard() {
 
           </div>
         </div>
+
+        <div className="d-flex justify-content-center mt-4">
+                    <table className="table table-striped text-center w-75">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Role</th>
+                                <th>Created at</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {users.map((user) => (
+                                <tr key={user._id} className="table-row">
+
+
+                                    <td>{user.username}</td>
+                                    <td>{user.password}</td>
+                                    <td>{user.userType}</td>
+                                    <td>
+                                        {new Date(user.createdAt).toLocaleDateString()}
+                                    </td>
+                                    
+
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+
+
+
       </div>
     </div>
   );

@@ -72,6 +72,10 @@ function Sidebar() {
         </li>
         <li>
           <FontAwesomeIcon icon={faCog} className="icon" />
+          <span><Link to={`/admin/promocodes`}>Promo Codes</Link></span>
+        </li>
+        <li>
+          <FontAwesomeIcon icon={faCog} className="icon" />
           <span><Link to={`/admin/users`}>Users</Link></span>
         </li>
         <li>

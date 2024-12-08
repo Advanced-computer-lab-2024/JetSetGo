@@ -33,7 +33,7 @@ const FlagItinerary = () => {
 
       if (response.ok) {
         setResponseMessage(data.message);
-        setItineraries(itineraries.map((itinerary) => 
+        setItineraries(itineraries.map((itinerary) =>
           itinerary._id === itineraryId ? { ...itinerary, flagged: true } : itinerary
         ));
       } else {
@@ -51,7 +51,7 @@ const FlagItinerary = () => {
       {errorMessage && <p className="error-message">{errorMessage}</p>}
 
       <div className="card-grid">
-        
+
         {itineraries.map((itinerary) => (
           <div className="card" key={itinerary._id}>
             <div className="card-body">
@@ -60,8 +60,9 @@ const FlagItinerary = () => {
                 onClick={() => handleFlagItinerary(itinerary._id)}
                 disabled={itinerary.flagged}
                 className={`button ${itinerary.flagged ? 'button-disabled' : 'button-primary'}`}
-              > <i className="fas fa-flag"></i>
-                {itinerary.flagged ? 'Already Flagged' : 'Flag'}
+              >
+                {!itinerary.flagged && <i className="fas fa-flag"></i>} {/* Show icon only for active buttons */}
+                {itinerary.flagged ? 'Already Flagged' : ' Flag'}
               </button>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef} from "react";
 import { useLocation, useSearchParams } from 'react-router-dom';
 import './admintags.css';
 const UserManagement = () => {
@@ -16,6 +16,10 @@ const UserManagement = () => {
     const [deletingId, setDeletingId] = useState(null); // State to store the id of the item to be deleted
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [modalError, setModalError] = useState(null);
+
+    const modalRef = useRef(null); // Create a ref for the modal
+
+
 
     const roles = [
         { value: "admin", label: "Admin" },
@@ -75,6 +79,27 @@ const UserManagement = () => {
     useEffect(() => {
         setLoading(true);
         fetchUsers();
+
+        const handleOutsideClick = (e) => {
+            if (modalRef.current && !modalRef.current.contains(e.target)) {
+                setShowModal1(false);
+                setShowModal2(false);
+                setNewAdmin({ username: '', email: '', password: '' });
+                setNewGov({ username: '', email: '', password: '' });
+                setIsDeleteModalOpen(false);
+                setDeletingId(null)
+                setModalError(null);
+            }
+        };
+
+        document.addEventListener("mousedown", handleOutsideClick);
+
+        return () => {
+            document.removeEventListener("mousedown", handleOutsideClick);
+        };
+
+
+
     }, [selectedRole]);
 
     const handleDeleteUser = async (userId) => {
@@ -268,7 +293,7 @@ const UserManagement = () => {
 
             {showModal1 && (
                 <div className="modal-overlay">
-                    <div className="modal">
+                    <div className="modal" ref={modalRef}>
                         <h2>Add New Admin</h2>
 
                         <div className="mb-3">
@@ -327,7 +352,7 @@ const UserManagement = () => {
 
             {showModal2 && (
                 <div className="modal-overlay">
-                    <div className="modal">
+                    <div className="modal" ref={modalRef}>
                         <h2>Add New Tourism Governer</h2>
                         <div className="mb-3">
                             <input
@@ -384,7 +409,7 @@ const UserManagement = () => {
             {isDeleteModalOpen && (
 
                 <div className="modal-overlay">
-                    <div className="modal">
+                    <div className="modal" ref={modalRef}>
                         <h2>Confirm Deletion</h2>
                         <p>Are you sure you want to delete this User?</p>
                         <div className="modal-actions">

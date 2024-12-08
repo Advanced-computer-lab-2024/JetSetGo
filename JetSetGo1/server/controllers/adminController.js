@@ -17,6 +17,7 @@ const mongoose= require('mongoose')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
+const PromoCode = require('../models/PromoCodeModel.js');
 
 const User = require('../models/UserModel');
 
@@ -40,6 +41,15 @@ const getAllItineraries = async (req, res) => {
       res.status(200).json({ activities });
     } catch (error) {
       res.status(500).json({ error: 'Server error while fetching Activities.', details: error.message });
+    }
+  };
+
+  const showUsers = async (req, res) => {
+    try {
+      const users = await User.find(); // Fetch all users from the database
+      res.status(200).json({ users });
+    } catch (error) {
+      res.status(500).json({ error: 'Server error while fetching Users.', details: error.message });
     }
   };
 
@@ -708,9 +718,35 @@ const RejectUserStatus = async (req, res) => {
 };
 
 
+const createPromoCode = async (req, res) => {
+  const {discount} = req.body;
+
+  try {
+    // Create a new promo code
+    const newPromoCode = new PromoCode({discount});
+
+    // Save the new promo code to the database
+    const savedPromoCode = await newPromoCode.save();
+
+    // Respond with the newly created promo code
+    res.status(201).json(savedPromoCode);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getPromoCodes = async (req, res) => {
+  try {
+    const promocodes = await PromoCode.find(); // Fetch all users from the database
+    res.status(200).json({ promocodes });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error while fetching PromoCodes.', details: error.message });
+  }
+};
+
 
 module.exports = { getComplaints,RejectUserStatus,getUploadedDocuments,create_pref_tag ,  get_pref_tag , update_pref_tag , delete_pref_tag , create_act_category , get_act_category , update_act_category , delete_act_category , add_tourism_governer , view_tourism_governer,addAdmin, deleteAccount, getAllUsers
     ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,
     flagItinerary, flagActivity,getAllItineraries, getAllActivities, AcceptUserStatus,getSales, getUsers,
-    viewComplaint,resolveComplaint,archieved_on};
+    viewComplaint,resolveComplaint,archieved_on, createPromoCode, showUsers, getPromoCodes};
 
