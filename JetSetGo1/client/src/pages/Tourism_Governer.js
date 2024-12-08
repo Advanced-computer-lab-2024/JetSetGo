@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
+import { useLocation, useSearchParams } from 'react-router-dom';
 import './admintags.css';
 const UserManagement = () => {
+    const location = useLocation();
+    const [searchParams] = useSearchParams();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedRole, setSelectedRole] = useState("admin");
+    const [selectedRole, setSelectedRole] = useState(searchParams.get('role') || 'admin');
     const [showModal1, setShowModal1] = useState(false);
     const [showModal2, setShowModal2] = useState(false);
     const [newAdmin, setNewAdmin] = useState({ username: '', email: '', password: '' });
     const [newGov, setNewGov] = useState({ username: '', email: '', password: '' });
+    const [modalOpened, setModalOpened] = useState(false);  // Flag to track modal state
     const [deletingId, setDeletingId] = useState(null); // State to store the id of the item to be deleted
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [modalError, setModalError] = useState(null);
@@ -21,6 +25,22 @@ const UserManagement = () => {
         { value: "advertiser", label: "Advertiser" },
         { value: "tourismgoverner", label: "Tourism Governer" },
     ];
+
+    useEffect(() => {
+        // Check query parameters to determine if a modal should open
+        const openModal = searchParams.get('openModal') === 'true';
+
+        if (openModal && !modalOpened) {
+            if (selectedRole === 'admin') {
+                setShowModal1(true);
+            } else if (selectedRole === 'tourismgoverner') {
+                setShowModal2(true);
+            }
+            setModalOpened(true);
+        }
+    }, [searchParams, selectedRole, modalOpened]);
+
+
 
     const fetchUsers = async () => {
         if (!selectedRole) {
@@ -206,36 +226,37 @@ const UserManagement = () => {
                 </div>
 
                 <div className="d-flex justify-content-center mt-4">
-                    <table className="table table-striped text-center w-100">
+                    <table className="table table-striped text-center w-75">
                         <thead>
                             <tr>
-                                <th className="buttons-container"></th>
                                 <th>Username</th>
                                 <th>Email</th>
                                 <th>Password</th>
                                 <th>Created at</th>
+                                <th className="buttons-container"></th>
                             </tr>
                         </thead>
                         <tbody>
                             {users.map((user) => (
                                 <tr key={user._id} className="table-row">
-                                                <td className="buttons-container">
-                <div className="action-buttons">
-                    
-                    <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => handleDeleteClick(user._id)}
-                    >
-                        <i className="fa-regular fa-trash-can"></i>
-                    </button>
-                </div>
-            </td>
+
 
                                     <td>{user.username}</td>
                                     <td>{user.email}</td>
                                     <td>{user.password}</td>
                                     <td>
                                         {new Date(user.createdAt).toLocaleDateString()}
+                                    </td>
+                                    <td className="buttons-container">
+                                        <div className="action-buttons">
+
+                                            <button
+                                                className="btn btn-sm btn-danger"
+                                                onClick={() => handleDeleteClick(user._id)}
+                                            >
+                                                <i className="fa-regular fa-trash-can"></i>
+                                            </button>
+                                        </div>
                                     </td>
 
                                 </tr>
@@ -286,9 +307,10 @@ const UserManagement = () => {
                                 }
                             />
                         </div>
-                        {modalError && <div className="alert alert-danger">{modalError}</div>}
+                        <div className="modal2-actions">
 
-                        <div className="modal-footer">
+                            {modalError && <div className="alert alert-danger">{modalError}</div>}
+
                             <button className="btn btn-primary" onClick={handleAddAdmin}>
                                 Submit
                             </button>
@@ -340,9 +362,10 @@ const UserManagement = () => {
                                 }
                             />
                         </div>
+                        <div className="modal2-actions">
+
                         {modalError && <div className="alert alert-danger">{modalError}</div>}
 
-                        <div className="modal-footer">
                             <button className="btn btn-primary" onClick={handleAddGov}>
                                 Submit
                             </button>
@@ -357,22 +380,22 @@ const UserManagement = () => {
                 </div>
             )}
 
-                        {/* Modal for Deletion */}
-                        {isDeleteModalOpen && (
+            {/* Modal for Deletion */}
+            {isDeleteModalOpen && (
 
-<div className="modal-overlay">
-    <div className="modal">
-        <h2>Confirm Deletion</h2>
-        <p>Are you sure you want to delete this User?</p>
-        <div className="modal-actions">
-        {modalError && <div className="alert alert-danger">{modalError}</div>}
+                <div className="modal-overlay">
+                    <div className="modal">
+                        <h2>Confirm Deletion</h2>
+                        <p>Are you sure you want to delete this User?</p>
+                        <div className="modal-actions">
+                            {modalError && <div className="alert alert-danger">{modalError}</div>}
 
-            <button onClick={confirmDelete}>Delete</button>
-            <button onClick={cancelDelete}>Cancel</button>
-        </div>
-    </div>
-</div>
-)}
+                            <button onClick={confirmDelete}>Delete</button>
+                            <button onClick={cancelDelete}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
 
         </div>

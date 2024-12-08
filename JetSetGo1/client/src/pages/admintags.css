@@ -185,9 +185,8 @@
 
 /* Hide action buttons initially */
 .action-buttons {
-    display: none;
     position: absolute;
-    left: -50px; /* Adjust position relative to the row */
+    left: 300px; /* Adjust position relative to the row */
     top: 50%;
     transform: translateY(-50%);
     z-index: 10; /* Ensure buttons appear above other elements */
@@ -211,7 +210,7 @@
 }
 
 /* Remove hover effects for the invisible column */
-.table-row td:first-child {
+.table-row td:last-child {
     pointer-events: none; /* Disable interactions for the invisible column */
     border: none !important; /* Remove borders */
     background-color: transparent !important; /* Match background */
@@ -247,9 +246,8 @@
 
 /* Hide action buttons initially */
 .action-buttons {
-    display: none;
     position: absolute;
-    left: -50px; /* Adjust position relative to the row */
+    left: 30px; /* Adjust position relative to the row */
     top: 50%;
     transform: translateY(-50%);
     z-index: 10; /* Ensure buttons appear above other elements */
@@ -274,7 +272,7 @@
 }
 
 /* Remove hover effects for the invisible column */
-.table-row td:first-child {
+.table-row td:last-child {
     pointer-events: none; /* Disable interactions for the invisible column */
     border: none !important; /* Remove borders */
     background-color: transparent !important; /* Match background */
@@ -309,12 +307,14 @@
 
 /* Hide action buttons initially */
 .action-buttons {
-    display: none;
+    display:flex ;
     position: absolute;
-    right: 10px; /* Adjust distance from the right side of the row */
+    left : 950px;
     top: 50%; /* Center vertically in the row */
     transform: translateY(-50%);
     z-index: 10; /* Ensure buttons appear above other elements */
+    pointer-events: auto;
+    visibility: visible;
 }
 
 /* Show buttons when hovering over the row or buttons */
@@ -356,6 +356,11 @@
     z-index: 1; /* Keep rows below buttons */
 }
 
+.modal2-actions{
+    margin: 10px 10px 0px 10px !important;
+
+}
+
 
 @media (max-width: 768px) { /* Adjust breakpoint as needed */
     .action-buttons {
@@ -369,3 +374,5 @@
         width: 100%; /* Make buttons full-width for better usability */
     }
 }
+
+/* When sidebar is open, adjust the button positioning */

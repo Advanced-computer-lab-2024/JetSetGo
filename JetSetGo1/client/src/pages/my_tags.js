@@ -18,7 +18,7 @@ const Tagspage = () => {
     const [deletingId, setDeletingId] = useState(null); // State to store the id of the item to be deleted
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-   // const token = Cookies.get("auth_token");
+    // const token = Cookies.get("auth_token");
     //const decodedToken = jwtDecode(token);
     //const id = decodedToken.id;
 
@@ -155,7 +155,7 @@ const Tagspage = () => {
         setEditingTag({
             ...tag, // Copy the entire location object
         });
-        
+
         setIsEditModalOpen(true);
     };
 
@@ -163,11 +163,11 @@ const Tagspage = () => {
     const handleEditInputChange = (e) => {
         const { name, value } = e.target;
 
-            setEditingTag((prev) => ({
-                ...prev,
-                [name]: value,
-            }));
-        
+        setEditingTag((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+
     };
 
     const handleEditSave = async () => {
@@ -235,41 +235,44 @@ const Tagspage = () => {
                     <table className="table table-striped text-center w-75">
                         <thead>
                             <tr>
-                                <th className="buttons-container"></th>
                                 <th>Name</th>
                                 <th>Description</th>
                                 <th>Created At</th>
+                                <th className="buttons-container"></th>
+
                             </tr>
                         </thead>
                         <tbody>
-    {tags.map((tag) => (
-        <tr key={tag._id} className="table-row">
-            <td className="buttons-container">
-                <div className="action-buttons">
-                    <button
-                        className="btn btn-sm btn-warning me-1"
-                        onClick={() => handleEditClick(tag)}
-                    >
-                        <i className="fa-regular fa-pen-to-square"></i>
-                    </button>
-                    {/* Correctly trigger Delete Modal */}
-                    <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => handleDeleteClick(tag._id)}
-                    >
-                        <i className="fa-regular fa-trash-can"></i>
-                    </button>
-                </div>
-            </td>
-            <td>{tag.tag_name}</td>
-            <td>{tag.description}</td>
-            <td>{new Date(tag.createdAt).toLocaleDateString()}</td>
-        </tr>
-    ))}
-</tbody>
+                            {tags.map((tag) => (
+                                <tr key={tag._id} className="table-row">
+
+                                    <td>{tag.tag_name}</td>
+                                    <td>{tag.description}</td>
+                                    <td>{new Date(tag.createdAt).toLocaleDateString()}</td>
+                                    <td className="buttons-container">
+                                        <div className="action-buttons">
+                                            <button
+                                                className="btn btn-sm btn-warning me-1"
+                                                onClick={() => handleEditClick(tag)}
+                                            >
+                                                <i className="fa-regular fa-pen-to-square"></i>
+                                            </button>
+                                            {/* Correctly trigger Delete Modal */}
+                                            <button
+                                                className="btn btn-sm btn-danger"
+                                                onClick={() => handleDeleteClick(tag._id)}
+                                            >
+                                                <i className="fa-regular fa-trash-can"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
 
                     </table>
-                </div></div>
+                </div>
+            </div>
 
             {showModal && (
                 <div className="modal-overlay">
@@ -297,9 +300,9 @@ const Tagspage = () => {
                                 }
                             />
                         </div>
-                        {modalError && <div className="alert alert-danger">{modalError}</div>}
+                        <div className="modal2-actions">
 
-                        <div className="modal-footer">
+                            {modalError && <div className="alert alert-danger">{modalError}</div>}
                             <button className="btn btn-primary" onClick={handleAddTag}>
                                 Submit
                             </button>
@@ -314,23 +317,23 @@ const Tagspage = () => {
                 </div>
             )}
 
-{isEditModalOpen && (
+            {isEditModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal">
 
-                    <h2>Edit Prefrence Tag</h2>
+                        <h2>Edit Prefrence Tag</h2>
 
 
-                    <div className="mb-3">
-                    <label className="form-label">Name</label>
+                        <div className="mb-3">
+                            <label className="form-label">Name</label>
 
                             <input
                                 type="text"
                                 className="form-control"
                                 name="tag_name"
-                            placeholder="Name"
-                            value={editingTag.tag_name}
-                            onChange={(e) => handleEditInputChange(e)}
+                                placeholder="Name"
+                                value={editingTag.tag_name}
+                                onChange={(e) => handleEditInputChange(e)}
                             />
                         </div>
                         <div className="mb-3">
@@ -345,11 +348,11 @@ const Tagspage = () => {
                             />
                         </div>
 
-                        
-               
-                        
+
+
+
                         <div className="modal2-actions">
-                        {modalError && <div className="alert alert-danger">{modalError}</div>}
+                            {modalError && <div className="alert alert-danger">{modalError}</div>}
 
                             <button onClick={handleEditSave}>Save</button>
                             <button onClick={cancelEdit}>Cancel</button>
@@ -368,7 +371,7 @@ const Tagspage = () => {
                         <h2>Confirm Deletion</h2>
                         <p>Are you sure you want to delete this Tag?</p>
                         <div className="modal-actions">
-                        {modalError && <div className="alert alert-danger">{modalError}</div>}
+                            {modalError && <div className="alert alert-danger">{modalError}</div>}
 
                             <button onClick={confirmDelete}>Delete</button>
                             <button onClick={cancelDelete}>Cancel</button>

@@ -63,6 +63,8 @@ import HLTags from "./pages/hltag.js";
 
 import TourGuideLayout from "./components/TourGuideLayout.js";
 import FlagItinerary from "./components/FlagItinerary";
+import FlagActivity from "./components/FlagActivity";
+
 import ItineraryManagement from "./components/ItineraryManagement";
 import CategoriesAndActivities from "./components/CategoriesAndActivities";
 import TourismGovernerLayout from "./pages/tourismgoverner/tourismgovernerlayout.js";
@@ -257,10 +259,14 @@ function App() {
                   path="/admin/updateProduct/:id"
                   element={<AdminUpdateProducts usertype="admin" />}
                 />
+                <Route path = "/admin/flagItinerary"
+                element={<FlagItinerary />} />
+                <Route path = "/admin/flagActivity"
+                element={<FlagActivity/>} />
 
                 <Route path="/admin/my_category" element={<Categorypage />} />
                 <Route path="/admin/my_tags" element={<Tagspage />} />
-                <Route path="/admin/Tourism_Governer" element={<Tourism_Governer />} />
+                <Route path="/admin/users" element={<Tourism_Governer />} />
               </Route>
 
               {/** Tourist */}

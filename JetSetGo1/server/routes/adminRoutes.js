@@ -31,7 +31,10 @@ const {
   AcceptUserStatus,
   RejectUserStatus,
   flagItinerary,
+  flagActivity,
   getAllItineraries,
+  getAllActivities,
+  getUsers
 } = require("../controllers/adminController.js");
 const router = express.Router();
 const multer = require("multer");
@@ -43,8 +46,11 @@ router.get("/view-documents", adminController.getUploadedDocuments);
 //Flag Itinerary
 
 router.patch("/itineraries/:itineraryId/flag", flagItinerary);
+router.patch("/activities/:activityId/flag", flagActivity);
 router.get("/itineraries", getAllItineraries);
+router.get("/activities", getAllActivities);
 router.get("/viewComplaints", getComplaints);
+router.get("/users", getUsers);
 
 // Advertiser activities
 router.post("/createtag", create_pref_tag);

@@ -235,15 +235,19 @@ const Categorypage = () => {
                     <table className="table table-striped text-center w-75">
                         <thead>
                             <tr>
-                                <th className="buttons-container"></th>
                                 <th>Name</th>
                                 <th>Description</th>
                                 <th>Created At</th>
+                                <th className="buttons-container"></th>
                             </tr>
                         </thead>
                         <tbody>
     {categories.map((category) => (
         <tr key={category._id} className="table-row">
+            
+            <td>{category.name}</td>
+            <td>{category.description}</td>
+            <td>{new Date(category.createdAt).toLocaleDateString()}</td>
             <td className="buttons-container">
                 <div className="action-buttons">
                     <button
@@ -261,9 +265,6 @@ const Categorypage = () => {
                     </button>
                 </div>
             </td>
-            <td>{category.name}</td>
-            <td>{category.description}</td>
-            <td>{new Date(category.createdAt).toLocaleDateString()}</td>
         </tr>
     ))}
 </tbody>
@@ -297,9 +298,9 @@ const Categorypage = () => {
                                 }
                             />
                         </div>
-                        {modalError && <div className="alert alert-danger">{modalError}</div>}
+                        <div className="modal2-actions">
 
-                        <div className="modal-footer">
+                            {modalError && <div className="alert alert-danger">{modalError}</div>}
                             <button className="btn btn-primary" onClick={handleAddCategory}>
                                 Submit
                             </button>

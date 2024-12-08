@@ -76,38 +76,38 @@ const TourismGovTags = () => {
 
     return (
         <div className="d-flex justify-content-center mt-4">
-        <div className="container mt-4">
-            <h1 className="mb-4 text-center">Historical Tags</h1>
-            
-            {/* Button at the top right */}
-            <button
-                className="btn btn-primary custom-add-button"
-                onClick={() => setShowModal(true)}
-            >
-                +
-            </button>
+            <div className="container mt-4">
+                <h1 className="mb-4 text-center">Historical Tags</h1>
 
-            {/* Center the table */}
-            <div className="d-flex justify-content-center mt-4">
-                <table className="table table-striped text-center w-75">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Historical Period</th>
-                            <th>Created At</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tags.map((tag) => (
-                            <tr key={tag._id}>
-                                <td>{tag.type}</td>
-                                <td>{tag.historicalPeriod}</td>
-                                <td>{new Date(tag.createdAt).toLocaleDateString()}</td>
+                {/* Button at the top right */}
+                <button
+                    className="btn btn-primary custom-add-button"
+                    onClick={() => setShowModal(true)}
+                >
+                    +
+                </button>
+
+                {/* Center the table */}
+                <div className="d-flex justify-content-center mt-4">
+                    <table className="table table-striped text-center w-75">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Historical Period</th>
+                                <th>Created At</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div></div>
+                        </thead>
+                        <tbody>
+                            {tags.map((tag) => (
+                                <tr key={tag._id}>
+                                    <td>{tag.type}</td>
+                                    <td>{tag.historicalPeriod}</td>
+                                    <td>{new Date(tag.createdAt).toLocaleDateString()}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div></div>
 
             {showModal && (
                 <div className="modal-overlay">
@@ -140,19 +140,20 @@ const TourismGovTags = () => {
                                 }
                             />
                         </div>
-                        {modalError && <div className="alert alert-danger">{modalError}</div>}
+                        <div className="modal-actions">
+                            {modalError && <div className="alert alert-danger">{modalError}</div>}
 
-                        <div className="modal-footer">
-                            <button className="btn btn-primary" onClick={handleAddTag}>
+                            <button className="submit-btn" onClick={handleAddTag}>
                                 Submit
                             </button>
                             <button
-                                className="btn btn-secondary"
+                                className="cancel-btn"
                                 onClick={() => setShowModal(false)}
                             >
                                 Cancel
                             </button>
                         </div>
+
                     </div>
                 </div>
             )}

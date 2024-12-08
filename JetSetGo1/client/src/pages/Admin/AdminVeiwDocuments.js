@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import UserCard from '../../components/Admin/UserCard';
+import "../../components/Admin/adminreview.css";
+
 
 function AdminDocumentReview() {
   const [userDocuments, setUserDocuments] = useState([]);
@@ -11,12 +13,12 @@ function AdminDocumentReview() {
 
   const fetchDocuments = async () => {
     try {
-        const response = await fetch("/api/admin/view-documents", {
-            method: 'GET', 
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
+      const response = await fetch("/api/admin/view-documents", {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       console.log(response)
       if (!response.ok) throw new Error("Failed to fetch documents");
 
@@ -36,17 +38,19 @@ function AdminDocumentReview() {
         <div key={userType}>
           <h3>{userType.charAt(0).toUpperCase() + userType.slice(1)}</h3>
           <div>
-            {userDocuments[userType].map((user) => (
-              
-              <UserCard
-                 key={user.id}
-                 username={user.username}
-                 documents={user.documents}
-                 Id={user.id}
-                 modelName={userType.slice(0, -1)} // 'tourGuide', 'advertiser', 'seller'
-                onStatusChange={fetchDocuments} // Refresh list after status change
-              />
-            ))} 
+            <div className="user-cards-container">
+              {userDocuments[userType].map((user) => (
+
+                <UserCard
+                  key={user.id}
+                  username={user.username}
+                  documents={user.documents}
+                  Id={user.id}
+                  modelName={userType.slice(0, -1)} // 'tourGuide', 'advertiser', 'seller'
+                  onStatusChange={fetchDocuments} // Refresh list after status change
+                />
+              ))}
+            </div>
           </div>
         </div>
       ))}

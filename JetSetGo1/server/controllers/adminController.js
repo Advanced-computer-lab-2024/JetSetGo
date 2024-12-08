@@ -17,6 +17,7 @@ const mongoose= require('mongoose')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
+
 const User = require('../models/UserModel');
 
 
@@ -32,6 +33,46 @@ const getAllItineraries = async (req, res) => {
       res.status(500).json({ error: 'Server error while fetching itineraries.', details: error.message });
     }
   };
+  
+  const getAllActivities = async (req, res) => {
+    try {
+      const activities = await Activity.find(); // Fetch all itineraries from the database
+      res.status(200).json({ activities });
+    } catch (error) {
+      res.status(500).json({ error: 'Server error while fetching Activities.', details: error.message });
+    }
+  };
+
+  const getUsers = async (req, res) => {
+    try {
+      // Get the current date
+      const currentDate = new Date();
+  
+      // Get the first day of the current month
+      const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+  
+      // Fetch all users
+      const users = await User.find();
+  
+      // Count total users
+      const totalUsers = users.length;
+  
+      // Count users created this month
+      const usersThisMonth = await User.countDocuments({
+        createdAt: { $gte: firstDayOfMonth }
+      });
+  
+      // Send the counts as a response
+      res.status(200).json({
+        totalUsers,
+        usersThisMonth,
+      });
+    } catch (error) {
+      res.status(500).json({ error: 'Server error while fetching users.', details: error.message });
+    }
+  };
+  
+
   
 
 // Flag an Itinerary
@@ -64,6 +105,35 @@ const flagItinerary = async (req, res) => {
     }
   };
 
+  // Flag an Itinerary
+const flagActivity = async (req, res) => {
+  const { activityId } = req.params;
+  
+
+  
+
+  try {
+    // Validate itinerary ID
+    if (!mongoose.Types.ObjectId.isValid(activityId)) {
+      return res.status(400).json({ error: 'Invalid activity ID.' });
+    }
+
+    const activity = await Activity.findById(activityId);
+
+    if (!activity) {
+      return res.status(404).json({ error: 'Activity not found.' });
+    }
+    
+    // Set flagged to true
+    activity.flagged = true;
+
+    await activity.save();
+
+    res.status(200).json({ message: 'Activity flagged successfully.', activity });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error while flagging activity.', details: error.message });
+  }
+};
   
 
 
@@ -641,6 +711,6 @@ const RejectUserStatus = async (req, res) => {
 
 module.exports = { getComplaints,RejectUserStatus,getUploadedDocuments,create_pref_tag ,  get_pref_tag , update_pref_tag , delete_pref_tag , create_act_category , get_act_category , update_act_category , delete_act_category , add_tourism_governer , view_tourism_governer,addAdmin, deleteAccount, getAllUsers
     ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,
-    flagItinerary,getAllItineraries, AcceptUserStatus,getSales,
+    flagItinerary, flagActivity,getAllItineraries, getAllActivities, AcceptUserStatus,getSales, getUsers,
     viewComplaint,resolveComplaint,archieved_on};
 

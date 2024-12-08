@@ -359,12 +359,12 @@
 }
 
 .modal-actions button:last-child {
-    background-color: #4CAF50;
+    background-color: #8b8b8b;
     color: white;
 }
 
 .modal-actions button:last-child:hover {
-    background-color: #388e3c;
+    background-color: #767676;
 }
   
 
@@ -419,7 +419,7 @@
 .modal2-actions button {
   width: 100px;
   height: 50px ;
-  margin: 5px 20px;
+  margin: 5px 20px 0px 20px;
   padding: 10px 20px;
   font-size: 1em;
   cursor: pointer;
@@ -515,5 +515,17 @@ padding: 0 20px;
 .card-action:hover {
   background: #0839b5;
   color: #fff;
+}
+
+
+.action-buttons {
+  display:flex ;
+  position: absolute;
+  right : 100px !important;
+  top: 50%; /* Center vertically in the row */
+  transform: translateY(-50%);
+  z-index: 10; /* Ensure buttons appear above other elements */
+  pointer-events: auto;
+  visibility: visible;
 }
 

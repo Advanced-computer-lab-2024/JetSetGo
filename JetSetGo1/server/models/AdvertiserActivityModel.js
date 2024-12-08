@@ -54,6 +54,10 @@ const activitySchema = new mongoose.Schema({
     type: [String],
     required: true,
   },
+  flagged: {
+    type: Boolean,
+    default: false,
+  },
   ratings: [
     {
       star: Number,

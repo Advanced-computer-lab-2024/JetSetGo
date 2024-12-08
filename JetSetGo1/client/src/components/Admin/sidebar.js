@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog, faTags, faChartBar, faComments, faBox, faTasks, faUser } from '@fortawesome/free-solid-svg-icons'; 
+import { faCog, faTags, faChartBar, faComments, faBox, faTasks, faUser, faFlag } from '@fortawesome/free-solid-svg-icons'; 
 import './sidebar.css';
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 
 function Sidebar() {
   const [isMinimized, setIsMinimized] = useState(false);
   const id= "67043d224b400647ae0e235f";
   const modelName="admin"
+  const navigate = useNavigate();
   const toggleSidebar = () => {
     setIsMinimized(!isMinimized);
   };
@@ -47,6 +50,14 @@ function Sidebar() {
           <span><Link to="/admin/requests">Request</Link></span>
         </li>
         <li>
+          <FontAwesomeIcon icon={faFlag} className="icon" />
+          <span><Link to="/admin/flagItinerary">Flag Itineraries</Link></span>
+        </li>
+        <li>
+          <FontAwesomeIcon icon={faFlag} className="icon" />
+          <span><Link to="/admin/flagActivity">Flag Activities</Link></span>
+        </li>
+        <li>
           <FontAwesomeIcon icon={faUser} className="icon" />
           <span><Link to={`/admin/change-password/${id}/${modelName}`}>change Password</Link></span>
         </li>
@@ -61,8 +72,16 @@ function Sidebar() {
         </li>
         <li>
           <FontAwesomeIcon icon={faCog} className="icon" />
-          <span><Link to={`/admin/Tourism_Governer`}>tourism governer</Link></span>
+          <span><Link to={`/admin/users`}>Users</Link></span>
         </li>
+        <li>
+    <FontAwesomeIcon icon={faUser} className="icon" />
+    <span><Link to = {`/admin/users?role=admin&openModal=true`}>Add Admin</Link></span>
+  </li>
+  <li>
+    <FontAwesomeIcon icon={faUser} className="icon" />
+    <span> <Link to = {`/admin/users?role=tourismgoverner&openModal=true`}>Add Tourism Governer</Link></span>
+  </li>
       </ul>
     </div>
   );
