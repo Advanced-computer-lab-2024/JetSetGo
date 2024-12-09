@@ -13,15 +13,138 @@ const Product= require('../models/ProductModel');
 const Advertiser = require('../models/AdvertiserModel.js');
 const Itinerary = require("../models/ItineraryModel");
 const Complaint = require('../models/ComplaintModel.js')
+const PromoCode = require('../models/PromoCodeModel.js');
+const Notification = require("../models/Notification")
 const mongoose= require('mongoose')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-
+const nodemailer = require('nodemailer');
 const User = require('../models/UserModel');
+const SalesModel = require("../models/SalesModel");
 
 
 const models={admin: Admin, seller: Seller, tourguide: TourGuide, tourist: Tourist, advertiser: Advertiser, tourismgoverner: TourismGoverner};
 ////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+// Controller to get all unread notifications for a tour guide
+const getUnreadNotifications = async (req, res) => {
+  const { id } = req.params; // TourGuide's ID passed in the URL parameter
+
+  try {
+    // Query for unread notifications for the specified TourGuide
+    const unreadNotifications = await Notification.find({
+      userId: id,
+      read: false,  
+      }).sort({ createdAt: -1 })  // Sort by creation date, descending (most recent first)
+      .limit(3);  // Limit to 3 notifications;
+
+    // Check if notifications were found
+    if (unreadNotifications.length === 0) {
+      return res.status(200).json({ message: 'No unread notifications.' });
+    }
+
+    // Return the unread notifications
+    return res.status(200).json(unreadNotifications);
+  } catch (error) {
+    console.error('Error fetching unread notifications:', error);
+    return res.status(500).json({ error: 'Error fetching unread notifications.' });
+  }
+};
+
+const markAllNotificationsAsRead = async (req, res) => {
+  const { id } = req.params;  // Get the Tour Guide ID from the URL parameter
+  try {
+    // Update notifications that are unread (read: false) to read: true
+    await Notification.updateMany({ userId: id, read: false }, { $set: { read: true } });
+    res.status(200).json({ message: 'Notifications marked as read.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error marking notification as read.', details: error.message });
+  }
+};
+
+// Route to mark notifications as read
+const markNotificationAsRead = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const notification = await Notification.findById(id);
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found.' });
+    }
+    notification.read = true;
+    await notification.save();
+    res.status(200).json({ message: 'Notification marked as read.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error marking notification as read.', details: error.message });
+  }
+};
+
+// Route to mark notifications as read
+const GetAllNotifications = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Fetch all notifications, sorted by creation date (most recent first)
+    const notifications = await Notification.find({ userId: id })
+      .sort({ createdAt: -1 });  // Sort by creation date, descending
+
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ error: 'Failed to fetch notifications.' });
+  }
+};
+
+
+
+
+
+
+
+
+const createPromoCode = async (req, res) => {
+  const {discount} = req.body;
+
+  try {
+    // Create a new promo code
+    const newPromoCode = new PromoCode({discount});
+
+    // Save the new promo code to the database
+    const savedPromoCode = await newPromoCode.save();
+
+    // Respond with the newly created promo code
+    res.status(201).json(savedPromoCode);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+const getPromoCodes = async (req, res) => {
+  try {
+    const promocodes = await PromoCode.find(); // Fetch all users from the database
+    res.status(200).json({ promocodes });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error while fetching PromoCodes.', details: error.message });
+  }
+};
+
+
+
+
+let transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: "jetsetgo212@gmail.com",
+    pass: "pesw cctk endt iasi",
+  },
+  tls: {
+    rejectUnauthorized: false, // Disable certificate validation (not secure)
+  },
+});
+
 
 // Get All Itineraries
 const getAllItineraries = async (req, res) => {
@@ -33,37 +156,148 @@ const getAllItineraries = async (req, res) => {
     }
   };
   
-
-// Flag an Itinerary
-const flagItinerary = async (req, res) => {
+  const flagItinerary = async (req, res) => {
     const { itineraryId } = req.params;
-    
-  
-    
   
     try {
-      // Validate itinerary ID
-      if (!mongoose.Types.ObjectId.isValid(itineraryId)) {
-        return res.status(400).json({ error: 'Invalid itinerary ID.' });
-      }
-  
-      const itinerary = await Itinerary.findById(itineraryId);
+      const itinerary = await Itinerary.findById(itineraryId).populate('tourGuide'); // Use populate() to include tourGuide data if necessary
   
       if (!itinerary) {
         return res.status(404).json({ error: 'Itinerary not found.' });
       }
-      
+  
       // Set flagged to true
       itinerary.flagged = true;
-  
       await itinerary.save();
+  
+      // Send notification to the Tour Guide (via Socket.IO)
+      if (itinerary.tourGuide) {
+        const tourGuide = await TourGuide.findById(itinerary.tourGuide._id);
+  
+        // Create the notification message
+        const notificationMessage = `Your itinerary "${itinerary.title}" has been flagged as inappropriate.`;
+  
+        // Create the notification object
+        const notification = new Notification({
+          message: notificationMessage,
+          userId: tourGuide._id,
+          read: false,
+        });
+  
+        // Save the notification to the database
+        await notification.save();
+  
+        // Check if the tour guide is online (i.e., has a socketId)
+        // if (tourGuide.socketId) {
+        //   // Emit the notification to the Tour Guide's socket ID
+        //   io.to(tourGuide.socketId).emit('new_notification', {
+        //     message: notificationMessage,
+        //     createdAt: new Date(),
+        //   });
+        // } else {
+        //   // If offline, store the notification in the database
+        //   console.log('Tour Guide is offline. Storing notification in database.');
+        // }
+  
+        // Save the notification ObjectId to the tourGuide's notifications array
+        tourGuide.notifications.push(notification._id);
+        await tourGuide.save();
+
+       const mailOptions = {
+        from: process.env.EMAIL_USER,  // Your email address
+        to: tourGuide.email,  // The user's email
+        subject: 'Iternanry flagged',
+        text: notificationMessage,
+      };
+      console.log("how howa wha :" ,tourGuide.email );
+      await transporter.sendMail(mailOptions);
+
+         // SEND EMAIL TO TOUR GUIDE
+    //  sendEmailNotification(tourGuide.email, notificationMessage);  // New function to send the email
+      }
   
       res.status(200).json({ message: 'Itinerary flagged successfully.', itinerary });
     } catch (error) {
+      console.error('Error while flagging itinerary:', error);
       res.status(500).json({ error: 'Server error while flagging itinerary.', details: error.message });
     }
   };
-
+  // Function to send email notification to the Tour Guide
+  const flagActivity = async (req, res) => {
+    const { activityId } = req.params;
+  
+    try {
+      const activity = await AdvertiserActivityModel.findById(activityId).populate('advertiser');
+  
+      if (!activity) {
+        return res.status(404).json({ error: 'Activity not found.' });
+      }
+      // Set flagged to true
+      activity.flagged = true;
+      await activity.save();
+  
+      // Send notification to the Advertiser
+      if (activity.advertiser) {
+        const advertiser = await Advertiser.findById(activity.advertiser._id);
+  
+        // Create the notification message
+        const notificationMessage = `Your activity "${activity.title}" has been flagged as inappropriate.`;
+  
+        // Create the notification object
+        const notification = new Notification({
+          message: notificationMessage,
+          userId: advertiser._id,
+          read: false,
+        });
+  
+        // Save the notification to the database
+        await notification.save();
+  
+        // Check if the advertiser is online (i.e., has a socketId)
+        // if (advertiser.socketId) {
+        //   // Emit the notification to the Advertiser's socket ID
+        //   io.to(advertiser.socketId).emit('new_notification', {
+        //     message: notificationMessage,
+        //     createdAt: new Date(),
+        //   });
+        // } else {
+        //   console.log('Advertiser is offline. Storing notification in database.');
+        // }
+  
+        // Save the notification ObjectId to the advertiser's notifications array
+        advertiser.notifications.push(notification._id);
+        await advertiser.save();
+  
+        // Send email notification to the advertiser
+        // let transporter = nodemailer.createTransport({
+        //   host: "smtp.gmail.com",
+        //   port: 465,
+        //   secure: true,
+        //   auth: {
+        //     user: "your-email@example.com",  // Replace with your email
+        //     pass: "your-email-password",     // Replace with your password
+        //   },
+        //   tls: {
+        //     rejectUnauthorized: false,
+        //   },
+        // });
+  
+        // const mailOptions = {
+        //   from: process.env.EMAIL_USER,  // Your email address
+        //   to: advertiser.email,  // The advertiser's email
+        //   subject: 'Activity Flagged',
+        //   text: notificationMessage,
+        // };
+  
+        // await transporter.sendMail(mailOptions);
+      }
+  
+      res.status(200).json({ message: 'Activity flagged successfully.', activity });
+    } catch (error) {
+      console.error('Error while flagging activity:', error);
+      res.status(500).json({ error: 'Error while flagging activity.', details: error.message });
+    }
+  };
   
 
 
@@ -305,11 +539,17 @@ const getProducts= async (req,res) => {
     res.status(200).json(products)
 }
 
-const getSingleProduct= async (req,res) => {
-    const {id}= req.params
+const getSingleProduct = async (req, res) => {
+  const { id } = req.params
+  if (!id) {
+    return
+  }
+  const product = await Product.find({ _id: id }).populate('seller');
 
-    const product = await Product.find({_id:id})
-    res.status(200).json(product)
+  if (!product) {
+    return res.status(404).json({ error: 'No such product' })
+  }
+  res.status(200).json(product)
 }
 
 
@@ -524,14 +764,12 @@ const getUploadedDocuments = async (req, res) => {
 };
 
 
-
 const getSales = async (req, res) => {
   const { id: productId } = req.params;  // Destructure product ID from the route parameters
-
+  console.log(productId)
   try {
-    const sales = await SalesModel.find({ Product: productId }).sort({ createdAt: -1 });      
-    // .populate('Tourists', 'name')  // Optional: populate Tourist's name (if you have this field in Tourist model)
-    // .populate('Seller', 'name')    // Optional: populate Seller's name (if you have this field in Seller model)
+    const sales = await SalesModel.find({ Product: productId }).sort({ createdAt: -1 }).populate('Tourists');    
+    
 
     res.status(200).json(sales);     // Send the sales data as JSON
   } catch (error) {
@@ -539,6 +777,21 @@ const getSales = async (req, res) => {
   }
 };
 
+const getAllSales = async (req, res) => {
+  const { id } = req.params; // Seller ID
+  try {
+    // Fetch sales data for the seller, populate the Product and Seller fields
+    const salesWithProducts = await SalesModel.find({ Seller: id })
+      .sort({ createdAt: -1 })
+      .populate('Product') // Populate the Product field with product data
+      .populate('Tourists')
+
+    res.status(200).json(salesWithProducts);  // Send back the populated sales data
+  } catch (error) {
+    console.error('Error fetching sales with products:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
 
 
@@ -629,11 +882,47 @@ const RejectUserStatus = async (req, res) => {
       res.status(400).json({ error: err.message });
     }
 };
+const showUsers = async (req, res) => {
+  try {
+    const users = await User.find(); // Fetch all users from the database
+    res.status(200).json({ users });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error while fetching Users.', details: error.message });
+  }
+};
 
+const getUsers = async (req, res) => {
+  try {
+    // Get the current date
+    const currentDate = new Date();
+
+    // Get the first day of the current month
+    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+
+    // Fetch all users
+    const users = await User.find();
+
+    // Count total users
+    const totalUsers = users.length;
+
+    // Count users created this month
+    const usersThisMonth = await User.countDocuments({
+      createdAt: { $gte: firstDayOfMonth }
+    });
+
+    // Send the counts as a response
+    res.status(200).json({
+      totalUsers,
+      usersThisMonth,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error while fetching users.', details: error.message });
+  }
+};
 
 
 module.exports = { getComplaints,RejectUserStatus,getUploadedDocuments,create_pref_tag ,  get_pref_tag , update_pref_tag , delete_pref_tag , create_act_category , get_act_category , update_act_category , delete_act_category , add_tourism_governer , view_tourism_governer,addAdmin, deleteAccount, getAllUsers
     ,getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName,getSingleProduct,
     flagItinerary,getAllItineraries, AcceptUserStatus,getSales,
-    viewComplaint,resolveComplaint,archieved_on};
+    viewComplaint,resolveComplaint,archieved_on,createPromoCode,showUsers,getUsers,getPromoCodes,flagActivity,getAllSales, markAllNotificationsAsRead,GetAllNotifications,markNotificationAsRead,getUnreadNotifications};
 

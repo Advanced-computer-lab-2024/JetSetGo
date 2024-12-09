@@ -5,9 +5,12 @@ import './changePassword.css'
 import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
 import Cookies from "js-cookie"; // Import js-cookie
 
-
+import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 export default function ChangePassword() {
+  const navigate = useNavigate();
   const location = useLocation(); // Access the location object
   const token = Cookies.get("auth_token");
   
@@ -85,6 +88,10 @@ export default function ChangePassword() {
 
   return (
     <div className="change-password-container">
+      <div className="back-link" onClick={() => navigate(-1)}>
+        <FontAwesomeIcon icon={faArrowLeft} className="back-arrow" />
+        <span className="text">Back</span>
+      </div>
       <div className="change-password-form">
         <h2 className="change-password-title">Change Password</h2>
 

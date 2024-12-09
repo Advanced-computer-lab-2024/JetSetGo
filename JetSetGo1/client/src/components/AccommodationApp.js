@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import Search from './Search';
 import { DateFilters } from "./DateFilters";
 import { Hotels } from "./Hotels";
-
-const AccommodationApp = ({touristId}) => {
+import back from './back/hotel2.jpg'; // Import the background image
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+const AccommodationApp = ({ touristId }) => {
     const [cityCode, setCityCode] = useState("");
     const [checkInDate, setCheckInDate] = useState(new Date().toISOString().split("T")[0]);
     const [checkOutDate, setCheckOutDate] = useState(
@@ -28,60 +30,81 @@ const AccommodationApp = ({touristId}) => {
     };
 
     const styles = {
-        appContainer: {
-            fontFamily: 'Arial, sans-serif',
-            textAlign: 'center',
-            backgroundColor: '#0071c2',
-            padding: '50px 0',
-            minHeight: '100vh'
-        },
-        contentBox: {
-            backgroundColor: '#fff',
-            padding: '20px',
-            borderRadius: '8px',
-            boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.2)',
-            maxWidth: '600px',
-            margin: '0 auto',
-        },
-        searchRow: {
-            marginBottom: '20px',
-        },
-        inputRow: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            gap: '10px',
-            alignItems: 'center',
-            marginBottom: '20px',
-        },
-        label: {
-            display: 'flex',
-            flexDirection: 'column',
-            fontSize: '14px'
-        },
-        searchButton: {
-            backgroundColor: '#0071c2',
-            color: '#fff',
-            border: 'none',
-            padding: '10px 20px',
-            cursor: 'pointer',
-            fontSize: '14px',
-            borderRadius: '4px',
-            transition: 'background-color 0.3s'
-        },
-        searchButtonHover: {
-            backgroundColor: '#005fa3'
-        },
-        loadingIndicator: {
-            fontSize: '16px',
-            color: '#0071c2',
-            marginTop: '20px'
-        }
-    };
+    appContainer: {
+        minHeight: '100vh',
+        backgroundImage: `url(${back})`,
+        backgroundSize: 'cover',
+        backgroundAttachment: 'fixed',
+        backgroundPosition: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        padding: '65px 24px',
+    },
+    contentBox: {
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        padding: '19px',
+        borderRadius: '14px',
+        boxShadow: '0px 5px 14px rgba(0, 0, 0, 0.2)',
+        maxWidth: '706px',
+        width: '100%',
+        margin: '18px auto',
+        minHeight: '160px',
+    },
+    searchRow: {
+        marginBottom: '12px',
+    },
+    inputRow: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        gap: '12px',
+        alignItems: 'center',
+        marginBottom: '24px',
+        padding: '14px 0',
+    },
+    label: {
+        display: 'flex',
+        flexDirection: 'column',
+        fontSize: '16px',
+        color: '#555',
+        marginBottom: '-6px',
+        position: 'relative',
+        top: '-12px',
+    },
+    searchButton: {
+        backgroundColor: '#0071c2',
+        color: '#fff',
+        border: 'none',
+        padding: '12px 29px',
+        cursor: 'pointer',
+        fontSize: '14px',
+        borderRadius: '5px',
+        transition: 'background-color 0.3s',
+    },
+    searchButtonHover: {
+        backgroundColor: '#005fa3',
+    },
+    loadingIndicator: {
+        fontSize: '24px',
+        color: '#f071c2',
+        marginTop: '24px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    hotelsContainer: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(1430px, 1fr))',
+        gap: '24px',
+        width: '90%',
+        padding: '24px 0',
+        alignItems: 'start',
+    },
+};
+
 
     return (
         <div style={styles.appContainer}>
-            <h1 style={{ color: '#fff' }}></h1>
-
             <div style={styles.contentBox}>
                 <div style={styles.searchRow}>
                     <Search setCityCode={setCityCode} />
@@ -115,12 +138,9 @@ const AccommodationApp = ({touristId}) => {
                         Search
                     </button>
                 </div>
-
-                {/* Loading Indicator */}
-                {isLoading && <div style={styles.loadingIndicator}>Loading...</div>}
-
-                {/* Hotels Component */}
-                {showHotels && cityCode ? (
+            </div>
+            {showHotels && cityCode ? (
+                <div style={styles.hotelsContainer}>
                     <Hotels
                         cityCode={cityCode}
                         checkInDate={checkInDate}
@@ -128,10 +148,10 @@ const AccommodationApp = ({touristId}) => {
                         adults={adults}
                         touristId={touristId}
                     />
-                ) : (
-                    !isLoading && <p>Please search and select a city to view accommodations.</p>
-                )}
-            </div>
+                </div>
+            ) : (
+                !isLoading
+            )}
         </div>
     );
 };

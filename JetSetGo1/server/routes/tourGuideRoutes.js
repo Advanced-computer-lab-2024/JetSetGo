@@ -15,6 +15,13 @@ const {
   requestAccountDeletion,
   uploadDoc,
   uploadDocument,
+  getSingleItinerary,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+  getUnreadNotifications,
+  GetAllNotifications,
+  getSales,
+  getAllSales
 } = require("../controllers/tourGuideController");
 const tourGuideController = require("../controllers/tourGuideController");
 const router = express.Router();
@@ -33,7 +40,33 @@ router.post("/test", (req, res) => {
   res.send("Tour Guide Test Route is working!");
 });
 
+
+router.get('/getAllSales/:id', getAllSales)
+router.get("/sales/:id", getSales);
+
+
+///////////////////////////////////////////
+
+
+///////////////////////////////////////
+
+
+
+// Endpoint to mark all notifications as read
+router.put('/ReadAllnotifications/:id', markAllNotificationsAsRead);
+
+
+
+router.get("/notifications/all/:id",GetAllNotifications)
+// Route to get all unread notifications for a specific tour guide
+router.get('/notifications/unread/:id', getUnreadNotifications);
+
+
+router.patch("/MarkAsRead/:id",markNotificationAsRead);
+
 router.get("/showAll", showMyItineraries);
+
+router.get("/getSingleItinerary/:itineraryId",getSingleItinerary)
 
 const { changePassword } = require("../controllers/PasswordController");
 router.patch("/change-password/:id/:modelName", changePassword);
@@ -56,7 +89,9 @@ router.get("/profile/:id", getProfile);
 router.post("/create/:id", createProfile);
 // router.patch("/update/:id", updateProfile);
 // router.get("/profile/:id", getProfile);
-router.post("/createItinerary", createItinerary);
+// router.post("/createItinerary", createItinerary); // in general which is just for testing w ma3loma ghalat men sprint
+// Route to create an itinerary by tour guide
+router.post('/createItinerary/:tourGuideId', createItinerary);
 router.get("/getItineraries", getItineraries);
 router.patch("/updateItinerary/:id", updateItinerary);
 router.delete("/deleteItinerary/:id", deleteItinerary);

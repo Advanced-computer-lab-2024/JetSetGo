@@ -1,6 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState,useEffect } from "react";
 import Cookies from "js-cookie"; // Import js-cookie
 import { jwtDecode } from "jwt-decode"; // Fix import name
+import io from "socket.io-client"; // Import socket.io-client 
+import NotificationComponent from '../../components/Notifications'; // Import the modified notification component
+
 import {
   BoldLink,
   BoxContainer,
@@ -28,6 +31,24 @@ export function LoginForm(props) {
   const [forgotPasswordMessage, setForgotPasswordMessage] = useState("");
   const [isForgotPassword, setIsForgotPassword] = useState(false); // Toggle view
 
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    if (!socket) {
+      // Only initialize socket if it's not already initialized
+      const newSocket = io("http://localhost:8000");
+      setSocket(newSocket);
+      console.log("Socket connected:", newSocket);
+
+      // Cleanup socket connection only when the component unmounts
+      return () => {
+        if (newSocket) {
+          newSocket.disconnect();  // Disconnect when the component unmounts
+          console.log('Socket disconnected');
+        }
+      };
+    }
+  }, []);
   // Login handler
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -55,26 +76,30 @@ export function LoginForm(props) {
           console.log("User ID:", id);
           console.log("User Type:", userType);
 
+         // Register the user with the decoded user ID
+
+         socket.emit("register", { userId: id }); // Emit the user ID to the server
+         console.log("User registered for notifications with ID:", id);
           // Redirection logic based on user type
-          let modelName;
-          if (userType === 'Advertiser') {
-            modelName = 'advertiser';
+          let modelName;    
+          if (userType === 'Advertisers') {
+            modelName = 'advertisers';
             navigate(`/${modelName}/${id}/Itineraries`);
           } else if (userType === 'Seller') {
             modelName = 'sellers';
-            navigate(`/${modelName}/${id}/products`);
+            navigate(`/Seller/products`);
           } else if (userType === 'Tourist') {
             modelName = 'tourist';
             navigate(`/${modelName}/home`);
           } else if (userType === 'TourGuide') {
             modelName = 'tourguide';
-            navigate(`/${modelName}/${id}/Itineraries`);
+            navigate(`/${modelName}/${id}`);
           } else if (userType === 'Admin') {
             modelName = 'admin';
             navigate(`/${modelName}/products`);
           } else if (userType === 'TourismGoverner') {
             modelName = 'tourism_governer';
-            navigate(`/${modelName}/${id}/HLTags`);
+            navigate(`/${modelName}`);
           } else {
             throw new Error('Invalid user role');
           }
@@ -134,6 +159,8 @@ export function LoginForm(props) {
           <SubmitButton type="submit" onClick={handleSubmit}>
             Signin
           </SubmitButton>
+          {/* Only show the NotificationComponent if logged in */}
+          
           <Marginer direction="vertical" margin="5px" />
           <LineText>
             Don't have an account?{" "}

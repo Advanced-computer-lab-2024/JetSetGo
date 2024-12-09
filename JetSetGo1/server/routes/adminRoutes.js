@@ -32,6 +32,9 @@ const {
   RejectUserStatus,
   flagItinerary,
   getAllItineraries,
+  createPromoCode,showUsers,
+  flagActivity,getPromoCodes,getUsers,
+  getAllSales,markAllNotificationsAsRead,GetAllNotifications,markNotificationAsRead,getUnreadNotifications
 } = require("../controllers/adminController.js");
 const router = express.Router();
 const multer = require("multer");
@@ -40,11 +43,45 @@ router.patch("/change-password/:id/:modelName", changePassword);
 
 router.get("/view-documents", adminController.getUploadedDocuments);
 
+router.get("/sales/:id", getSales);
+router.get('/getAllSales/:id', getAllSales)
+
+
+router.get("/users", getUsers);
+router.get("/showUsers", showUsers);
+
+
+// Route to create a promo code
+router.post('/createPromoCode', createPromoCode);
+
+router.get('/PromoCodes', getPromoCodes);
+
+///////////////////////////////////////////////////////////
+// Endpoint to mark all notifications as read
+router.put('/ReadAllnotifications/:id', markAllNotificationsAsRead);
+
+
+
+router.get("/notifications/all/:id",GetAllNotifications)
+// Route to get all unread notifications for a specific tour guide
+router.get('/notifications/unread/:id', getUnreadNotifications);
+
+
+router.patch("/MarkAsRead/:id",markNotificationAsRead);
+////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
 //Flag Itinerary
 
 router.patch("/itineraries/:itineraryId/flag", flagItinerary);
 router.get("/itineraries", getAllItineraries);
 router.get("/viewComplaints", getComplaints);
+
+router.patch("/Activity/:activityId/flag",flagActivity)
 
 // Advertiser activities
 router.post("/createtag", create_pref_tag);

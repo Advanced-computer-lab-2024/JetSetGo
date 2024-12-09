@@ -1,69 +1,131 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import './ItineraryManager.css'; // Add a CSS file for custom styles
+import './ItineraryManager.css';
+import { jwtDecode } from 'jwt-decode';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
-axios.defaults.baseURL = 'http://localhost:8000'; // Replace with your actual API URL
-
-
+axios.defaults.baseURL = 'http://localhost:8000'; // Backend URL
 
 const ItineraryManager = () => {
-  const { id } = useParams();
-  const tourGuide_ID = id;
+  const token = Cookies.get("auth_token");
+  const decodedToken = jwtDecode(token);
+  const tourGuide_ID = decodedToken.id;
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  // State for form data
   const [itineraryData, setItineraryData] = useState({
     title: '',
     description: '',
     tourGuide: tourGuide_ID,
     activities: { name: [], duration: [] },
     locations: [],
-    timeline: [], // Timeline added here
-    tags: [], // This will hold the selected tag IDs
+    timeline: [],  // Timeline added
+    tags: [], // This will hold selected tags
     language: '',
-    price: '',
+    price: '', // Price field
     availableDates: [{ date: '', times: [] }],
-    accessibility: '',
-    pickupLocation: '',
-    dropoffLocation: '',
-    rating: 0, // Added rating field
-    isBooked: false, // Added isBooked field
+    accessibility: '', // Accessibility dropdown
+    pickupLocation: '', // Pickup location
+    dropoffLocation: '', // Dropoff location
+    rating: 0,
+    isBooked: false,
   });
 
-  const [itineraries, setItineraries] = useState([]);
-  const [tags, setTags] = useState([]); // Store fetched tags from backend
-  const [editMode, setEditMode] = useState(false);
-  const [currentItineraryId, setCurrentItineraryId] = useState(null);
-  const [error, setError] = useState(null); // State for handling errors
+  // State for fetched tags and country options
+  const [tags, setTags] = useState([]);
+  const [countryOptions] = useState([
+    { value: 'US', label: 'United States' },
+    { value: 'IN', label: 'India' },
+    { value: 'GB', label: 'United Kingdom' },
+    { value: 'CA', label: 'Canada' },
+    { value: 'AU', label: 'Australia' },
+    { value: 'DE', label: 'Germany' },
+    { value: 'FR', label: 'France' },
+    { value: 'IT', label: 'Italy' },
+    { value: 'ES', label: 'Spain' },
+    { value: 'BR', label: 'Brazil' },
+    { value: 'JP', label: 'Japan' },
+    { value: 'MX', label: 'Mexico' },
+    { value: 'CN', label: 'China' },
+    { value: 'RU', label: 'Russia' },
+    { value: 'ZA', label: 'South Africa' },
+    { value: 'KR', label: 'South Korea' },
+    { value: 'NG', label: 'Nigeria' },
+    { value: 'PK', label: 'Pakistan' },
+    { value: 'SA', label: 'Saudi Arabia' },
+    { value: 'AE', label: 'United Arab Emirates' },
+    { value: 'EG', label: 'Egypt' },
+    { value: 'KE', label: 'Kenya' },
+    { value: 'PH', label: 'Philippines' },
+    { value: 'TH', label: 'Thailand' },
+    { value: 'ID', label: 'Indonesia' },
+    { value: 'MY', label: 'Malaysia' },
+    { value: 'AR', label: 'Argentina' },
+    { value: 'CL', label: 'Chile' },
+    { value: 'CO', label: 'Colombia' },
+    { value: 'PE', label: 'Peru' },
+    { value: 'VE', label: 'Venezuela' },
+    { value: 'TR', label: 'Turkey' },
+    { value: 'SE', label: 'Sweden' },
+    { value: 'NO', label: 'Norway' },
+    { value: 'FI', label: 'Finland' },
+    { value: 'DK', label: 'Denmark' },
+    { value: 'PL', label: 'Poland' },
+    { value: 'PT', label: 'Portugal' },
+    { value: 'AT', label: 'Austria' },
+    { value: 'CH', label: 'Switzerland' },
+    { value: 'BE', label: 'Belgium' },
+    { value: 'NL', label: 'Netherlands' },
+    { value: 'GR', label: 'Greece' },
+    { value: 'CZ', label: 'Czech Republic' },
+    { value: 'SK', label: 'Slovakia' },
+    { value: 'HU', label: 'Hungary' },
+    { value: 'RO', label: 'Romania' },
+    { value: 'BG', label: 'Bulgaria' },
+    { value: 'HR', label: 'Croatia' },
+    { value: 'SI', label: 'Slovenia' },
+    { value: 'BA', label: 'Bosnia and Herzegovina' },
+    { value: 'RS', label: 'Serbia' },
+    { value: 'MK', label: 'North Macedonia' },
+    { value: 'AL', label: 'Albania' },
+    { value: 'ME', label: 'Montenegro' },
+    { value: 'AM', label: 'Armenia' },
+    { value: 'AZ', label: 'Azerbaijan' },
+    { value: 'BY', label: 'Belarus' },
+    { value: 'UA', label: 'Ukraine' },
+    { value: 'MD', label: 'Moldova' },
+    { value: 'LT', label: 'Lithuania' },
+    { value: 'LV', label: 'Latvia' },
+    { value: 'EE', label: 'Estonia' },
+    { value: 'IS', label: 'Iceland' },
+    { value: 'MT', label: 'Malta' },
+    { value: 'LI', label: 'Liechtenstein' },
+    { value: 'FO', label: 'Faroe Islands' },
+    { value: 'IM', label: 'Isle of Man' },
+    { value: 'JE', label: 'Jersey' },
+    { value: 'GG', label: 'Guernsey' }
+  ]);
+
+  // Error and Success messages
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   // Fetch tags from the backend
-  const fetchTags = async () => {
-    try {
-      const response = await axios.get('/api/admin/tag'); // Fetch tags
-      setTags(response.data); // Set fetched tags
-    } catch (error) {
-      console.error('Error fetching tags:', error);
-    }
-  };
-
-// Fetch itineraries by tour guide ID
-const fetchItineraries = async (tourGuideId) => {
-  try {
-    const response = await axios.post('/api/tourist/getItinerariesByTourGuide', {
-      tourGuideId:id, // Send the ID in the request body
-    });
-    setItineraries(response.data);
-    setError(null); // Clear error state on success
-  } catch (error) {
-    console.error('Error fetching itineraries:', error);
-    setError('Error fetching itineraries');
-  }
-};
-
   useEffect(() => {
-    fetchItineraries(); // Fetch itineraries on component mount
-    fetchTags(); // Fetch tags when component mounts
+    const fetchTags = async () => {
+      try {
+        const response = await axios.get('/api/admin/tag');
+        setTags(response.data);
+      } catch (error) {
+        console.error('Error fetching tags:', error);
+        setError('Failed to load tags.');
+      }
+    };
+    fetchTags();
   }, []);
 
-  // Handle input changes for basic fields
+  // Handle input changes
   const handleChange = (e) => {
     setItineraryData({
       ...itineraryData,
@@ -71,7 +133,7 @@ const fetchItineraries = async (tourGuideId) => {
     });
   };
 
-  // Handle dynamic input changes for nested arrays
+  // Handle adding/removing activities
   const handleActivityChange = (index, type, value) => {
     const updatedActivities = { ...itineraryData.activities };
     updatedActivities[type][index] = value;
@@ -81,18 +143,28 @@ const fetchItineraries = async (tourGuideId) => {
     });
   };
 
-  // Handle changes for arrays like locations, timeline, availableDates
-  const handleArrayChange = (index, field, value) => {
-    const updatedArray = [...itineraryData[field]];
-    updatedArray[index] = value;
+  const addActivity = () => {
     setItineraryData({
       ...itineraryData,
-      [field]: updatedArray,
+      activities: {
+        name: [...itineraryData.activities.name, ''],
+        duration: [...itineraryData.activities.duration, ''],
+      },
     });
   };
 
-  // Handle changes for availableDates
-  const handleDateChange = (index, value) => {
+  const removeActivity = (index) => {
+    const updatedActivities = { ...itineraryData.activities };
+    updatedActivities.name.splice(index, 1);
+    updatedActivities.duration.splice(index, 1);
+    setItineraryData({
+      ...itineraryData,
+      activities: updatedActivities,
+    });
+  };
+
+  // Handle adding/removing available dates
+  const handleAvailableDateChange = (index, value) => {
     const updatedDates = [...itineraryData.availableDates];
     updatedDates[index].date = value;
     setItineraryData({
@@ -101,7 +173,7 @@ const fetchItineraries = async (tourGuideId) => {
     });
   };
 
-  const handleTimeChange = (dateIndex, timeIndex, value) => {
+  const handleAvailableTimeChange = (dateIndex, timeIndex, value) => {
     const updatedDates = [...itineraryData.availableDates];
     updatedDates[dateIndex].times[timeIndex] = value;
     setItineraryData({
@@ -110,58 +182,96 @@ const fetchItineraries = async (tourGuideId) => {
     });
   };
 
-  // Submit the form to create or update an itinerary
+  const addAvailableDate = () => {
+    setItineraryData({
+      ...itineraryData,
+      availableDates: [...itineraryData.availableDates, { date: '', times: [] }],
+    });
+  };
+
+  const removeAvailableDate = (index) => {
+    const updatedDates = itineraryData.availableDates.filter((_, idx) => idx !== index);
+    setItineraryData({
+      ...itineraryData,
+      availableDates: updatedDates,
+    });
+  };
+
+  // Handle adding/removing locations
+  const handleLocationChange = (index, value) => {
+    const updatedLocations = [...itineraryData.locations];
+    updatedLocations[index] = value;
+    setItineraryData({
+      ...itineraryData,
+      locations: updatedLocations,
+    });
+  };
+
+  const addLocation = () => {
+    setItineraryData({
+      ...itineraryData,
+      locations: [...itineraryData.locations, ''],
+    });
+  };
+
+  const removeLocation = (index) => {
+    const updatedLocations = itineraryData.locations.filter((_, idx) => idx !== index);
+    setItineraryData({
+      ...itineraryData,
+      locations: updatedLocations,
+    });
+  };
+
+  // Handle tag selection
+  const handleTagSelection = (tagId) => {
+    setItineraryData((prevData) => {
+      const selectedTags = prevData.tags.includes(tagId)
+        ? prevData.tags.filter((id) => id !== tagId) // Remove tag if already selected
+        : [...prevData.tags, tagId]; // Add tag if not selected
+      return { ...prevData, tags: selectedTags };
+    });
+  };
+
+  // Handle timeline change
+  const handleTimelineChange = (index, value) => {
+    const updatedTimeline = [...itineraryData.timeline];
+    updatedTimeline[index] = value;
+    setItineraryData({
+      ...itineraryData,
+      timeline: updatedTimeline,
+    });
+  };
+
+  const removeTimeline = (index) => {
+    const updatedTimeline = itineraryData.timeline.filter((_, idx) => idx !== index);
+    setItineraryData({
+      ...itineraryData,
+      timeline: updatedTimeline,
+    });
+  };
+
+  const addTimeline = () => {
+    setItineraryData({
+      ...itineraryData,
+      timeline: [...itineraryData.timeline, ''],
+    });
+  };
+
+  // Submit form (create itinerary)
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (editMode) {
-        await axios.patch(`/api/tour-guides/updateItinerary/${currentItineraryId}`, itineraryData);
-        alert('Itinerary updated successfully!');
-        setEditMode(false);
-        setCurrentItineraryId(null);
-      } else {
-        await axios.post('/api/tour-guides/createItinerary', itineraryData);
-        alert('Itinerary created successfully!');
-      }
-      fetchItineraries();
-      resetForm();
-      setError(null); // Clear error state on success
+        // Correct URL format for your backend route
+        await axios.post(`/api/tour-guides/createItinerary/${tourGuide_ID}`, itineraryData);
+        setSuccess('Itinerary created successfully!');
+        resetForm();
+        setError('');
     } catch (error) {
-      console.error('Error submitting itinerary:', error);
-      window.scrollTo(0, 0)
-      setError('Error submitting itinerary'); // Display error
+        setError('Error submitting itinerary');
     }
-  };
+};
 
-  // Handle delete operation
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`/api/tour-guides/deleteItinerary/${id}`);
-      alert('Itinerary deleted successfully!');
-      fetchItineraries();
-      setError(null); // Clear error state on success
-    } catch (error) {
-      console.error('Error deleting itinerary:', error);
-      window.scrollTo(0, 0)
-      setError('Error deleting itinerary because it is booked'); // Display error
-    }
-  };
-
-  // Handle edit operation (fill the form with existing data)
-  const handleEdit = (itinerary) => {
-    // Format date to YYYY-MM-DD for display
-    const formattedDates = itinerary.availableDates.map((dateItem) => ({
-      ...dateItem,
-      date: new Date(dateItem.date).toISOString().split('T')[0], // Format date for input field
-    }));
-
-    setItineraryData({ ...itinerary, availableDates: formattedDates });
-    setEditMode(true);
-    setCurrentItineraryId(itinerary._id);
-    window.scrollTo(0, 0)
-  };
-
-  // Reset form after submission
+  // Reset form
   const resetForm = () => {
     setItineraryData({
       title: '',
@@ -169,229 +279,184 @@ const fetchItineraries = async (tourGuideId) => {
       tourGuide: tourGuide_ID,
       activities: { name: [], duration: [] },
       locations: [],
-      timeline: [], // Reset timeline
-      tags: [], // Reset tags
+      timeline: [],  // Reset timeline here
+      tags: [],
       language: '',
-      price: '',
+      price: '', // Reset price here
       availableDates: [{ date: '', times: [] }],
-      accessibility: '',
-      pickupLocation: '',
-      dropoffLocation: '',
-      rating: 0, // Reset rating
-      isBooked: false, // Reset isBooked
+      accessibility: '', // Reset accessibility here
+      pickupLocation: '', // Reset pickupLocation here
+      dropoffLocation: '', // Reset dropoffLocation here
+      rating: 0,
+      isBooked: false,
     });
   };
 
-  return (
-    <div className="itinerary-manager">
-      <h1 className="title">Itinerary Manager</h1>
+ // Handle Cancel button click (go back)
+ const handleCancel = () => {
+  navigate(-1); // Go back to the previous page
+};
 
-      {/* Display errors */}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+return (
+  <div className="itinerary-manager">
+    <h1 className="title">🌴 Create New Itinerary 🌴</h1>
 
-      {/* Form for creating/updating an itinerary */}
-      <form onSubmit={handleSubmit} className="itinerary-form">
-        <input type="text" name="title" placeholder="Title" value={itineraryData.title} onChange={handleChange} required />
-        <textarea name="description" placeholder="Description" value={itineraryData.description} onChange={handleChange} required />
-        <input type="text" name="language" placeholder="Language" value={itineraryData.language} onChange={handleChange} required />
-        <input type="number" name="price" placeholder="Price" value={itineraryData.price} onChange={handleChange} required />
-        <input type="text" name="pickupLocation" placeholder="Pickup Location" value={itineraryData.pickupLocation} onChange={handleChange} required />
-        <input type="text" name="dropoffLocation" placeholder="Dropoff Location" value={itineraryData.dropoffLocation} onChange={handleChange} required />
+    {error && <div className="error-message">{error}</div>}
+    {success && <div className="success-message">{success}</div>}
 
-        {/* Accessibility Options */}
-        <select name="accessibility" value={itineraryData.accessibility} onChange={handleChange} required>
-          <option value="">Select Accessibility</option>
-          <option value="wheelchair accessible">Wheelchair Accessible</option>
-          <option value="not accessible">Not Accessible</option>
-          <option value="limited accessibility">Limited Accessibility</option>
-        </select>
+    <form onSubmit={handleSubmit} className="itinerary-form">
+      {/* Title and Description */}
+      <input type="text" name="title" placeholder="Title" value={itineraryData.title} onChange={handleChange} required />
+      <textarea name="description" placeholder="Description" value={itineraryData.description} onChange={handleChange} required />
 
-        
-        {/* Is Booked */}
-        <div className="form-group">
-          <label>
-            <input type="checkbox" name="isBooked" checked={itineraryData.isBooked} onChange={(e) => setItineraryData({ ...itineraryData, isBooked: e.target.checked })} />
-            Is Booked
-          </label>
-        </div>
+      {/* Price */}
+      <input type="number" name="price" placeholder="Price" value={itineraryData.price} onChange={handleChange} required />
 
-        {/* Activities */}
-        <h3>Activities</h3>
-        {itineraryData.activities.name.map((_, index) => (
-          <div key={index} className="activity-item">
-            <input type="text" placeholder="Activity Name" value={itineraryData.activities.name[index] || ''} onChange={(e) => handleActivityChange(index, 'name', e.target.value)} />
-            <input type="text" placeholder="Duration" value={itineraryData.activities.duration[index] || ''} onChange={(e) => handleActivityChange(index, 'duration', e.target.value)} />
-            <button type="button" className="remove-btn" onClick={() => {
-              const updatedActivities = itineraryData.activities;
-              updatedActivities.name.splice(index, 1);
-              updatedActivities.duration.splice(index, 1);
-              setItineraryData({ ...itineraryData, activities: updatedActivities });
-            }}>Remove</button>
-          </div>
+      {/* Accessibility */}
+      <select name="accessibility" value={itineraryData.accessibility} onChange={handleChange} required>
+        <option value="">Select Accessibility</option>
+        <option value="wheelchair accessible">Wheelchair Accessible</option>
+        <option value="not accessible">Not Accessible</option>
+        <option value="limited accessibility">Limited Accessibility</option>
+      </select>
+
+      {/* Pickup Location */}
+      <input type="text" name="pickupLocation" placeholder="Pickup Location" value={itineraryData.pickupLocation} onChange={handleChange} required />
+
+      {/* Dropoff Location */}
+      <input type="text" name="dropoffLocation" placeholder="Dropoff Location" value={itineraryData.dropoffLocation} onChange={handleChange} required />
+
+      {/* Country Selection Dropdown */}
+      <select name="language" value={itineraryData.language} onChange={e => handleChange(e)} required>
+        <option value="">Select Language</option>
+        {countryOptions.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
         ))}
-        <button type="button" onClick={() => setItineraryData({
-          ...itineraryData,
-          activities: { name: [...itineraryData.activities.name, ''], duration: [...itineraryData.activities.duration, ''] }
-        })}>Add Activity</button>
+      </select>
 
-        {/* Locations */}
-        <h3>Locations</h3>
-        {itineraryData.locations.map((location, index) => (
-          <div key={index} className="location-item">
-            <input type="text" placeholder="Location" value={location || ''} onChange={(e) => handleArrayChange(index, 'locations', e.target.value)} />
-            <button type="button" className="remove-btn" onClick={() => {
-              const updatedLocations = [...itineraryData.locations];
-              updatedLocations.splice(index, 1);
-              setItineraryData({ ...itineraryData, locations: updatedLocations });
-            }}>Remove</button>
-          </div>
-        ))}
-        <button type="button" onClick={() => setItineraryData({
-          ...itineraryData,
-          locations: [...itineraryData.locations, '']
-        })}>Add Location</button>
-
-        {/* Timeline */}
-        <h3>Timeline</h3>
-        {itineraryData.timeline.map((time, index) => (
-          <div key={index} className="timeline-item">
-            <input type="text" placeholder="Timeline Entry" value={time || ''} onChange={(e) => handleArrayChange(index, 'timeline', e.target.value)} />
-            <button type="button" className="remove-btn" onClick={() => {
-              const updatedTimeline = [...itineraryData.timeline];
-              updatedTimeline.splice(index, 1);
-              setItineraryData({ ...itineraryData, timeline: updatedTimeline });
-            }}>Remove</button>
-          </div>
-        ))}
-        <button type="button" onClick={() => setItineraryData({
-          ...itineraryData,
-          timeline: [...itineraryData.timeline, '']
-        })}>Add Timeline Entry</button>
-
-        {/* Tags as toggle buttons */}
-        <div>
-          <h3>Tags</h3>
-          <div className="tags-container">
-            {tags.map((tag) => (
-              <button
-                key={tag._id}
-                type="button"
-                onClick={() => {
-                  // Create a copy of the current tags array
-                  let updatedTags;
-                  // Check if the tag is already selected
-                  if (itineraryData.tags.includes(tag._id)) {
-                    // Remove the tag if it's already selected
-                    updatedTags = itineraryData.tags.filter(t => t !== tag._id);
-                  } else {
-                    // Add the tag if it's not selected
-                    updatedTags = [...itineraryData.tags, tag._id];
-                  }
-                  // Update the state with the new tags array
-                  setItineraryData({ ...itineraryData, tags: updatedTags });
-                }}
-                className={itineraryData.tags.includes(tag._id) ? 'tag-btn selected' : 'tag-btn'}
-                style={{
-                  backgroundColor: itineraryData.tags.includes(tag._id) ? 'blue' : 'lightgray',
-                  color: itineraryData.tags.includes(tag._id) ? 'white' : 'black',
-                  margin: '5px',
-                  padding: '10px',
-                  border: 'none',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                }}
-              >
-                {tag.tag_name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Add available dates */}
-        <div>
-          <h3>Available Dates</h3>
-          {itineraryData.availableDates.map((dateItem, dateIndex) => (
-            <div key={dateIndex}>
-              <input type="date" value={dateItem.date || ''} onChange={(e) => handleDateChange(dateIndex, e.target.value)} />
-              {dateItem.times.map((time, timeIndex) => (
-                <input type="time" key={timeIndex} value={time || ''} onChange={(e) => handleTimeChange(dateIndex, timeIndex, e.target.value)} />
-              ))}
-              <button type="button" onClick={() => handleTimeChange(dateIndex, dateItem.times.length, '')}>Add Time</button>
-              <button type="button" onClick={() => {
-                const updatedDates = itineraryData.availableDates;
-                updatedDates.splice(dateIndex, 1);
-                setItineraryData({ ...itineraryData, availableDates: updatedDates });
-              }}>Remove Date</button>
-            </div>
-          ))}
-          <button type="button" onClick={() => setItineraryData({
-            ...itineraryData,
-            availableDates: [...itineraryData.availableDates, { date: '', times: [] }]
-          })}>Add Date</button>
-        </div>
-
-        <button type="submit">{editMode ? 'Update Itinerary' : 'Create Itinerary'}</button>
-      </form>
-
-      {/* Displaying fetched itineraries */}
-      <h2>Itineraries</h2>
-      <div className="itinerary-list">
-        {itineraries.map((itinerary) => (
-          <div key={itinerary._id} className="itinerary-card">
-            <h3>{itinerary.title}</h3>
-            <p>{itinerary.description}</p>
-            <p><strong>Language:</strong> {itinerary.language}</p>
-            <p><strong>Price:</strong> ${itinerary.price}</p>
-            <p><strong>Pickup Location:</strong> {itinerary.pickupLocation}</p>
-            <p><strong>Dropoff Location:</strong> {itinerary.dropoffLocation}</p>
-            
-            <p><strong>Booked:</strong> {itinerary.isBooked ? 'Yes' : 'No'}</p>
-
-            <h4>Activities</h4>
-            <ul>
-              {itinerary.activities.name.map((activity, index) => (
-                <li key={index}>{activity} - {itinerary.activities.duration[index]}</li>
-              ))}
-            </ul>
-
-            <h4>Locations</h4>
-            <ul>
-              {itinerary.locations.map((location, index) => (
-                <li key={index}>{location}</li>
-              ))}
-            </ul>
-
-            <h4>Timeline</h4>
-            <ul>
-              {itinerary.timeline.map((entry, index) => (
-                <li key={index}>{entry}</li>
-              ))}
-            </ul>
-
-            <h4>Available Dates</h4>
-            <ul>
-              {itinerary.availableDates.map((dateItem, index) => (
-                <li key={index}>
-                  {dateItem.date} - Times: {dateItem.times.join(', ')}
-                </li>
-              ))}
-            </ul>
-
-            <h4>Tags</h4>
-            <ul>
-              {itinerary.tags.map(tag => {
-                const selectedTag = tags.find(t => t._id === tag);
-                return selectedTag ? <li key={tag}>{selectedTag.tag_name}</li> : null;
-              })}
-            </ul>
-
-            <button className="edit-btn" onClick={() => handleEdit(itinerary)}>Edit</button>
-            <button className="delete-btn" onClick={() => handleDelete(itinerary._id)}>Delete</button>
-          </div>
+      {/* Tags Selection */}
+      <div className="tags-container">
+        {tags.map((tag) => (
+          <button
+            key={tag._id}
+            type="button"
+            className={`tag-btn ${itineraryData.tags.includes(tag._id) ? 'selected' : ''}`}
+            onClick={() => handleTagSelection(tag._id)}
+          >
+            {tag.tag_name}
+          </button>
         ))}
       </div>
-    </div>
-  );
+
+      {/* Activities */}
+      <h3>Activities</h3>
+      {itineraryData.activities.name.map((_, index) => (
+        <div key={index}>
+          <input
+            type="text"
+            placeholder="Activity Name"
+            value={itineraryData.activities.name[index]}
+            onChange={(e) => handleActivityChange(index, 'name', e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Activity Duration"
+            value={itineraryData.activities.duration[index]}
+            onChange={(e) => handleActivityChange(index, 'duration', e.target.value)}
+          />
+          <button
+  type="button"
+  className="remove-button"
+  onClick={() => removeActivity(index)} // replace with the correct remove function
+>
+  X
+</button>
+        </div>
+      ))}
+      <button className="add-button" type="button" onClick={addActivity}>+</button>
+
+      {/* Timeline */}
+      <h3>Timeline</h3>
+      {itineraryData.timeline.map((entry, index) => (
+        <div key={index}>
+          <input
+            type="text"
+            placeholder="Timeline Entry"
+            value={entry}
+            onChange={(e) => handleTimelineChange(index, e.target.value)}
+          />
+          <button
+  type="button"
+  className="remove-button"
+  onClick={() => removeTimeline(index)} // replace with the correct remove function
+>
+  X
+</button>
+        </div>
+      ))}
+      <button className="add-button" type="button" onClick={addTimeline}>+</button>
+
+      {/* Available Dates */}
+      <h3>Available Dates</h3>
+      {itineraryData.availableDates.map((dateItem, dateIndex) => (
+        <div key={dateIndex}>
+          <input
+            type="date"
+            value={dateItem.date}
+            onChange={(e) => handleAvailableDateChange(dateIndex, e.target.value)}
+          />
+          {dateItem.times.map((time, timeIndex) => (
+            <input
+              type="time"
+              key={timeIndex}
+              value={time}
+              onChange={(e) => handleAvailableTimeChange(dateIndex, timeIndex, e.target.value)}
+            />
+          ))}
+          <button
+  type="button"
+  className="remove-button"
+  onClick={() => removeAvailableDate(dateIndex)} // replace with the correct remove function
+>
+  X
+</button>
+        </div>
+      ))}
+      <button className="add-button" type="button" onClick={addAvailableDate}>+</button>
+
+      {/* Locations */}
+      <h3>Locations</h3>
+      {itineraryData.locations.map((location, index) => (
+        <div key={index}>
+          <input
+            type="text"
+            placeholder="Location"
+            value={location}
+            onChange={(e) => handleLocationChange(index, e.target.value)}
+          />
+                    <button
+  type="button"
+  className="remove-button"
+  onClick={() => removeLocation(index)} // replace with the correct remove function
+>
+  X
+</button>
+        </div>
+      ))}
+      <button className="add-button" type="button" onClick={addLocation}>+</button>
+      <div className="SubmitCancel">
+          {/* Cancel Button */}
+      <button className="cancel-button" type="button" onClick={handleCancel}>Cancel</button>
+      {/* Submit Button */}
+      <button className="SubmitButtonCreate" type="submit">Create</button>
+
+    
+      </div>
+    </form>
+  </div>
+);
 };
 
 export default ItineraryManager;

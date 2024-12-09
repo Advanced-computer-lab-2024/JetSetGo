@@ -11,6 +11,7 @@
   font-size: 24px;
   font-weight: 600;
   text-align: center;
+  margin-top: 24px;
   margin-bottom: 24px;
   color: #000;
 }
@@ -54,7 +55,7 @@
   font-size: 16px;
   font-weight: 500;
   color: white;
-  background: #000;
+  background: #0021a1;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -62,7 +63,7 @@
 }
 
 .submit-button:hover {
-  background: #1a1a1a;
+  background: #2238ff;
 }
 
 .submit-button:disabled {

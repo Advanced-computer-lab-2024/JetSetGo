@@ -2,14 +2,28 @@ import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import './uploadPicture.css'
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
+import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 export default function ImageUpload() {
-  const { id, modelName } = useParams()
+  //const { id, modelName } = useParams()
+  const navigate = useNavigate();
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [file, setFile] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
+  const token = Cookies.get("auth_token");
+const decodedToken = jwtDecode(token);
+const id = decodedToken.id;
+console.log("id:",id);
+let  modelName = decodedToken.userType;
+console.log("modelName:",modelName);
+
+   if(modelName =="Seller") modelName = "sellers";
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0]
@@ -67,6 +81,10 @@ export default function ImageUpload() {
 
   return (
     <div className="image-upload-container">
+      <div className="back-link" onClick={() => navigate(-1)}>
+        <FontAwesomeIcon icon={faArrowLeft} className="back-arrow" />
+        <span className="text">Back</span>
+      </div>
       <div className="image-upload-form">
         <h2 className="image-upload-title">Upload Profile Image</h2>
         <p className="image-upload-subtitle">

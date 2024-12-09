@@ -1,6 +1,6 @@
 import React from 'react';
 import "../../pages/Admin/AdminVeiwDocuments"
-
+import "./adminreview.css";
 
 
 function UserCard({ username, documents, Id, modelName, onStatusChange }) {
@@ -51,7 +51,7 @@ function UserCard({ username, documents, Id, modelName, onStatusChange }) {
     };
   
     return (
-      <div style={{ border: '1px solid #ccc', padding: '10px', margin: '10px' }}>
+      <div className="user-card-adrev">
         <h4>{username}</h4>
         {documents.map((doc, index) => (
           <div key={index}>
@@ -65,11 +65,11 @@ function UserCard({ username, documents, Id, modelName, onStatusChange }) {
             </a>
           </div>
         ))}
-        <div style={{ marginTop: '10px' }}>
-          <button onClick={handleAccept} style={{ backgroundColor: 'green', color: 'white', marginRight: '10px' }}>
+        <div className="user-card-actions-adrev">
+          <button onClick={handleAccept} className="accept-btn-adrev">
             Accept
           </button>
-          <button onClick={handleReject} style={{ backgroundColor: 'red', color: 'white' }}>
+          <button onClick={handleReject} className="reject-btn-adrev">
             Reject
           </button>
         </div>

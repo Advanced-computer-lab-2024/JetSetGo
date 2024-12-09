@@ -43,6 +43,22 @@ const advertiserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+
+    socketId: {
+      type: String,
+      default: null, // Initialize with null, it will be set when they connect
+    },
+
+    notifications : [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Notification"
+   }],
+   
+   flagged: {
+    type: Boolean,
+    default: false,
+  },
+     
     createdAt: { 
       type: Date, 
       default: Date.now }

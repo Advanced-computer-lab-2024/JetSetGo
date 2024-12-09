@@ -6,6 +6,7 @@ import './TouristComplaints.css';
 import { useLocation } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
 import Cookies from "js-cookie"; // Import js-cookie
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const statusClasses = {
   resolved: 'status-resolved',
@@ -14,6 +15,7 @@ const statusClasses = {
 
 function TouristComplaint() {
   const location = useLocation(); // Access the location object
+  const navigate = useNavigate();
   const token = Cookies.get("auth_token");
   const decodedToken = jwtDecode(token);
   const id = decodedToken.id;
@@ -22,7 +24,7 @@ function TouristComplaint() {
   const [dateFilter, setDateFilter] = useState("Recent");
   const [statusFilter, setStatusFilter] = useState("All");
 
-  const navigate = useNavigate();
+  
   // const { id } = useParams();
   console.log(id);
 
@@ -56,8 +58,18 @@ function TouristComplaint() {
 
   return (
     <div>
-      <button onClick={() => navigate('/')} className="back-button">Go Back</button>
-      <button onClick={() => navigate(`/tourist/addComplaint`, { state:{ id }})} className="back-button">Add Complaint</button>
+      <div className="header-box">
+        <div className="back-link" onClick={() => navigate(-1)}>
+          <FontAwesomeIcon icon={faArrowLeft} className="back-arrow" />
+          <span className="text">Back</span>
+        </div>
+        <button
+          onClick={() => navigate(`/tourist/addComplaint`, { state: { id } })}
+          className="backy-button"
+        >
+          Add Complaint
+        </button>
+      </div>
       <div className="table-container">
         <div className="table-controls">
           <div className="date-filter">
@@ -120,12 +132,12 @@ function TouristComplaint() {
           </table>
 
           <div className="table-pagination">
-            <span>Page 1 of 4</span>
+            {/* <span>Page 1 of 4</span>
             <div className="pagination-controls">
               <button className="pagination-button">Show 5</button>
               <button className="pagination-button">❮</button>
               <button className="pagination-button">❯</button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

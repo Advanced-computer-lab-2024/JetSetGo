@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import "../components/adminflag.css"
 
 const FlagItinerary = () => {
   const [itineraries, setItineraries] = useState([]);
@@ -29,10 +30,10 @@ const FlagItinerary = () => {
         method: 'PATCH',
       });
       const data = await response.json();
-      
+
       if (response.ok) {
         setResponseMessage(data.message);
-        setItineraries(itineraries.map(itinerary => 
+        setItineraries(itineraries.map((itinerary) =>
           itinerary._id === itineraryId ? { ...itinerary, flagged: true } : itinerary
         ));
       } else {
@@ -44,35 +45,29 @@ const FlagItinerary = () => {
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: 'auto', padding: '20px' }}>
-      <h2>All Itineraries</h2>
-      {responseMessage && <p style={{ color: 'green' }}>{responseMessage}</p>}
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      
-      <ul style={{ listStyleType: 'none', padding: 0 }}>
+    <div className="container">
+      <h2 className="page-title">Flag Itineraries</h2>
+      {responseMessage && <p className="success-message">{responseMessage}</p>}
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
+
+      <div className="card-grid">
+
         {itineraries.map((itinerary) => (
-          <li key={itinerary._id} style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>
-            <div>
-              <strong>Title:</strong> {itinerary.title}<br />
-              <strong>Flagged:</strong> {itinerary.flagged ? 'Yes' : 'No'}
+          <div className="card-adflag" key={itinerary._id}>
+            <div className="card-body-adflag">
+              <p className="card-title-adflag">{itinerary.title}</p>
+              <button
+                onClick={() => handleFlagItinerary(itinerary._id)}
+                disabled={itinerary.flagged}
+                className={`button-adflag ${itinerary.flagged ? 'button-disabled-adflag' : 'button-primary-adflag'}`}
+              >
+                {!itinerary.flagged && <i className="fas fa-flag"></i>} {/* Show icon only for active buttons */}
+                {itinerary.flagged ? 'Already Flagged' : ' Flag'}
+              </button>
             </div>
-            <button
-              onClick={() => handleFlagItinerary(itinerary._id)}
-              disabled={itinerary.flagged}
-              style={{
-                marginTop: '10px',
-                padding: '8px 12px',
-                backgroundColor: itinerary.flagged ? '#ccc' : '#007bff',
-                color: '#fff',
-                border: 'none',
-                cursor: itinerary.flagged ? 'not-allowed' : 'pointer',
-              }}
-            >
-              {itinerary.flagged ? 'Already Flagged' : 'Flag'}
-            </button>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

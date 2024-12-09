@@ -37,7 +37,7 @@ const Tourism_Governerform = () => {
 
     return (
         <form className="create" onSubmit={addcategory}>
-            <h3>Add a New category</h3>
+            <h3>Add new Tourism Governer</h3>
 
             <label>username:</label>
             <input

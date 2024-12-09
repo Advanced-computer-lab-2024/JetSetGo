@@ -6,68 +6,68 @@ const HistoricalLocation = require('../models/HistoricalLocationModel')
 
 
 
-// Create Museum
-const createMuseum = async (req, res) => {
-  const {name, description, location, openingHours, ticketPrices, pictures, tags, category,governor } = req.body;
+// // Create Museum
+// const createMuseum = async (req, res) => {
+//   const {name, description, location, openingHours, ticketPrices, pictures, tags, category,governor } = req.body;
 
-  try {
-    const newMuseum = await Museum.create({ name, description, location, openingHours, ticketPrices, pictures,tags, category, governor });
-    res.status(201).json(newMuseum);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
+//   try {
+//     const newMuseum = await Museum.create({ name, description, location, openingHours, ticketPrices, pictures,tags, category, governor });
+//     res.status(201).json(newMuseum);
+//   } catch (err) {
+//     res.status(400).json({ error: err.message });
+//   }
+// };
 
-// Read Museum
-const getMuseum = async (req, res) => {
-// const { id } = req.params;
+// // Read Museum
+// const getMuseum = async (req, res) => {
+// // const { id } = req.params;
 
-  try {
-    const MuseumProfile = await Museum.find();
-    res.status(200).json(MuseumProfile);
-  } catch (err) {
-    res.status(404).json({ error: 'Museum not found' });
-  }
-};
+//   try {
+//     const MuseumProfile = await Museum.find();
+//     res.status(200).json(MuseumProfile);
+//   } catch (err) {
+//     res.status(404).json({ error: 'Museum not found' });
+//   }
+// };
 
-// Update Museum 
-const updateMuseum = async (req, res) => {
-  const { id } = req.params;
-  const updates = req.body;
+// // Update Museum 
+// const updateMuseum = async (req, res) => {
+//   const { id } = req.params;
+//   const updates = req.body;
 
-  try {
-    const updatedMuseum = await Museum.findByIdAndUpdate(id, updates, { new: true });
-    res.status(200).json(updatedMuseum);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
+//   try {
+//     const updatedMuseum = await Museum.findByIdAndUpdate(id, updates, { new: true });
+//     res.status(200).json(updatedMuseum);
+//   } catch (err) {
+//     res.status(400).json({ error: err.message });
+//   }
+// };
 
-//Delete Museum
-const deleteMuseum = async (req, res) => {
-  const { id } = req.params;
+// //Delete Museum
+// const deleteMuseum = async (req, res) => {
+//   const { id } = req.params;
 
-  try {
-      const deletedMuseum = await Museum.findByIdAndDelete(id);
+//   try {
+//       const deletedMuseum = await Museum.findByIdAndDelete(id);
       
-      if (!deletedMuseum) {
-          return res.status(404).json({ message: 'Museum not found' });
-      }
+//       if (!deletedMuseum) {
+//           return res.status(404).json({ message: 'Museum not found' });
+//       }
       
-      res.status(200).json({ message: 'Museum deleted successfully' });
-  } catch (err) {
-      res.status(500).json({ error: err.message });
-  }
-};
+//       res.status(200).json({ message: 'Museum deleted successfully' });
+//   } catch (err) {
+//       res.status(500).json({ error: err.message });
+//   }
+// };
 
 
 
 // Create Historical Location
 const createHistoricalLocation = async (req, res) => {
-  const {name, description, location, openingHours, ticketPrices, type, tags, category, governor } = req.body;
+  const {name, description, location, openingHours, ticketPrices, tags, category, governor } = req.body;
 
   try {
-    const newHistoricalLocation = await HistoricalLocation.create({ name, description, location, openingHours, ticketPrices, type, tags, category, governor});
+    const newHistoricalLocation = await HistoricalLocation.create({ name, description, location, openingHours, ticketPrices, tags, category, governor});
     res.status(201).json(newHistoricalLocation);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -139,15 +139,17 @@ const createTag = async (req, res) => {
 
 
 //Read my Museums and Historical Locations
-  const showMyMuseumsAndHistoricalPlaces = async(req,res) => {
+  const showMyHistoricalPlaces = async(req,res) => {
    
 
-    const govId = req.query.govId;
+    const {id} =  req.params;
+
     try{
-      const Museums = await Museum.find({governor:(govId)})
-      const HistoricalLocations =await HistoricalLocation.find({governor:(govId)})
-      const result = {Museums,HistoricalLocations}
-      res.status(200).json(result)
+      //const Museums = await Museum.find({governor:(govId)})
+      console.log(id);
+      const HistoricalLocations =await HistoricalLocation.find({governor:id})
+      //const result = {Museums,HistoricalLocations}
+      res.status(200).json(HistoricalLocations)
     }catch{
       res.status(400).json({error:"Id is required"})
     }
@@ -157,4 +159,4 @@ const createTag = async (req, res) => {
   
 
 
-module.exports = { createMuseum, getMuseum, updateMuseum, deleteMuseum, createHistoricalLocation, getHistoricalLocation, updateHistoricalLocation, deleteHistoricalLocation, createTag, showMyMuseumsAndHistoricalPlaces,getAllTags};
+module.exports = { /*createMuseum, getMuseum, updateMuseum, deleteMuseum,*/ createHistoricalLocation, getHistoricalLocation, updateHistoricalLocation, deleteHistoricalLocation, createTag, showMyHistoricalPlaces,getAllTags};

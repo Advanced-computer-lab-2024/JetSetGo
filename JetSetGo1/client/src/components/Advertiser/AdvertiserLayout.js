@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Outlet } from 'react-router-dom';
 
-import AdvertiserNavBar from './AdvertiserNavBar';
+import AdvertiserNavBar from '../AdvertiserNavBar';
 
 function AdvertiserLayout() {
   return (

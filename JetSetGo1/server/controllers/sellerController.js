@@ -4,6 +4,114 @@ const mongoose = require('mongoose')
 const Product = require('../models/ProductModel')
 const multer = require('multer');
 const path = require('path');
+const SalesModel = require("../models/SalesModel");
+
+
+
+// Controller to get all unread notifications for a tour guide
+const getUnreadNotifications = async (req, res) => {
+  const { id } = req.params; // TourGuide's ID passed in the URL parameter
+
+  try {
+    // Query for unread notifications for the specified TourGuide
+    const unreadNotifications = await Notification.find({
+      userId: id,
+      read: false,  
+      }).sort({ createdAt: -1 })  // Sort by creation date, descending (most recent first)
+      .limit(3);  // Limit to 3 notifications;
+
+    // Check if notifications were found
+    if (unreadNotifications.length === 0) {
+      return res.status(200).json({ message: 'No unread notifications.' });
+    }
+
+    // Return the unread notifications
+    return res.status(200).json(unreadNotifications);
+  } catch (error) {
+    console.error('Error fetching unread notifications:', error);
+    return res.status(500).json({ error: 'Error fetching unread notifications.' });
+  }
+};
+
+const markAllNotificationsAsRead = async (req, res) => {
+  const { id } = req.params;  // Get the Tour Guide ID from the URL parameter
+  try {
+    // Update notifications that are unread (read: false) to read: true
+    await Notification.updateMany({ userId: id, read: false }, { $set: { read: true } });
+    res.status(200).json({ message: 'Notifications marked as read.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error marking notification as read.', details: error.message });
+  }
+};
+
+// Route to mark notifications as read
+const markNotificationAsRead = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const notification = await Notification.findById(id);
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found.' });
+    }
+    notification.read = true;
+    await notification.save();
+    res.status(200).json({ message: 'Notification marked as read.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error marking notification as read.', details: error.message });
+  }
+};
+
+// Route to mark notifications as read
+const GetAllNotifications = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Fetch all notifications, sorted by creation date (most recent first)
+    const notifications = await Notification.find({ userId: id })
+      .sort({ createdAt: -1 });  // Sort by creation date, descending
+
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ error: 'Failed to fetch notifications.' });
+  }
+};
+
+
+
+
+
+
+
+const getSales = async (req, res) => {
+  const { id: productId } = req.params;  // Destructure product ID from the route parameters
+  console.log(productId)
+  try {
+    const sales = await SalesModel.find({ Product: productId }).sort({ createdAt: -1 }).populate('Tourists');    
+    
+
+    res.status(200).json(sales);     // Send the sales data as JSON
+  } catch (error) {
+    res.status(500).json({ error: 'Error retrieving sales data' });
+  }
+};
+
+const getAllSales = async (req, res) => {
+  const  {id}  = req.params; // Seller ID
+  try {
+    // Fetch sales data for the seller, populate the Product and Seller fields
+    const salesWithProducts = await SalesModel.find({ Seller: id })
+      .sort({ createdAt: -1 }).populate('Tourists')
+      .populate('Product') // Populate the Product field with product data
+      
+    res.status(200).json(salesWithProducts);  // Send back the populated sales data
+  } catch (error) {
+    console.error('Error fetching sales with products:', error);
+    res.status(500).json({ error: error.messsage });
+  }
+};
+
+
+
 
 // Create Seller Profile
 const createSellerProfile = async (req, res) => {
@@ -115,13 +223,14 @@ const getSingleProduct = async (req, res) => {
   if (!id) {
     return
   }
-  const product = await Product.find({ _id: id })
+  const product = await Product.find({ _id: id }).populate('seller');
 
   if (!product) {
     return res.status(404).json({ error: 'No such product' })
   }
   res.status(200).json(product)
 }
+
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -354,11 +463,34 @@ const archieved_on = async (req, res) => {
 
   res.status(200).json(product)
 }
+const uploadProductImage = async (req, res) => {
+  upload(req, res, async (err) => {
+  try {
+    const { id,productId } = req.params;
+    console.log(id)
+    const picture = req.file ? req.file.path : null;
+
+    // Update the advertiser's profile image in the database
+    const product = await Product.findByIdAndUpdate(
+      productId,
+      { picture:picture },
+      { new: true }
+    );
+
+    if (!product) {
+      return res.status(404).json({ error: 'Seller not found' });
+    }
+
+    res.json({ message: 'Profile image uploaded successfully', imagePath: picture });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to upload image' });
+  }})
+
+};
 
 
 
 
 
 
-
-module.exports = { requestAccountDeletion, uploadLogo, createSellerProfile, updateSellerProfile, getSellerProfile, getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName, getSingleProduct, uploadProfileImage, uploadDoc, uploadDocument, archieved_on };
+module.exports = { requestAccountDeletion, uploadProductImage,uploadLogo, createSellerProfile, updateSellerProfile, getSellerProfile, getProducts, createProduct, updateProduct, filterProducts, sortByRate, searchProductName, getSingleProduct, uploadProfileImage, uploadDoc, uploadDocument, archieved_on ,getAllSales,getSales,GetAllNotifications,markNotificationAsRead,markAllNotificationsAsRead,getUnreadNotifications};

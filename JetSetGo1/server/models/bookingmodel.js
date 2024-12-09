@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
     tourist: {
-        type: String, 
+        type: mongoose.Schema.Types.ObjectId, 
         required: true, 
         ref: "Tourist"
     },
@@ -15,6 +15,15 @@ const bookingSchema = new mongoose.Schema({
         type: String, 
         enum: ['Activity', 'Itinerary'], 
         required: true 
+    },
+    price:{
+        type: Number, 
+        required: true, 
+    },
+    paymentMethod: { 
+        type: String, 
+        enum: ['Visa', 'Wallet' ],
+
     },
     createdAt: {
         type: Date,

@@ -1,69 +1,57 @@
 const mongoose = require('mongoose');
+const Transportation = require('../models/TransportationModel.js');
 
-const transportationbookingSchema = new mongoose.Schema({
-    
-    transportationId: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: 'Transportation', 
-      required: true 
-    },    
-    touristId: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Tourist', 
-        required: true 
-      },
-      date:{
-        type: Date,
-        required: false
-      },
-      seats:{
-        type: Number,
-        required :false,
-      },
-    createdAt: { 
-      type: Date, 
-      default: Date.now 
-    }
+const transportationBookingSchema = new mongoose.Schema({
+  transportationId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Transportation', 
+    required: true 
+  },
+  touristId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Tourist', 
+    required: true 
+  },
+  date: {
+    type: Date,
+    required: true
+  },
+  seats: {
+    type: Number,
+    default: 1 
+  },
+  createdAt: { 
+    type: Date, 
+    default: Date.now 
+  }
 });
 
-
-
-transportationbookingSchema.pre('validate', async function(next) {
+transportationBookingSchema.pre('save', async function (next) {
   try {
     const transportation = await mongoose.model('Transportation').findById(this.transportationId);
-    
-    if (transportation && transportation.vehicle === 'bus' && !this.seats) {
-      this.invalidate('seats', 'Seats are required for bus bookings.');
-    } else if (transportation && transportation.vehicle === 'car' && !this.date) {
-      this.invalidate('date', 'date is required for car bookings.');
+    if (!transportation) {
+      return next(new Error('Invalid Transportation ID.'));
     }
-    
+    const bookingWeekday = new Date(this.date).toLocaleString('en-US', { weekday: 'long' }).toLowerCase();
+
+    if (!transportation.days.includes(bookingWeekday)) {
+      return next(new Error(`Transportation is not available on ${bookingWeekday}.`));
+    }
+    const totalBookedSeats = await mongoose.model('TransportationBooking')
+      .aggregate([
+        { $match: { transportationId: this.transportationId, date: this.date } },
+        { $group: { _id: null, totalSeats: { $sum: '$seats' } } }
+      ]);
+
+    const bookedSeats = totalBookedSeats[0]?.totalSeats || 0;
+    if (bookedSeats + this.seats > transportation.capacity) {
+      return next(new Error('Booking exceeds available capacity for the selected date.'));
+    }
+
     next();
   } catch (error) {
     next(error);
   }
 });
 
-
-transportationbookingSchema.pre('save', async function(next) {
-  try {
-    if (this.date) {
-      const existingBooking = await mongoose.model('TransportationBooking').findOne({
-        transportationId: this.transportationId,
-        date: this.date,
-      });
-
-      if (existingBooking) {
-        const error = new Error('Booking already exists for this date');
-        return next(error);
-      }
-    }
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
-
-
-
-module.exports = mongoose.model('TransportationBooking', transportationbookingSchema);
+module.exports = mongoose.model('TransportationBooking', transportationBookingSchema);

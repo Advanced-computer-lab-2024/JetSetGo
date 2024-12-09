@@ -51,7 +51,7 @@ function TouristTourGuideProfile() {
 
 
     // Fetch itineraries by tour guide ID
-    fetch("http://localhost:8000/api/tourist/getItinerariesByTourGuide", {
+    fetch(`http://localhost:8000/api/tourist/getItinerariesByTourGuide/${guideId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tourGuideId: guideId }),

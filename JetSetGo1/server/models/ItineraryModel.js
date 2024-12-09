@@ -19,7 +19,7 @@ const itinerarySchema = new mongoose.Schema({
   //     {
   //         type: mongoose.Schema.Types.ObjectId,
   //         ref: 'Activity'  // References multiple activities
-  //     }
+  //     }  
   // ],
   activities: {
     name: { type: [String], required: true }, // Start time of the activity
@@ -85,12 +85,22 @@ const itinerarySchema = new mongoose.Schema({
       },
     },
   ],
+
   Tourists: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Tourist", // Assuming you have a Tourist model
     },
   ],
+
+  sales: [
+    {
+      tourist: { type: mongoose.Schema.Types.ObjectId, ref: 'Tourist' },  // reference to Tourist
+      pricePaid: { type: Number, required: true },  // price paid
+      datePaid: { type: Date, default:Date.now },  // date of payment
+    }
+  ],
+
 
   comments: [
     {

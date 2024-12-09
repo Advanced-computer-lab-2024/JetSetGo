@@ -12,9 +12,9 @@ function TourismGovernerLayout() {
   return (
     <div className="admin-dashboard">
       <div className="main-content">
-        <TourismGovernerNavBar  state={{ id }}/> {/* Navbar stays visible */}
+        <TourismGovernerNavBar  state={{ id }}/> 
         <div className="dashboard-data">
-          <Outlet  state={{ id }}/> {/* Renders the page content here */}
+          <Outlet  state={{ id }}/> =
         </div>
       </div>
     </div>
