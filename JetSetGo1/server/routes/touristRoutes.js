@@ -75,7 +75,7 @@ const {
   getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking, createBooking,getSingleProduct,shareViaEmail,payWithWallet,checkout,addAddress,getAddresses,updateCartQuantity,addToCart,removeFromCart,viewCart ,applyPromoCode,updateOrderDetails,getOrdersByTourist,changeOrderStatus,cancelOrder,getOrderById,createOrder
   ,addWalletTransaction,getWalletDetails,removeProductFromWishlist,addProductWishlist,getWishlistProducts,getSales,addSalesI,addSalesA,
   
-  markAllNotificationsAsRead,GetAllNotifications,markNotificationAsRead,getUnreadNotifications,getFullBookingDays,getSingleActivity,isActivity} = require("../controllers/touristController");
+  markAllNotificationsAsRead,GetAllNotifications,markNotificationAsRead,getTags,getTourist,getUnreadNotifications,getFullBookingDays,getSingleActivity,isActivity,getBookmarkedActivities,removeBookmarkedActivities,addBookMarkedActivities,addBookMarked,getBookmarkedItineraries,removeBookmarkedItinerary} = require("../controllers/touristController");
 
 const router = express.Router();
 
@@ -90,7 +90,16 @@ router.post('/updateOrderDetails', updateOrderDetails);
 router.post("/addWalletTransaction",addWalletTransaction);
 router.post("/getWalletDetails",getWalletDetails);
 ////////////////////////////////////////////////////////
+router.post("/addBookMarked/:id",addBookMarked)
+router.get("/savedBookMarked/:id",getBookmarkedItineraries)
+router.delete("/remove-bookmark/:touristId/:itineraryId",removeBookmarkedItinerary)
 
+router.post("/addBookMarkedActivities/:id",addBookMarkedActivities)
+router.get("/savedBookMarkedActivities/:id",getBookmarkedActivities)
+router.delete("/remove-bookmarkActivities/:touristId/:activityId",removeBookmarkedActivities)
+
+router.get("/GetTourist",getTourist)
+router.get("/getTags",getTags)
 
 ///////////////////////////////////////
 router.post("/addtoProductWishlist/:id", addProductWishlist);

@@ -159,13 +159,13 @@ const HistoricalPlaceFilter = ({ onFilter }) => {
 
     return (
         <div>
-            <h1>Search for Historical Places</h1>
+            {/*<h1>Search for Historical Places</h1>*/}
 
             {/* Search bars for each search field */}
-            <SearchBar label="Name" value={name} onChange={setName} />
-            <SearchBar label="Tag Name" value={tagName} onChange={setTagName} /> {/* Use tag name input */}
+            {/*<SearchBar label="Name" value={name} onChange={setName} />
+            <SearchBar label="Tag Name" value={tagName} onChange={setTagName} />*/} {/* Use tag name input */}
 
-            <div>
+            {/*<div>
                 <h6>Categories</h6>
                 {categoryList.length > 0 ? (
                     categoryList.map((category) => (
@@ -184,13 +184,13 @@ const HistoricalPlaceFilter = ({ onFilter }) => {
                 ) : (
                     <p>Loading categories...</p>
                 )}
-            </div>
+            </div>*/}
 
             {/* Submit button */}
-            <button onClick={handleSubmit}>Search</button>
+            {/*<button onClick={handleSubmit}>Search</button>*/}
 
             {/* Loading indicator */}
-            {loading && <p>Loading...</p>}
+            {/*{loading && <p>Loading...</p>}*/}
         </div>
     );
 };

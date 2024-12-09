@@ -237,6 +237,12 @@ const ProfileDropdown = () => {
                                 </Link>
                             </li>
 
+                            <li>
+                                <Link to={`/tourist/Complaints`} className="dropdownItem">
+                                    <i className="fas fa-sliders-h"></i>
+                                    <span>Complaints</span>
+                                </Link>
+                            </li>
 
                         </ul>
                     </div>

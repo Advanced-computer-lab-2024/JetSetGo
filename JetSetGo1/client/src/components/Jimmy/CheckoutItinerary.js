@@ -25,7 +25,11 @@ const CheckoutItinerary = () => {
   let [total, setTotal] = useState(0); // Total with discount
   const navigate = useNavigate();
   const location = useLocation();
-  const { eventId, eventType } = location.state || {};
+
+  const { eventId} = location.state || {};
+     const  eventType = location.state.eventType
+ console.log("evv locc ID" ,location.state )
+
 
 
   const token = Cookies.get("auth_token");

@@ -28,8 +28,11 @@ function Sidebar() {
       </button>
       <ul className="sidebar-menu">
         <li>
+        <Link to ={`/admin/productSales`}>
           <FontAwesomeIcon icon={faChartBar} className="icon" />
+           
           <span>Sales</span>
+          </Link> 
         </li>
         <li>
           <FontAwesomeIcon icon={faTags} className="icon" />

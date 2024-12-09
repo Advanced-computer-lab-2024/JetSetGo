@@ -384,9 +384,9 @@ const deleteActivity = async (req, res) => {
       res.status(500).json({ error: err.message });
   }
 };
-
 // Create Activity
 const createActivity = async (req, res) => {
+  const { id } = req.params;
   const {
     title,
     description,
@@ -396,12 +396,13 @@ const createActivity = async (req, res) => {
     price,
     category,
     tags,
-    advertiser,
     bookingOpen,
     specialDiscounts
   } = req.body;
 
   try {
+    
+
     // Create a new activity with the provided details
     const newActivity = await Activity.create({
       title,
@@ -410,9 +411,12 @@ const createActivity = async (req, res) => {
       time,
       location,
       price,
-      category,
-      tags,
-      advertiser,
+      //category,
+      //tags,
+      //id,
+      category, // Use the category ObjectId
+      tags,  // Use the tags ObjectIds
+      advertiser: id,  // Advertiser passed as a route param
       bookingOpen,
       specialDiscounts
     });
@@ -423,7 +427,6 @@ const createActivity = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
 
 // Update Activity
 const updateActivity = async (req, res) => {

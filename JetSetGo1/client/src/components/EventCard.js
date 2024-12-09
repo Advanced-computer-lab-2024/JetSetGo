@@ -370,14 +370,14 @@ const cancelBooking = async (bookingId,refid, type, touristId,referenceType) => 
     });
 
     const walletResult = await walletResponse.json();
-    if (!walletResponse.ok) {
-      // alert(`Cancellation succeeded, but wallet transaction failed: ${walletResult.message}`);
-      toast.error(`Cancellation succeeded, but wallet transaction failed: ${walletResult.message}`);
-      return 0;
-    }
+    // if (!walletResponse.ok) {
+    //   // alert(`Cancellation succeeded, but wallet transaction failed: ${walletResult.message}`);
+    //   toast.error(`Cancellation succeeded, but wallet transaction failed: ${walletResult.message}`);
+    //   return 0;
+    // }
 
     // alert(`Booking canceled and wallet transaction successful: ${walletResult.message}`);
-    toast.error(`Booking canceled and wallet transaction successful: ${walletResult.message}`);
+    toast.success(`Booking canceled and wallet transaction successful: ${walletResult.message}`);
     return 1; // Success
   } catch (err) {
     console.error('Error cancelling booking:', err);

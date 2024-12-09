@@ -33,8 +33,8 @@ router.get('/notifications/unread/:id', getUnreadNotifications);
 router.patch("/MarkAsRead/:id",markNotificationAsRead);
 router.patch("/change-password/:id/:modelName", changePassword);
 
-// Advertiser activities 
 router.post('/createActivity/:id', createActivity);
+
 router.patch('/updateActivity/:id', updateActivity);
 
 router.get('/', getActivities);

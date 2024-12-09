@@ -1,10 +1,14 @@
-'use client'
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
+import IT from "../../assets/images/activities.jpg";
+import "../Myitinerariespage.css"; 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import { useParams } from 'react-router';
-
+/*
 const mapContainerStyle = {
   width: '100%',
   height: '400px'
@@ -13,62 +17,258 @@ const mapContainerStyle = {
 const center = {
   lat: 0,
   lng: 0
-};
-
-const API_BASE_URL = 'http://localhost:8000/api';
+};*/
 
 
-const ActivityItem = ({ activity, onEdit, onDelete }) => (
-  <div className="border p-4 mb-4 rounded bg-white">
-    <h3 className="font-bold">{activity.category}</h3>
-    <p>Date: {activity.date}</p>
-    <p>Time: {activity.time}</p>
-    <p>Location: {activity.location}</p>
-    <p>Price: ${activity.price}</p>
-    <p>Tags: {Array.isArray(activity.tags) ? activity.tags.join(', ') : activity.tags}</p>
-    <p>Special Discounts: {activity.specialDiscounts}</p>
-    <p>Booking: {activity.bookingOpen ? 'Open' : 'Closed'}</p>
-    <div className="mt-2">
 
-    </div>
-  </div>
-);
+//const ActivityItem = ({ activity, onEdit, onDelete }) => (
+//   <div className="border p-4 mb-4 rounded bg-white">
+//     <h3 className="font-bold">{activity.category}</h3>
+//     <p>Date: {activity.date}</p>
+//     <p>Time: {activity.time}</p>
+//     <p>Location: {activity.location}</p>
+//     <p>Price: ${activity.price}</p>
+//     <p>Tags: {Array.isArray(activity.tags) ? activity.tags.join(', ') : activity.tags}</p>
+//     <p>Special Discounts: {activity.specialDiscounts}</p>
+//     <p>Booking: {activity.bookingOpen ? 'Open' : 'Closed'}</p>
+//     <div className="mt-2">
+
+//     </div>
+//   </div>
+// );
 
 
 export default function AdvertiserActivities() {
   const [activities, setActivities] = useState([]);
-  const [editingActivity, setEditingActivity] = useState(null);
-  const [error, setError] = useState(null);
+  const [loadingTags, setLoadingTags] = useState(true); 
+  const [tags, setTags] = useState([]); 
+  const [category, setCategory] = useState([]); 
+  const [error, setError] = useState('');
+  const [showModal, setShowModal] = useState(false); // State to control the modal visibility
+  const [deletingId, setDeletingId] = useState(null); // Store the ID of the activity to delete
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState(""); // State for search input
+  const token = Cookies.get("auth_token");
+  const decodedToken = jwtDecode(token);
+  const id = decodedToken.id;
 
   useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const response = await fetch(`/api/advertisers/showAll/${id}`);
+        const data = await response.json();
+        setActivities(data);
+      } catch (error) {
+        setError('You don’t have Activities yet.');
+      }
+    };
     fetchActivities();
-  }, []);
+  }, [id]);
+  
 
-  const fetchActivities = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/advertisers`);
-      setActivities(response.data);
-      setError(null);
-    } catch (error) {
-      console.error('Error fetching activities:', error);
-      setError('Failed to load activities. Please try again later.');
+  
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await fetch('/api/admin/tag');
+        const data = await response.json();
+        setTags(data); 
+      } catch (error) {
+        console.error('Error fetching tags:', error);
+      } finally {
+        setLoadingTags(false);
+      }
+    };
+    fetchTags();
+  }, []); 
+
+  
+  useEffect(() => {
+    const fetchCategory = async () => {
+      try {
+        const response = await fetch('/api/admin/category');
+        const data = await response.json();
+        setCategory(data); 
+      } catch (error) {
+        console.error('Error fetching tags:', error);
+      } finally {
+        setLoadingTags(false);
+      }
+    };
+    fetchCategory();
+  }, []); 
+
+  const calculateAverageRating = (ratings) => {
+    if (!ratings || ratings.length === 0) return 0;
+    const total = ratings.reduce((acc, rating) => acc + rating.star, 0);
+    return (total / ratings.length).toFixed(1);
+  };
+
+const renderStars = (rating) => {
+    rating = calculateAverageRating(rating);
+    if (rating === null || rating === undefined) {
+      return <p className="no-ratings">No ratings yet</p>;
+    }
+    const stars = Array.from({ length: 5 }, (_, index) => {
+      const filledValue = index + 1;
+      if (filledValue <= Math.floor(rating)) return "full";
+      if (filledValue - 0.5 === rating) return "half";
+      return "empty";
+    });
+    return (
+      <div className="rating-stars">
+        {stars.map((star, index) => (
+          <span key={index} className={`star ${star}`} />
+        ))}
+      </div>
+    );
+  };
+
+  const filteredActivities = activities.filter((activity) =>
+    activity.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+    // Function to handle the delete confirmation
+    const handleDeleteClick = (id) => {
+      setDeletingId(id); // Store the ID of the item to be deleted
+      setShowModal(true); // Show the confirmation modal
+    };
+
+     // Function to confirm deletion
+  const confirmDelete = () => {
+    if (deletingId) {
+      console.log("This is the id of the activity to be deleted" + deletingId)
+      fetch(`/api/advertisers/deleteAct/delete/${deletingId}`, {
+        method: 'DELETE',
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            setActivities((prev) => prev.filter((item) => item._id !== deletingId));
+            setShowModal(false); // Close the modal
+            alert('Activity deleted successfully');
+          } else {
+            alert('Failed to delete activity');
+          }
+        })
+        .catch((error) => {
+          console.error("Error deleting the activity:", error);
+          alert('Error deleting activity');
+        });
     }
   };
+   // Function to cancel deletion
+   const cancelDelete = () => {
+    setShowModal(false); // Close the modal without deleting
+    setDeletingId(null); // Clear the stored ID
+  };
+
+
+
+
 
   
   return (
-    <>
+    <div className="home">
+      <h1 className="page-title">My Activities</h1>
 
+      {/* Search Bar */}
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search for Activities"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <span className="search-icon">
+          <i className="fas fa-search"></i>
+        </span>
+        <button className="addIti" onClick={() => navigate(`/Advertisers/${id}/ActivitiesJohn/${id}`)}> 
+          <FontAwesomeIcon icon={faPlus} style={{ height: '18px', width: '18px' }} />
+        </button>
+      </div>
 
-      <div className="container mx-auto p-4" style={{ maxHeight: '550px', overflowX: 'auto' }}>
-        <h2 className="text-2xl font-bold mb-4">Activity List</h2>
-        {activities.map((activity) => (
-          <ActivityItem
-            key={activity._id}
-            activity={activity}
-          />
+      {/* Modal for Deletion Confirmation */}
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete this activity?</p>
+            <div className="modal-actions">
+              <button onClick={confirmDelete}>Delete</button>
+              <button onClick={cancelDelete}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Itineraries Section */}
+      <div className="tags">
+        {filteredActivities.map((activity) => (
+          <div className="itinerary-card" key={activity._id}>
+            <div className="card-header">
+              <img src={IT} alt={activity.title} className="card-image" />
+              <button className="card-action" onClick={() => handleDeleteClick(activity._id)}>
+                <FontAwesomeIcon icon={faTrashAlt} />
+              </button>
+            </div>
+            <div className="card-content">
+              <div className="card-title">{activity.title || "Untitled activity"}</div>
+              <div className="card-rating">
+                <div className="rating">{renderStars(activity.ratings)}</div>
+                ★ {calculateAverageRating(activity.ratings) > 0
+                  ? `${calculateAverageRating(activity.ratings)} (${activity.ratings.length})`
+                  : "0 (0)"}
+              </div>
+              <div className="card-description">
+                {activity.description || "No description available."}
+              </div>
+              <div className="card-tags">
+                <strong>🏷️ Tags: </strong>
+                {loadingTags ? (
+                  <span>Loading tags...</span>
+                ) : (
+                  activity.tags && Array.isArray(activity.tags) && activity.tags.length > 0 ? (
+                    activity.tags
+                      .map((tagId) => {
+                        const tagItem = tags.find((t) => t._id === tagId);
+                        return tagItem ? tagItem.tag_name : '';
+                      })
+                      .join(', ') || "No tags available"
+                  ) : (
+                    <span>No tags available</span>
+                  )
+                )}
+              </div>
+              <div className="card-price">
+                <strong>$</strong>
+                {activity.price || "N/A"}
+              </div>
+              <div className="card-tags">
+                <strong>🏷️ Category: </strong>
+                {loadingTags ? (
+                  <span>Loading tags...</span>
+                ) : (
+                  activity.category ? (
+                    category
+                      .filter(t => activity.category.includes(t._id))
+                      .map(t => t.name)
+                      .join(', ') || "No tags available"
+                  ) : (
+                    <span>No tags available</span>
+                  )
+                )}
+              </div>
+          </div>
+            <Link to={`/Advertisers/${id}/ViewActivityEdit/${activity._id}`} className="view-more-btn">
+              View More
+            </Link>
+          </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }

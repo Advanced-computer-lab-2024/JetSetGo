@@ -168,9 +168,17 @@ await Promise.all([
   if (error) {
     return <div className="text-red-500 text-center">{error}</div>;
   }
+  const containerStyle_22 = {
+    margin: '0 auto',
+    padding: '1rem',
+    maxWidth: '1400px',
+    // backgroundColor: '#f8f9fa', // Light background color
+    // borderRadius: '8px',        // Rounded corners
+    // boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Subtle shadow
+  };
 
   return (
-    <div className="container mx-auto p-4">
+    <div style={containerStyle_22}>
       <h1 className="text-3xl font-bold mb-6">My Bookings</h1>
       <EventCard events={combinedBookings} />
     </div>

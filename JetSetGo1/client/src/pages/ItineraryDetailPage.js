@@ -1,200 +1,241 @@
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { FaStar } from 'react-icons/fa';
-import ShareLink from '../components/ShareLink';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
+import { faTags, faCalendarAlt, faMapMarkerAlt, faClock, faGlobe, faDollarSign, faHotel, faCar } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
 import Cookies from "js-cookie"; // Import js-cookie
+import IT from "../assets/images/ItPic.jpg";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const ItineraryDetailPage = () => {
-    const location = useLocation(); // Access the location object
-    const token = Cookies.get("auth_token");
-    const decodedToken = jwtDecode(token);
-    const id = decodedToken.id;
-    console.log("id: deit", id);
-    const modelName = decodedToken.userType;
-    console.log("modelName:", modelName);
-    // const { id } = location.state || {}; // Access the id from state
-    const { itineraryId } = useParams(); // Get itineraryId and id from URL
-    const [itinerary, setItinerary] = useState(null);
-    const [error, setError] = useState(null);
-    const [tagNames, setTagNames] = useState([]);
-    const [paymentMessage, setPaymentMessage] = useState('');
+axios.defaults.baseURL = 'http://localhost:8000'; // Backend URL
 
-    // Fetch Itinerary Details
-    useEffect(() => {
-        const fetchItineraryDetails = async () => {
-            try {
-                const response = await fetch(`http://localhost:8000/api/tourist/itinerary/${itineraryId}`);
-                const data = await response.json();
+function ItineraryDetailPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
 
-                if (response.ok) {
-                    setItinerary(data);
-                } else {
-                    setError('Failed to fetch itinerary details');
-                }
-            } catch (err) {
-                setError('An error occurred while fetching the itinerary details');
-            }
-        };
+  const token = Cookies.get("auth_token");
+  const decodedToken = jwtDecode(token);
+  const id = decodedToken.id;
+  console.log("Tour Guide ID:", id);
 
-        fetchItineraryDetails();
-    }, [itineraryId]);
+  const _id = useParams().itineraryId; // Get _id from URL parameters
+  console.log("Itinerary ID:", _id); // Log the itinerary ID
 
-    // Fetch Tag Names
-    useEffect(() => {
-        const fetchTagNames = async () => {
-            try {
-                if (!itinerary?.tags) return;
+  const [itinerary, setItinerary] = useState(null); // Initialize itinerary as null
+  const [availableDates, setAvailableDates] = useState(null);
+  const [tags, setTags] = useState([]); // State to store all available tags
+  
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    price: '',
+    locations: [],
+    timeline: [],
+    language: '',
+    accessibility: '',
+    pickupLocation: '',
+    dropoffLocation: '',
+    availableDates: [{ date: '', times: [''] }]  // Initialize availableDates with an array of objects
+  });
+  
+  const [itineraries, setItineraries] = useState([]);
+  const [reviews, setReviews] = useState([]); // State to hold reviews
+  const [showReviewModal, setShowReviewModal] = useState(false); // State to show/hide review modal
+  const [ID,setID] = useState(_id);
+  
+  // Fetch the itinerary details
+  useEffect(() => {
+    const fetchItinerary = async () => {
+      try {
+        if (_id) {
+          const response = await fetch(`/api/tour-guides/getSingleItinerary/${_id}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
 
-                const names = [];
-                for (const tagId of itinerary.tags) {
-                    const response = await fetch(`http://localhost:8000/api/tourist/tagName/${tagId}`);
-                    const data = await response.json();
-                    if (response.ok) {
-                        names.push(data.tag_name);
-                    } else {
-                        console.error(data.error);
-                    }
-                }
-                setTagNames(names);
-            } catch (error) {
-                console.error("Failed to fetch tag names:", error);
-            }
-        };
+          if (!response.ok) {
+            throw new Error("Failed to fetch itinerary details");
+          }
 
-        if (itinerary) fetchTagNames();
-    }, [itinerary]);
+          const data = await response.json(); // Parse the JSON response
+          setItinerary(data); // Set itinerary data
+          
+          setFormData({
+            title: data.title,
+            description: data.description,
+            price: data.price,
+            locations: data.locations,
+            timeline: data.timeline,
+            language: data.language,
+            accessibility: data.accessibility,
+            pickupLocation: data.pickupLocation,
+            dropoffLocation: data.dropoffLocation,
+            availableDates: data.availableDates || [],  // Adding availableDates field
+            tags: data.tags || [],  // Add tags to formData
+            comments: data.comments || []  // Add comments to formData
+          });
 
-
-    // Handle Payment
-    const handlePayment = async () => {
-        try {
-            const response = await fetch(`http://localhost:8000/api/tourist/payForItinerary/${id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id,
-                    itineraryId,
-                }),
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                setPaymentMessage(data.message);
-                setItinerary(prevItinerary => ({
-                    ...prevItinerary,
-                    isBookedYet: true,
-                }));
-            } else {
-                setPaymentMessage(data.message || 'Payment failed');
-            }
-        } catch (error) {
-            console.error('Error in payment:', error);
-            setPaymentMessage('An error occurred during payment');
+          setReviews(data.comments || []); // Set reviews
+          setAvailableDates(data.availableDates);
         }
+      } catch (error) {
+        console.error("Error fetching itinerary details:", error);
+      }
     };
 
-    if (error) {
-        return <p>{error}</p>;
+    fetchItinerary();
+  }, [_id]);
+
+  // Fetch tags
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await axios.get('/api/admin/tag');
+        setTags(response.data);
+      } catch (error) {
+        console.error('Error fetching tags:', error);
+      }
+    };
+    fetchTags();
+  }, []);
+
+  // Calculate the average rating for itinerary
+  const calculateAverageRating = (ratings) => {
+    if (!ratings || ratings.length === 0) return 0;
+    const total = ratings.reduce((acc, rating) => acc + rating.rating, 0);
+    return (total / ratings.length).toFixed(1);
+  };
+
+  // Render stars for the rating
+  const renderStars = (rating) => {
+    if (rating === null || rating === undefined) {
+      return <p className="no-ratings">No ratings yet</p>;
     }
+    const stars = Array.from({ length: 5 }, (_, index) => {
+      const filledValue = index + 1;
+      if (filledValue <= Math.floor(rating)) return "full";
+      if (filledValue - 0.5 === rating) return "half";
+      return "empty";
+    });
 
-    if (!itinerary) {
-        return <p>Loading...</p>;
-    }
+    return (
+      <div className="rating-stars">
+        {stars.map((star, index) => (
+          <span key={index} className={`star ${star}`} />
+        ))}
+      </div>
+    );
+  };
 
-    if (id) {
-        return (
-            <div className="itinerary-detail">
-                <h2>{itinerary.title}</h2>
-                <p><strong>Description: </strong>{itinerary.description}</p>
-                <p><strong>Tour Guide: </strong>{itinerary.tourGuide}</p>
-                <p><strong>Activities: </strong>
-                    {itinerary.activities.name.map((activityName, index) => (
-                        <div key={index}>
-                            {activityName} - Duration: {itinerary.activities.duration[index]}
-                        </div>
-                    ))}
-                </p>
+  // If itinerary is not loaded yet
+  if (!_id) {
+    return <div>No itinerary data available!</div>;
+  }
 
-                <p><strong>Locations: </strong>{itinerary.locations.join(', ')}</p>
-                <p><strong>Timeline: </strong>{itinerary.timeline.join(', ')}</p>
-                <p><strong>Language: </strong>{itinerary.language}</p>
-                <p><strong>Price:</strong> ${itinerary.price}</p>
+  if (!itinerary) {
+    return <div>Loading itinerary...</div>;
+  }
 
-                <p><strong>Available Dates: </strong>
-                    {itinerary.availableDates.map((dateObj, index) => (
-                        <div key={index}>
-                            {dateObj.date.toString()}: {dateObj.times.join(', ')}
-                        </div>
-                    ))}
-                </p>
+  const handleNavigate = () => {
+    // Assuming you have the eventId and eventType in location.state
+ 
+    const { eventId, eventType } = location.state || {};
 
-                <p><strong>Accessibility: </strong>{itinerary.accessibility}</p>
-                <p><strong>Pick Up Location: </strong>{itinerary.pickupLocation}</p>
-                <p><strong>Drop Off Location: </strong>{itinerary.dropoffLocation}</p>
-                <p><strong>Tags:</strong> {tagNames.map((tag) => `#${tag}`).join(', ')}</p>
+    // Navigate to the checkout page and pass eventId and eventType as state
+    console.log("eventid: ",ID )
+    console.log("eventType: ",location.state)
+    navigate("/tourist/CheckoutItinerary", {
+      state: { eventId : ID, eventType: "itinerary" } // Event type is set to 'itinerary'
+    });
+  };
 
-                <div className="adv-rating">
-                    <p className='rating'><strong> Rating: </strong>{itinerary.rating}</p>
-                    <FaStar className="star-icon" />
-                </div>
-
-
-                {/* Payment button */}
-                <div>
-                    <button onClick={handlePayment} disabled={itinerary.isBookedYet}>
-                        {itinerary.isBookedYet ? 'Already Booked' : 'Pay for Itinerary'}
-                    </button>
-                    <ShareLink />
-                </div>
-
-                {/* Payment Message */}
-                {paymentMessage && <p>{paymentMessage}</p>}
+  return (
+    <div className="itinerary-view-container">
+      <div className="container">
+        <div className="detail">
+          <div className="imageAndbutton">
+            <div className="image image-wrapper">
+              <img src={IT} alt={itinerary.title} className="product-image" />
             </div>
-        );
-    } else {
-        return (
-            <div className="itinerary-detail">
-                <h2>{itinerary.title}</h2>
-                <p><strong>Description: </strong>{itinerary.description}</p>
-                <p><strong>Tour Guide: </strong>{itinerary.tourGuide}</p>
-                <p><strong>Activities: </strong>
-                    {itinerary.activities.name.map((activityName, index) => (
-                        <div key={index}>
-                            {activityName} - Duration: {itinerary.activities.duration[index]}
-                        </div>
-                    ))}
-                </p>
+          </div>
 
-                <p><strong>Locations: </strong>{itinerary.locations.join(', ')}</p>
-                <p><strong>Timeline: </strong>{itinerary.timeline.join(', ')}</p>
-                <p><strong>Language: </strong>{itinerary.language}</p>
-                <p><strong>Price:</strong> ${itinerary.price}</p>
-
-                <p><strong>Available Dates: </strong>
-                    {itinerary.availableDates.map((dateObj, index) => (
-                        <div key={index}>
-                            {dateObj.date.toString()}: {dateObj.times.join(', ')}
-                        </div>
-                    ))}
-                </p>
-
-                <p><strong>Accessibility: </strong>{itinerary.accessibility}</p>
-                <p><strong>Pick Up Location: </strong>{itinerary.pickupLocation}</p>
-                <p><strong>Drop Off Location: </strong>{itinerary.dropoffLocation}</p>
-                <p><strong>Tags:</strong> {tagNames.map((tag) => `#${tag}`).join(', ')}</p>
-
-                <div className="adv-rating">
-                    <p className='rating'><strong> Rating: </strong>{itinerary.rating}</p>
-                    <FaStar className="star-icon" />
-                </div>
-
+          <div className="content">
+            <h1 className="name">{itinerary.title}</h1>
+            <div className="description">{itinerary.description}</div>
+            <div className="price">{itinerary.price} EGP</div>
+            <div className="tags-container">
+              <strong>Tags:</strong>
+              {tags.map((tag, index) => (
+                <span key={index} className="tag">{tag.name}</span>
+              ))}
             </div>
-        );
-    }
-};
+          </div>
+        </div>
+
+        <div className="ItineraryContent">
+          <div className="itinerary-info-right">
+            <strong><FontAwesomeIcon icon={faCalendarAlt} /> Available Dates:</strong>
+            {availableDates && availableDates.map((dateObj, index) => (
+              <div key={index}>
+                <strong>Date:</strong> {dateObj.date}
+                <br />
+                <strong>Times:</strong> {dateObj.times.join(', ')}
+              </div>
+              
+            ))}
+            <div>
+              <strong><FontAwesomeIcon icon={faMapMarkerAlt} /> Locations:</strong>
+                {itinerary.locations.join(', ')}
+            </div>
+  
+            <div>
+              <strong><FontAwesomeIcon icon={faClock} /> Timeline:</strong>
+                {itinerary.timeline.join(', ')}
+            </div>
+  
+            <div>
+              <strong><FontAwesomeIcon icon={faGlobe} /> Language:</strong>
+                {itinerary.language}
+            </div>
+  
+            <div>
+              <strong>💲 Price:</strong>
+                {itinerary.price}
+            </div>
+  
+            <div>
+              <strong>Accessibility:</strong>
+                {itinerary.accessibility}
+            </div>
+  
+            <div>
+              <strong><FontAwesomeIcon icon={faHotel} /> Pickup Location:</strong>
+                {itinerary.pickupLocation}
+            </div>
+  
+            <div>
+              <strong><FontAwesomeIcon icon={faCar} /> Dropoff Location:</strong>
+                {itinerary.dropoffLocation}
+            </div>  
+          </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="reviews-section">
+          
+          {/* Render the reviews here */}
+        </div>
+        {/* Navigation Button at the end */}
+      <button onClick={handleNavigate} className="navigate-button">
+        Go to Checkout
+      </button>
+      </div>
+
+      
+    </div>
+  );
+}
 
 export default ItineraryDetailPage;

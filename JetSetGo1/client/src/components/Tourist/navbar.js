@@ -272,7 +272,7 @@ const Navbar2 = () => {
             <Link to="/help" className={styles.iconBox}>
             <i class="fa-regular fa-bell"></i>
             </Link>
-            <Link to="/cart" className={styles.iconBox}>
+            <Link to="/tourist/cart" className={styles.iconBox}>
               <i className="fas fa-shopping-cart"></i>
             </Link>
           </div>

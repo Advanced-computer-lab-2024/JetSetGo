@@ -71,7 +71,7 @@ import HLTags from "./pages/hltag.js";
 import ViewAct_Iten from "./components/ite_view.js"
 
 import ViewActivity from "./components/activity_view.js"
-
+import Updateavtivityadvertiser from"./pages/Updateavtivityadvertiser.js";
 
 import TourGuideLayout from "./components/TourGuideLayout.js";
 import FlagItinerary from "./components/FlagItinerary.js";
@@ -98,7 +98,6 @@ import AdminViewComplaint from "./pages/Admin/AdminViewComplaint.js";
 import ProductSales from "./pages/Product/ProductSales.js";
 import TouristAddComplaintPage from "./pages/Tourist/TouristComplaintPage.js";
 import TouristProfile from "./pages/Tourist/TouristProfilePage.js";
-
 import ActivityDetailPage from "./pages/ActivityDetailPage.js";
 import ItineraryDetailPage from "./pages/ItineraryDetailPage.js";
 
@@ -114,7 +113,9 @@ import Authentication from "./pages/Authentication/Authentication.js";
 import SellerProfile from "./components/Seller/sellerProfile.js";
 import AdvertiserProfile from "./components/userDetails/AdvertiserProfile.js";
 import AdminAddProduct from "./pages/Admin/AdminAddProduct.js";
-import OrderDetails from "./components/Jimmy/OrderDetails.js"
+import OrderDetails from "./components/Jimmy/OrderDetails.js";
+// import CheckoutItinerary from "./components/Jimmy/CheckoutItinerary.js";
+
 import TouristOrders from "./components/Jimmy/TouristOrders.js";
 // Jimmy
 import Dashboard2 from "./components/Jimmy/Dashboard2.js";
@@ -219,6 +220,7 @@ function App() {
                   path="/Advertisers/:id/ActivitiesJohn/:id"
                   element={<ActivityPageJohn />}
                 />
+                <Route path="/Advertisers/:id/ViewActivityEdit/:activityId" element={<Updateavtivityadvertiser />} />
                 
                  <Route path="/Advertisers/:id/notifications" element={<NotificationsPage/>} />
                 <Route path='/Advertisers/:id/ActivitySales' element={<ActivitySales />} />
@@ -316,6 +318,7 @@ function App() {
 
               {/** Tourist */}
               <Route path="/tourist" element={<TouristLayout />}>
+              
                 {/* <Route path="/tourist/:id/terms" element={<TermsAndConditionsForm />} /> */}
                 <Route path="/tourist/products" element={<ProductListing usertype="tourist" />} />  {/**/}
 
@@ -324,6 +327,7 @@ function App() {
                 <Route path="/tourist/cart" element={<Cart />} /> 
                 <Route path="/tourist/checkout" element={<Checkout />} />
                 <Route path="/tourist/CheckoutItinerary" element={<CheckoutItinerary />} />
+                
                 <Route path="/tourist/confirmation" element={<Confirmation/>} />
                 <Route path="/tourist/viewproduct" element={<ViewProduct />} />                                    {/**/}
                 <Route path="/tourist/addComplaint" element={<TouristAddComplaintPage />} />                     {/**/}
