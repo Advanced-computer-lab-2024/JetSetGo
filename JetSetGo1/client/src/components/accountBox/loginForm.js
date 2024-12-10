@@ -1,6 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState,useEffect } from "react";
 import Cookies from "js-cookie"; // Import js-cookie
 import { jwtDecode } from "jwt-decode"; // Fix import name
+
 import {
   BoldLink,
   BoxContainer,
@@ -28,6 +29,13 @@ export function LoginForm(props) {
   const [forgotPasswordMessage, setForgotPasswordMessage] = useState("");
   const [isForgotPassword, setIsForgotPassword] = useState(false); // Toggle view
 
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    if (!socket) {
+      
+    }
+  }, []);
   // Login handler
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -55,20 +63,23 @@ export function LoginForm(props) {
           console.log("User ID:", id);
           console.log("User Type:", userType);
 
+         // Register the user with the decoded user ID
+
+         console.log("User registered for notifications with ID:", id);
           // Redirection logic based on user type
-          let modelName;
+          let modelName;    
           if (userType === 'Advertiser') {
             modelName = 'advertiser';
             navigate(`/${modelName}/${id}/Itineraries`);
           } else if (userType === 'Seller') {
             modelName = 'sellers';
-            navigate(`/${modelName}/${id}/products`);
+            navigate(`/Seller/products`);
           } else if (userType === 'Tourist') {
             modelName = 'tourist';
             navigate(`/${modelName}/home`);
           } else if (userType === 'TourGuide') {
             modelName = 'tourguide';
-            navigate(`/${modelName}/${id}/Itineraries`);
+            navigate(`/${modelName}/${id}`);
           } else if (userType === 'Admin') {
             modelName = 'admin';
             navigate(`/${modelName}/products`);
@@ -134,6 +145,8 @@ export function LoginForm(props) {
           <SubmitButton type="submit" onClick={handleSubmit}>
             Signin
           </SubmitButton>
+          {/* Only show the NotificationComponent if logged in */}
+          
           <Marginer direction="vertical" margin="5px" />
           <LineText>
             Don't have an account?{" "}
