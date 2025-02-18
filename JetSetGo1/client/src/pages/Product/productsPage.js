@@ -449,18 +449,18 @@ const ProductListing = ({ usertype }) => {
               </button>)}
             </div>
                
-            <div className="card-content">
+            <div className="productcard-content">
              
-              <h2 className="product-title">{product.name}</h2>
-              <div className="product-rating">
+              <h2 className="productcard-title">{product.name}</h2>
+              <div className="productcard-rating">
                 <div className="rating">{renderStars(product.ratings)}</div>
               </div>
               <div className="card-description">
-                <p className="product-description">{product.description}</p>
+                <p className="productcard-description">{product.description}</p>
               </div>
               <div className="card-price">
-                {usertype!="tourist" && (<p className="product-price">{(product.price).toFixed(2)} EGP</p>)}
-                {usertype==="tourist" && (<p className="product-price">{(product.price * pricerate).toFixed(2)} {currency}</p>)}
+                {usertype!="tourist" && (<p className="productcard-price">{(product.price).toFixed(2)} EGP</p>)}
+                {usertype==="tourist" && (<p className="productcard-price">{(product.price * pricerate).toFixed(2)} {currency}</p>)}
               </div>
               {archiveMode && (
                 <div

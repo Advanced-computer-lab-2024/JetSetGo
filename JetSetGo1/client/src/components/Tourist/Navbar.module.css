@@ -1,24 +1,25 @@
-.navbar {
-    --menu-width: 28.125em; /* Adjusted width */
-    --items: 4;
-    --item-width: calc(var(--menu-width) / var(--items));
+/* NEEEEWWWW CSSSSSS */
+
+.navbarContainer {
     
-    width: var(--menu-width);
+    background: #012e58;
+    color: #ffc400;
+    height: 95px; /* Reduced from 100px */
     display: flex;
-    transform-style: preserve-3d;
+    justify-content: space-between;
+    align-items: center;
+    
+}
+
+
+.navbar {
+    display: flex;
+    color: #ffc400;
+    gap: 30px;
     justify-content: center;
     align-items: center; /* Ensures vertical centering of items */
-    position: absolute; /* Allows free positioning within the parent or viewport */
-    /* background-color: rgba(255, 255, 255, 0.1); */
-    /* backdrop-filter: blur(10px); */
-    z-index: 3;
-    top: 50%; /* Moves the navbar to the vertical center */
-    left: 53.5%; /* Moves the navbar to the horizontal center */
-    transform: translate(-50%, -50%); /* Corrects offset caused by `top` and `left` */
-    perspective: 1500px; /* Reduced from 2000px */
     height: 75px; /* Reduced from 100px */
-    flex-wrap: nowrap;
-    white-space: nowrap;
+    z-index: 3;
 }
 
 
@@ -42,7 +43,7 @@
 
 .menuText a {
     font-size: 1.05em; /* Reduced from 1.4em */
-    color: rgb(242, 241, 237);
+    color: #ffc400;
     text-decoration: none;
     text-shadow: 0 1px 4px rgba(0,0,0,0.1); /* Reduced shadow */
     transition: color 0.1s ease-out;
@@ -50,7 +51,7 @@
 }
 
 .menuText a:hover {
-    color: rgba(221, 193, 9, 0.5);
+    color:  #ad8500;
 }
 
 .subMenu {
@@ -136,15 +137,7 @@
     height: 3.75em; /* Reduced from 5em */
 }
 
-.navbarContainer {
-    position: relative;
-    background: linear-gradient(135deg, #013567,#012e58);
-    color: white;
-    height: 75px; /* Reduced from 100px */
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
+
 
 .logo {
     font-size: 1.975em; /* Reduced from 2.5em */
@@ -161,7 +154,7 @@
 }
 .logoHighlight:hover {
     background-color: #eeda23; /* Keep the yellow background */
-    color: #013567; /* Solid white text */
+    color: #012e58; /* Solid white text */
     padding: 0 15px; /* Adjust padding */
     left: 7.5px; /* Adjust positioning */
     position: relative;
@@ -177,13 +170,13 @@
     background-color: yellow;
 }
 
-.navbar {
+/* .navbar {
     display: flex;
     justify-content: center; 
     align-items: center;
     gap: 0;
-    padding-right: 112.5px; /* Reduced from 150px */
-}
+    padding-right: 112.5px; /* Reduced from 150px 
+} */
 
 .menuItem {
     position: relative;
@@ -196,7 +189,7 @@
 }
 
 .menuText a:hover {
-    color: rgb(255, 255, 0);
+    color:  #ac8400;
 }
 
 .iconBox {
@@ -225,7 +218,7 @@
 
 .iconBox {
     cursor: pointer;
-    background-color: linear-gradient(135deg, #0073b1, #005582);
+    background-color: linear-gradient(135deg, #012e58, #012e58);
     display: flex;
     align-items: center;
     padding: 0.375em 0; /* Reduced from 0.5em */
@@ -258,10 +251,7 @@
     gap: 0.75em;
     margin-right:10px;
     font-size: 1.0625em;
-     margin-left: auto; /*Keeps the element pushed to the right */
-    /* justify-content: flex-end; */
-    /* position: absolute; Makes positioning independent of parent */
-    right: 0; /* Positions it to the rightmost edge of the container */
+    
 }
 
 
@@ -270,5 +260,17 @@
 .iconBox {
     display: flex;
     align-items: center;
+}
+
+.signUpbutton{
+    background-color: #ffc400;
+    color:black;
+    height:48px;
+    width: 100px;
+}
+.signUpbutton:hover{
+    background-color: #cc9c00;
+    color:black;
+    
 }
 

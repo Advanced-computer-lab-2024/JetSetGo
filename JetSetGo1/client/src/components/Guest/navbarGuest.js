@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-
+import axios from 'axios';
+import io from 'socket.io-client';
 import './homepage.css';
+import '@fortawesome/fontawesome-free/css/all.min.css'; // Import Font Awesome
+import { jwtDecode } from 'jwt-decode';
+import Cookies from 'js-cookie';
 
+import styles from '../Tourist/Navbar.module.css'
 
 function NavBarGuest() {
     const navigate = useNavigate();
@@ -12,30 +17,56 @@ function NavBarGuest() {
         navigate(path);
     };
 
+    const menuItems = [
+        {
+          title: 'Home',
+          link: '/guest/home'
+        },
+        {
+          title: 'Activities',
+            link: '/guest/activities2'
+        },
+        {
+            title: 'Itineraries',
+            link: '/guest/itineraries2'
+          },
+        {
+            title :'Historical Locations',
+            link: `/guest/historicalLocations`
+        }
+      ];
 
 
     return (
-        <div>
-            <div className="navvvbar">
-                <div className="logo">
-                    {/* <h1>Travel Wiki</h1>
-                    <img src="/images/jetsetgo.jpg" alt="Explore" className="card-image" /> */}
-                </div>
-                <div className="menu">
-                    <ul>
-                        <li><Link to={`/guest/home`}>Home</Link></li>
-                        <li><Link to={`/guest/activities2`}>Activities</Link></li>
-                        <li><Link to={`/guest/itineraries2`}>Itineraries</Link></li>
-                        <li><Link to={`/guest/historicalLocations`}>Historical Locations</Link></li>
-                    </ul>
-                </div>
-
-                <button onClick={() => handleNavigation('/Authentication')}>
-                    Register
-                </button>
-                
-	        </div>
+        <div className={styles.navbarContainer}>
+        <div className={styles.logo}>
+        <Link to="/guest/home" className={styles.logoLink}>
+            <span className={styles.logoHighlight}>JETSETGO</span>
+        </Link>
         </div>
+
+        <nav className={styles.navbar}>
+        {menuItems.map((item) => (
+            <div
+            key={item.title}
+            className={`${styles.menuItem} ${item.items ? '' : styles.noDropdown}`}
+            
+            >
+            <div className={styles.menuText}>
+                <Link to={item.link || '#'}>{item.title}</Link>
+            </div>
+            </div>
+        ))}
+        </nav>
+            <div className={styles.actions}>
+                <div className={styles.profileChanger}>
+                    <button className={styles.signUpbutton} onClick={() => handleNavigation('/Authentication')}>
+                        Sign up
+                    </button>
+                </div>
+            </div>
+        </div>
+
     );
 }
 
