@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import IT from "../../assets/images/activities.jpg";
-import "../Myitinerariespage.css"; 
+import "../Tourguide/Myitinerariespage.css"; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
@@ -186,7 +186,7 @@ const renderStars = (rating) => {
         <span className="search-icon">
           <i className="fas fa-search"></i>
         </span>
-        <button className="addIti" onClick={() => navigate(`/Advertisers/${id}/ActivitiesJohn/${id}`)}> 
+        <button className="addIti" onClick={() => navigate(`/Advertisers/${id}/ActivitiesForm/${id}`)}> 
           <FontAwesomeIcon icon={faPlus} style={{ height: '18px', width: '18px' }} />
         </button>
       </div>

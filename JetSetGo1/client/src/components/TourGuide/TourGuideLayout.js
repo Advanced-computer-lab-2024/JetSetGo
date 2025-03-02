@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Outlet } from 'react-router-dom';
 
-import TourGuideNavBar from './TourGuideNavBar';
+import TourGuideNavBar from '../TourGuideNavBar';
 
 
 

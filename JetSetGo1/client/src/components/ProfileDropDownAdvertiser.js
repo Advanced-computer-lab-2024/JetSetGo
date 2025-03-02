@@ -210,7 +210,7 @@ const ProfileDropdown = () => {
                                 </Link>
                             </li>
                             <li>
-                                <Link to={`/tourist/RequestDelete/${modelName}/${id}`} className="dropdownItem">
+                                <Link to={`/Advertisers/${id}/RequestDelete/${id}/${modelName}`} className="dropdownItem">
                                     <i className="fas fa-trash"></i>
                                     <span>Request to Delete</span>
                                 </Link>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
-import IT from "../assets/images/ItPic.jpg";
+import IT from "../../assets/images/ItPic.jpg";
 import "./Myitinerariespage.css"; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
@@ -134,7 +134,7 @@ const MyItinerariesPage = () => {
         <span className="search-icon">
           <i className="fas fa-search"></i>
         </span>
-        <button className="addIti" onClick={() => navigate(`/Tourguide/${id}/tour-guide/itineraryManager/${id}`)}>
+        <button className="addIti" onClick={() => navigate(`/Tourguide/${id}/tour-guide/itineraryAdd/${id}`)}>
           <FontAwesomeIcon icon={faPlus} style={{ height: '18px', width: '18px' }} />
         </button>
       </div>

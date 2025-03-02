@@ -84,7 +84,7 @@ export function LoginForm(props) {
           let modelName;    
           if (userType === 'Advertisers') {
             modelName = 'advertisers';
-            navigate(`/${modelName}/${id}/Itineraries`);
+            navigate(`/Advertisers/${id}/ActivitiesMainPage/${id}`);
           } else if (userType === 'Seller') {
             modelName = 'sellers';
             navigate(`/Seller/products`);

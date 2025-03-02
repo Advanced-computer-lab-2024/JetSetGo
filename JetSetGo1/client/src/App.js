@@ -6,9 +6,11 @@ import { useState } from "react"; // Add this line
 import LoginForm1 from "./components/accountBox/LoginTrial.js"  //Kont bagarab 7aga hena
 import Profile from "./components/Profile.js";
 //import touristProfile from './components/touristProfile'
-import UpdateProfile from "./components/UpdateProfile.js";
+import UpdateProfile from "./pages/Tourguide/UpdateProfile.js";
 //import touristUpdateProfile from './components/touristUpdateProfile';
+
 import CreateProfile from "./components/CreateProfile.js";
+
 import TourismGovTags from "./pages/tourismgoverner/tourismgovernortags.js";
 
 import ProfilePage from "./components/TryProfile.js"
@@ -18,7 +20,7 @@ import AdminAddPage from "./pages/AdminAddPage.js";
 import AdminProfilePage from "./pages/AdminProfilePage.js";
 import DeleteOptions from "./pages/DeleteOptions.js";
 import UserList from "./pages/UserList.js";
-import ItineraryManager from "./pages/ItineraryManager.js";
+import ItineraryManager from "./pages/Tourguide/ItineraryAdd.js";
 import ProductListing from "./pages/Product/productsPage.js";
 import ViewProduct from "./pages/Product/ProductDetails.js";
 import MyPrefs from './pages/my_prefrences.js';
@@ -51,7 +53,7 @@ import PreferencesSelection from './pages/SelectPrefrences.js'
 import Transportationpage from './pages/Transportation.js'
 import Categorypage from './pages/my_category.js'
 //pages and components
-import Home from "./pages/home.js";
+
 
 // import Navbar from './components/navbar.js'
 import Tourism_Governer from "./pages/Tourism_Governer.js";
@@ -59,7 +61,7 @@ import HL from "./pages/HistoricalLocations2.js";
 import Museum from "./pages/Museums2.js";
 import HLMs from "./pages/my_HLMs.js";
 import Activities from "./pages/my_activities2.js";
-import Itineraries from "./pages/my_itineraries.js";
+import Itineraries from "./pages/Tourguide/my_itineraries.js";
 import HLTags from "./pages/hltag.js";
 
 //johnimport { useTouristId } from '../../pages/Tourist/TouristIdContext';
@@ -73,7 +75,7 @@ import ViewAct_Iten from "./components/ite_view.js"
 import ViewActivity from "./components/activity_view.js"
 import Updateavtivityadvertiser from"./pages/Updateavtivityadvertiser.js";
 
-import TourGuideLayout from "./components/TourGuideLayout.js";
+import TourGuideLayout from "./components/TourGuide/TourGuideLayout.js";
 import FlagItinerary from "./components/FlagItinerary.js";
 import ItineraryManagement from "./components/ItineraryManagement.js";
 import CategoriesAndActivities from "./components/CategoriesAndActivities.js";
@@ -93,7 +95,7 @@ import AdminDocumentReview from "./pages/Admin/AdminVeiwDocuments.js";
 import AdminComplaints from "./pages/Admin/AdminComplaints.js";
 import TouristProductListing from "./pages/Tourist/TouristProductPage.js";
 import SalesOverviewChart from "./components/Admin/SalesOverviewChart.js";
-import CheckoutItinerary from "./components/Jimmy/CheckoutItinerary"//////////////////////////////////////
+import CheckoutItinerary from "./components/Jimmy/CheckoutItinerary.js"//////////////////////////////////////
 import AdminViewComplaint from "./pages/Admin/AdminViewComplaint.js";
 import ProductSales from "./pages/Product/ProductSales.js";
 import TouristAddComplaintPage from "./pages/Tourist/TouristComplaintPage.js";
@@ -103,15 +105,17 @@ import ItineraryDetailPage from "./pages/ItineraryDetailPage.js";
 
 import PromoCodespage from './components/Admin/AdminPromoCode.js'
 
-import FlagActivity from "./components/FlagActivity";
+import FlagActivity from "./components/FlagActivity.js";
 
-import ChangePassword from "./components/Admin/changePassword.js";
-import ImageUpload from "./components/Admin/uploadPicture.js";
-import RequestAccountDeletion from "./components/Admin/AccountDeletion.js";
-import ActivityPageJohn from "./pages/Advertiser/ActivityJohn.js";
+import ChangePassword from "./components/Profile_Settings/changePassword.js";
+import ImageUpload from "./components/Profile_Settings/uploadPicture.js";
+import RequestAccountDeletion from "./components/Profile_Settings/AccountDeletion.js";
+
+import ActivityForm from "./pages/Advertiser/ActivityAdd.js";
+
 import Authentication from "./pages/Authentication/Authentication.js";
 import SellerProfile from "./components/Seller/sellerProfile.js";
-import AdvertiserProfile from "./components/userDetails/AdvertiserProfile.js";
+import AdvertiserProfile from "./pages/Advertiser/Advertiseromo.js";
 import AdminAddProduct from "./pages/Admin/AdminAddProduct.js";
 import OrderDetails from "./components/Jimmy/OrderDetails.js";
 // import CheckoutItinerary from "./components/Jimmy/CheckoutItinerary.js";
@@ -124,15 +128,15 @@ import AddRatingCommentItinerary from "./components/Jimmy/AddRatingCommentItiner
 import TouristTourGuideProfile from "./components/Jimmy/TouristTourGuideProfile.js";
 import TouristItineraryDetails from "./components/Jimmy/TouristItineraryDetails.js";
 import AdvertiserLayout from "./components/Advertiser/AdvertiserLayout.js"
-import AdvertiserActivities from "./pages/Advertiser/AdvertiserActivities.js";
+import AdvertiserActivities from "./pages/Advertiser/ActivitiesMainPage.js";
 // JIMMY END
 import { useNavigate, Navigate } from 'react-router-dom';
 
 import GuestLayout from "./components/Guest/GuestLayout.js";
 
 
-import ItinerarySales from "./pages/Sales/ItinerarySales.js"
-import ActivitySales from  "./pages/Sales/ActivitySales"
+import ItinerarySales from "./pages/Tourguide/ItinerarySales.js"
+import ActivitySales from  "./pages/Advertiser/ActivitySales.js"
 
 import SellerLayout from "./components/Seller/SellerLayout.js";
 import AdminUpdateProducts from "./pages/Admin/AdminUpdateProduct.js";
@@ -211,30 +215,50 @@ function App() {
               />
               <Route path="/:modelName/:id/terms" element={<TermsAndConditionsForm />} />
               {/* tourguide advertiser seller tourist*/}
+
+
+
               {/* Advertiser//////////////////////////////////////////////////////////////////////////////////////////////// */}
 
               
               <Route path="/Advertisers/:id" element={<AdvertiserLayout />}>
+                {/* <Route path='/Advertisers/:id/advertiserprofile' element={<AdvertiserProfile />} />  */}
+                {/* {this is the (old) profile view for advertiser + edit functions} */}
+
                 <Route path='/Advertisers/:id/advertiserprofile' element={<AdvertiserProfile />} />
+
                 <Route
-                  path="/Advertisers/:id/ActivitiesJohn/:id"
-                  element={<ActivityPageJohn />}
+                  path="/Advertisers/:id/ActivitiesForm/:id"
+                  element={<ActivityForm />}
                 />
+
                 <Route path="/Advertisers/:id/ViewActivityEdit/:activityId" element={<Updateavtivityadvertiser />} />
                 
                  <Route path="/Advertisers/:id/notifications" element={<NotificationsPage/>} />
+
                 <Route path='/Advertisers/:id/ActivitySales' element={<ActivitySales />} />
+
                  <Route
                 path="Advertisers/:id/change-password/:modelName"
                 element={<ChangePassword />}
               />
+              <Route
+                  path="/Advertisers/:id/RequestDelete/:id/:modelName"
+                  element={<RequestAccountDeletion />}
+                />
                 <Route
-                  path="/Advertisers/:id/AdvertiserActivities/:id"
+                  path="/Advertisers/:id/ActivitiesMainPage/:id"
                   element={<AdvertiserActivities />}
                 />
-                <Route path="/Advertisers/:id/Itineraries" element={<Itineraries />} />
+
 
               </Route>
+
+
+
+
+
+
 {/* Notifications */}
               {/*///////////////////////////////////////////tg//////////////////////////////////////////////////////////////*/}
 
@@ -406,17 +430,15 @@ function App() {
               <Route path ="/Tourguide/:id/ItinerarySales" element ={<ItinerarySales/>} />      
 
               <Route path="/Tourguide/:id/notifications" element={<NotificationsPage/>} />
-                <Route
-                  path="/Tourguide/:id/create/tour-guides/:id"
-                  element={<CreateProfile />}
-                />
+
+
                 <Route
                   path="/Tourguide/:id/profile/tour-guides/:id"
                   element={<Profile />}
                 />
                 <Route
                 
-                path="/Tourguide/:id/tour-guide/itineraryManager/:id"
+                path="/Tourguide/:id/tour-guide/itineraryAdd/:id"
                 element={<ItineraryManager />}
               />
               <Route path ="/Tourguide/:id/ViewItineraryEdit/:ItineraryID" element = {<ViewItineraryTourGuide />} />
@@ -428,6 +450,8 @@ function App() {
                   path="/Tourguide/:id/MyItineraries"
                   element={<Itineraries />}
                 />
+                {/* {HHHHHHHEEEEEEEEERRRRRRRRRREEEEEEE vvvvvvvvvvvvvvvvvvv} */}
+                
                 <Route
                   path="/Tourguide/:id/Activities"
                   element={<Activities />}
@@ -439,6 +463,15 @@ function App() {
                   element={<ItineraryManagement />}
                 />  
               </Route>
+
+
+
+
+
+
+
+
+
               {/** seller */}
               <Route path="/Seller" element={<SellerLayout />}>
                 <Route
@@ -473,11 +506,16 @@ function App() {
                   path="/Seller/updateProduct/:id"
                   element={<UpdateProducts usertype="sellers" />}
                 />
-                <Route path="/Seller/sellerprofile/:id" element={<SellerProfile />} />
                 <Route path="/Seller/viewproduct" element={<ViewProduct />} />
 
               </Route>
               {/** seller */}
+
+
+
+
+
+
               <Route path="/guest" element={<GuestPage />} />
               <Route
                 path="/admindashboard"
@@ -492,10 +530,6 @@ function App() {
               <Route path="/admin/add" element={<AdminAddPage />} />
               <Route path="/edit/tourist/:id" element={<TouristEditPage />} />
 
-              <Route
-                path="/create/tour-guides/:id"
-                element={<CreateProfile />}
-              />
               <Route
                 path="/update-profile/tour-guides/:id"
                 element={<UpdateProfile />}
@@ -524,7 +558,7 @@ function App() {
 
               <Route path="/rate-comment-event" element={<ActivityList touristId={"670255f97b12bc9e3f1c7f26"} />} />  ///////////////////////////////////
 
-              <Route path="/hhh" element={<Home />} />
+            
 
 
               <Route path="/Itineraries" element={<Itineraries />} />{/*show for all */}
