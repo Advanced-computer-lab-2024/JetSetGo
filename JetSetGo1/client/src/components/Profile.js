@@ -4,6 +4,8 @@ import "./Profile.css"; // Import the Profile.css file
 import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
 import Cookies from "js-cookie"; // Import js-cookie
 import Badge1 from '../assets/images/ProfileTouristPic.jpg';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -53,9 +55,14 @@ const Profile = () => {
 
   return (
     <div className="profile-container">
+       <div className="back-link" onClick={() => navigate(-1)}>
+        <FontAwesomeIcon icon={faArrowLeft} className="back-arrow" />
+        <span className="text">Back</span>
+      </div>
       {/* Header Section */}
       <div className="profile-header">
         {/* Update Profile Button */}
+        
         <button
           onClick={() => navigate(`/update-profile/tour-guides/${id}`)}
           className="update-profile-btn"

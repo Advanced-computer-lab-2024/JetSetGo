@@ -215,6 +215,12 @@ const ProfileDropdown = () => {
                                     <span>Request to Delete</span>
                                 </Link>
                             </li>
+                            <li>
+                                <Link to={`/guest/home`} className="dropdownItem">
+                                    <i className="fas fa-sign-out-alt"></i>
+                                    <span>logout</span>
+                                </Link>
+                            </li>
                                 
 
 

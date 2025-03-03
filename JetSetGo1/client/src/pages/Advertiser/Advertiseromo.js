@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
 import Cookies from "js-cookie"; // Import js-cookie
 
+
+//The advertiser mother
 const Advertiseromo = () => {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);

@@ -25,6 +25,8 @@ export function LoginForm(props) {
   // State for login
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState(""); // ✅ New state for error messages
+
 
   // State for Forgot Password
   const [forgotUsername, setForgotUsername] = useState("");
@@ -52,11 +54,13 @@ export function LoginForm(props) {
   // Login handler
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoginError(""); // Clear previous errors
+  
     if (!email || !password) {
-      alert("Please fill in all fields.");
+      setLoginError("⚠️ Please enter both username and password.");
       return;
     }
-
+  
     fetch("http://localhost:8000/user/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -64,7 +68,7 @@ export function LoginForm(props) {
     })
       .then(response => {
         if (!response.ok) {
-          throw new Error("Login failed");
+          throw new Error("❌ Invalid username or password.");
         }
         return response.json();
       })
@@ -73,14 +77,9 @@ export function LoginForm(props) {
           Cookies.set("auth_token", data.token, { expires: 7 });
           const decodedToken = jwtDecode(data.token);
           const { id, userType } = decodedToken;
-          console.log("User ID:", id);
-          console.log("User Type:", userType);
-
-         // Register the user with the decoded user ID
-
-         socket.emit("register", { userId: id }); // Emit the user ID to the server
-         console.log("User registered for notifications with ID:", id);
-          // Redirection logic based on user type
+  
+          socket.emit("register", { userId: id });
+  
           let modelName;    
           if (userType === 'Advertisers') {
             modelName = 'advertisers';
@@ -104,11 +103,14 @@ export function LoginForm(props) {
             throw new Error('Invalid user role');
           }
         } else {
-          alert("Login failed: No token received.");
+          setLoginError("⚠️ Login failed. No token received.");
         }
       })
-      
+      .catch(error => {
+        setLoginError(error.message);
+      });
   };
+  
 
   // Forgot Password handler
   const handleForgotPassword = async () => {
@@ -151,6 +153,7 @@ export function LoginForm(props) {
               onChange={(e) => setPassword(e.target.value)}
             />
           </FormContainer>
+          {loginError && <p className="error-message">{loginError}</p>} {/* ✅ Show error here */}
           <Marginer direction="vertical" margin={10} />
           <MutedLink href="#" onClick={() => setIsForgotPassword(true)}>
             Forget your password?
