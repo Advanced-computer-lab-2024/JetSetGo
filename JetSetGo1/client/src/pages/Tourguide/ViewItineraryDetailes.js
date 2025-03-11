@@ -21,7 +21,7 @@ function ViewItineraryTourGuide() {
   console.log("Tour Guide ID:", id);
 
   const _id = useParams().ItineraryID; // Get _id from URL parameters
-  console.log("Itinerary ID:", _id); // Log the itinerary ID
+  console.log("Itinerary IDDDDDDD:", _id); // Log the itinerary ID
 
   const [itinerary, setItinerary] = useState(null); // Initialize itinerary as null
   const [availableDates,setAvailableDates] = useState(null);
@@ -65,7 +65,7 @@ function ViewItineraryTourGuide() {
                // Set initial form data
               setReviews(data.comments || []); // Set reviews
               setAvailableDates(data.availableDates)
-              calculateDuration(data[0].tourGuide.createdAt); // Calculate the tour guide's duration
+              //calculateDuration(data[0].tourGuide.createdAt); // Calculate the tour guide's duration
             }
           } catch (error) {
             console.error("Error fetching itinerary details:", error);
@@ -143,7 +143,7 @@ function ViewItineraryTourGuide() {
   };
 
 
-  const visibleReviews = showAll ? itinerary.comments.length : 3; // Show 3 reviews initially
+  const visibleReviews = false ? itinerary.comments.length : 0; // Show 3 reviews initially
   const filteredAndSortedReviews = reviews
     .filter((review) => filterRating === 0 || review.rating === filterRating) // Filter by selected rating
     .sort((a, b) => (sortOrder === "asc" ? a.rating - b.rating : b.rating - a.rating));
@@ -491,6 +491,9 @@ console.log("available dates :" +availableDates)
        
         </div>
   
+
+
+
       {/* Reviews Section */}
 <div className="reviews-section">
   <h2>Comments from Tourists</h2>
@@ -500,12 +503,14 @@ console.log("available dates :" +availableDates)
       
       // Loop over the comments array
       for (let i = 0; i < visibleReviews; i++) {
+        {console.log(visibleReviews)}
         const comment = itinerary.comments[i];
-        
+        {console.log(comment.tourist)}
         // Find the matching rating for the current comment
         const matchingRating = itinerary.ratings.find(
           rating => rating.tourist._id === comment.tourist._id
         );
+
         
         // If a matching rating is found, push the combined data to the array
         if (matchingRating) {

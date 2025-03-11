@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import IT from "../../assets/images/ItPic.jpg";
-import "./Myitinerariespage.css"; 
+import styles from  "./Myitinerariespage.module.css"; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTags } from "@fortawesome/free-solid-svg-icons";
+
+
 import { faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
@@ -120,32 +123,32 @@ const MyItinerariesPage = () => {
   };
 
   return (
-    <div className="home">
+    <div className={styles.home}>
       <h1 className="page-title">My Itineraries</h1>
 
       {/* Search Bar */}
-      <div className="search-bar">
+      <div className={styles["search-bar"]}>
         <input
           type="text"
           placeholder="Search for itineraries"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <span className="search-icon">
+        <span className={styles["search-icon"]}>
           <i className="fas fa-search"></i>
         </span>
-        <button className="addIti" onClick={() => navigate(`/Tourguide/${id}/tour-guide/itineraryAdd/${id}`)}>
+        <button className={styles.addIti} onClick={() => navigate(`/Tourguide/${id}/tour-guide/itineraryAdd/${id}`)}>
           <FontAwesomeIcon icon={faPlus} style={{ height: '18px', width: '18px' }} />
         </button>
       </div>
 
       {/* Modal for Deletion Confirmation */}
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal">
+        <div className={styles["modal-overlay"]} onClick={cancelDelete}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <h2>Confirm Deletion</h2>
             <p>Are you sure you want to delete this itinerary?</p>
-            <div className="modal-actions">
+            <div className={styles["modal-actions"]}>
               <button onClick={confirmDelete}>Delete</button>
               <button onClick={cancelDelete}>Cancel</button>
             </div>
@@ -154,45 +157,48 @@ const MyItinerariesPage = () => {
       )}
 
       {/* Itineraries Section */}
-      <div className="tags">
+      <div className={styles.tags}>
         {filteredItineraries.map((itinerary) => (
-          <div className="itinerary-card" key={itinerary._id}>
-            <div className="card-header">
-              <img src={IT} alt={itinerary.title} className="card-image" />
-              <button className="card-action" onClick={() => handleDeleteClick(itinerary._id)}>
+          <div className={styles["itinerary-card"]} key={itinerary._id}>
+            <div className={styles["card-header"]}>
+              <img src={IT} alt={itinerary.title} className={styles["card-image"]} />
+              <button className={styles["card-action"]} onClick={() => handleDeleteClick(itinerary._id)}>
                 <FontAwesomeIcon icon={faTrashAlt} />
               </button>
             </div>
-            <div className="card-content">
-            <div className="card-tags">
-                <strong>🏷️ : </strong>
-                {loadingTags ? (
-                  <span>Loading tags...</span>
-                ) : (
-                  itinerary.tags && Array.isArray(itinerary.tags) && itinerary.tags.length > 0 ? (
-                    itinerary.tags
-                      .map((tagId) => {
-                        const tagItem = tags.find((t) => t._id === tagId);
-                        return tagItem ? tagItem.tag_name : '';
-                      })
-                      .join(', ') || "No tags available"
-                  ) : (
-                    <span>No tags available</span>
-                  )
-                )}
-              </div>
-              <div className="card-title">{itinerary.title || "Untitled Itinerary"}</div>
-              <div className="card-rating">
-                <div className="rating">{renderStars(itinerary.ratings)}</div>
+            <div className={styles["card-content"]}>
+            <div className={styles["card-tags"]}>
+  <strong>
+    <FontAwesomeIcon icon={faTags} /> :
+  </strong>
+  {loadingTags ? (
+    <span>Loading tags...</span>
+  ) : (
+    itinerary.tags && Array.isArray(itinerary.tags) && itinerary.tags.length > 0 ? (
+      itinerary.tags
+        .map((tagId) => {
+          const tagItem = tags.find((t) => t._id === tagId);
+          return tagItem ? tagItem.tag_name : '';
+        })
+        .join(', ') || "No tags available"
+    ) : (
+      <span>No tags available</span>
+    )
+  )}
+</div>
+
+              <div className={styles["card-title"]}>{itinerary.title || "Untitled Itinerary"}</div>
+              <div className={styles["card-rating"]}>
+                <div className={styles["rating"]}>{renderStars(itinerary.ratings)}</div>
                 ★ {calculateAverageRating(itinerary.ratings) > 0
                   ? `${calculateAverageRating(itinerary.ratings)} (${itinerary.ratings.length})`
                   : "0 (0)"}
               </div>
-              <div className="card-description">
+              <div className={styles["card-description"]}>
                 {itinerary.description || "No description available."}
               </div>
              
-              <div className="card-price">
+              <div className={styles["card-price"]}>
                 <strong>$</strong>
                 {itinerary.price || "N/A"}
               </div>

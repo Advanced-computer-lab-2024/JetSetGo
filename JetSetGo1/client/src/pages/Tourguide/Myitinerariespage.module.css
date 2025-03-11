@@ -52,21 +52,37 @@
   /* Itinerary Cards */
   .tags {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive columns */
+    gap: 20px; /* Equal spacing between rows and columns */
+    justify-content: center; /* Centers content */
+    align-items: stretch; /* Ensures all cards stretch to the same height */
+    padding: 20px; /* Adds space around the entire grid */
   }
-
   .itinerary-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensures "View More" button stays at the bottom */
+    height: 100%; /* Make all cards take equal height */
+    flex: 1 1 calc(33.33% - 20px); /* Ensures 3 cards per row with proper spacing */
+    max-width: 350px; /* Prevents overly large cards */
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.2s ease;
-    width: 100%;
-    max-width: 350px;
     margin: 0 auto;
-    position: relative; /* Ensure delete button is positioned relative to the card */
-  }
+    position: relative;
+    
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%; /* Makes all cards the same height */
+}
+
+
 
   .itinerary-card:hover {
     transform: scale(1.03);
@@ -83,6 +99,20 @@
     height: 100%;
     object-fit: cover;
   }
+
+  /* Responsive Design */
+@media (max-width: 1024px) {
+  .itinerary-card {
+      flex: 1 1 calc(50% - 20px); /* Adjusts to 2 cards per row */
+  }
+}
+
+@media (max-width: 768px) {
+  .itinerary-card {
+      flex: 1 1 100%; /* Adjusts to 1 card per row */
+  }
+}
+
 
 .addIti{
   margin-left: 10px;

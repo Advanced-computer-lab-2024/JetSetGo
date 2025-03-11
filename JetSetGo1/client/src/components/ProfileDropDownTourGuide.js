@@ -192,40 +192,17 @@ const ProfileDropdown = () => {
                                     <span>Profile</span>
                                 </Link>
                             </li>
+
                             <li>
-                                <Link to={`/tourist/change-password/${id}/${modelName}`} className="dropdownItem">
+                                <Link to={`/Tourguide/${id}/change-password/${modelName}/${id}`} className="dropdownItem">
                                     <i className="fas fa-key"></i>
                                     <span>Change Password</span>
                                 </Link>
                             </li>
                             <li>
-                                <Link to={`/tourist/RequestDelete/${modelName}/${id}`} className="dropdownItem">
+                                <Link to={`/Tourguide/${id}/RequestDelete/${modelName}/${id}`} className="dropdownItem">
                                     <i className="fas fa-trash"></i>
                                     <span>Request to Delete</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to={`/tourist/rate-comment-event/${modelName}/${id}`} className="dropdownItem">
-                                    <i className="fas fa-star"></i>
-                                    <span>Rate/Comment</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to={`/tourist/my_bookings`} className="dropdownItem">
-                                    <i className="fas fa-calendar-check"></i>
-                                    <span>Bookings</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to={`/tourist/tourguidelist`} className="dropdownItem">
-                                    <i className="fas fa-user-tie"></i>
-                                    <span>Tour Guide</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to={`/tourist/myprefs/${id}`} className="dropdownItem">
-                                    <i className="fas fa-sliders-h"></i>
-                                    <span>Preferences</span>
                                 </Link>
                             </li>
 

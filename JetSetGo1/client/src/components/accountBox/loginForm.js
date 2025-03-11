@@ -153,7 +153,7 @@ export function LoginForm(props) {
               onChange={(e) => setPassword(e.target.value)}
             />
           </FormContainer>
-          {loginError && <p className="error-message">{loginError}</p>} {/* ✅ Show error here */}
+          {loginError && <p className="errore-message">{loginError}</p>} {/* ✅ Show error here */}
           <Marginer direction="vertical" margin={10} />
           <MutedLink href="#" onClick={() => setIsForgotPassword(true)}>
             Forget your password?

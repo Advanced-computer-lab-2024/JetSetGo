@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './ItineraryAdd.css';
+import styles from'./ItineraryAdd.module.css';
 import { jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMapMarkedAlt } from '@fortawesome/free-solid-svg-icons';
 
 axios.defaults.baseURL = 'http://localhost:8000'; // Backend URL
 
@@ -298,13 +301,21 @@ const ItineraryManager = () => {
 };
 
 return (
-  <div className="itinerary-manager">
-    <h1 className="title">🌴 Create New Itinerary 🌴</h1>
+  <div className={styles["itinerary-manager"]}>
+    <h1 className={styles.title}>
+            <div className="back-link" onClick={() => navigate(-1)}>
+              <FontAwesomeIcon icon={faArrowLeft} className="back-arrow" />
+              <span className="text">Back</span>
+            </div>
+  <FontAwesomeIcon icon={faMapMarkedAlt} style={{ marginRight: '10px' }} />
+  <strong>Create New Itinerary</strong>
+  <FontAwesomeIcon icon={faMapMarkedAlt} style={{ marginLeft: '10px' }} />
+</h1>
 
-    {error && <div className="error-message">{error}</div>}
-    {success && <div className="success-message">{success}</div>}
+    {error && <div className={styles["error-message"]}>{error}</div>}
+    {success && <div className={styles["success-message"]}>{success}</div>}
 
-    <form onSubmit={handleSubmit} className="itinerary-form">
+    <form onSubmit={handleSubmit} className={styles["itinerary-form"]}>
       {/* Title and Description */}
       <input type="text" name="title" placeholder="Title" value={itineraryData.title} onChange={handleChange} required />
       <textarea name="description" placeholder="Description" value={itineraryData.description} onChange={handleChange} required />
@@ -336,19 +347,22 @@ return (
         ))}
       </select>
 
-      {/* Tags Selection */}
-      <div className="tags-container">
-        {tags.map((tag) => (
-          <button
-            key={tag._id}
-            type="button"
-            className={`tag-btn ${itineraryData.tags.includes(tag._id) ? 'selected' : ''}`}
-            onClick={() => handleTagSelection(tag._id)}
-          >
-            {tag.tag_name}
-          </button>
-        ))}
-      </div>
+{/* Tags Selection */}
+<div>
+  <label className={styles["tags-label"]}>Select Tags:</label> {/* Added label */}
+  <div className={styles["tags-container"]}>
+    {tags.map((tag) => (
+      <button
+        key={tag._id}
+        type="button"
+        className={`tag-btn ${itineraryData.tags.includes(tag._id) ? 'selected' : ''}`}
+        onClick={() => handleTagSelection(tag._id)}
+      >
+        {tag.tag_name}
+      </button>
+    ))}
+  </div>
+</div>
 
       {/* Activities */}
       <h3>Activities</h3>
@@ -368,14 +382,14 @@ return (
           />
           <button
   type="button"
-  className="remove-button"
+  className={styles["remove-button"]}
   onClick={() => removeActivity(index)} // replace with the correct remove function
 >
   X
 </button>
         </div>
       ))}
-      <button className="add-button" type="button" onClick={addActivity}>+</button>
+      <button className={styles["add-button"]} type="button" onClick={addActivity}>+</button>
 
       {/* Timeline */}
       <h3>Timeline</h3>
@@ -389,14 +403,14 @@ return (
           />
           <button
   type="button"
-  className="remove-button"
+  className={styles["remove-button"]}
   onClick={() => removeTimeline(index)} // replace with the correct remove function
 >
   X
 </button>
         </div>
       ))}
-      <button className="add-button" type="button" onClick={addTimeline}>+</button>
+      <button className={styles["add-button"]} type="button" onClick={addTimeline}>+</button>
 
       {/* Available Dates */}
       <h3>Available Dates</h3>
@@ -417,14 +431,14 @@ return (
           ))}
           <button
   type="button"
-  className="remove-button"
+  className={styles["remove-button"]}
   onClick={() => removeAvailableDate(dateIndex)} // replace with the correct remove function
 >
   X
 </button>
         </div>
       ))}
-      <button className="add-button" type="button" onClick={addAvailableDate}>+</button>
+      <button className={styles["add-button"]} type="button" onClick={addAvailableDate}>+</button>
 
       {/* Locations */}
       <h3>Locations</h3>
@@ -438,19 +452,19 @@ return (
           />
                     <button
   type="button"
-  className="remove-button"
+  className={styles["remove-button"]}
   onClick={() => removeLocation(index)} // replace with the correct remove function
 >
   X
 </button>
         </div>
       ))}
-      <button className="add-button" type="button" onClick={addLocation}>+</button>
-      <div className="SubmitCancel">
+      <button className={styles["add-button"]} type="button" onClick={addLocation}>+</button>
+      <div className={styles["SubmitCancel"]}>
           {/* Cancel Button */}
-      <button className="cancel-button" type="button" onClick={handleCancel}>Cancel</button>
+      <button className={styles["cancel-button"]} type="button" onClick={handleCancel}>Cancel</button>
       {/* Submit Button */}
-      <button className="SubmitButtonCreate" type="submit">Create</button>
+      <button className={styles["SubmitButtonCreate"]} type="submit">Create</button>
 
     
       </div>

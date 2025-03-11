@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Profile.css"; // Import the Profile.css file
+import styles from "./Profile.module.css"; // Import the Profile.css file
 import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
 import Cookies from "js-cookie"; // Import js-cookie
-import Badge1 from '../assets/images/ProfileTouristPic.jpg';
+import Badge1 from '../../assets/images/ProfileTouristPic.jpg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
@@ -47,25 +47,26 @@ const Profile = () => {
 
   if (error) {
     return (
-      <div className="profile-container">
+      <div className={styles["profile-container"]}>
         <p className="text-center text-red-500 text-xl">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="profile-container">
+    <div className={styles["profile-container"]}>
        <div className="back-link" onClick={() => navigate(-1)}>
         <FontAwesomeIcon icon={faArrowLeft} className="back-arrow" />
         <span className="text">Back</span>
       </div>
       {/* Header Section */}
-      <div className="profile-header">
+      <div className={styles["profile-header"]}>
         {/* Update Profile Button */}
         
         <button
           onClick={() => navigate(`/update-profile/tour-guides/${id}`)}
-          className="update-profile-btn"
+          className={styles["update-profile-btn"]}
+          type="button"
         >
           <i className="fas fa-pencil-alt"></i> 
         </button>
@@ -75,17 +76,17 @@ const Profile = () => {
           alt="Profile"
         />
         
-        <h1 className="UserName">{profile.username}</h1>
-        <p className="editWidthExp">{profile.experience}+ Years Experience</p>
+        <h1 className={styles["UserName"]}>{profile.username}</h1>
+        <p className={styles["editWidthExp"]}>{profile.experience}+ Years Experience</p>
 
         {/* Display Average Rating */}
-        <div className="average-rating">
+        <div className={styles["average-rating"]}>
           <strong></strong> {calculateAverageRating(profile.ratings)} ⭐
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="profile-content">
+      <div className={styles["profile-content"]}>
         <h2>🔎About</h2>
         <p><strong>📧:</strong> {profile.email}</p>
         <p><strong>📞:</strong> {profile.mobile || "N/A"}</p>
@@ -93,18 +94,18 @@ const Profile = () => {
       </div>
 
       {/* Comments Section */}
-      <div className="comments-section">
+      <div className={styles["comments-section"]}>
         <h2> 💬 Comments</h2>
         {profile.comments && profile.comments.length > 0 ? (
           profile.comments.map((comment) => (
-            <div key={comment._id} className="comment">
+            <div key={comment._id} className={styles["comment"]}>
               <img
                 src={Badge1}
                 alt={comment.tourist?.username || "Anonymous"}
               />
-              <div className="comment-text">
+              <div className={styles["comment-text"]}>
                 <p>{comment.text}</p>
-                <div className="comment-meta">
+                <div className={styles["comment-meta"]}>
                   - {comment.tourist?.username || "Anonymous"}{" "}
                   {new Date(comment.createdAt).toLocaleDateString()}
                 </div>

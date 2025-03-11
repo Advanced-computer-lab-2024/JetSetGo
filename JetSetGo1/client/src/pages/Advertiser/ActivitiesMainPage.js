@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import IT from "../../assets/images/activities.jpg";
-import "../Tourguide/Myitinerariespage.css"; 
+import styles from  "../Tourguide/Myitinerariespage.module.css"; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
@@ -172,32 +172,32 @@ const renderStars = (rating) => {
 
   
   return (
-    <div className="home">
+    <div className={styles["home"]}>
       <h1 className="page-title">My Activities</h1>
 
       {/* Search Bar */}
-      <div className="search-bar">
+      <div className={styles["search-bar"]}>
         <input
           type="text"
           placeholder="Search for Activities"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <span className="search-icon">
+        <span className={styles["search-icon"]}>
           <i className="fas fa-search"></i>
         </span>
-        <button className="addIti" onClick={() => navigate(`/Advertisers/${id}/ActivitiesForm/${id}`)}> 
+        <button className={styles.addIti} onClick={() => navigate(`/Advertisers/${id}/ActivitiesForm/${id}`)}> 
           <FontAwesomeIcon icon={faPlus} style={{ height: '18px', width: '18px' }} />
         </button>
       </div>
 
       {/* Modal for Deletion Confirmation */}
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal">
+        <div className={styles["modal-overlay"]} onClick={cancelDelete}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <h2>Confirm Deletion</h2>
             <p>Are you sure you want to delete this activity?</p>
-            <div className="modal-actions">
+            <div className={styles["modal-actions"]}>
               <button onClick={confirmDelete}>Delete</button>
               <button onClick={cancelDelete}>Cancel</button>
             </div>
@@ -206,27 +206,27 @@ const renderStars = (rating) => {
       )}
 
       {/* Itineraries Section */}
-      <div className="tags">
+      <div className={styles.tags}>
         {filteredActivities.map((activity) => (
-          <div className="itinerary-card" key={activity._id}>
-            <div className="card-header">
-              <img src={IT} alt={activity.title} className="card-image" />
-              <button className="card-action" onClick={() => handleDeleteClick(activity._id)}>
+          <div className={styles["itinerary-card"]} key={activity._id}>
+            <div className={styles["card-header"]}>
+              <img src={IT} alt={activity.title} className={styles["card-image"]} />
+              <button className={styles["card-action"]} onClick={() => handleDeleteClick(activity._id)}>
                 <FontAwesomeIcon icon={faTrashAlt} />
               </button>
             </div>
-            <div className="card-content">
-              <div className="card-title">{activity.title || "Untitled activity"}</div>
-              <div className="card-rating">
-                <div className="rating">{renderStars(activity.ratings)}</div>
+            <div className={styles["card-content"]}>
+              <div className={styles["card-title"]}>{activity.title || "Untitled activity"}</div>
+              <div className={styles["card-rating"]}>
+                <div className={styles["rating"]}>{renderStars(activity.ratings)}</div>
                 ★ {calculateAverageRating(activity.ratings) > 0
                   ? `${calculateAverageRating(activity.ratings)} (${activity.ratings.length})`
                   : "0 (0)"}
               </div>
-              <div className="card-description">
+              <div className={styles["card-description"]}>
                 {activity.description || "No description available."}
               </div>
-              <div className="card-tags">
+              <div className={styles["card-tags"]}>
                 <strong>🏷️ Tags: </strong>
                 {loadingTags ? (
                   <span>Loading tags...</span>
@@ -243,11 +243,7 @@ const renderStars = (rating) => {
                   )
                 )}
               </div>
-              <div className="card-price">
-                <strong>$</strong>
-                {activity.price || "N/A"}
-              </div>
-              <div className="card-tags">
+              <div className={styles["card-tags"]}>
                 <strong>🏷️ Category: </strong>
                 {loadingTags ? (
                   <span>Loading tags...</span>
@@ -262,8 +258,12 @@ const renderStars = (rating) => {
                   )
                 )}
               </div>
+              <div className={styles["card-price"]}>
+                <strong>$</strong>
+                {activity.price || "N/A"}
+              </div>
           </div>
-            <Link to={`/Advertisers/${id}/ViewActivityEdit/${activity._id}`} className="view-more-btn">
+            <Link to={`/Advertisers/${id}/ViewActivityEdit/${activity._id}`} className={styles["view-more-btn"]}>
               View More
             </Link>
           </div>

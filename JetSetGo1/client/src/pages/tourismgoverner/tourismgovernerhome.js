@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import IT from "../../assets/images/hs.jpg";
-import "./tourismgovernerhome.css";
+import styles from  "./tourismgovernerhome.module.css";
 import Filter from "../../components/Filterbox.js";
 
 const TourismGovernerHomepage = () => {
@@ -315,22 +315,22 @@ const TourismGovernerHomepage = () => {
     );
 
     return (
-        <div className="home-gov">
+        <div className={styles["home-gov"]}>
             {/* Page Title */}
-            <div className="header-container-gov">
-                <h1 className="page-title-gov">Historical Locations</h1>
-                <button className="add-button-gov" onClick={() => setIsCreateModalOpen(true)}> + </button></div>
+            <div className={styles["header-container-gov"]}>
+                <h1 className={styles["page-title-gov"]}>Historical Locations</h1>
+                <button className={styles["add-button-gov"]} onClick={() => setIsCreateModalOpen(true)}> + </button></div>
 
-            <div className="SearchBarAndFiletr-gov">
+            <div className={styles["SearchBarAndFiletr-gov"]}>
                 {/* Search Bar */}
-                <div className="search-bar-gov">
+                <div className={styles["search-bar-gov"]}>
                     <input
                         type="text"
                         placeholder="Search for Historical Locations                                                                                                               🔍"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <span className="search-icon-gov">
+                    <span className={styles["search-icon-gov"]}>
                         <i className="fas fa-search"></i>
                     </span>
 
@@ -341,9 +341,9 @@ const TourismGovernerHomepage = () => {
 
             {/* Create Modal */}
             {isCreateModalOpen && (
-                <div className="modal-overlay-gov">
+                <div className={styles["modal-overlay-gov"]}>
                     {console.log("Current newLocation State:", newLocation)} {/* Log before displaying */}
-                    <div className="modal2-gov" ref={modalRef}>
+                    <div className={styles["modal2-gov"]} ref={modalRef}>
                         <h2>Create Historical Location</h2>
                         <input
                             type="text"
@@ -412,8 +412,8 @@ const TourismGovernerHomepage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className="modal2-actions-gov">
-                        {modalError && <div className="alert alert-danger-gov">{modalError}</div>}
+                        <div className={styles["modal2-actions-gov"]}>
+                        {modalError && <div className={styles["alert alert-danger-gov"]}>{modalError}</div>}
 
                             <button onClick={handleCreate}>Create</button>
                             <button onClick={cancelCreate}>Cancel</button>
@@ -423,9 +423,9 @@ const TourismGovernerHomepage = () => {
             )}
 
             {isEditModalOpen && (
-                <div className="modal-overlay-gov">
+                <div className={styles["modal-overlay-gov"]}>
                     {console.log("Editing Location State:", editingLocation)} {/* Log before displaying */}
-                    <div className="modal2-gov" ref={modalRef}>
+                    <div className={styles["modal2-gov"]} ref={modalRef}>
                         <h2>Edit Historical Location</h2>
                         <input
                             type="text"
@@ -494,8 +494,8 @@ const TourismGovernerHomepage = () => {
                                 </option>
                             ))}
                         </select>
-                        <div className="modal2-actions-gov">
-                        {modalError && <div className="alert alert-danger-gov">{modalError}</div>}
+                        <div className={styles["modal2-actions-gov"]}>
+                        {modalError && <div className={styles["alert alert-danger-gov"]}>{modalError}</div>}
 
                             <button onClick={handleEditSave}>Save</button>
                             <button onClick={() => setIsEditModalOpen(false)}>Cancel</button>
@@ -509,12 +509,12 @@ const TourismGovernerHomepage = () => {
             {/* Modal for Deletion */}
             {showModal && (
 
-                <div className="modal-overlay-gov">
-                    <div className="modal-gov" ref={modalRef}>
+                <div className={styles["modal-overlay-gov"]}>
+                    <div className={styles["modal-gov"]} ref={modalRef}>
                         <h2>Confirm Deletion</h2>
                         <p>Are you sure you want to delete this location?</p>
-                        <div className="modal-actions-gov">
-                        {modalError && <div className="alert alert-danger-gov">{modalError}</div>}
+                        <div className={styles["modal-actions-gov"]}>
+                        {modalError && <div className={styles["alert alert-danger-gov"]}>{modalError}</div>}
 
                             <button onClick={confirmDelete}>Delete</button>
                             <button onClick={cancelDelete}>Cancel</button>
@@ -525,34 +525,46 @@ const TourismGovernerHomepage = () => {
 
 
             {/* Historical Locations Section */}
-            <div className="tags-gov">
-                <div className="histloc-card-container-gov">
+            <div className={styles["tags-gov"]}>
+                <div className={styles["histloc-card-container-gov"]}>
                     {console.log("Rendering histlocs:", filteredHistLocs)} {/* Log filtered data */}
                     {filteredHistLocs.map((histloc) => (
-                        <div className="histloc-card-gov" key={histloc._id}>
-                            <div className="card-header-gov">
-                                <img src={IT} alt={histloc.name} className="card-image-gov" />
-                                <a class="card-action-gov" href="#" onClick={() => handleDeleteClick(histloc._id)}><i class="fa fa-trash"></i></a>
-                                <a class="card-action-gov" href="#" onClick={() => handleEditClick(histloc)}><i class="fa-solid fa-pen"></i></a>
-                            </div>
-                            <div className="card-content-gov">
-                                <div className="card-title-gov">{histloc.name || "Untitled Historical Location"}</div>
-                                <div className="card-rating-gov">
+                        <div className={styles["histloc-card-gov"]} key={histloc._id}>
+                       <div className={styles["card-header-gov"]}>
+    <img src={IT} alt={histloc.name} className={styles["card-image-gov"]} />
+    <div className={styles["card-actions-container"]}>
+    <a className={`${styles["card-action-gov"]} ${styles["delete-btn"]}`} 
+       href="#" 
+       onClick={() => handleDeleteClick(histloc._id)}>
+        <i className="fa fa-trash"></i>
+    </a>
+    <a className={`${styles["card-action-gov"]} ${styles["edit-btn"]}`} 
+       href="#" 
+       onClick={() => handleEditClick(histloc)}>
+        <i className="fa-solid fa-pen"></i>
+    </a>
+</div>
+
+</div>
+
+                            <div className={styles["card-content-gov"]}>
+                                <div className={styles["card-title-gov"]}>{histloc.name || "Untitled Historical Location"}</div>
+                                <div className={styles["card-rating-gov"]}>
 
                                 </div>
-                                <div className="card-description-gov">
+                                <div className={styles["card-description-gov"]}>
                                     {histloc.description || "No description available."}
                                 </div>
-                                <div className="card-location-gov">
+                                <div className={styles["card-location-gov"]}>
                                     <strong>Location: </strong>
                                     {histloc.location || "No location available."}
                                 </div>
-                                <div className="card-location-gov">
+                                <div className={styles["card-location-gov"]}>
                                     <strong>Opening Hours: </strong>
 
                                     {histloc.openingHours.from} - {histloc.openingHours.to}
                                 </div>
-                                <div className="card-tags-gov">
+                                <div className={styles["card-tags-gov"]}>
                                     <strong>🏷 Tag:  </strong>
                                     {loadingTags ? (
                                         <span>Loading tag...</span>
@@ -567,7 +579,7 @@ const TourismGovernerHomepage = () => {
                                         )
                                     )}
                                 </div>
-                                <div className="card-price-gov">
+                                <div className={styles["card-price-gov"]}>
 
 
                                     <ul>

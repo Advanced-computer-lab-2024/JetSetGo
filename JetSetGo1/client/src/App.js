@@ -4,12 +4,11 @@ import { useState } from "react"; // Add this line
 //pages & components
 
 import LoginForm1 from "./components/accountBox/LoginTrial.js"  //Kont bagarab 7aga hena
-import Profile from "./components/Profile.js";
+import Profile from "./pages/Tourguide/Profile.js";
 //import touristProfile from './components/touristProfile'
 import UpdateProfile from "./pages/Tourguide/UpdateProfile.js";
 //import touristUpdateProfile from './components/touristUpdateProfile';
 
-import CreateProfile from "./components/CreateProfile.js";
 
 import TourismGovTags from "./pages/tourismgoverner/tourismgovernortags.js";
 
@@ -450,6 +449,22 @@ function App() {
                   path="/Tourguide/:id/MyItineraries"
                   element={<Itineraries />}
                 />
+                 <Route
+                  path="/Tourguide/:id/change-password/:id/:modelName"
+                  element={<ChangePassword />}
+                  
+                />
+
+                <Route
+                  path="/Tourguide/:id/RequestDelete/:id/:modelName"
+                  element={<RequestAccountDeletion />}
+                />
+          
+                
+                
+
+
+
                 {/* {HHHHHHHEEEEEEEEERRRRRRRRRREEEEEEE vvvvvvvvvvvvvvvvvvv} */}
                 
                 <Route
