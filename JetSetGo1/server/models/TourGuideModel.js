@@ -52,7 +52,7 @@ const tourGuideSchema = new mongoose.Schema({
       },
       rating: {
         type: Number,
-        required: true,
+        required: false,
       },
     },
   ],
@@ -64,7 +64,7 @@ const tourGuideSchema = new mongoose.Schema({
       },
       text: {
         type: String,
-        required: true,
+        required: false,
       },
       createdAt: {
         type: Date,
@@ -79,12 +79,15 @@ const tourGuideSchema = new mongoose.Schema({
       ref: "Tourist", // Assuming you have a Tourist model
     },
   ],
-  Tourists: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Tourist", // Assuming you have a Tourist model
-    },
-  ],
+  socketId: {
+    type: String,
+    default: null, // Initialize with null, it will be set when they connect
+  },
+  notifications : [{
+     type: mongoose.Schema.Types.ObjectId,
+     ref: "Notification"
+  }],
+
 
   createdAt: {
     type: Date,

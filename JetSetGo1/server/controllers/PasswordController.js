@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const Admin = require('../models/AdminModel');
 const Advertiser = require('../models/AdvertiserModel');
+const User = require('../models/UserModel'); 
 const TourGuide = require('../models/TourGuideModel');
 const Tourist = require('../models/TouristModels');
 const TourismGoverner = require('../models/TourismGovernerModel')
@@ -25,6 +26,7 @@ const changePassword = async (req, res) => {
     }
     console.log("before the try")
     try {
+        
         // Get the model based on user type
         console.log("before const user = ")
         // Find the user in the appropriate collection
@@ -33,11 +35,17 @@ const changePassword = async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: 'User not found.' });
         }
+        // Find the user in the User model
+        const generalUser = await User.findOne({ userDetails: id });
+        if (!generalUser) {
+            return res.status(404).json({ error: 'User not found in the main User model.' });
+        }
+
         console.log("after !user")
 
         // Verify old password
        
-        if (oldPassword != user.password) {
+        if (oldPassword != user.password || oldPassword != generalUser.password) {
             return res.status(400).json({ error: 'Incorrect old password.' });
         }
 
@@ -45,7 +53,9 @@ const changePassword = async (req, res) => {
 
         // Hash the new password and save it
         user.password = newPassword
+        generalUser.password = newPassword
         await user.save();
+        await generalUser.save();
 
         console.log("ba3d el save")
 

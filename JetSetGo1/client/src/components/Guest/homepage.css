@@ -71,40 +71,13 @@
 	background-position: center;
 	background-size: cover;
 } */
-.heaading{
-	max-width: 850px;
-	padding: 20px;
-	text-align: center;
-	color: #fff;
-	
-}
-.heaading h1{
-	font-size: 40px;
-}
-.heaading a{
-	text-decoration: none;
-	color: #000;
-	font-size: 25px;
-	font-weight: bold;
-	border-radius: 45px;
-	padding: 14px 50px;
-	background-color: #fff;
-}
-.heaading a:hover{
-	padding:20px 56px;
-	transition: 0.4s;
-}
+
 .tours{
 	width: 70%;
 	display: flex;
 	justify-content: space-around;
 }
-.tittle{
-	
-	
-	padding-top: 2px;
-	font-size: 18px;
-}
+
 .places{
 	display: inline;
 	text-align: center;
@@ -132,27 +105,7 @@
 	letter-spacing: 3px;
 	transition: 0.6s;
 }
-.footer{
-	width: 100%;
-	height: 80px;
-	display: flex;
-	justify-content: space-around;
-	
-	border-top: 1px solid #ccc;
-  	padding: 20px;
-  	background-color: #f1f1f1;
-}
-.footer a{
-	text-decoration: none;
-	color: black;
-	font-size: 15px;
-	font-weight: bold;
 
-}
-.footer a:hover{
-	text-decoration: underline;
-	transition: 0.4s;
-}
 
 .moreinfo {
 	background-color: #f9f9f9;

@@ -1,22 +1,1188 @@
 const TransportBooking = require("../models/TransportationBookingModel");
 const ActivityItineraryBooking =  require('../models/bookingmodel.js');
+const Transportation = require("../models/TransportationModel.js");
 const mongoose = require("mongoose");
 const Product = require("../models/ProductModel");
 const Tourist = require("../models/TouristModels");
-const Itinerary = require("../models/ItineraryModel");
+const Itinerary = require("../models/ItineraryModel");  
 const Activity = require("../models/AdvertiserActivityModel");
 const Tag = require("../models/TagModel");
 const HistoricalLocationModel = require("../models/HistoricalLocationModel");
 const MuseumModel = require("../models/MuseumModel");
 const ComplaintModel = require("../models/ComplaintModel");
 const Category = require("../models/CategoryModel");
-
+const PromoCode = require('../models/PromoCodeModel.js');
 const Booking = require("../models/bookingmodel");
 const SalesModel = require("../models/SalesModel");
-
+const SalesIModel = require("../models/SalesIModel");
 const TourGuide = require("../models/TourGuideModel.js");
 const FlightBooking = require('../models/FlightBooking');
 const nodemailer = require('nodemailer');
+const Order = require('../models/OrderModel');
+const SalesAModel = require("../models/SalesAModel");
+const Notification = require("../models/Notification")
+
+
+
+// Controller to get all unread notifications for a tour guide
+const getUnreadNotifications = async (req, res) => {
+  const { id } = req.params; // TourGuide's ID passed in the URL parameter
+
+  try {
+    // Query for unread notifications for the specified TourGuide
+    const unreadNotifications = await Notification.find({
+      userId: id,
+      read: false,  
+      }).sort({ createdAt: -1 })  // Sort by creation date, descending (most recent first)
+      .limit(3);  // Limit to 3 notifications;
+
+    // Check if notifications were found
+    if (unreadNotifications.length === 0) {
+      return res.status(200).json({ message: 'No unread notifications.' });
+    }
+
+    // Return the unread notifications
+    return res.status(200).json(unreadNotifications);
+  } catch (error) {
+    console.error('Error fetching unread notifications:', error);
+    return res.status(500).json({ error: 'Error fetching unread notifications.' });
+  }
+};
+
+const markAllNotificationsAsRead = async (req, res) => {
+  const { id } = req.params;  // Get the Tour Guide ID from the URL parameter
+  try {
+    // Update notifications that are unread (read: false) to read: true
+    await Notification.updateMany({ userId: id, read: false }, { $set: { read: true } });
+    res.status(200).json({ message: 'Notifications marked as read.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error marking notification as read.', details: error.message });
+  }
+};
+
+// Route to mark notifications as read
+const markNotificationAsRead = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const notification = await Notification.findById(id);
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found.' });
+    }
+    notification.read = true;
+    await notification.save();
+    res.status(200).json({ message: 'Notification marked as read.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error marking notification as read.', details: error.message });
+  }
+};
+
+// Route to mark notifications as read
+const GetAllNotifications = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Fetch all notifications, sorted by creation date (most recent first)
+    const notifications = await Notification.find({ userId: id })
+      .sort({ createdAt: -1 });  // Sort by creation date, descending
+
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ error: 'Failed to fetch notifications.' });
+  }
+};
+
+
+
+const rateItinerary = async (req, res) => {
+  try {
+    const { _id, star, activityId } = req.body;
+
+    const activity = await Itinerary.findById(activityId);
+
+    if (!activity) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
+    let alreadyRated = activity.ratings.find(
+      (rating) => rating.postedby.toString() === _id.toString()
+    );
+
+    if (alreadyRated) {
+      await Itinerary.updateOne(
+        { _id: activityId, "ratings._id": alreadyRated._id },
+        {
+          $set: { "ratings.$.star": star },
+        },
+        { new: true }
+      );
+    } else {
+      await Itinerary.findByIdAndUpdate(
+        activityId,
+        {
+          $push: { ratings: { star, postedby: _id } },
+        },
+        { new: true }
+      );
+    }
+
+    const getAllRatings = await Activity.findById(activityId);
+    if (!getAllRatings) {
+      return res.status(404).json({ message: "Activity not found" });
+    }
+
+    let totalRating = getAllRatings.ratings.length;
+    let ratingSum = getAllRatings.ratings
+      .map((item) => item.star)
+      .reduce((prev, curr) => prev + curr, 0);
+    let actualRating = Math.round(ratingSum / totalRating);
+
+    let finalActivity = await Activity.findByIdAndUpdate(
+      activityId,
+      {
+        totalrating: actualRating,
+      },
+      { new: true }
+    );
+
+    res.json(finalActivity);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+const isActivity = async (id) => {
+  try {
+    // Check if the ID belongs to the Activity collection
+    const activity = await Activity.findById(id);
+    if (activity) {
+      return "activity";
+    }
+
+    // Check if the ID belongs to the Itinerary collection
+    const itinerary = await Itinerary.findById(id);
+    if (itinerary) {
+      return "itinerary";
+    }
+
+    // If not found in either collection
+    return null;
+  } catch (error) {
+    console.error("Error in isActivity function:", error.message);
+    return null;
+  }
+};
+
+const getUserRating = async (req, res) => {
+  try {
+    const { _id, activityId } = req.params; // Extract user ID and activityId
+
+    // First, search in the Activity collection
+    const activity = await Activity.findById(activityId);
+    console.log("Checking in Activity:", activity);
+
+    if (activity) {
+      const userRating = activity.ratings.find(
+        (rating) => rating.postedby.toString() === _id.toString()
+      );
+      if (userRating) {
+        return res.json({ rating: userRating.star });
+      }
+    }
+
+    // If not found in Activity, check in the Itinerary collection
+    const itinerary = await Itinerary.findById(activityId);
+    console.log("Checking in Itinerary:", itinerary);
+
+    if (itinerary) {
+      const userRating = itinerary.ratings.find(
+        (rating) => rating.tourist.toString() === _id.toString()
+      );
+      if (userRating) {
+        return res.json({ rating: userRating.rating });
+      }
+    }
+
+    // If neither has the rating
+    res.json({ rating: null });
+  } catch (error) {
+    console.error("Error fetching user rating:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const myActivityItineraryBooking = async (req, res) => {
+  const { touristId } = req.params;
+
+  try {
+    console.log("el tourist that i am using"+touristId);
+    // Search for all bookings where the tourist field matches the provided touristId
+    const ActivityItineraryBookingProfile = await ActivityItineraryBooking.find({ tourist: touristId });
+    console.log(ActivityItineraryBookingProfile);
+    if (ActivityItineraryBookingProfile.length === 0) {
+      return res.status(404).json({ error: 'No bookings found for this tourist' });
+    }
+
+    res.status(200).json(ActivityItineraryBookingProfile);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while fetching bookings' });
+  }
+};
+
+
+const addComment = async (req, res) => {
+  const { tourGuideId, touristId, comment } = req.body;
+  console.log("soso",tourGuideId, touristId, comment);
+  try {
+    // Find the tour guide by ID and populate tourists for validation
+    const tourGuide = await TourGuide.findById(tourGuideId).populate(
+      "Tourists"
+    );
+
+    if (!tourGuide) {
+      return res.status(404).json({ message: "Tour Guide not found." });
+    }
+
+    // Check if the tourist is associated with the tour guide
+    if (
+      // tourGuide.Tourists.some((tourist) => tourist._id.toString() === touristId)
+      1==1
+    ) {
+      // Add the structured comment
+      const newComment = {
+        tourist: touristId,
+        text: comment,
+        createdAt: new Date(),
+      };
+      tourGuide.comments.push(newComment);
+      await tourGuide.save();
+
+      return res.status(200).json({
+        message: "Comment added successfully.",
+        comment: newComment,
+      });
+    } else {
+      return res
+        .status(400)
+        .json({ message: "Tourist not associated with this tour guide." });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: "Error adding comment.", error });
+  }
+};
+
+const addItineraryRating = async (req, res) => {
+  const { itineraryId, touristId, rating } = req.body;
+
+  console.log("Request data:", itineraryId, touristId, rating);
+
+  try {
+    // Find the itinerary by ID
+    const itinerary = await Itinerary.findById(itineraryId);
+
+    if (!itinerary) {
+      return res.status(404).json({ message: "Itinerary not found." });
+    }
+
+    // Check if the tourist has already rated the itinerary
+    const existingRating = itinerary.ratings.find(
+      (r) => r.tourist.toString() === touristId
+    );
+
+    if (existingRating) {
+      // Update the existing rating
+      existingRating.rating = rating;
+    } else {
+      // Add a new rating
+      itinerary.ratings.push({ tourist: touristId, rating });
+    }
+
+    // Recalculate the average rating
+    const totalRatings = itinerary.ratings.length;
+    const sumOfRatings = itinerary.ratings.reduce(
+      (sum, r) => sum + r.rating,
+      0
+    );
+    itinerary.rating = sumOfRatings / totalRatings; // Average rating
+
+    await itinerary.save(); // Save the updated itinerary
+
+    return res
+      .status(200)
+      .json({ message: "Rating added/updated successfully.", itinerary });
+  } catch (error) {
+    return res.status(500).json({ message: "Error adding/updating rating.", error });
+  }
+};
+
+
+const addItineraryComment = async (req, res) => {
+  const { itineraryId, touristId, comment } = req.body;
+
+  try {
+    // Find the itinerary by ID and populate tourists for validation
+    const itinerary = await Itinerary.findById(itineraryId);
+
+    if (!itinerary) {
+      return res.status(404).json({ message: "Itinerary not found." });
+    }
+
+    // Check if the tourist is associated with the itinerary
+    if (
+      // 
+      // itinerary.Tourists.some((tourist) => tourist._id.toString() === touristId)
+      1==1
+    ) {
+      // Add the structured comment
+      const newComment = {
+        tourist: touristId,
+        text: comment,
+        createdAt: new Date(),
+      };
+      itinerary.comments.push(newComment);
+      await itinerary.save();
+
+      return res.status(200).json({
+        message: "Comment added successfully.",
+        comment: newComment,
+      });
+    } else {
+      return res
+        .status(400)
+        .json({ message: "Tourist not associated with this itinerary." });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Error adding comment.", error });
+  }
+};
+
+const getSingleActivity = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const itemType = await isActivity(id);
+    if (!itemType) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+    const Model = itemType === "activity" ? Activity : Itinerary;
+    const item = await Model.findById(id);
+    if (!item) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+    res.json(item);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+async function addWalletTransaction(req, res) {
+  const { touristId, orderId, amount, type, orderType } = req.body;
+
+  try {
+      const tourist = await Tourist.findById(touristId);
+      if (!tourist) {
+          return res.status(404).json({ message: 'Tourist not found' });
+      }
+
+      // Validate deduction transactions
+      if (type === 'deduction' && tourist.wallet.balance < amount) {
+          return res.status(400).json({ message: 'Insufficient wallet balance' });
+      }
+
+    // Update the ActivitiesPaidFor array if the orderType is 'activity'
+    if (orderType === "activity" && type === 'deduction') {
+      if (!tourist.ActivitiesPaidFor.includes(orderId)) {
+        tourist.ActivitiesPaidFor.push(orderId); // Add the orderId to ActivitiesPaidFor
+      }
+      const activity = await Activity.findById(orderId);
+        
+        if (!activity) {
+          return res.status(404).json({ message: `Activity with ID ${orderId} not found` });
+        }
+
+
+
+
+        const sale = new SalesAModel({
+          price: activity.price,
+          Tourists: touristId,
+          Advertiser: activity.advertiser,
+          Activity: orderId,
+        });
+
+
+        await sale.save();
+
+        const booking = new Booking({
+          tourist: touristId,
+          referenceId: orderId,
+          referenceType: "Activity",
+          price: amount,
+          paymentMethod: "Wallet",
+        });
+  
+  
+        await booking.save();
+
+
+    }
+      
+        // Update the ActivitiesPaidFor array if the orderType is 'activity'
+    if (orderType === "itinerary"&& type === 'deduction') {
+      if (!tourist.ItinerariesPaidFor.includes(orderId)) {
+        tourist.ItinerariesPaidFor.push(orderId); // Add the orderId to ActivitiesPaidFor
+      }
+      const itinerary = await Itinerary.findById(orderId);
+        
+      if (!itinerary) {
+        return res.status(404).json({ message: `Itinerary with ID ${orderId} not found` });
+      }
+
+
+      itinerary.Tourists.push(touristId);
+      itinerary.save();
+
+      const sale = new SalesIModel({
+        price: itinerary.price,
+        Tourists: touristId,
+        TourGuide: itinerary.tourGuide,
+        Itinerary: orderId,
+      });
+
+
+      await sale.save();
+
+      const booking = new Booking({
+        tourist: touristId,
+        referenceId: orderId,
+        referenceType: "Itinerary",
+        price: amount,
+        paymentMethod: "Wallet",
+      });
+
+
+      await booking.save();
+
+    }
+
+
+
+    if (orderType === "activity" && type === 'addition') {
+      const activity = await Activity.findById(orderId);
+        
+        if (!activity) {
+          return res.status(404).json({ message: `Activity with ID ${orderId} not found` });
+        }
+
+        const sale = new SalesAModel({
+          price: -activity.price,
+          Tourists: touristId,
+          Advertiser: activity.advertiser,
+          Activity: orderId,
+        });
+
+
+        await sale.save();
+    }
+      
+
+    if (orderType === "itinerary"&& type === 'addition') {
+      const itinerary = await Itinerary.findById(orderId);
+        
+      if (!itinerary) {
+        return res.status(404).json({ message: `Itinerary with ID ${orderId} not found` });
+      }
+
+
+
+
+      const sale = new SalesIModel({
+        price: -itinerary.price,
+        Tourists: touristId,
+        TourGuide: itinerary.tourGuide,
+        Itinerary: orderId,
+      });
+
+
+      await sale.save();
+
+    }
+
+
+
+      // Update balance
+      const newBalance = type === 'addition' 
+          ? tourist.wallet.balance + amount 
+          : tourist.wallet.balance - amount;
+
+ 
+
+      
+
+      // Add transaction
+      tourist.wallet.transactions.push({
+          orderId,
+          amount,
+          type,
+          orderType
+      });
+
+      // Update wallet balance
+      tourist.wallet.balance = newBalance;
+
+
+      await tourist.save();
+
+      res.status(200).json({
+          message: 'Transaction successful',
+          wallet: tourist.wallet
+      });
+  } catch (error) {
+    console.error('Error adding wallet transaction:', error);
+    res.status(500).json({
+        message: 'Internal server error',
+        error: {
+            message: error.message || 'An unknown error occurred',
+            stack: error.stack || null
+        }
+    });
+}
+}
+
+
+
+
+async function getWalletDetails(req, res) {
+  const { touristId } = req.body;
+
+  try {
+      const tourist = await Tourist.findById(touristId);
+      if (!tourist) {
+          return res.status(404).json({ message: 'Tourist not found' });
+      }
+
+      res.status(200).json({
+          balance: tourist.wallet.balance,
+          transactions: tourist.wallet.transactions
+      });
+  } catch (error) {
+      res.status(500).json({ message: 'Internal server error', error });
+  }
+}
+// Function to pay using wallet
+const payWithWallet = async (req, res) => {
+  const { touristId } = req.params;  // Tourist ID from the URL
+  const token = req.headers.authorization.split(" ")[1];  // Token from the headers
+
+  try {
+      // Fetch the tourist's details from the database
+      const tourist = await Tourist.findById(touristId);
+
+      if (!tourist) {
+          return res.status(404).json({ message: "Tourist not found." });
+      }
+
+      // Fetch the tourist's cart items
+      const cart = await Cart.findOne({ tourist: touristId });
+
+      if (!cart || cart.items.length === 0) {
+          return res.status(400).json({ message: "Your cart is empty." });
+      }
+
+      // Calculate the total amount to pay for the products in the cart
+      const totalAmount = cart.items.reduce((acc, item) => acc + item.quantity * item.product.price, 0);
+
+      // Check if the tourist has enough balance in their wallet
+      if (tourist.walletBalance < totalAmount) {
+          return res.status(400).json({ message: "Insufficient funds in wallet." });
+      }
+
+      // Deduct the total amount from the wallet balance
+      tourist.walletBalance -= totalAmount;
+
+      // Save the updated wallet balance
+      await tourist.save();
+
+      // Optionally, mark the cart as paid or process the order (this depends on your business logic)
+      // For example, we can clear the cart after successful payment
+      await Cart.updateOne({ tourist: touristId }, { $set: { items: [], paid: true } });
+
+      // Respond with a success message
+      return res.status(200).json({ message: "Payment successful.", newWalletBalance: tourist.walletBalance });
+
+  } catch (error) {
+      console.error("Error processing payment:", error);
+      return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+// Checkout Controller
+const checkout = async (req, res) => {
+  const { touristId } = req.params; // Get touristId from the URL or request
+  const { selectedAddressId } = req.body; // Get the selected address ID from the body
+
+  try {
+    // Find the tourist by ID and populate the cart with product details
+    const tourist = await Tourist.findById(touristId).populate('cart.product');
+
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found' });
+    }
+
+    // Find the selected address
+    const selectedAddress = tourist.addresses.find(
+      (address) => address._id.toString() === selectedAddressId
+    );
+
+    if (!selectedAddress) {
+      return res
+        .status(400)
+        .json({ message: 'Selected address not found or invalid' });
+    }
+
+    // Calculate the total amount of the products in the cart
+    let totalAmount = 0;
+    const cartProducts = tourist.cart.map((item) => {
+      const product = item.product;
+      const totalProductCost = item.quantity * product.price;
+      totalAmount += totalProductCost;
+      return {
+        product: product._id,
+        quantity: item.quantity,
+      };
+    });
+
+    // Create a new checkout entry for the tourist
+    const newCheckout = {
+      deliveryAddress: selectedAddress.address,
+      products: cartProducts,
+      totalAmount,
+    };
+
+    // Add the checkout entry to the tourist's checkouts array
+    tourist.checkouts.push(newCheckout);
+
+    // Optionally, clear the cart after checkout
+    tourist.cart = [];
+    await tourist.save();
+
+    // Return the checkout details
+    res.status(201).json({
+      message: 'Checkout successful',
+      checkout: newCheckout,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+// Add a new address
+const addAddress = async (req, res) => {
+  const { touristId } = req.params;
+  const { label, address } = req.body;
+
+  if (!label || !address) {
+    return res.status(400).json({ message: 'Label and address are required' });
+  }
+
+  try {
+    const tourist = await Tourist.findById(touristId);
+
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found' });
+    }
+
+    // Add the new address
+    tourist.addresses.push({ label, address });
+    await tourist.save();
+
+    res.status(201).json({ message: 'Address added successfully', addresses: tourist.addresses });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Get all addresses for a tourist
+const getAddresses = async (req, res) => {
+  const { touristId } = req.params;
+
+  try {
+    const tourist = await Tourist.findById(touristId);
+
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found' });
+    }
+
+    res.status(200).json({ addresses: tourist.addresses });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+async function updateCartQuantity(req, res) {
+  try {
+      const { touristId, productId, action } = req.params;
+
+      // Find the tourist
+      const tourist = await Tourist.findById(touristId);
+      if (!tourist) {
+          return res.status(404).json({ error: "Tourist not found" });
+      }
+
+      // Find the cart item for the product in the tourist's cart
+      const cartItem = tourist.cart.find(item => item.product.toString() === productId);
+      if (!cartItem) {
+          return res.status(404).json({ error: "Product not found in cart" });
+      }
+
+      // Fetch the product to get the available quantity
+      const product = await Product.findById(productId);
+      if (!product) {
+          return res.status(404).json({ error: "Product not found" });
+      }
+
+      const availableQuantity = product.quantityAvailable;
+      
+      // Determine the maximum allowed quantity
+      const maxQuantity = availableQuantity;
+      const minQuantity = 1; // Ensure the quantity is at least 1 (or any other threshold)
+
+      // Increase or decrease the quantity based on the action
+      if (action === 'increase') {
+          if (cartItem.quantity < maxQuantity) {
+              cartItem.quantity += 1; // Increase quantity by 1
+          } else {
+              return res.status(400).json({ error: "Cannot increase quantity beyond available stock" });
+          }
+      } else if (action === 'decrease') {
+          if (cartItem.quantity > minQuantity) {
+              cartItem.quantity -= 1; // Decrease quantity by 1
+          } else {
+              return res.status(400).json({ error: "Cannot decrease quantity below 1" });
+          }
+      }
+
+      // Save the updated tourist cart
+      await tourist.save();
+
+      // Return the updated cart
+      res.status(200).json(tourist.cart);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: error.message || "Failed to update cart" });
+  }
+}
+
+async function addToCart(req, res) {
+  try {
+      const { touristId, productId } = req.params;
+      const { quantity } = req.body; // Quantity comes from the body
+      const tourist = await Tourist.findById(touristId);
+      if (!tourist) throw new Error('Tourist not found');
+
+      const product = await Product.findById(productId);
+      if (!product || product.archieved) throw new Error('Product not available');
+
+      const cartItem = tourist.cart.find(item => item.product.toString() === productId);
+      if (cartItem) {
+          // If product already in cart, update quantity
+          cartItem.quantity += quantity;
+      } else {
+          // Add new product to cart
+          tourist.cart.push({ product: productId, quantity });
+      }
+
+      await tourist.save();
+      res.status(200).json(tourist.cart);
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+}
+
+async function removeFromCart(req, res) {
+  try {
+      const { touristId, productId } = req.params;
+      const tourist = await Tourist.findById(touristId);
+      if (!tourist) throw new Error('Tourist not found');
+
+      tourist.cart = tourist.cart.filter(item => item.product.toString() !== productId);
+      await tourist.save();
+
+      res.status(200).json(tourist.cart);
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+}
+
+async function viewCart(req, res) {
+  try {
+      const { touristId } = req.params;
+      const tourist = await Tourist.findById(touristId).populate('cart.product');
+      if (!tourist) throw new Error('Tourist not found');
+
+      const cart = tourist.cart.map(item => ({
+          product: item.product,
+          quantity: item.quantity,
+          total: item.product.price * item.quantity
+      }));
+
+      res.status(200).json(cart);
+  } catch (error) {
+      res.status(400).json({ error: error.message });
+  }
+}
+
+
+const applyPromoCode = async (req, res) => {
+  const { promoCodeId } = req.body;  // Get the promo code ID from the request body
+
+  try {
+    // Find the promo code by ID
+    const promoCode = await PromoCode.findById(promoCodeId);
+
+    if (!promoCode) {
+      return res.status(404).json({ error: 'iNVALID Promo Code' });  // If the promo code doesn't exist
+    }
+
+    // Return the valid promo code details
+    return res.status(200).json({
+      message: 'Promo code applied successfully',
+      promoCode: promoCode,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Create Order
+const createOrder = async (req, res) => {
+  try {
+      const { touristID,  products, totalPrice,deliveryAddress,paymentMethod,} = req.body;
+
+      const newOrder = new Order({
+          touristID,
+          products,
+          totalPrice,
+          deliveryAddress,
+          paymentMethod,
+      });
+
+      await newOrder.save();
+      res.status(201).json({ message: 'Order created successfully', order: newOrder });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+// Read Order by ID
+ const getOrderById = async (req, res) => {
+  try {
+      const { orderId } = req.body;
+      const order = await Order.findById(orderId).populate('touristID').populate('products');
+      if (!order) {
+          return res.status(404).json({ message: 'Order not found' });
+      }
+      res.status(200).json(order);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+// Cancel Order
+const cancelOrder = async (req, res) => {
+  try {
+      const { id } = req.params;
+
+      // Step 1: Find the order by ID
+      const order = await Order.findById(id);
+      if (!order) {
+          return res.status(404).json({ message: 'Order not found' });
+      }
+
+      // Step 2: Prevent cancellation if the order is already Shipped or Delivered
+      if (['Shipped', 'Delivered'].includes(order.orderStatus)) {
+          return res.status(400).json({ 
+              message: 'Order cannot be cancelled as it is already Shipped or Delivered' 
+          });
+      }
+
+      // Step 3: Handle refunds if the order is Paid
+      if (order.orderStatus === 'Paid') {
+          // Find the tourist associated with the order
+          const tourist = await Tourist.findById(order.touristID);
+          if (!tourist) {
+              return res.status(404).json({ message: 'Tourist not found' });
+          }
+
+          // Refund the order total price to the tourist's wallet
+          tourist.wallet.balance += order.totalPrice;
+
+          // Record the transaction in the tourist's wallet
+          tourist.wallet.transactions.push({
+              orderId: id,
+              amount: order.totalPrice,
+              type: 'addition', // Indicating a refund
+              orderType: 'product'
+          });
+
+          // Save the updated tourist document
+          await tourist.save();
+      }
+
+      // Step 4: Update product quantities if applicable
+      for (const product of order.products) {
+          const productDetails = await Product.findById(product.productID);
+          if (!productDetails) {
+              return res.status(404).json({ 
+                  message: `Product with ID ${product.productID} not found` 
+              });
+          }
+
+          // Restore the stock for cancelled orders
+          productDetails.quantityAvailable += product.quantity;
+
+          // Save the updated product details
+          await productDetails.save();
+      }
+
+      // Step 5: Update the order status to "Cancelled"
+      order.orderStatus = 'Cancelled';
+      await order.save();
+
+      // Step 6: Respond to the client
+      res.status(200).json({ message: 'Order cancelled successfully', order });
+
+  } catch (error) {
+      console.error('Error cancelling order:', error);
+      res.status(500).json({ error: error.message });
+  }
+};
+const changeOrderStatus = async (req, res) => {
+  try {
+    const { id, newStatus } = req.body; // New status from the request body
+
+    // Validate the new status
+    const validStatuses = ['Pending', 'Paid', 'Shipped', 'Delivered', 'Cancelled'];
+    if (!validStatuses.includes(newStatus)) {
+      return res.status(400).json({ message: 'Invalid status provided' });
+    }
+
+    // Find the order
+    const order = await Order.findById(id).populate('products.productID');
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    // Prevent changing status for Delivered orders
+    if (order.orderStatus === 'Delivered') {
+      return res.status(400).json({ message: 'Delivered orders cannot be updated' });
+    }
+
+    // Prevent status change to Cancelled if Shipped or Delivered
+    if (newStatus === 'Cancelled' && (order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered')) {
+      return res.status(400).json({ message: 'Order cannot be cancelled as it is already Shipped or Delivered' });
+    }
+
+    if (newStatus === 'Paid') {
+      // Iterate over products in the order and create a sale for each
+      for (const product of order.products) {
+        const productDetails = await Product.findById(product.productID);
+    
+        if (!productDetails) {
+          return res.status(404).json({ message: `Product with ID ${product.productID} not found` });
+        }
+    
+        // Check if there's enough quantity available
+        if (productDetails.quantityAvailable < product.quantity) {
+          return res.status(400).json({ 
+            message: `Insufficient stock for product with ID ${product.productID}` 
+          });
+        }
+    
+        // Deduct the quantity purchased from quantityAvailable
+        productDetails.quantityAvailable -= product.quantity;
+        if(productDetails.quantityAvailable<=0){
+
+             ///NOTTTTTIIIFICATIONNNNNNNNNNNNNN////
+        }
+    
+        // Save the updated product details
+        await productDetails.save();
+      }
+    }
+
+
+
+    if (newStatus === 'Delivered') {
+      // Iterate over products in the order and create a sale for each
+      for (const product of order.products) {
+        const productDetails = await Product.findById(product.productID);
+        
+        if (!productDetails) {
+          return res.status(404).json({ message: `Product with ID ${product.productID} not found` });
+        }
+
+
+
+
+        const sale = new SalesModel({
+          price: productDetails.price,
+          quantityPurchased: product.quantity,
+          Tourists: order.touristID,
+          Seller: productDetails.seller,
+          Product: product.productID,
+          ratings: 0,
+          reviews: "",
+        });
+
+
+        await sale.save();
+      }
+        
+        const tourist = await Tourist.findById(order.touristID);
+
+        if (!tourist) {
+          return res.status(404).json({ message: "Tourist not found" });
+        } 
+
+        
+        // Calculate loyalty points based on the level
+        let pointsEarned = 0;
+        if (tourist.Level === 1) {
+          pointsEarned = order.totalPrice * 0.5;
+        } else if (tourist.Level === 2) {
+          pointsEarned = order.totalPrice * 1;
+        } else if (tourist.Level === 3) {
+          pointsEarned = order.totalPrice * 1.5;
+        }
+
+        // Update Points, TotalPoints, and Level
+        tourist.Points += pointsEarned;
+        tourist.TotalPoints += pointsEarned;
+
+        // Update Level based on new TotalPoints
+        if (tourist.TotalPoints > 500000) {
+          tourist.Level = 3;
+        } else if (tourist.TotalPoints > 100000) {
+          tourist.Level = 2;
+        } else {
+          tourist.Level = 1;
+        }
+
+        await tourist.save();
+    }
+
+    // Update the status
+    order.orderStatus = newStatus;
+    await order.save();
+
+    res.status(200).json({ message: 'Order status updated successfully', order });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getOrdersByTourist = async (req, res) => {
+  try {
+      const { touristID } = req.body;
+
+
+      // Check if the touristID is a valid ObjectId and cast it if necessary
+      if (!mongoose.Types.ObjectId.isValid(touristID)) {
+          return res.status(400).json({ message: 'Invalid tourist ID' });
+      }
+
+      // Find all orders for the given tourist ID
+      const orders = await Order.find({ touristID: new mongoose.Types.ObjectId(touristID) }).populate('products');
+
+      // Check if orders exist
+      if (orders.length === 0) {
+          return res.status(404).json({ message: 'No orders found for this tourist' });
+      }
+
+      res.status(200).json({ message: 'Orders retrieved successfully', orders });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+};
+
+const updateOrderDetails = async (req, res) => {
+  const { orderId, deliveryAddress, paymentMethod, totalPrice } = req.body; // Include totalPrice in the request body
+
+  // Validate input
+  if (!orderId || (!deliveryAddress && !paymentMethod && totalPrice === undefined)) {
+    return res.status(400).json({
+      error: 'Order ID, delivery address, payment method, or total price is missing.',
+    });
+  }
+
+  try {
+    // Build the update object dynamically based on provided fields
+    const updateFields = {
+      ...(deliveryAddress && { deliveryAddress }), // Update delivery address if provided
+      ...(paymentMethod && { paymentMethod }), // Update payment method if provided
+      ...(totalPrice !== undefined && { totalPrice }), // Update total price if provided
+    };
+
+    // Find the order and update it
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      updateFields,
+      { new: true, runValidators: true } // Return updated document and apply schema validators
+    );
+
+    // Check if order exists
+    if (!updatedOrder) {
+      return res.status(404).json({ error: 'Order not found.' });
+    }
+
+    // Respond with the updated order
+    res.status(200).json({
+      message: 'Order updated successfully.',
+      order: updatedOrder,
+    });
+  } catch (err) {
+    // Handle errors
+    console.error(err);
+    res.status(500).json({
+      error: 'An error occurred while updating the order.',
+    });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Function to share via email using Tourist model
@@ -96,18 +1262,30 @@ const getCategoryNameById = async (req, res) => {
   }
 };
 
-// Create TransportBooking
 const createTransportBooking = async (req, res) => {
-  const {transportationId, touristId, date, seats} = req.body;
+  const { transportationId, touristId, date, seats } = req.body;
 
   try {
-    const newTransportBooking = await TransportBooking.create({ transportationId, touristId, date, seats});
+    // Find the transportation record
+    const transportation = await Transportation.findById(transportationId);
+    if (!transportation) {
+      return res.status(404).json({ error: "Transportation not found" });
+    }
+    const newTransportBooking = await TransportBooking.create({
+      transportationId,
+      touristId,
+      date,
+      seats,
+    });
+    // Respond with the created booking
     res.status(201).json(newTransportBooking);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
 };
 
+module.exports = { createTransportBooking };
 // Read Transportation
 const getTransportBooking = async (req, res) => {
   // const { id } = req.params;
@@ -191,7 +1369,7 @@ const multer = require("multer");
 const getProducts = async (req, res) => {
   try {
     // Fetch products that are not archived
-    const products = await Product.find({ archieved: false }).sort({
+    const products = await Product.find({ archieved: false, quantityAvailable: { $gt: 0 } }).sort({
       createdAt: -1,
     });
     res.status(200).json(products); // Return the filtered products
@@ -200,6 +1378,7 @@ const getProducts = async (req, res) => {
     res.status(500).json({ message: "Failed to retrieve products" }); // Handle any errors
   }
 };
+
 
 const filterProducts = async (req, res) => {
   const { min, max } = req.query;
@@ -861,6 +2040,78 @@ const ADDRateReview = async (req, res) => {
   }
 };
 
+
+
+
+const addSalesI = async (req, res) => {
+  console.log(req.body);
+  const {
+    price,
+    touristId,
+    ItineraryId,
+    TourguideId,
+  } = req.body;
+
+  if (!price || !touristId || !ItineraryId || !TourguideId) {
+    return res
+      .status(400)
+      .json({
+        error:
+          "All fields are required: price, touristId, ItineraryId, and TourguideId.",
+      });
+  }
+
+  try {
+    // Create a new sale
+    const sale = await SalesIModel.create({
+      price: price,
+      Tourists: touristId, // Make sure the field names match your schema
+      TourGuide: TourguideId,
+      Itinerary: ItineraryId,
+    });
+
+    res.status(201).json(sale); // Use 201 status for created resource
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const addSalesA= async (req, res) => {
+  console.log(req.body);
+  const {
+    price,
+    touristId,
+    ActivityId,
+    AdvertiserId,
+  } = req.body;
+
+  if (!price || !touristId || !ActivityId || !AdvertiserId) {
+    return res
+      .status(400)
+      .json({
+        error:
+          "All fields are required: price, touristId, ActivityId, and AdvertiserId.",
+      });
+  }
+
+  try {
+    // Create a new sale
+    const sale = await SalesAModel.create({
+      price: price,
+      Tourists: touristId, // Make sure the field names match your schema
+      Advertiser: AdvertiserId,
+      Activity: ActivityId,
+    });
+
+    res.status(201).json(sale); // Use 201 status for created resource
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+
+
+
 const addSales = async (req, res) => {
   console.log(req.body);
   const {
@@ -1184,25 +2435,6 @@ const rateActivity = async (req, res) => {
   }
 };
 
-const getUserRating = async (req, res) => {
-  try {
-    const { _id, activityId } = req.params;
-
-    const activity = await Activity.findById(activityId);
-    console.log(activity);
-    if (!activity) {
-      return res.status(404).json({ message: "Activity not found" });
-    }
-
-    const userRating = activity.ratings.find(
-      (rating) => rating.postedby.toString() === _id.toString()
-    );
-
-    res.json({ rating: userRating ? userRating.star : null });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
 
 
 
@@ -1326,6 +2558,187 @@ const book_activity_Itinerary = async (req, res) => {
   }
 };
 
+const addBookMarkedActivities = async (req, res) => {
+  const { id } = req.params;  // Get itineraryId from the request params
+  const { touristId } = req.body;         // Get touristId from the request body
+  
+  try {
+    // Find the itinerary by the itineraryId
+    const activity = await Activity.findById(id);
+    if (!activity) return res.status(404).json({ error: "Activity not found" });
+
+    // Find the tourist by the touristId
+    const tourist = await Tourist.findById(touristId); // Assuming you have a Tourist model
+    if (!tourist) return res.status(404).json({ error: "Tourist not found" });
+
+    // Check if the itinerary is already in the tourist's bookmarks
+    if (tourist.ActivitiesBookmarked.includes(id)) {
+      return res.status(400).json({ message: "This itinerary is already bookmarked" });
+    }
+
+    // Add the itineraryId to the ItinerariesBookmarked array
+    tourist.ActivitiesBookmarked.push(id);
+    
+    // Save the updated tourist document
+    await tourist.save();
+
+    // Respond with success
+    return res.status(200).json({ message: "Itinerary bookmarked successfully." });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: "An error occurred while processing the bookmarking request.",
+    });
+  }
+};
+
+
+const getBookmarkedActivities = async (req, res) => {
+  const { id } = req.params;  // Get touristId from the request params
+
+  try {
+    // Find the tourist by the touristId
+    const tourist = await Tourist.findById(id).populate('ActivitiesBookmarked');  // Populate the itineraries
+
+    if (!tourist) {
+      return res.status(404).json({ error: "Tourist not found" });
+    }
+
+    // Return the itineraries in the ItinerariesBookmarked array
+    return res.status(200).json({
+      message: "Bookmarked itineraries retrieved successfully",
+      activities: tourist.ActivitiesBookmarked,  // This will return an array of itinerary documents
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: "An error occurred while fetching the bookmarked itineraries.",
+    });
+  }
+};
+
+const removeBookmarkedActivities = async (req, res) => {
+  const { touristId, activityId } = req.params;  // Get touristId and itineraryId from request params
+  
+  try {
+    // Find the tourist by the touristId
+    const tourist = await Tourist.findById(touristId);
+    if (!tourist) {
+      return res.status(404).json({ error: "Tourist not found" });
+    }
+
+    // Check if the itinerary is in the tourist's bookmarks
+    if (!tourist.ActivitiesBookmarked.includes(activityId)) {
+      return res.status(400).json({ message: "This itinerary is not bookmarked by the tourist" });
+    }
+
+    // Remove the itineraryId from the ItinerariesBookmarked array
+    tourist.ActivitiesBookmarked.pull(activityId);
+    
+    // Save the updated tourist document
+    await tourist.save();
+
+    // Respond with success
+    return res.status(200).json({ message: "Itinerary removed from bookmarks successfully." });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: "An error occurred while removing the itinerary from bookmarks.",
+    });
+  }
+};
+
+
+
+const addBookMarked = async (req, res) => {
+  const { id } = req.params;  // Get itineraryId from the request params
+  const { touristId } = req.body;         // Get touristId from the request body
+  
+  try {
+    // Find the itinerary by the itineraryId
+    const itinerary = await Itinerary.findById(id);
+    if (!itinerary) return res.status(404).json({ error: "Itinerary not found" });
+
+    // Find the tourist by the touristId
+    const tourist = await Tourist.findById(touristId); // Assuming you have a Tourist model
+    if (!tourist) return res.status(404).json({ error: "Tourist not found" });
+
+    // Check if the itinerary is already in the tourist's bookmarks
+    if (tourist.ItinerariesBookmarked.includes(id)) {
+      return res.status(400).json({ message: "This itinerary is already bookmarked" });
+    }
+
+    // Add the itineraryId to the ItinerariesBookmarked array
+    tourist.ItinerariesBookmarked.push(id);
+    
+    // Save the updated tourist document
+    await tourist.save();
+
+    // Respond with success
+    return res.status(200).json({ message: "Itinerary bookmarked successfully." });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: "An error occurred while processing the bookmarking request.",
+    });
+  }
+};
+
+
+const getBookmarkedItineraries = async (req, res) => {
+  const { id } = req.params;  // Get touristId from the request params
+
+  try {
+    // Find the tourist by the touristId
+    const tourist = await Tourist.findById(id).populate('ItinerariesBookmarked');  // Populate the itineraries
+
+    if (!tourist) {
+      return res.status(404).json({ error: "Tourist not found" });
+    }
+
+    // Return the itineraries in the ItinerariesBookmarked array
+    return res.status(200).json({
+      message: "Bookmarked itineraries retrieved successfully",
+      itineraries: tourist.ItinerariesBookmarked,  // This will return an array of itinerary documents
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: "An error occurred while fetching the bookmarked itineraries.",
+    });
+  }
+};
+
+const removeBookmarkedItinerary = async (req, res) => {
+  const { touristId, itineraryId } = req.params;  // Get touristId and itineraryId from request params
+  
+  try {
+    // Find the tourist by the touristId
+    const tourist = await Tourist.findById(touristId);
+    if (!tourist) {
+      return res.status(404).json({ error: "Tourist not found" });
+    }
+
+    // Check if the itinerary is in the tourist's bookmarks
+    if (!tourist.ItinerariesBookmarked.includes(itineraryId)) {
+      return res.status(400).json({ message: "This itinerary is not bookmarked by the tourist" });
+    }
+
+    // Remove the itineraryId from the ItinerariesBookmarked array
+    tourist.ItinerariesBookmarked.pull(itineraryId);
+    
+    // Save the updated tourist document
+    await tourist.save();
+
+    // Respond with success
+    return res.status(200).json({ message: "Itinerary removed from bookmarks successfully." });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: "An error occurred while removing the itinerary from bookmarks.",
+    });
+  }
+};
 
 
 const getTouristBookedActivities = async (req, res) => {
@@ -1479,18 +2892,6 @@ const myTransportBooking = async (req, res) => {
 
 
 
-const myActivityItineraryBooking = async (req, res) => {
-  const { touristId } = req.params;
-
-  try {
-    const ActivityItineraryBookingProfile = await ActivityItineraryBooking.find({ touristId });
-    res.status(200).json(ActivityItineraryBookingProfile);
-  } catch (err) {
-    res.status(404).json({ error: 'Activity/Itinerary Booking not found' });
-  }
-};
-
-
 
 // controllers/hotelBookingController.js
 // controllers/hotelBookingController.js
@@ -1630,142 +3031,11 @@ const addRating = async (req, res) => {
   }
 };
 
-// Method to add a comment from a tourist to a tour guide
-const addComment = async (req, res) => {
-  const { tourGuideId, touristId, comment } = req.body;
 
-  try {
-    // Find the tour guide by ID and populate tourists for validation
-    const tourGuide = await TourGuide.findById(tourGuideId).populate(
-      "Tourists"
-    );
 
-    if (!tourGuide) {
-      return res.status(404).json({ message: "Tour Guide not found." });
-    }
 
-    // Check if the tourist is associated with the tour guide
-    if (
-      tourGuide.Tourists.some((tourist) => tourist._id.toString() === touristId)
-    ) {
-      // Add the structured comment
-      const newComment = {
-        tourist: touristId,
-        text: comment,
-        createdAt: new Date(),
-      };
-      tourGuide.comments.push(newComment);
-      await tourGuide.save();
 
-      return res.status(200).json({
-        message: "Comment added successfully.",
-        comment: newComment,
-      });
-    } else {
-      return res
-        .status(400)
-        .json({ message: "Tourist not associated with this tour guide." });
-    }
-  } catch (error) {
-    return res.status(500).json({ message: "Error adding comment.", error });
-  }
-};
 
-const addItineraryRating = async (req, res) => {
-  const { itineraryId, touristId, rating } = req.body;
-
-  try {
-    // Find the itinerary by ID
-    const itinerary = await Itinerary.findById(itineraryId,{
-      active: true,
-      flagged: false,
-    });
-
-    if (!itinerary) {
-      return res.status(404).json({ message: "Itinerary not found." });
-    }
-
-    // Check if the tourist is associated with the itinerary
-    if (!itinerary.Tourists.includes(touristId)) {
-      return res
-        .status(400)
-        .json({ message: "Tourist not associated with this itinerary." });
-    }
-
-    // Check if the tourist has already rated the itinerary
-    const existingRating = itinerary.ratings.find(
-      (r) => r.tourist.toString() === touristId
-    );
-    if (existingRating) {
-      return res
-        .status(400)
-        .json({ message: "Tourist has already rated this itinerary." });
-    }
-
-    // Add the new rating
-    itinerary.ratings.push({ tourist: touristId, rating });
-
-    // Update the average rating
-    const totalRatings = itinerary.ratings.length;
-    const sumOfRatings = itinerary.ratings.reduce(
-      (sum, r) => sum + r.rating,
-      0
-    );
-    itinerary.rating = sumOfRatings / totalRatings; // Average rating
-
-    await itinerary.save(); // Save the updated itinerary
-
-    return res
-      .status(200)
-      .json({ message: "Rating added successfully.", itinerary });
-  } catch (error) {
-    return res.status(500).json({ message: "Error adding rating.", error });
-  }
-};
-
-// Method to add a comment from a tourist to an itinerary
-const addItineraryComment = async (req, res) => {
-  const { itineraryId, touristId, comment } = req.body;
-
-  try {
-    // Find the itinerary by ID and populate tourists for validation
-    const itinerary = await Itinerary.findById(itineraryId,{
-      active: true,
-      flagged: false,
-    }).populate(
-      "Tourists"
-    );
-
-    if (!itinerary) {
-      return res.status(404).json({ message: "Itinerary not found." });
-    }
-
-    // Check if the tourist is associated with the itinerary
-    if (
-      itinerary.Tourists.some((tourist) => tourist._id.toString() === touristId)
-    ) {
-      // Add the structured comment
-      const newComment = {
-        tourist: touristId,
-        text: comment,
-        createdAt: new Date(),
-      };
-      itinerary.comments.push(newComment);
-      await itinerary.save();
-
-      return res.status(200).json({
-        message: "Comment added successfully.",
-        comment: newComment,
-      });
-    } else {
-      return res
-        .status(400)
-        .json({ message: "Tourist not associated with this itinerary." });
-    }
-  } catch (error) {
-    return res.status(500).json({ message: "Error adding comment.", error });
-  }
-};
 // Method for a tourist to follow an itinerary (add tourist to Itinerary.Tourists)
 const followItinerary = async (req, res) => {
   const { itineraryId, touristId } = req.body;
@@ -1928,7 +3198,7 @@ const getAllTourGuideProfiles = async (req, res) => {
 const getItinerariesByTourGuide = async (req, res) => {
   try {
     // Extract the tour guide's ID from the request parameters
-    const { tourGuideId } = req.body;
+    const { tourGuideId } = req.params;
 
     // Find itineraries that belong to the specified tour guide
     const itineraries = await Itinerary.find({
@@ -1948,9 +3218,8 @@ const getItinerariesByTourGuide = async (req, res) => {
   }
 };
 
-// Controller function to get a single itinerary by ID
 const getSingleItinerary = async (req, res) => {
-  const { itineraryId } = req.body;
+  const { itineraryId } = req.params;
 
   try {
     // Find the itinerary by its ID in the database
@@ -1994,11 +3263,186 @@ const getTouristUsername = async (req, res) => {
   }
 };
 
-const getSingleProduct= async (req,res) => {
-  const {id}= req.params
+const getSingleProduct = async (req, res) => {
+  const { id } = req.params
+  if (!id) {
+    return
+  }
+  const product = await Product.find({ _id: id }).populate('seller');
 
-  const product = await Product.find({_id:id})
+  if (!product) {
+    return res.status(404).json({ error: 'No such product' })
+  }
   res.status(200).json(product)
+}
+
+
+const getSales = async (req, res) => {
+  const { id: productId } = req.params;  // Destructure product ID from the route parameters
+
+  try {
+    const sales = await SalesModel.find({ Product: productId }).sort({ createdAt: -1 }).populate('Tourists');  
+   
+
+    res.status(200).json(sales);     // Send the sales data as JSON
+  } catch (error) {
+    res.status(500).json({ error: 'Error retrieving sales data' });
+  }
+};
+
+const getWishlistProducts = async (req, res) => {
+  const {id}= req.params;
+
+  try {
+    
+    const tourist = await Tourist.findById(id).populate({
+      path: 'wishlist.product', // Path to populate
+      select: '-archieved', // Optional: Exclude fields like 'archived' if not needed
+    });
+    res.status(200).json(tourist); // Return the filtered products
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({ message: "Failed to retrieve products" }); // Handle any errors
+  }
+};
+
+const addProductWishlist = async (req, res) => {
+  const touristId= req.params.id;
+  
+  const {productId} = req.body;
+
+  try {
+    // Validate the product existence
+    const productExists = await Product.findById(productId);
+    if (!productExists) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Find the tourist
+    const tourist = await Tourist.findById(touristId);
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found' });
+    }
+
+    // Check if the product is already in the wishlist
+    const productAlreadyInWishlist = tourist.wishlist.some(
+      (item) => item.product.toString() === productId
+    );
+    if (productAlreadyInWishlist) {
+      return res.status(400).json({ message: 'Product is already in the wishlist' });
+    }
+
+    // Add the product to the wishlist
+    tourist.wishlist.push({ product: productId });
+    await tourist.save();
+
+    res.status(200).json({ message: 'Product added to wishlist successfully', wishlist: tourist.wishlist });
+  } catch (error) {
+    console.error('Error adding product to wishlist:', error);
+    res.status(500).json({ message: 'Failed to add product to wishlist' });
+  }
+};
+
+const removeProductFromWishlist = async (req, res) => {
+  const  touristId  = req.params.id;
+  const {productId} = req.body;
+
+  try {
+    // Find the tourist
+    const tourist = await Tourist.findById(touristId);
+    if (!tourist) {
+      return res.status(404).json({ message: 'Tourist not found' });
+    }
+
+    // Check if the product exists in the wishlist
+    const productIndex = tourist.wishlist.findIndex(
+      (item) => item.product.toString() === productId
+    );
+
+    if (productIndex === -1) {
+      return res.status(400).json({ message: 'Product not found in wishlist' });
+    }
+
+    // Remove the product from the wishlist
+    tourist.wishlist.splice(productIndex, 1);
+
+    // Save the updated tourist document
+    await tourist.save();
+
+    res.status(200).json({ message: 'Product removed from wishlist successfully', wishlist: tourist.wishlist });
+  } catch (error) {
+    console.error('Error removing product from wishlist:', error);
+    res.status(500).json({ message: 'Failed to remove product from wishlist' });
+  }
+};
+
+const getFullBookingDays = async (req, res) => {
+  const { transportationId } = req.body;
+  // console.log(transportationId,"lhgfdfghjklkjhgfghujikolkhigyuyuyguyg");
+  try {
+    // Fetch the transportation by ID
+    const transportation = await Transportation.findById(transportationId);
+    if (!transportation) {
+      return res.status(404).json({ error: "Transportation not found" });
+    }
+
+    // Fetch all bookings for this transportation
+    const bookings = await TransportBooking.find({ transportationId })
+      .sort({ date: 1 }) // Order bookings by date (ascending)
+      .lean(); // Use lean() for better performance if you don't need Mongoose documents
+    console.log("booking",bookings);
+    // Create a map to count bookings by date
+    const bookingCountByDate = {};
+
+    bookings.forEach((booking) => {
+      const date = booking.date.toISOString().split("T")[0]; // Get date in YYYY-MM-DD format
+      bookingCountByDate[date] = (bookingCountByDate[date] || 0) + booking.seats;
+    });
+
+    // Check for dates with full capacity
+    const fullCapacityDates = [];
+    for (const [date, count] of Object.entries(bookingCountByDate)) {
+      if (count >= transportation.capacity) {
+        fullCapacityDates.push({ date, count });
+      }
+    }
+    console.log(transportation.capacity,"capacity");
+
+    // Return the results
+    res.status(200).json({
+      transportationId,
+      fullCapacityDates,
+      allBookings: bookings, // Optional: include all bookings in response
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const getTourist = async (req, res) => {
+  try {
+    // Fetch all tourists from the database
+    const tourists = await Tourist.find();
+
+    // Return the data as JSON
+    res.status(200).json(tourists);
+  } catch (error) {
+    console.error("Error fetching tourists:", error.message);
+    res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+};
+
+const getTags = async (req,res) =>{
+  try{
+    const tags = await Tag.find();
+    res.status(200).json(tags);
+  }
+  catch(error)
+  {
+    console.error("Error sending receipt:", error);
+    res.status(500).json({ message: "An error occurred", error: error.message });
+  }
 }
 
 module.exports = {
@@ -2073,7 +3517,9 @@ module.exports = {
   getAllTourGuideProfiles,
   getItinerariesByTourGuide,
   getSingleItinerary,
-  getTouristUsername,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,createBooking,getSingleProduct,
+  getTouristUsername,getTouristActivities,getTouristBookedActivities,getUserRating,isCommentByTourist,createFlightBooking,createBooking,getSingleProduct,removeProductFromWishlist,addProductWishlist,getWishlistProducts,getSales,
 
-  getTagIdByName, myTransportBooking, myActivityItineraryBooking, upload, shareViaEmail
+  getTagIdByName, myTransportBooking, myActivityItineraryBooking, upload, shareViaEmail,payWithWallet,checkout,addAddress,getAddresses,updateCartQuantity,addToCart,removeFromCart,viewCart,applyPromoCode,updateOrderDetails,getOrdersByTourist,changeOrderStatus,cancelOrder,getOrderById,createOrder,getWalletDetails,addWalletTransaction,addSalesI,addSalesA,GetAllNotifications,markNotificationAsRead,markAllNotificationsAsRead,getUnreadNotifications,getSingleActivity,getFullBookingDays,isActivity,getBookmarkedActivities,removeBookmarkedActivities,addBookMarkedActivities
+  
+  ,getSingleProduct,addBookMarked,getBookmarkedItineraries,removeBookmarkedItinerary,getTourist,getTags
 };

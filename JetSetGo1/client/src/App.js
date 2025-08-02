@@ -1,51 +1,58 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react"; // Add this line
 //pages & components
-import Profile from "./components/Profile";
+
+import LoginForm1 from "./components/accountBox/LoginTrial.js"  //Kont bagarab 7aga hena
+import Profile from "./pages/Tourguide/Profile.js";
 //import touristProfile from './components/touristProfile'
-import UpdateProfile from "./components/UpdateProfile";
+import UpdateProfile from "./pages/Tourguide/UpdateProfile.js";
 //import touristUpdateProfile from './components/touristUpdateProfile';
-import CreateProfile from "./components/CreateProfile";
-import TouristProfilePagehazem from "./pages/TouristProfilePages";
-import TouristEditPage from "./pages/TouristEditPage";
-import AdminAddPage from "./pages/AdminAddPage";
-import AdminProfilePage from "./pages/AdminProfilePage";
-import DeleteOptions from "./pages/DeleteOptions";
-import UserList from "./pages/UserList";
-import ItineraryManager from "./pages/ItineraryManager";
-import ProductListing from "./pages/Product/productsPage";
+
+
+import TourismGovTags from "./pages/tourismgoverner/tourismgovernortags.js";
+
+import ProfilePage from "./components/TryProfile.js"
+import TouristProfilePagehazem from "./pages/TouristProfilePages.js";
+import TouristEditPage from "./pages/TouristEditPage.js";
+import AdminAddPage from "./pages/AdminAddPage.js";
+import AdminProfilePage from "./pages/AdminProfilePage.js";
+import DeleteOptions from "./pages/DeleteOptions.js";
+import UserList from "./pages/UserList.js";
+import ItineraryManager from "./pages/Tourguide/ItineraryAdd.js";
+import ProductListing from "./pages/Product/productsPage.js";
 import ViewProduct from "./pages/Product/ProductDetails.js";
 import MyPrefs from './pages/my_prefrences.js';
 import MyBookingsPage from './components/my_bookings.js'
 import TransportBookingPage from './components/TouristTransportationComponent.js';
 // import Navbar from "./components/Navbar";
-import ProductForm from "./pages/Product/ProductForm";
-import UpdateProducts from "./pages/Product/UpdateProduct";
+import TourismGovernerHomepage from './pages/tourismgoverner/tourismgovernerhome.js';
+import ProductForm from "./pages/Product/ProductForm.js";
+import UpdateProducts from "./pages/Product/UpdateProduct.js";
 
-import Activities2 from "./pages/Activities";
-import Itineraries2 from "./pages/Itineraries";
-import Museums from "./pages/museums";
+import Activities2 from "./pages/Activities.js";
+import Itineraries2 from "./pages/Itineraries.js";
+import Museums from "./pages/museums.js";
 import HistoricalLocations from "./pages/historicallocations.js";
 
 // import ActivityFilter from './components/ActivityFilter';
 // import ItineraryFilter from './components/ItineraryFilter';
-import MuseumFilter from "./components/MuseumFilter";
-import HistoricalPlaceFilter from "./components/HistoricalPlaceFilter";
+import MuseumFilter from "./components/MuseumFilter.js";
+import HistoricalPlaceFilter from "./components/HistoricalPlaceFilter.js";
 
-import HomePage from "./pages/HomePage";
+import HomePage from "./pages/HomePage.js";
 
 import "@fortawesome/fontawesome-free/css/all.css";
 
 // import { BrowserRouter, Routes, Route } from 'react-router-dom'
 //pages and components 
-
+import NotificationsPage from './pages/NotificationsPage.js';
 import Tagspage from './pages/my_tags.js'
 import PreferencesSelection from './pages/SelectPrefrences.js'
 import Transportationpage from './pages/Transportation.js'
 import Categorypage from './pages/my_category.js'
 //pages and components
-import Home from "./pages/home.js";
+
 
 // import Navbar from './components/navbar.js'
 import Tourism_Governer from "./pages/Tourism_Governer.js";
@@ -53,16 +60,24 @@ import HL from "./pages/HistoricalLocations2.js";
 import Museum from "./pages/Museums2.js";
 import HLMs from "./pages/my_HLMs.js";
 import Activities from "./pages/my_activities2.js";
-import Itineraries from "./pages/my_itineraries.js";
+import Itineraries from "./pages/Tourguide/my_itineraries.js";
 import HLTags from "./pages/hltag.js";
 
 //johnimport { useTouristId } from '../../pages/Tourist/TouristIdContext';
 //const { id } = useTouristId();
 
-import TourGuideLayout from "./components/TourGuideLayout.js";
-import FlagItinerary from "./components/FlagItinerary";
-import ItineraryManagement from "./components/ItineraryManagement";
-import CategoriesAndActivities from "./components/CategoriesAndActivities";
+
+
+
+import ViewAct_Iten from "./components/ite_view.js"
+
+import ViewActivity from "./components/activity_view.js"
+import Updateavtivityadvertiser from"./pages/Updateavtivityadvertiser.js";
+
+import TourGuideLayout from "./components/TourGuide/TourGuideLayout.js";
+import FlagItinerary from "./components/FlagItinerary.js";
+import ItineraryManagement from "./components/ItineraryManagement.js";
+import CategoriesAndActivities from "./components/CategoriesAndActivities.js";
 import TourismGovernerLayout from "./pages/tourismgoverner/tourismgovernerlayout.js";
 import TourismGovernerNavBar from "./pages/tourismgoverner/tourismgovernernavbar.js";
 //homepages
@@ -79,23 +94,32 @@ import AdminDocumentReview from "./pages/Admin/AdminVeiwDocuments.js";
 import AdminComplaints from "./pages/Admin/AdminComplaints.js";
 import TouristProductListing from "./pages/Tourist/TouristProductPage.js";
 import SalesOverviewChart from "./components/Admin/SalesOverviewChart.js";
-
+import CheckoutItinerary from "./components/Jimmy/CheckoutItinerary.js"//////////////////////////////////////
 import AdminViewComplaint from "./pages/Admin/AdminViewComplaint.js";
-
+import ProductSales from "./pages/Product/ProductSales.js";
 import TouristAddComplaintPage from "./pages/Tourist/TouristComplaintPage.js";
 import TouristProfile from "./pages/Tourist/TouristProfilePage.js";
+import ActivityDetailPage from "./pages/ActivityDetailPage.js";
+import ItineraryDetailPage from "./pages/ItineraryDetailPage.js";
 
-import ActivityDetailPage from "./pages/ActivityDetailPage";
-import ItineraryDetailPage from "./pages/ItineraryDetailPage";
+import PromoCodespage from './components/Admin/AdminPromoCode.js'
 
-import ChangePassword from "./components/Admin/changePassword.js";
-import ImageUpload from "./components/Admin/uploadPicture.js";
-import RequestAccountDeletion from "./components/Admin/AccountDeletion.js";
-import ActivityPageJohn from "./pages/Advertiser/ActivityJohn.js";
-import Authentication from "./pages/Authentication/Authentication";
-import SellerProfile from "./components/userDetails/SellerProfile.js";
-import AdvertiserProfile from "./components/userDetails/AdvertiserProfile.js";
+import FlagActivity from "./components/FlagActivity.js";
+
+import ChangePassword from "./components/Profile_Settings/changePassword.js";
+import ImageUpload from "./components/Profile_Settings/uploadPicture.js";
+import RequestAccountDeletion from "./components/Profile_Settings/AccountDeletion.js";
+
+import ActivityForm from "./pages/Advertiser/ActivityAdd.js";
+
+import Authentication from "./pages/Authentication/Authentication.js";
+import SellerProfile from "./components/Seller/sellerProfile.js";
+import AdvertiserProfile from "./pages/Advertiser/Advertiseromo.js";
 import AdminAddProduct from "./pages/Admin/AdminAddProduct.js";
+import OrderDetails from "./components/Jimmy/OrderDetails.js";
+// import CheckoutItinerary from "./components/Jimmy/CheckoutItinerary.js";
+
+import TouristOrders from "./components/Jimmy/TouristOrders.js";
 // Jimmy
 import Dashboard2 from "./components/Jimmy/Dashboard2.js";
 import AddRatingComment from "./components/Jimmy/AddRatingComment.js";
@@ -103,25 +127,37 @@ import AddRatingCommentItinerary from "./components/Jimmy/AddRatingCommentItiner
 import TouristTourGuideProfile from "./components/Jimmy/TouristTourGuideProfile.js";
 import TouristItineraryDetails from "./components/Jimmy/TouristItineraryDetails.js";
 import AdvertiserLayout from "./components/Advertiser/AdvertiserLayout.js"
-import AdvertiserActivities from "./pages/Advertiser/AdvertiserActivities.js";
+import AdvertiserActivities from "./pages/Advertiser/ActivitiesMainPage.js";
 // JIMMY END
 import { useNavigate, Navigate } from 'react-router-dom';
 
 import GuestLayout from "./components/Guest/GuestLayout.js";
 
+
+import ItinerarySales from "./pages/Tourguide/ItinerarySales.js"
+import ActivitySales from  "./pages/Advertiser/ActivitySales.js"
+
 import SellerLayout from "./components/Seller/SellerLayout.js";
 import AdminUpdateProducts from "./pages/Admin/AdminUpdateProduct.js";
 
-
+import ViewItineraryTourGuide from "./pages/Tourguide/ViewItineraryDetailes.js"
 
 import Booking from './pages/bookhotel.js'
 import ActivityList from './components/ActivityList-Rate-Comment.js';
 import FlightSearch from './components/flights.js';
 import ResetPassword from "./pages/resetpass.js";
 
+import Cart from "./components/Tourist/cart.js";
+
+import Checkout from "./components/Tourist/Checkout.js";
+
+import Confirmation from "./components/Tourist/confirmation.js";
+
+
 
 function App() {
   const [view, setView] = useState("home"); // 'home', 'viewDocuments'
+
 
   const handleViewDocuments = () => {
     setView("viewDocuments");
@@ -151,6 +187,11 @@ function App() {
     setFilteredHistoricalPlace(results);
   };
 
+  // useEffect(() => {
+  //   const socket = io("http://localhost:8000");
+  //   console.log(socket)
+  // },[])
+
   return (
     <div>
       <BrowserRouter>
@@ -173,38 +214,66 @@ function App() {
               />
               <Route path="/:modelName/:id/terms" element={<TermsAndConditionsForm />} />
               {/* tourguide advertiser seller tourist*/}
+
+
+
               {/* Advertiser//////////////////////////////////////////////////////////////////////////////////////////////// */}
 
-
+              
               <Route path="/Advertisers/:id" element={<AdvertiserLayout />}>
+                {/* <Route path='/Advertisers/:id/advertiserprofile' element={<AdvertiserProfile />} />  */}
+                {/* {this is the (old) profile view for advertiser + edit functions} */}
+
                 <Route path='/Advertisers/:id/advertiserprofile' element={<AdvertiserProfile />} />
+
                 <Route
-                  path="/Advertisers/:id/ActivitiesJohn/:id"
-                  element={<ActivityPageJohn />}
+                  path="/Advertisers/:id/ActivitiesForm/:id"
+                  element={<ActivityForm />}
+                />
+
+                <Route path="/Advertisers/:id/ViewActivityEdit/:activityId" element={<Updateavtivityadvertiser />} />
+                
+                 <Route path="/Advertisers/:id/notifications" element={<NotificationsPage/>} />
+
+                <Route path='/Advertisers/:id/ActivitySales' element={<ActivitySales />} />
+
+                 <Route
+                path="Advertisers/:id/change-password/:modelName"
+                element={<ChangePassword />}
+              />
+              <Route
+                  path="/Advertisers/:id/RequestDelete/:id/:modelName"
+                  element={<RequestAccountDeletion />}
                 />
                 <Route
-                  path="/Advertisers/:id/AdvertiserActivities/:id"
+                  path="/Advertisers/:id/ActivitiesMainPage/:id"
                   element={<AdvertiserActivities />}
                 />
-                <Route path="/Advertisers/:id/Itineraries" element={<Itineraries />} />
+
 
               </Route>
 
+
+
+
+
+
+{/* Notifications */}
               {/*///////////////////////////////////////////tg//////////////////////////////////////////////////////////////*/}
-              <Route path="/tourism_governer/:id" element={<TourismGovernerLayout />}>
-                <Route path="/tourism_governer/:id/HLTags" element={<HLTags />} />{/*tourism governer*/}
-                <Route path="/tourism_governer/:id/HLMs" element={<HLMs />} />{/*tourism governer*/}
-                <Route
-                  path="/tourism_governer/:id/:modelName/change-password"
-                  element={<ChangePassword />}
-                />
-                {/* <Route path="/tourism_governer/:id/Itineraries" element={<Itineraries /> */}
+
+              <Route path="/tourism_governer" element={<TourismGovernerLayout />}>
+                <Route path="/tourism_governer" element={<TourismGovernerHomepage />}></Route>
+                <Route path="/tourism_governer/Tags" element={<TourismGovTags />} />
+                <Route path="/tourism_governer/:modelName/change-password" element={<ChangePassword />} />
 
 
               </Route>
 
 
+             
 
+
+             <Route path="/ProfileGarab" element = {<ProfilePage  />} />
               <Route path="/Authentication" element={<Authentication />} />
               <Route path="/reset-password" element={<ResetPassword />} />
 
@@ -213,10 +282,26 @@ function App() {
               <Route path="/" element={<Navigate to="/guest/home" replace />} />
               {/* Admiin */}
               <Route path="/admin" element={<Layout />}>
+              <Route path = "/admin/flagItinerary"
+                element={<FlagItinerary />} />
+                <Route path = "/admin/flagActivity"
+                element={<FlagActivity/>} />
+                <Route path="/admin/my_category" element={<Categorypage />} />
+                <Route path="/admin/my_tags" element={<Tagspage />} />
+                <Route path="/admin/promocodes" element={<PromoCodespage />} />
+                <Route path="/admin/users" element={<Tourism_Governer />} />
+
+              <Route
+                  path="/admin/productSales"
+                  element={<ProductSales usertype="admin" />}
+                />
                 <Route
                   path="/admin/requests"
                   element={<AdminDocumentReview />}
+                  
                 />
+                
+                <Route path="/admin/flagITI" element ={<FlagItinerary />} />
 
                 {/*momen */}
                 <Route
@@ -256,10 +341,17 @@ function App() {
 
               {/** Tourist */}
               <Route path="/tourist" element={<TouristLayout />}>
+              
                 {/* <Route path="/tourist/:id/terms" element={<TermsAndConditionsForm />} /> */}
-                <Route path="/tourist/products" element={<TouristProductListing usertype="tourist" />} />            {/**/}
+                <Route path="/tourist/products" element={<ProductListing usertype="tourist" />} />  {/**/}
+
                 <Route path="/tourist/Complaints" element={<TouristComplaint />} />{/** lazem takhod id */}         {/**/}
                 <Route path="/tourist/home" element={<ToursitPage />} />                                           {/**/}
+                <Route path="/tourist/cart" element={<Cart />} /> 
+                <Route path="/tourist/checkout" element={<Checkout />} />
+                <Route path="/tourist/CheckoutItinerary" element={<CheckoutItinerary />} />
+                
+                <Route path="/tourist/confirmation" element={<Confirmation/>} />
                 <Route path="/tourist/viewproduct" element={<ViewProduct />} />                                    {/**/}
                 <Route path="/tourist/addComplaint" element={<TouristAddComplaintPage />} />                     {/**/}
                 <Route path="/tourist/change-password/:id/:modelName" element={<ChangePassword />} />               {/**/}
@@ -270,6 +362,11 @@ function App() {
                 <Route path="/tourist/itineraries2" element={<Itineraries2 filteredItinerary={filteredItinerary} />} />{/**/}
                 <Route path="/tourist/itinerary/:itineraryId/tourist/:id" element={<ItineraryDetailPage />} />
                 {/* jimmy */}
+
+                
+                <Route path="/tourist/touristOrders/:id" element={<TouristOrders />} />   
+                <Route path="/tourist/order-details/:orderId" element={<OrderDetails />} /> 
+
                 <Route path="/tourist/tourguidelist" element={<Dashboard2 />} />                                    {/**/}
                 <Route path="/tourist/viewTourGuideProfile/:guideId" element={<TouristTourGuideProfile />} />{/**/}
                 <Route path="/tourist/add-rating-comment/:guideId" element={<AddRatingComment />} />{/**/}
@@ -295,8 +392,20 @@ function App() {
                   path="/tourist/Transportation"
                   element={<Transportationpage />}
                 />
+                <Route
+                  path="/tourist/ViewItineraryEdit/:ItineraryID"
+                  element={<ViewAct_Iten />}
+                />
+                <Route
+                  path="/tourist/ViewActivity/:ItineraryID"
+                  element={<ViewActivity />}
+                />
               </Route>
               {/* carol */}
+            
+
+              
+
 
               {/* carol */}
 
@@ -312,26 +421,52 @@ function App() {
 
               </Route>
 
-
+               <Route path = "/GARAB" element ={<LoginForm1/>}/>
 
               {/** Tourguide */}
               <Route path="/Tourguide/:id" element={<TourGuideLayout />}>
-                <Route
-                  path="/Tourguide/:id/create/tour-guides/:id"
-                  element={<CreateProfile />}
-                />
+              
+              <Route path ="/Tourguide/:id/ItinerarySales" element ={<ItinerarySales/>} />      
+
+              <Route path="/Tourguide/:id/notifications" element={<NotificationsPage/>} />
+
+
                 <Route
                   path="/Tourguide/:id/profile/tour-guides/:id"
                   element={<Profile />}
                 />
                 <Route
+                
+                path="/Tourguide/:id/tour-guide/itineraryAdd/:id"
+                element={<ItineraryManager />}
+              />
+              <Route path ="/Tourguide/:id/ViewItineraryEdit/:ItineraryID" element = {<ViewItineraryTourGuide />} />
+                <Route
                   path="/Tourguide/:id/update-profile/tour-guides/:id"
                   element={<UpdateProfile />}
                 />
                 <Route
-                  path="/Tourguide/:id/Itineraries"
+                  path="/Tourguide/:id/MyItineraries"
                   element={<Itineraries />}
                 />
+                 <Route
+                  path="/Tourguide/:id/change-password/:id/:modelName"
+                  element={<ChangePassword />}
+                  
+                />
+
+                <Route
+                  path="/Tourguide/:id/RequestDelete/:id/:modelName"
+                  element={<RequestAccountDeletion />}
+                />
+          
+                
+                
+
+
+
+                {/* {HHHHHHHEEEEEEEEERRRRRRRRRREEEEEEE vvvvvvvvvvvvvvvvvvv} */}
+                
                 <Route
                   path="/Tourguide/:id/Activities"
                   element={<Activities />}
@@ -343,12 +478,29 @@ function App() {
                   element={<ItineraryManagement />}
                 />  
               </Route>
+
+
+
+
+
+
+
+
+
               {/** seller */}
               <Route path="/Seller" element={<SellerLayout />}>
                 <Route
                   path="/Seller/change-password/:id/:modelName"
                   element={<ChangePassword />}
                 />
+                                <Route
+                  path="/Seller/profile"
+                  element={<SellerProfile />}
+                />
+                <Route
+                  path="/Seller/productSales"
+                  element={<ProductSales usertype="sellers" />}
+                     />
                 <Route
                   path="/Seller/upload-image/:id/:modelName"
                   element={<ImageUpload />}
@@ -369,11 +521,16 @@ function App() {
                   path="/Seller/updateProduct/:id"
                   element={<UpdateProducts usertype="sellers" />}
                 />
-                <Route path="/Seller/sellerprofile/:id" element={<SellerProfile />} />
                 <Route path="/Seller/viewproduct" element={<ViewProduct />} />
 
               </Route>
               {/** seller */}
+
+
+
+
+
+
               <Route path="/guest" element={<GuestPage />} />
               <Route
                 path="/admindashboard"
@@ -383,18 +540,11 @@ function App() {
               {/* Update product page */}
 
               <Route path="/delete/:role" element={<UserList />} />
-              <Route
-                path="/tour-guide/itineraryManager/:id"
-                element={<ItineraryManager />}
-              />
               <Route path="/admin/profile" element={<AdminProfilePage />} />
               <Route path="/admin/delete-options" element={<DeleteOptions />} />
               <Route path="/admin/add" element={<AdminAddPage />} />
               <Route path="/edit/tourist/:id" element={<TouristEditPage />} />
-              <Route
-                path="/create/tour-guides/:id"
-                element={<CreateProfile />}
-              />
+
               <Route
                 path="/update-profile/tour-guides/:id"
                 element={<UpdateProfile />}
@@ -423,7 +573,7 @@ function App() {
 
               <Route path="/rate-comment-event" element={<ActivityList touristId={"670255f97b12bc9e3f1c7f26"} />} />  ///////////////////////////////////
 
-              <Route path="/hhh" element={<Home />} />
+            
 
 
               <Route path="/Itineraries" element={<Itineraries />} />{/*show for all */}

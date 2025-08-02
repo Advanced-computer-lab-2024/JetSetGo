@@ -1,12 +1,13 @@
 const Advertiser = require('../models/AdvertiserModel');
 const Activity = require('../models/AdvertiserActivityModel');
 const Itinerary = require ('../models/ItineraryModel');
+const SalesAModel = require("../models/SalesAModel");
+const Notification = require("../models/Notification")
+const TransportBooking = require("../models/TransportationBookingModel");
+
 const multer = require('multer');
 const path = require('path');
 const Transportation = require('../models/TransportationModel');
-
-
-
 
 // Set up storage configuration
 const storage = multer.diskStorage({
@@ -35,7 +36,160 @@ const upload = multer({
   }
 });
 
+const getSales = async (req, res) => {
+  const { id: ActivityID } = req.params;  // Destructure product ID from the route parameters
+  console.log(ActivityID)
+  try {
+    const sales = await SalesAModel.find({ Activity: ActivityID }).sort({ createdAt: -1 }).populate('Tourists');
+    res.status(200).json(sales);     // Send the sales data as JSON
+  } catch (error) {
+    res.status(500).json({ error: 'Error retrieving sales data' });
+  }
+};
 
+
+const getAllSales = async (req, res) => {
+  const  {id}  = req.params; // Seller IDs
+  try {
+    // Fetch sales data for the seller, populate the Product and Seller fields
+    const salesWithActivity = await SalesAModel.find({ Advertiser: id })
+      .sort({ createdAt: -1 }).populate('Tourists')
+      .populate('Activity') // Populate the Product field with product data
+    res.status(200).json(salesWithActivity);  // Send back the populated sales data
+  } 
+  catch (error) {
+    console.error('Error fetching sales with Activity:', error);
+    res.status(500).json({ error: error.messsage });
+  }
+};
+
+// Function to get total number of tourists for a specific activity
+const getTotalTouristsForActivity = async (req, res) => {
+  const { id: AdvertiserID } = req.params;  // Extract Advertiser ID from params
+  const { activityID } = req.query;         // Extract Activity ID from query params
+
+  try {
+    const touristsCount = await SalesAModel.aggregate([
+      { $match: { Advertiser: mongoose.Types.ObjectId(AdvertiserID), Activity: mongoose.Types.ObjectId(activityID) } },  // Match Advertiser and Activity
+      { $group: { _id: '$Tourists', count: { $sum: 1 } } },   // Group by Tourist ID (assuming tourists are unique for each activity)
+      { $count: 'totalTourists' }  // Count the number of unique tourists
+    ]);
+
+    if (touristsCount.length === 0) {
+      return res.status(200).json({ totalTourists: 0 });
+    }
+    res.status(200).json({ totalTourists: touristsCount[0].totalTourists });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error fetching tourists count for the activity' });
+  }
+};
+
+// Function to get total number of tourists for a specific activity, filtered by month and year
+const getTotalTouristsForActivityByMonth = async (req, res) => {
+  const { id: AdvertiserID } = req.params;  // Extract Advertiser ID from params
+  const { activityID } = req.query;         // Extract Activity ID from query params
+  const { year, month } = req.query;        // Extract year and month from query params
+
+  if (!year || !month) {
+    return res.status(400).json({ error: 'Year and month are required for this filter.' });
+  }
+
+  try {
+    const touristsCountByMonth = await SalesAModel.aggregate([
+      { $match: { Advertiser: mongoose.Types.ObjectId(AdvertiserID), Activity: mongoose.Types.ObjectId(activityID) } },
+      { 
+        $addFields: {
+          month: { $month: '$createdAt' },    // Extract month from createdAt
+          year: { $year: '$createdAt' }       // Extract year from createdAt
+        }
+      },
+      { $match: { year: parseInt(year), month: parseInt(month) } },  // Filter by specific year and month
+      { $group: { _id: '$Tourists', count: { $sum: 1 } } },  // Group by Tourist ID (ensure unique tourists)
+      { $count: 'totalTourists' }  // Count the unique tourists
+    ]);
+
+    if (touristsCountByMonth.length === 0) {
+      return res.status(200).json({ totalTourists: 0 });
+    }
+
+    res.status(200).json({ totalTourists: touristsCountByMonth[0].totalTourists });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error fetching tourists count for the activity by month' });
+  }
+};
+
+
+
+
+// Controller to get all unread notifications for an advertiser
+const getUnreadNotifications = async (req, res) => {
+  const { id } = req.params; // Advertiser's ID passed in the URL parameter
+
+  try {
+    // Query for unread notifications for the specified Advertiser
+    const unreadNotifications = await Notification.find({
+      userId: id,
+      read: false,
+    }).sort({ createdAt: -1 })  // Sort by creation date, descending (most recent first)
+      .limit(3);  // Limit to 3 notifications
+
+    // Check if notifications were found
+    if (unreadNotifications.length === 0) {
+      return res.status(200).json({ message: 'No unread notifications.' });
+    }
+
+    // Return the unread notifications
+    return res.status(200).json(unreadNotifications);
+  } catch (error) {
+    console.error('Error fetching unread notifications:', error);
+    return res.status(500).json({ error: 'Error fetching unread notifications.' });
+  }
+};
+
+const markAllNotificationsAsRead = async (req, res) => {
+  const { id } = req.params;  // Get the Advertiser ID from the URL parameter
+
+  try {
+    // Update notifications that are unread (read: false) to read: true
+    await Notification.updateMany({ userId: id, read: false }, { $set: { read: true } });
+    res.status(200).json({ message: 'Notifications marked as read.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error marking notifications as read.', details: error.message });
+  }
+};
+
+const markNotificationAsRead = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const notification = await Notification.findById(id);
+    if (!notification) {
+      return res.status(404).json({ error: 'Notification not found.' });
+    }
+    notification.read = true;
+    await notification.save();
+    res.status(200).json({ message: 'Notification marked as read.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error marking notification as read.', details: error.message });
+  }
+};
+
+const GetAllNotifications = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Fetch all notifications, sorted by creation date (most recent first)
+    const notifications = await Notification.find({ userId: id })
+      .sort({ createdAt: -1 });  // Sort by creation date, descending
+
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ error: 'Failed to fetch notifications.' });
+  }
+};
 
 
 // Create Transportation
@@ -68,18 +222,47 @@ const createTransportation = async (req, res) => {
   }
 };
   
-  // Read Transportation
-  const getTransportation = async (req, res) => {
-  // const { id } = req.params;
+const getTransportation = async (req, res) => {
+  try {
+    // Fetch all transportation
+    const allTransportations = await Transportation.find().lean(); // Use lean() for better performance
+    const allBookings = await TransportBooking.find().lean(); // Fetch all bookings
+
+    // Prepare result with fullDays for each transportation
+    const result = allTransportations.map((transportation) => {
+      const bookingsForTransportation = allBookings.filter(
+        (booking) => booking.transportationId.toString() === transportation._id.toString()
+      );
+
+      // Create a map to count bookings by date
+      const bookingCountByDate = {};
+      bookingsForTransportation.forEach((booking) => {
+        if (booking.date) { // Ensure booking.date exists
+          const date = new Date(booking.date).toISOString().split("T")[0]; // Convert to YYYY-MM-DD format
+          bookingCountByDate[date] = (bookingCountByDate[date] || 0) + booking.seats;
+        }
+      });
+
+      // Identify full capacity dates
+      const fullDays = Object.entries(bookingCountByDate)
+        .filter(([date, count]) => count >= transportation.capacity)
+        .map(([date]) => date);
+
+      return {
+        ...transportation,
+        fullDays, // Add the fullDays attribute
+      };
+    });
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};  
   
-    try {
-      const TransportationProfile = await Transportation.find();
-      res.status(200).json(TransportationProfile);
-    } catch (err) {
-      res.status(404).json({ error: 'Transportation not found' });
-    }
-  };
-  
+
+
   // Update Transportation 
   const updateTransportation = async (req, res) => {
     const { id } = req.params;
@@ -201,13 +384,44 @@ const deleteActivity = async (req, res) => {
       res.status(500).json({ error: err.message });
   }
 };
-
 // Create Activity
 const createActivity = async (req, res) => {
-  const {title,date,time,location,price,category,tags,advertiser,bookingOpen,specialDiscounts} = req.body;
+  const { id } = req.params;
+  const {
+    title,
+    description,
+    date,
+    time,
+    location,
+    price,
+    category,
+    tags,
+    bookingOpen,
+    specialDiscounts
+  } = req.body;
 
   try {
-    const newActivity = await Activity.create({ title, date, time, location, price, category, tags, bookingOpen,advertiser,specialDiscounts });
+    
+
+    // Create a new activity with the provided details
+    const newActivity = await Activity.create({
+      title,
+      description,
+      date,
+      time,
+      location,
+      price,
+      //category,
+      //tags,
+      //id,
+      category, // Use the category ObjectId
+      tags,  // Use the tags ObjectIds
+      advertiser: id,  // Advertiser passed as a route param
+      bookingOpen,
+      specialDiscounts
+    });
+
+    // Return the created activity in the response
     res.status(201).json(newActivity);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -426,5 +640,5 @@ const findReferenceDetails = async (req, res) => {
   }
 };
 
-module.exports = {requestAccountDeletion,upload,createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities,changePassword,uploadProfileImage,  createTransportation, getTransportation, updateTransportation, deleteTransportation,uploadDocument,uploadDoc, findReferenceDetails,findtransport};
+module.exports = {requestAccountDeletion,upload,createAdvertiserProfile,updateAdvertiserProfile, getAdvertiserProfile ,deleteActivity,getActivities,updateActivity,createActivity,showMyActivities,changePassword,uploadProfileImage,  createTransportation, getTransportation, updateTransportation, deleteTransportation,uploadDocument,uploadDoc, findReferenceDetails,findtransport,GetAllNotifications,markNotificationAsRead,markAllNotificationsAsRead,getUnreadNotifications,getAllSales,getSales,getTotalTouristsForActivity,getTotalTouristsForActivityByMonth};
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Use React Router to navigate to the UpdateProfile component
-import './Profile.css';
+import '../pages/Tourguide/Profile.css';
 import { useParams } from 'react-router-dom';
 
 const CreateProfile = () => {

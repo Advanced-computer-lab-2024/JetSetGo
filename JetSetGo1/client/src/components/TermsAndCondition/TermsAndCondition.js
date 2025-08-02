@@ -1,84 +1,86 @@
-import React, { useState } from 'react';
-import './TermsAndCondition.css'; // Import CSS for styling
-import { Link, useParams } from "react-router-dom";
-import { useLocation } from 'react-router-dom';
-import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
-import Cookies from "js-cookie"; // Import js-cookie
+import React, { useState } from "react";
+import "./TermsAndConditionsForm.css";
+import { FaClipboard } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
-function TermsAndConditionsForm() {
+const TermsConditions = () => {
   const token = Cookies.get("auth_token");
   const decodedToken = jwtDecode(token);
-  const id = decodedToken.id; 
+  const id = decodedToken.id;
   const modelName = decodedToken.userType;
-  // const location = useLocation();
-  console.log("terms", modelName, id);
-  // const { modelName, id } = useParams(); 
 
-  // State to track whether the terms are accepted
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  // Handle checkbox change
-  const handleCheckboxChange = (event) => {
-    setAcceptedTerms(event.target.checked);
+  const handleAccept = () => {
+    setAcceptedTerms(true);
+    setFormSubmitted(true);
+    alert("Form submitted. Terms accepted!");
   };
 
-  // Handle form submission
-  const handleFormSubmit = (event) => {
-    event.preventDefault();
-    if (acceptedTerms) {
-      setFormSubmitted(true);
-      alert("Form submitted. Terms accepted!");
-    } else {
-      alert("Please accept the terms and conditions before proceeding.");
-    }
+  const handleDecline = () => {
+    setAcceptedTerms(false);
+    alert("You must accept the terms to continue.");
   };
 
-  // Conditionally set the link path based on the role
   const getLinkPath = () => {
-    if (modelName === 'Seller' || modelName === 'Tourist') {
-      return `/${modelName}/products`;  // Lowercase the model name for the URL
-    } else {
-      return `/${modelName}/${id}`; // Replace with the link you want for other roles
-    }
+    return modelName === "Seller" || modelName === "Tourist"
+      ? `/${modelName}/products`
+      : `/${modelName}/${id}`;
   };
-      
+
   return (
-    <div className="centered-container">
-      <div className="terms-form">
-        <h2>Terms and Conditions</h2>
-        <p>Please read and accept the terms and conditions to continue.</p>
-
-        <div className="terms-text">
-          <p>[Insert Terms and Conditions text here]</p>
-        </div>
-
-        <form onSubmit={handleFormSubmit}>
-          <div className="checkbox-container">
-            <input
-              type="checkbox"
-              id="terms"
-              checked={acceptedTerms}
-              onChange={handleCheckboxChange}
-            />
-            <label htmlFor="terms"> I accept the terms and conditions</label>
+    <div className="flex_center">
+      <div className="tc_main">
+        <div className="tc_content">
+          <div className="tc_top">
+            <div className="icon">
+              <FaClipboard />
+            </div>
+            <div className="title">
+              <p>Terms of Service</p>
+            </div>
+            <div className="info">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi sint
+              veritatis recusandae alias. Numquam voluptates inventore eligendi
+              totam tempore quia et enim accusantium labore at autem unde
+              quibusdam molestiae doloremque corrupti architecto blanditiis
+              corporis ex quisquam quo, deleniti pariatur? Illo, cum.
+              Dignissimos provident quod ducimus aperiam sunt expedita odit
+              laboriosam!
+            </div>
           </div>
-          
+          <div className="tc_bottom">
+            <div className="title">
+              <p>Please go through the terms before accepting them.</p>
+            </div>
+            <div className="info">
+              <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</p>
+              <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</p>
+              <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</p>
+              <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</p>
+              <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</p>
+              <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</p>
+            </div>
+          </div>
+        </div>
+        <div className="tc_btns">
           <Link to={getLinkPath()} state={{ id }}>
             <button
-              type="submit"
-              disabled={!acceptedTerms}
-              className={`continue-button ${acceptedTerms ? 'active' : ''}`}
+              className={`accept ${acceptedTerms ? "active" : ""}`}
+              onClick={handleAccept}
             >
-              Continue
+              Accept
             </button>
           </Link>
-        </form>
-
-        {formSubmitted && <p>Thank you! Your acceptance has been recorded.</p>}
+          <button className="decline" onClick={handleDecline}>Decline</button>
+        </div>
+        {formSubmitted && <p className="confirmation-message">Thank you! Your acceptance has been recorded.</p>}
       </div>
     </div>
   );
-}
+};
 
-export default TermsAndConditionsForm;
+export default TermsConditions;

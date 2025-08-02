@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
 import "./addproduct.css";
-// import axios from 'axios'
+import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
+import Cookies from "js-cookie"; // Import js-cookie
+
 
 const ProductForm = ({usertype}) => {
-    const location=useLocation()
-    const {id}= location.state
+    const token = Cookies.get("auth_token");
+    const decodedToken = jwtDecode(token);
+    const id = decodedToken.id;
+    const modelName = decodedToken.userType;
     
     const [name, setname] = useState('');
     const [description, setdescription] = useState('');
@@ -31,7 +35,8 @@ const ProductForm = ({usertype}) => {
         formData.append('ratings', ratings);
 
         // Adjust the URL based on user type
-        const response = await fetch(`/api/admin/createProduct` , {
+        
+        const response = await fetch(`/api/${usertype}/createProduct` , {
             method: 'POST',
             body: formData, // Send FormData
         });
@@ -59,7 +64,7 @@ const ProductForm = ({usertype}) => {
       
         const handleBack = () => {
           // Navigate to the specific path (replace '/specific-path' with your desired path)
-          navigate('/admin/products');
+          navigate('/Seller/products');
         };
 
     return (

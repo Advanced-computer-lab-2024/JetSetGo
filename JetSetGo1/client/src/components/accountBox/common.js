@@ -11,43 +11,45 @@ export const BoxContainer = styled.div`
 export const FormContainer = styled.form`
   width: 100%;
   display: flex;
+  gap:20px;
   flex-direction: column;
 `;
 
+
 export const MutedLink = styled.a`
   font-size: 12px;
-  color: rgba(200, 200, 200, 0.8);
+  color: rgba(150, 150, 150, 0.8);
   font-weight: 500;
   text-decoration: none;
-  border-bottom: 1px dashed rgba(200, 200, 200, 0.8);
+  border-bottom: 1px dashed rgba(150, 150, 150, 0.8);
 `;
 
 export const BoldLink = styled.a`
   font-size: 12px;
-  color: rgba(241,196,15,1);
+  color: #0073b1; /* Gradient blue color */
   font-weight: 500;
   text-decoration: none;
-  border-bottom: 1px dashed rgba(241,196,15,1);
+  border-bottom: 1px dashed #0073b1; /* Blue dashed underline */
 `;
+
 
 export const Input = styled.input`
   width: 100%;
   height: 42px;
   outline: none;
-  border: 1px solid rgba(200, 200, 200, 0.3);
+  border: 1px solid rgba(150, 150, 150, 0.3); /* Light gray border */
   border-radius: 5px;
   padding: 0px 10px;
   transition: all 200ms ease-in-out;
-  margin-bottom: 5px;
+
 
   &::placeholder {
-    color: rgba(200, 200, 200, 1);
+    color: rgba(150, 150, 150, 1); /* Gray placeholder */
   }
-
 
   &:focus {
     outline: none;
-    border-bottom: 1px solid rgba(241, 196, 15, 1);
+    border-bottom: 1px solid #0073b1; /* Blue border on focus */
   }
 `;
 
@@ -55,24 +57,22 @@ export const SubmitButton = styled.button`
   width: 100%;
   max-width: 150px;
   padding: 10px;
-  color: #fff;
+  color: white; /* White text */
   font-size: 15px;
   font-weight: 600;
   border: none;
   border-radius: 100px;
   cursor: pointer;
   transition: all 240ms ease-in-out;
-  background: linear-gradient(
-    58deg, rgba(243,172,18,1) 20%, rgba(241,196,15,1) 100%
-  );
+  background: linear-gradient(135deg, #0073b1, #005582); /* Gradient background */
 
   &:hover {
-    filter: brightness(1.03);
+    filter: brightness(0.9); /* Slight darkening effect */
   }
 `;
 
 export const LineText = styled.p`
   font-size: 12px;
-  color: rgba(200, 200, 200, 0.8);
+  color: rgba(150, 150, 150, 0.8); /* Light gray text */
   font-weight: 500;
 `;

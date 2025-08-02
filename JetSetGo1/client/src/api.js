@@ -64,7 +64,6 @@ export const search = (keyword) => {
 //   }
 // };
 
-
 export const getHotels = async (cityCode, checkInDate, checkOutDate, adults) => {
   try {
     const response = await axios.get(
@@ -72,46 +71,42 @@ export const getHotels = async (cityCode, checkInDate, checkOutDate, adults) => 
     );
 
     const hotelOffers = response.data.data; // Access the array of hotel offers
+    console.log("Hotel offers received imp:", hotelOffers);
 
-    // Flatten and map each offer into a separate entry
     const hotels = hotelOffers.flatMap((offer) => {
       const hotel = offer.hotel;
 
-      // Map each offer individually, retaining hotel data for each one
-      return offer.offers.map((individualOffer) => ({
-        hotelId: hotel.hotelId,
-        name: hotel.name,
-        cityCode: hotel.cityCode,
-        latitude: hotel.latitude,
-        longitude: hotel.longitude,
-        contact: hotel.contact?.phone,
-        available: offer.available,
-        offerId: individualOffer.id,
-        checkInDate: individualOffer.checkInDate,
-        checkOutDate: individualOffer.checkOutDate,
-        price: individualOffer.price?.total,
-        currency: individualOffer.price?.currency,
-        room: individualOffer.room?.name,
-        boardType: individualOffer.boardType,
-        description: individualOffer.description?.text,
-      }));
+      return offer.offers.map((individualOffer) => {
+        return {
+          hotelId: hotel.hotelId,
+          name: hotel.name || "Hotel Name Not Available",
+          cityCode: hotel.cityCode || "Not Available",
+          latitude: hotel.latitude || "Not Available",
+          longitude: hotel.longitude || "Not Available",
+          contact: hotel.contact?.phone || "Not Available",
+          available: offer.available || false,
+          offerId: individualOffer.id,
+          checkInDate: individualOffer.checkInDate || "Not Available",
+          checkOutDate: individualOffer.checkOutDate || "Not Available",
+          price: individualOffer.price?.total || "N/A",
+          currency: individualOffer.price?.currency || "N/A",
+          room: individualOffer.room?.name || "Not Specified",
+          roomType: individualOffer.room?.type || "Not Specified", // Added correct mapping for room type
+          beds: individualOffer.room?.typeEstimated?.beds || "Not Specified", // Added handling for beds
+          bedType: individualOffer.room?.typeEstimated?.bedType || "Not Specified", // Added handling for bed type
+          description: individualOffer.room?.description?.text || "No description available.",
+          cancellationDeadline:
+            individualOffer.policies?.cancellations?.[0]?.deadline || "Not Available", // Fixed cancellation deadline
+        };
+      });
     });
 
-    console.log("Hotels with individual offers:", hotels);
+    console.log("Processed Hotels Data:", hotels);
     return hotels;
-
   } catch (error) {
     console.error("Error fetching hotels:", error);
-    return [];
+    return []; // Return empty array in case of error
   }
 };
-
-
-
-
-
-
-
-
 
 

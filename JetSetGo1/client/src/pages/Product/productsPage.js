@@ -1,120 +1,221 @@
 import React, { useState, useEffect, useContext } from 'react';
 import './ProductListing.css';
-import { Link, useLocation } from "react-router-dom";
-import Filter from '../../components/Filterbox';
-import ViewProduct from './ProductDetails';
+import { Link } from "react-router-dom";
+import Filter from '../../components/Filterbox2';
+import { CurrencyContext } from '../../components/Tourist/CurrencyContext';
 import { Range } from 'react-range';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faStar } from '@fortawesome/free-solid-svg-icons';
+import { faPlus,faArchive,faEdit,faHeart   } from '@fortawesome/free-solid-svg-icons';
+import { jwtDecode } from "jwt-decode"; 
+import Cookies from "js-cookie";
+import {  useNavigate } from 'react-router-dom'; 
 
-import { useParams, useNavigate } from 'react-router-dom'; // useParams to get the model and ID from the URL
 
-const STEP = 1;
+const STEP = 2;
 const MIN = 0;
-const MAX = 500;
-
+const MAX =1000000;
 
 const ProductListing = ({ usertype }) => {
-  const location = useLocation(); // Access the location object
-  const { id } = location.state || {}; // Access id from state
-  let userId = id
-  console.log(location.state)
   
+  const token = Cookies.get("auth_token");
+  const decodedToken = jwtDecode(token);
+  const id = decodedToken.id;
+  const modelName = decodedToken.userType;
+  let userId = id
+  const { currency } = useContext(CurrencyContext);
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isFilterOpen2, setIsFilterOpen2] = useState(false);
   const [values, setValues] = useState([100, 250]);
-  const [isPriceRangeVisible, setIsPriceRangeVisible] = useState(false);
-  const [ratingValue, setRatingValue] = useState(1);
-  const [isRatingVisible, setIsRatingVisible] = useState(false);
-  const [sortOrder, setSortOrder] = useState(''); // State for sorting order
-  const navigate = useNavigate(); // For navigation after the update
-  const [filtersApplied, setFiltersApplied] = useState(false);
+  
+  const [showNotification, setShowNotification] = useState(false);
+  const [sortOrder, setSortOrder] = useState('');
+  const navigate = useNavigate(); 
   const [archiveMode, setArchiveMode] = useState(false);
+  const [selectedPriceRange, setSelectedPriceRange] = useState("");
   const [selectedProducts, setSelectedProducts] = useState([]);
+  
+  const [wishlistedProducts, setWishlistedProducts] = React.useState([]);
 
-
-
-  // Formatter for price display
-
-
-
-  const toggleRatingVisibility = () => {
-    setIsRatingVisible(!isRatingVisible);
+  const formatter = (value) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(value);
   };
-
-
-  const togglePriceRangeVisibility = () => {
-    setIsPriceRangeVisible(!isPriceRangeVisible);
-  };
-
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-
-      try {
+  const fetchProducts = async () => {
+    try {
+      if(usertype!="tourist"){
         const response = await fetch(`/api/${usertype}/Products/${userId}`);
         const data = await response.json();
-        setProducts(data); // Assuming response data is an array of products
-      } catch (error) {
-        console.error('Error fetching products:', error);
+        setProducts(data); 
       }
-    };
+      else{
+        if(usertype==="tourist"){
+        const response = await fetch('/api/tourist/Products');
+        const data = await response.json();
+        setProducts(data);}
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
 
-    fetchProducts();
-  }, []);
-
-
-
-
-  const fetchFilteredProducts = async () => {
+  const addProductToWishlist = async (productId) => {
     try {
+      const response = await fetch(`/api/tourist/addtoProductWishlist/${id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productId }),
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Product added to wishlist:', data);
+        window.location.reload();
+      } else {
+        console.error('Failed to add product to wishlist:', data.message);
+      }
+    } catch (error) {
+      console.error('Error adding product to wishlist:', error);
+    }
+  };
 
-      const response = await fetch(`/api/${usertype}/filterProducts/${userId}?min=${values[0]}&max=${values[1]}`, {
+  const removeProductFromWishlist = async ( productId) => {
+    try {
+      const response = await fetch(`/api/tourist/removeProductWishlist/${id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productId }),
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        setWishlistedProducts((prev) =>
+          prev.filter((product) => product._id !== productId));
+        console.log('Product removed from wishlist:', data);
+      } else {
+        console.error('Failed to remove product from wishlist:', data.message);
+      }
+    } catch (error) {
+      console.error('Error removing product from wishlist:', error);
+    }
+  };
+
+  const fetchWishlistProducts = async () => {
+    try {
+      const response = await fetch(`/api/tourist/getProductWishlist/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+      const data = await response.json();
+      if (Array.isArray(data.wishlist)) {
+        setWishlistedProducts(data.wishlist);   
+        if (response.ok) {
+          console.log('Wishlist products fetched successfully:', data);
+        } else {
+          console.error('Failed to fetch wishlist products:', data.message);
+        }   
+      } else {
+        console.error('Expected an array of notifications, but got:', response.data);
+        setWishlistedProducts([]);
       }
-
-      const filtered = await response.json(); // Parse the JSON response
-      setProducts(filtered); // Update products with filtered data
     } catch (error) {
-      console.error('Error filtering products by price:', error);
+      console.error('Error fetching wishlist products:', error);
     }
   };
-  const fetchSortedProducts = async (order) => {
-    try {
+  
+  useEffect(() => {
+    fetchProducts();
+    fetchWishlistProducts();
+  }, []);
 
-      const response = await fetch(`/api/${usertype}/sortByRate/${userId}?flag=${order}`, {
-        method: 'GET', // This is correct
+  const handlePriceFilterChange = async (event) => {
+    const { value } = event.target;
+    const [min, max] = value.includes('+')
+      ? [10000, 1000000]
+      : value.split('-').map(Number);
+    
+    const updatedRange = selectedPriceRange === value ? "" : value;
+    setSelectedPriceRange(updatedRange);
+    setValues([min || 0, max || Infinity]);
+    if (value === "all") {
+      fetchProducts()
+      return;
+    }
+    if (updatedRange) {
+    try {
+      const response = await fetch(`/api/${usertype}/filterProducts/${userId}?min=${min}&max=${max}`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
+      const filtered = await response.json(); 
+      setProducts(filtered);
+      console.log(filtered) 
+    } catch (error) {
+      console.error('Error filtering products by price:', error);
+    }}
+  };
 
-      const sortedProducts = await response.json(); // Parse the JSON response
-      setProducts(sortedProducts); // Update products with sorted data
+  const addToCart = async (productId) => {
+    try {
+      const response = await fetch(`/api/tourist/cart/${id}/add/${productId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        console.log('Product added to cart:', data);
+        // Optionally, refresh the cart or update the UI here
+      } else {
+        console.error('Failed to add product to cart:', data.message);
+      }
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+    }
+  };
+
+  const fetchSortedProducts = async (order) => {
+    try {
+      const response = await fetch(`/api/${usertype}/sortByRate/${userId}?flag=${order}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const sortedProducts = await response.json(); 
+      setProducts(sortedProducts);
     } catch (error) {
       console.error('Error sorting products by rating:', error);
     }
   };
 
-  const handleSortChange = (event) => {
-    const selectedOrder = event.target.value;
+  const handleSortChange = (order) => {
+    const selectedOrder = order;
     setSortOrder(selectedOrder);
     const flag = selectedOrder === 'ascending' ? 1 : -1;
     fetchSortedProducts(flag);
@@ -129,27 +230,48 @@ const ProductListing = ({ usertype }) => {
   };
   const toggleArchiveMode = () => {
     setArchiveMode(!archiveMode);
-    setSelectedProducts([]); // Clear selected products when toggling archive mode
+    setSelectedProducts([]);
   };
 
+  const renderStars = (rating) => {
+    if (rating === null || rating === undefined) {
+      return <p className="no-ratings">No ratings yet</p>;
+    }
+    const stars = Array.from({ length: 5 }, (_, index) => {
+      const filledValue = index + 1;
+      if (filledValue <= Math.floor(rating)) {
+        return "full";
+      } else if (filledValue - 0.5 === rating) {
+        return "half";
+      } else {
+        return "empty";
+      }
+    });
+
+    return (
+      <div className="rating-stars">
+        {stars.map((star, index) => (
+          <span key={index} className={`star ${star}`} />
+        ))}
+      </div>
+    );
+  };
 
   const handleArchiveProducts = async () => {
     console.log(selectedProducts)
     for (const productId of selectedProducts) {
       console.log(productId)
-      const product = products.find(p => p._id === productId); // Find the product from the current state
-      const newArchiveStatus = !product.archieved; // Toggle the archived status
-
+      const product = products.find(p => p._id === productId); 
+      const newArchiveStatus = !product.archieved; 
       try {
         await fetch(`/api/${usertype}/archieved/${productId}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ archieved: newArchiveStatus }), // Update with the new status
+          body: JSON.stringify({ archieved: newArchiveStatus }), 
         });
 
-        // Update the product's status locally
         setProducts(products.map(p =>
           p._id === productId ? { ...p, archieved: newArchiveStatus } : p
         ));
@@ -158,173 +280,238 @@ const ProductListing = ({ usertype }) => {
       }
     }
     try {
-      const response = await fetch(`/api/${usertype}/Products/${userId}`); // Adjust this endpoint as necessary
+      const response = await fetch(`/api/${usertype}/Products/${userId}`); 
       const updatedProducts = await response.json();
-      setProducts(updatedProducts); // Update the state with the new product list
+      setProducts(updatedProducts); 
     } catch (error) {
       console.error('Error fetching updated products:', error);
     }
-
-    setArchiveMode(false); // Close archive mode
-    setSelectedProducts([]); // Clear selected products after archiving
+    setArchiveMode(false); 
+    setSelectedProducts([]); 
   };
-
 
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-
-
+  var pricerate = 0;
+  if (currency == "USD") {
+    pricerate = 48
+  }
+  if (currency == "EUR") {
+    pricerate = 52
+  }
+  if (currency == "EGP") {
+    pricerate = 1;
+  }
 
   return (
     <div className="product-listing">
       <div className="filter-section">
         <div className="serachFilterbtn">
-          <input
-            type="text"
-            placeholder="Search products..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="search-input"
-          />
-          <Filter isFilterOpen={isFilterOpen} toggleFilter={setIsFilterOpen}>
-            <h2>Advanced Filters</h2>
-
-            {/* Price selector */}
-            <div className="price-toggle" onClick={togglePriceRangeVisibility}>
+          
+          {/* Search Bar */}
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+            <span className="search-icon">
+              <i className="fas fa-search"></i>
+            </span>
+           
+          </div>
+          
+        </div>
+        <Filter isFilterOpen={isFilterOpen} toggleFilter={setIsFilterOpen}>
+            
+            <div className="price-toggle" >
               <span>Price</span>
-              <div className="toggle-arrow">
-                {/* {isPriceRangeVisible ? <MdArrowDropUp size={34} /> : <MdArrowDropDown size={34} />} */}
+            </div>
+            <div className="price-div">
+              {/* <h4>Price Range</h4> */}
+              <div className="price-options">
+                <label>
+                  <input
+                    type="checkbox"
+                    value="0-100"
+                    onChange={handlePriceFilterChange}
+                    checked={selectedPriceRange === "0-100"}
+                  />
+                  $0 - $100
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    value="100-1000"
+                    onChange={handlePriceFilterChange}
+                    checked={selectedPriceRange === "100-1000"}
+                  />
+                  $100 - $1,000
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    value="1000-5000"
+                    onChange={handlePriceFilterChange}
+                    checked={selectedPriceRange === "1000-5000"}
+                  />
+                  $1,000 - $5,000
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    value="5000-10000"
+                    onChange={handlePriceFilterChange}
+                    checked={selectedPriceRange === "5000-10000"}
+                  />
+                  $5,000 - $10,000
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    value="10000+"
+                    onChange={handlePriceFilterChange}
+                    checked={selectedPriceRange === "10000+"}
+                  />
+                  $10,000+
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    value="all"
+                    onChange={handlePriceFilterChange}
+                    checked={selectedPriceRange === "all"}
+                  />
+                  All Products
+                </label>
               </div>
             </div>
 
-            {isPriceRangeVisible && (
-              <div className="price-div">
-                <div className="price-display">
-                  <span>Min: {values[0]}</span> -
-                  <span>Max: {values[1]}</span>
-                </div>
 
-                <Range
-                  values={values}
-                  step={STEP}
-                  min={MIN}
-                  max={MAX}
-                  onChange={setValues}
-                  renderTrack={({ props, children }) => (
-                    <div
-                      {...props}
-                      style={{
-                        ...props.style,
-                        height: '6px',
-                        width: '100%',
-                        background: 'black',
-                      }}
-                    >
-                      {children}
-                    </div>
-                  )}
-                  renderThumb={({ props, isDragged }) => (
-                    <div
-                      {...props}
-                      style={{
-                        ...props.style,
-                        height: '24px',
-                        width: '24px',
-                        backgroundColor: isDragged ? '#007bff' : '#ccc',
-                        borderRadius: '50%',
-                      }}
-                    />
-                  )}
-                />
-              </div>
-            )}
+            
 
-            {/* Save Button to Apply Filter */}
-            <button className="save-filter-btn" onClick={fetchFilteredProducts}>
-              Save Filter
-            </button>
-
-            {/* Rating Toggle Section */}
-            <div className="rating-toggle" onClick={toggleRatingVisibility}>
+            
+            <div className="price-toggle" >
               <span>Rating</span>
-              <div className="toggle-arrow">
-                {/* {isRatingVisible ? <MdArrowDropUp size={34} /> : <MdArrowDropDown size={34} />} */}
-              </div>
+              
             </div>
-
-            {isRatingVisible && (
-              <div className="rating-div">
-                <div className="rating-display">
-                  <span>Rating: {ratingValue.toFixed(1)} Stars</span>
+            
+              <div className="price-div">
+                
+                <div className="rating-sort-options">
+                  <div
+                    className={`sort-option ${sortOrder === "descending" ? "selected" : ""}`}
+                    onClick={() => handleSortChange("descending")}
+                  >
+                    {renderStars(5)} to {renderStars(1)}
+                  </div>
+                  <div
+                    className={`sort-option ${sortOrder === "ascending" ? "selected" : ""}`}
+                    onClick={() => handleSortChange("ascending")}
+                  >
+                    {renderStars(1)} to {renderStars(5)}
+                  </div>
                 </div>
-                <select id="sort" value={sortOrder} onChange={handleSortChange}>
-                  <option value="">Select</option>
-                  <option value="ascending">1 to 5</option>
-                  <option value="descending">5 to 1</option>
-                </select>
-
-
               </div>
-            )}
+            
+
           </Filter>
 
-        </div>
-        {usertype !== "tourist" && (<button className="archivebtn" onClick={archiveMode ? handleArchiveProducts : toggleArchiveMode}>
-          {archiveMode ? 'Confirm Archive' : 'Archive Mode'}
-        </button>)}
+          
 
-        {usertype !== "tourist" && (<button className="addproductbtn" onClick={() => navigate(`/${usertype}/addProduct`, { state: { id } })}>
-          <FontAwesomeIcon icon={faPlus} style={{ height: '18px', width: '18px' }} />
-        </button>)}
+          {usertype !== "tourist" && (<button className="archivebtn" onClick={archiveMode ? handleArchiveProducts : toggleArchiveMode}>
+            {archiveMode ? <FontAwesomeIcon icon={faEdit} style={{ height: '18px', width: '18px' }}/>  : <FontAwesomeIcon icon={faArchive} style={{ height: '18px', width: '18px' }} />}
+          </button>)}
 
-
+          {usertype !== "tourist" && (<button className="addproductbtn" onClick={() => navigate(`/${modelName}/addProduct`)}>
+            <FontAwesomeIcon icon={faPlus} style={{ height: '18px', width: '18px' }} />
+          </button>)}
       </div>
 
       <div className="product-grid">
         {filteredProducts.map((product) => (
-
           <div key={product._id} className="product-card"> {/* Ensure unique key */}
             {product.archieved && <div className="archivedoverlay">Archived</div>}
-            <img src={`http://localhost:8000/${product.picture}`} alt={product.name} className="product-image" />
-
-            {/* Ensure this matches your DB field */}
-            <h2 className="product-title">{product.name}</h2>
-            <p className="product-price">{(product.price).toFixed(2)} EGP</p>
-            <div className="product-rating">
-              <p className='rating'>{product.ratings}</p>
-              <faStar className="star-icon" />
+            <div className="card-header">
+              <img src={`http://localhost:8000/${product.picture}`} alt={product.name} className="product-image" />
+              {usertype==="tourist" && (<button
+                className={`card-action ${
+                  wishlistedProducts.some((item) => item.product._id === product._id) ? "wishlist-added" : ""
+                }`}
+                onClick={() => addProductToWishlist(product._id)}
+              >
+                <FontAwesomeIcon
+                  icon={ faHeart}
+                />
+              </button>)}
             </div>
-            <p className="product-description">{product.description}</p>
-            {archiveMode && (
-              <div
+               
+            <div className="productcard-content">
+             
+              <h2 className="productcard-title">{product.name}</h2>
+              <div className="productcard-rating">
+                <div className="rating">{renderStars(product.ratings)}</div>
+              </div>
+              <div className="card-description">
+                <p className="productcard-description">{product.description}</p>
+              </div>
+              <div className="card-price">
+                {usertype!="tourist" && (<p className="productcard-price">{(product.price).toFixed(2)} EGP</p>)}
+                {usertype==="tourist" && (<p className="productcard-price">{(product.price * pricerate).toFixed(2)} {currency}</p>)}
+              </div>
+              {archiveMode && (
+                <div
                 className={`archive-select-circle ${selectedProducts.includes(product._id) ? 'selected' : ''}`}
                 onClick={() => handleSelectProduct(product._id)}
-              ></div>
-            )}
-
+                ></div>
+              )}
+             
+            </div>
             {usertype === "admin" && (
               <Link
-                to="/admin/viewproduct" state={[product._id, usertype, userId]}
+                to="/admin/viewproduct" state={[product._id, usertype] } className="view-more-btn"
               >
-                <button className="add-to-cart-btn">View Details</button>
+                View Details
               </Link>
             )}
-
-
-
+            {usertype === "tourist" && (
+              <Link
+                to={`/tourist/viewproduct`} state={[product._id, usertype]} className="view-more-btn"  
+              >
+                view more
+              </Link>
+            )}
+            {usertype === "tourist" && (
+              <>
+                <Link
+                  className="view-more-btn"
+                  onClick={() => {
+                    addToCart(product._id);
+                    setShowNotification(true); // Show the notification
+                    setTimeout(() => setShowNotification(false), 3000); // Hide after 3 seconds
+                  }}
+                >
+                  Add to Cart
+                </Link>
+              </>
+            )}
             {usertype === "sellers" && (
               <Link
-                to="/sellers/viewproduct" state={[product._id, usertype, userId]}
+                to="/Seller/viewproduct" state={[product._id, usertype, userId]} className="view-more-btn"
               >
-                <button className="add-to-cart-btn">View Details</button>
+                View Details
               </Link>
             )}
-
-            {usertype !== "tourist" && (<button className="add-to-cart-btn" onClick={() => navigate(`/${usertype}/updateProduct/${product._id}`, { state: { userId } })}>Edit Product</button>)}
           </div>
         ))}
+        {showNotification && (
+                  <div className="notification-popup">
+                    <span>Added to Cart Successfully!</span>
+                  </div>
+                )}
       </div>
     </div>
   );

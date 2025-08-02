@@ -5,14 +5,22 @@ const activitySchema = new mongoose.Schema({
     type: String,
     required: true
   },
+
+  description: {
+    type: String,
+    required: true,
+  },
+
   date: {
     type: Date,
     required: true
   },
+
   time: {
     type: String,
     required: true
   },
+  
   location: {
     type: String,
     required: true
@@ -39,9 +47,9 @@ const activitySchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
-  rate: {
+  rate: { 
     type: [Number],
-  },
+  },////////////Malosh lazma
   specialDiscounts: {
     type: String,
     default: null
@@ -50,10 +58,11 @@ const activitySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tourist', // Assuming you have a Tourist model
   }],
-  comments: {
-    type: [String],
-    required: true,
+  flagged: {
+    type: Boolean,
+    default: false,
   },
+ 
   ratings: [
     {
       star: Number,

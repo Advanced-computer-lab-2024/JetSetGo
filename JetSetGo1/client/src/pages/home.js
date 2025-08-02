@@ -1,4 +1,4 @@
-import ItineraryManager from "./ItineraryManager";
+import ItineraryManager from "./Tourguide/ItineraryAdd";
 
 const Home = () => {
     return(

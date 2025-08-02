@@ -1,5 +1,10 @@
 .admin-dashboard {
     display: flex;
+    
+  }
+  .dashboard-data {
+    
+    margin:0px;
   }
   .main-content {
     flex-grow: 1;

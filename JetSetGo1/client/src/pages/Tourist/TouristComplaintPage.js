@@ -3,6 +3,11 @@ import { useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
 import Cookies from "js-cookie"; // Import js-cookie
+import "./addComplaint.css"
+import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+
 
 
 const TouristAddComplaintPage = () => {
@@ -16,6 +21,7 @@ const TouristAddComplaintPage = () => {
     const [body, setBody] = useState('');
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -41,6 +47,7 @@ const TouristAddComplaintPage = () => {
                 setSuccessMessage('Complaint added successfully!');
                 setTitle('');
                 setBody('');
+                navigate(-1)
             }
         } catch (err) {
             setError('An error occurred while adding the complaint');
@@ -48,32 +55,45 @@ const TouristAddComplaintPage = () => {
         }
     };
 
-    return (
-        <div>
-            <h2>Submit a Complaint</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Title:</label>
-                    <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Body:</label>
-                    <textarea
-                        value={body}
-                        onChange={(e) => setBody(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit">Submit Complaint</button>
-            </form>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+    return (<div className="complaint-section">
+        <div className="complaint-header">
+          <div className="back-link" onClick={() => navigate(-1)}>
+            <FontAwesomeIcon icon={faArrowLeft} className="complaint-back-arrow" />
+            <span className="complaint-back-text">Back</span>
+          </div>
         </div>
+          <h2 className="complaint-page-title">File a Complaint</h2>
+        
+        <form onSubmit={handleSubmit} className="complaint-form-wrapper">
+          <div className="complaint-form-group">
+            <label htmlFor="title" className="complaint-form-label">Title:</label>
+            <input
+              id="title"
+              type="text"
+              className="complaint-form-input"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </div>
+          <div className="complaint-form-group">
+            <label htmlFor="body" className="complaint-form-label">Body:</label>
+            <textarea
+              id="body"
+              className="complaint-form-textarea"
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="complaint-submit-button">Submit Complaint</button>
+        </form>
+        
+        {error && <p className="complaint-error-message">{error}</p>}
+        {successMessage && <p className="complaint-success-message">{successMessage}</p>}
+      </div>
+      
+      
     );
 };
 

@@ -1,6 +1,9 @@
 const express = require('express');
 const { createSellerProfile, updateSellerProfile, getSellerProfile, 
-    getProducts, createProduct, updateProduct,filterProducts,sortByRate, searchProductName,getSingleProduct ,requestAccountDeletion, uploadDoc,uploadDocument,archieved_on} = require('../controllers/sellerController');
+    getProducts, createProduct, updateProduct,filterProducts,sortByRate, 
+    searchProductName,getSingleProduct ,requestAccountDeletion, 
+    uploadDoc,uploadDocument,archieved_on,getAllSales,uploadProductImage
+    ,getSales,  markAllNotificationsAsRead,GetAllNotifications,markNotificationAsRead,getUnreadNotifications} = require('../controllers/sellerController');
 const router = express.Router();
 const SellerController = require('../controllers/sellerController')
 const {uploadLogo} = require('../controllers/sellerController');
@@ -9,13 +12,30 @@ router.patch('/:id/upload-profile-image', uploadLogo.single('image'), SellerCont
 
 router.patch('/:id/upload-Doc', uploadDoc.array('image'), uploadDocument);
 
-
+router.get('/getAllSales/:id', getAllSales)
+router.get("/sales/:id", getSales);
 
 
 // const sellerController = require('../controllers/sellerController');
 //  multer = require('../config/multer');
 // router.patch('/:id/upload-profile-image', multer.single('image'), sellerController.uploadProfileImage);
 router.patch('/requestDelete/:id',requestAccountDeletion)
+
+router.patch("/updateProductPicture/:id/:productId", uploadProductImage);
+
+
+// Endpoint to mark all notifications as read
+router.put('/ReadAllnotifications/:id', markAllNotificationsAsRead);
+
+
+
+router.get("/notifications/all/:id",GetAllNotifications)
+// Route to get all unread notifications for a specific tour guide
+router.get('/notifications/unread/:id', getUnreadNotifications);
+
+
+router.patch("/MarkAsRead/:id",markNotificationAsRead);
+////////////////////////////////////////////////////////////////////////
 
 
 

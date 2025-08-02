@@ -15,6 +15,28 @@
     right: 0;
 }
 
+.heartboxwishlist {
+   
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; /* Adjust as needed */
+    height: 40px; /* Adjust as needed */
+    border-radius: 50%; /* Makes it circular */
+    cursor: pointer;
+    }
+    
+.heartboxwishlist i {
+      height: 18px;
+      width: 18px;
+      color: white;
+      transition: color 0.3s ease; /* Smooth color transition */
+    }
+    
+.heartboxwishlist:hover i {
+      color: yellow;
+    }
+
 .filter-panel h2 {
     margin-top: 0;
     color: #007bff;

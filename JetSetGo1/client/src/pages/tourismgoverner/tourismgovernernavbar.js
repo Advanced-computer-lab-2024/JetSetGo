@@ -1,149 +1,101 @@
+'use client';
+
+import styles from './Navbar.module.css';
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
-import Badge1 from '../../assets/images/Badge1.jpg';
-import Badge2 from '../../assets/images/Badge2.jpg';
-import Badge3 from '../../assets/images/Badge3.jpg';
-import { useLocation } from 'react-router-dom';
-import './homepage.css';
-import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
-import Cookies from "js-cookie"; // Import js-cookie
-
-function TourismGovernerNavBar() {
-    const location = useLocation(); // Access state passed via Link
-    // const { id } = location.state || {}; // Access id from state
-   
-    const token = Cookies.get("auth_token");
-    const decodedToken = jwtDecode(token);
-    const id = decodedToken.id;
-    
-    console.log("id:",id);
-    const modelName = decodedToken.userType;
-    console.log("modelName:",modelName);
+import { Link, useLocation } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import Cookies from 'js-cookie';
+import ProfileDropdown from './ProfileDropdown';
+import '@fortawesome/fontawesome-free/css/all.min.css'; // Import Font Awesome
 
 
-   
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [activePopup, setActivePopup] = useState(null);
-    const dropdownRef = useRef(null);
-    const navigate = useNavigate();
-   // const modelName = "tourismgoverner"  /** 7ot modelName */
-    const [tourist, setTourist] = useState(null);
 
+const Navbar2 = () => {
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const dropdownRef = useRef(null);
+  const location = useLocation();
 
-    useEffect(() => {// Fetch tourist data using fetch
-        const fetchTouristData = async () => {
-            try {
-                const response = await fetch(`http://localhost:8000/api/tourist/${id}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                const data = await response.json();
-                setTourist(data);
-                console.log(data);
-            } catch (error) {
-                console.error('Error fetching tourist data:', error);
-            }
-        };
-        fetchTouristData();
-    }, [id]);
+  const token = Cookies.get('auth_token');
+  const decodedToken = jwtDecode(token);
+  const id = decodedToken.id;
 
-    const toggleDropdown = () => {
-        setIsDropdownOpen((prev) => !prev);
+  const menuItems = [
+    {
+        title: 'Home',
+        link: `/tourism_governer`, 
+      },
+  {
+    title: 'Historical Tags',
+    link: `/tourism_governer/Tags`, 
+  },
+];
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setActiveDropdown(null);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
     };
+  }, []);
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsDropdownOpen(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
+  return (
+    <div className={styles.navbarContainer}>
+      <div className={styles.logo}>
+        <Link to="/tourism_governer" className={styles.logoLink}>
+          <span className={styles.logoHighlight}>JETSETGO</span>
+        </Link>
+      </div>
 
-    const handleNavigation = (path) => {
-        navigate(path);
-        setIsDropdownOpen(false);
-        setActivePopup(null);
-    };
-
-    const togglePopup = (menuItem) => {
-        setActivePopup((prev) => (prev === menuItem ? null : menuItem));
-    };
-
-    
-    const renderLevelImage = (level) => {
-        switch (level) {
-            case 1:
-                return <img src={Badge1} alt="Level 1 Badge" className="badge-image" style={{ width: '50px', height: '50px' }} />;
-            case 2:
-                return <img src={Badge2} alt="Level 2 Badge" className="badge-image" style={{ width: '50px', height: '50px' }} />;
-            case 3:
-                return <img src={Badge3} alt="Level 3 Badge" className="badge-image" style={{ width: '50px', height: '50px' }} />;
-            default:
-                return null;
-        }
-    };
-
-    return (
-        <div>
-            <div className="navvvbar">
-                <div className="logo">
-                    {/* <h1>Travel Wiki</h1>
-                    <img src="/images/jetsetgo.jpg" alt="Explore" className="card-image" /> */}
-                </div>
-                <div className="menu">
-                    <ul>
-                        <li><Link to={`/tourism_governer/${id}/HLMs`} state={{ id }}>HLMss</Link></li>
-                        <li><Link to={`/tourism_governer/${id}/HLTags`} state={{ id }}>HLTags</Link></li>
-                        {/* <li><Link to={`/tourist/Complaints`} state={{ id }}>Complaints</Link></li> */}
-                        
-                        
-                    </ul>
-                </div>
-
-                
-                <div className="profile" ref={dropdownRef}>
-                    <span className="profile-link" onClick={toggleDropdown}>
-                        {(tourist && renderLevelImage(tourist.Level)) ||
-                            (tourist && renderLevelImage(2)) ||
-                            (tourist && renderLevelImage(3))}
-                    </span>
-                    {isDropdownOpen && (
-                        <div className="dropdown-menu">
-                            <ul>
-                            <li>
-                                    <Link to={`/tourism_governer/${id}/${modelName}/change-password`} state={{id,modelName}}>
-                                        <i className="fas fa-user"></i> Change My password
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link to={`/tourism_governer/RequestDelete/${id}/${modelName}`} state={{id,modelName}}>
-                                        <i className="fas fa-user"></i> Request to delete
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link to={`/tourism_governer/upload-image/${id}/${modelName}`} state={{id,modelName}}>
-                                        <i className="fas fa-user"></i> upload Image
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link to={`/tourism_governer/sellerprofile/${id}`} state={{id}}>
-                                        <i className="fas fa-user"></i> seller profile
-                                    </Link>
-                                </li>
-                                {/* Additional dropdown links can go here */}
-                            </ul>
-                        </div>
-                    )}
-                </div>
+      <nav className={styles.navbar}>
+        {menuItems.map((item) => (
+          <div
+            key={item.title}
+            className={`${styles.menuItem} ${item.items ? '' : styles.noDropdown}`}
+            onMouseEnter={() => item.items && setActiveDropdown(item.title)}
+            onMouseLeave={() => setActiveDropdown(null)}
+          >
+            <div className={styles.menuText}>
+              <Link to={item.link || '#'}>{item.title}</Link>
             </div>
-        </div>
-    );
-}
+            {activeDropdown === item.title && item.items && (
+              <div className={styles.subMenu}>
+                {item.items.map((subItem, index) => (
+                  <Link to={subItem.link} key={index} className={styles.iconBox}>
+                    <div className={styles.icon}>
+                      <i className={`fas fa-${subItem.icon}`}></i>
+                    </div>
+                    <div className={styles.text}>
+                      <div className={styles.title}>
+                        {subItem.title} <i className="fa-arrow-right"></i>
+                      </div>
+                      {subItem.subText && (
+                        <div className={styles.subText}>{subItem.subText}</div>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+        
+      </nav>
+      <div className={styles.actions}>
+          
 
-export default TourismGovernerNavBar;
+
+          
+          <div className={styles.profileChanger}>
+            <ProfileDropdown />
+          </div>
+        </div>
+    </div>
+  );
+};
+
+export default Navbar2;

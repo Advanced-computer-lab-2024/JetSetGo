@@ -19,11 +19,13 @@ const login = async (req, res) => {
   
     try {
       const user = await User.findOne({ username });
-      if (!user) {
+      if (!user) {  
         return res.status(404).json({ error: 'User not found' });
       }
   
       // const isPasswordValid = await bcrypt.compare(password, user.password);
+      console.log("Da el username fel backend : " +username)
+      console.log("Da el username bta3 el user msh el sHolder :" + user.username)
       console.log(user.password,password)
       if (user.password!=password) {
         return res.status(401).json({ error: 'Invalid password' });

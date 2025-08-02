@@ -1,7 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { jwtDecode } from "jwt-decode"; // Correct import for jwt-decode
-import Cookies from "js-cookie"; // Import js-cookie
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
+import EventCard from './EventCard';
+import { FaTable, FaMapMarker, FaExpand, FaTrash, FaArrowRight, FaTag } from "react-icons/fa";
+import LoadingScreen from './loading';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+function formatDate(isoDate) {
+  const date = new Date(isoDate);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+  const year = date.getFullYear();
+
+  return `${year}-${month}-${day}`;
+}
+
+// Example usage
+const formattedDate = formatDate("2024-11-18T00:00:00.000Z");
+console.log(formattedDate); // Output: 18-11-2024
 
 const MyBookingsPage = () => {
   const [transportBookings, setTransportBookings] = useState([]);
@@ -10,174 +26,161 @@ const MyBookingsPage = () => {
   const [error, setError] = useState(null);
   const [transportDetails, setTransportDetails] = useState({});
   const [activityDetails, setActivityDetails] = useState({});
-  const token = Cookies.get("auth_token");
-  const decodedToken = jwtDecode(token);
-  const id = decodedToken.id;
-  console.log("id:", id);
-  const modelName = decodedToken.userType;
-  console.log("modelName:", modelName);
-  const location = useLocation(); // Access state passed via Link
-  // const { id } = location.state || {}; // Access id from state
-  const tourist = id;
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    const fetchBookings = async () => {
+    const token = Cookies.get("auth_token");
+    if (token) {
       try {
-        // Fetch transport bookings
-        const transportResponse = await fetch(`http://localhost:3000/api/tourist/mytransports/${id}`);
-        const transportData = await transportResponse.json();
-        setTransportBookings(transportData);
-        console.log("fetch 1 done");
-
-        // Fetch activity/itinerary bookings
-        const activityResponse = await fetch(`http://localhost:3000/api/tourist/myactivities/${id}`);
-        const activityData = await activityResponse.json();
-        setActivityBookings(activityData);
-        console.log("fetch 2 done");
-        setLoading(false);
+        const decodedToken = jwtDecode(token);
+        setUserId(decodedToken.id);
       } catch (err) {
-        setError('Error fetching bookings');
+        setError('Invalid token');
         setLoading(false);
       }
-    };
+    } else {
+      setError('Please log in to view your bookings.');
+      setLoading(false);
+    }
+  }, []);
 
-    fetchBookings();
-  });
+  useEffect(() => {
+    if (userId) {
+      const fetchBookings = async () => {
+        try {
+          console.log("userId:", userId);
+          const [transportResponse, activityResponse] = await Promise.all([
+            fetch(`http://localhost:3000/api/tourist/mytransports/${userId}`),
+            fetch(`http://localhost:3000/api/tourist/myactivities/${userId}`)
+          ]);
 
-  // Fetch details for transport bookings
+          const transportData = await transportResponse.json();
+          const activityData = await activityResponse.json();
+
+          // Safely handle null or undefined values
+          // Set the state with default empty arrays if data is null or undefined
+          setTransportBookings(Array.isArray(transportData) ? transportData : []); // Ensure it's an array
+setActivityBookings(Array.isArray(activityData) ? activityData : []);
+
+await Promise.all([
+  ...(Array.isArray(transportData) ? transportData : []).map(booking => fetchTransportDetails(booking.transportationId)),
+  ...(Array.isArray(activityData) ? activityData : []).map(booking => fetchActivityOrItineraryDetails(booking.referenceId, booking.referenceType)),
+]);
+
+
+
+
+          setLoading(false);
+        } catch (err) {
+          setError('Error fetching bookings');
+          setLoading(false);
+        }
+      };
+
+      fetchBookings();
+    }
+  }, [userId]);
+
   const fetchTransportDetails = async (transportationId) => {
     try {
-      const transportDetailsResponse = await fetch(`http://localhost:3000/api/advertisers/findtransport/${transportationId}`);
-      const transportDetails = await transportDetailsResponse.json();
-      console.log("fetch 3 done")
-      setTransportDetails((prevDetails) => ({
+      const response = await fetch(`http://localhost:3000/api/advertisers/findtransport/${transportationId}`);
+      const details = await response.json();
+      setTransportDetails(prevDetails => ({
         ...prevDetails,
-        [transportationId]: transportDetails,
+        [transportationId]: details,
       }));
     } catch (err) {
       console.error('Error fetching transport details:', err);
-      return null;
     }
   };
 
-  // Fetch activity or itinerary details based on referenceType
   const fetchActivityOrItineraryDetails = async (referenceId, referenceType) => {
     try {
-      const detailsResponse = await fetch(`http://localhost:3000/api/advertisers/findrefdetails/${referenceId}/${referenceType}`);
-      const details = await detailsResponse.json();
-      console.log("fetch 4 done")
-      setActivityDetails((prevDetails) => ({
+      const response = await fetch(`http://localhost:3000/api/advertisers/findrefdetails/${referenceId}/${referenceType}`);
+      const details = await response.json();
+      setActivityDetails(prevDetails => ({
         ...prevDetails,
         [`${referenceId}-${referenceType}`]: details,
       }));
-      console.log(details);
     } catch (err) {
       console.error('Error fetching activity/itinerary details:', err);
-      return null;
     }
   };
 
+  const combinedBookings = [
+    ...(transportBookings ?? []).map(booking => {
+      const transportDetail = transportDetails[booking.transportationId];
+      const isCar = transportDetail?.vehicle === 'car';
+      const isBus = !isCar;
 
-  const cancelBooking = async (bookingId, type) => {
-    try {
-      const url = type === 'transport'
-        ? `http://localhost:3000/api/tourist/deleteTransportBooking/${bookingId}`
-        : `http://localhost:3000/api/tourist/cancel_booking`;
+      console.log("isBus:", isBus, "isCar:", isCar);
 
+      return {
+        id: booking.transportationId,
+        bookingid: booking._id,
+        date: booking.date,
+        event: "Transportation",
+        referenceType: transportDetail?.vehicle || 'Unknown Vehicle',
+        schedule: formatDate(booking?.date) || 'N/A',
+        location: isBus
+          ? transportDetail?.bLocation?.pickup + "->" + transportDetail?.bLocation?.dropoff || 'N/A'
+          : transportDetail?.cLocation || 'N/A',
+        status: "Booked",
+        pickup: isBus ? transportDetail?.bLocation?.pickup || 'N/A' : null,
+        dropoff: isBus ? transportDetail?.bLocation?.dropoff || 'N/A' : null,
+        carModel: isCar ? transportDetail?.carModel || 'N/A' : booking.seats,
+        deadline: booking.date,
+        touristid: userId,
+      };
+    }),
+    ...(activityBookings ?? []).map(booking => {
+      const isActivity = booking.referenceType === "Activity";
+      const activityDetail = activityDetails[`${booking.referenceId}-${booking.referenceType}`];
 
-      const body = type === 'transport' ? undefined : JSON.stringify({ booking_id: bookingId }); // Only send the body for activities
-
-
-      const response = await fetch(url, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body,
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        alert(`Booking canceled successfully: ${result.message}`);
-        // Remove the cancelled booking from the state
-        if (type === 'transport') {
-          setTransportBookings(transportBookings.filter(booking => booking._id !== bookingId));
-        } else {
-          setActivityBookings(activityBookings.filter(booking => booking._id !== bookingId));
-        }
-      } else {
-        alert(result.message || 'Failed to cancel booking');
-      }
-    } catch (err) {
-      console.error('Error cancelling booking:', err);
-      alert('Error cancelling booking');
-    }
-  };
-
+      return {
+        id: booking.referenceId,
+        bookingid: booking._id,
+        date: isActivity
+          ? activityDetail?.date
+          : activityDetail?.availableDates?.[0]?.date || 'N/A', // Get the first available date for Itinerary
+        event: "Activity",
+        referenceType: booking.referenceType,
+        schedule: isActivity
+          ? activityDetail?.title || 'N/A'
+          : activityDetail?.title || 'N/A',
+        location: isActivity
+          ? activityDetail?.location || 'N/A'
+          : activityDetail?.pickupLocation || 'N/A',
+        status: "Booked",
+        touristid: userId,
+        carModel: isActivity
+          ? formatDate(activityDetail?.date)
+          : formatDate(activityDetail?.availableDates?.[0]?.date) || 'N/A',
+      };
+    }),
+  ];
 
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingScreen />
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="text-red-500 text-center">{error}</div>;
   }
+  const containerStyle_22 = {
+    margin: '0 auto',
+    padding: '1rem',
+    maxWidth: '1400px',
+    // backgroundColor: '#f8f9fa', // Light background color
+    // borderRadius: '8px',        // Rounded corners
+    // boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Subtle shadow
+  };
 
   return (
-    <div>
-      <h1>My Bookings</h1>
-
-      {/* Transport Bookings */}
-      <h2>Transportation Bookings</h2>
-      {transportBookings.length > 0 ? (
-        transportBookings.map((booking) => (
-          <div key={booking._id}>
-            <h3>Booking Date: {new Date(booking.date).toLocaleDateString()}</h3>
-            {transportDetails[booking.transportationId] ? (
-              <div>
-                <p>Vehicle Type: {transportDetails[booking.transportationId].vehicle}</p>
-                <p>Car Model: {transportDetails[booking.transportationId].carModel}</p>
-                <p>Location: {transportDetails[booking.transportationId].cLocation}</p>
-                <p>Days: {transportDetails[booking.transportationId].days.join(', ')}</p>
-                <p>Time: {transportDetails[booking.transportationId].time}</p>
-                <p>Price: ${transportDetails[booking.transportationId].price}</p>
-              </div>
-            ) : (
-
-              <button onClick={() => fetchTransportDetails(booking.transportationId)}>Load Details</button>
-            )}
-            <button onClick={() => cancelBooking(booking._id, 'transport')}>Cancel Booking</button>
-          </div>
-        ))
-      ) : (
-        <p>No transportation bookings found.</p>
-      )}
-
-      {/* Activity / Itinerary Bookings */}
-      <h2>Activity & Itinerary Bookings</h2>
-      {activityBookings.length > 0 ? (
-        activityBookings.map((booking) => (
-
-          <div key={booking._id}>
-            <h3>Booking Reference Type: {booking.referenceType}</h3>
-            {activityDetails[`${booking.referenceId}-${booking.referenceType}`] ? (
-              <div>
-                <p>{booking.referenceType} Name: {activityDetails[`${booking.referenceId}-${booking.referenceType}`].title}</p>
-                {/* <p>Details: {activityDetails[`${booking.referenceId}-${booking.referenceType}`].details}</p> */}
-                {/* <p>Date: {{activityDetails[${booking.referenceId}-${booking.referenceType}].date}}</p> */}
-                <p>Date: {activityDetails[`${booking.referenceId}-${booking.referenceType}`].date}</p>
-              </div>
-            ) : (
-              <button onClick={() => fetchActivityOrItineraryDetails(booking.referenceId, booking.referenceType)}>
-                Load Details
-              </button>
-            )}
-            <button onClick={() => cancelBooking(booking._id, 'activity')}>Cancel Booking</button>
-          </div>
-        ))
-      ) : (
-        <p>No activity or itinerary bookings found.</p>
-      )}
+    <div style={containerStyle_22}>
+      <h1 className="text-3xl font-bold mb-6">My Bookings</h1>
+      <EventCard events={combinedBookings} />
     </div>
   );
 };

@@ -6,7 +6,7 @@ const  HomePage = () =>  {
         <h1>Welcome to the Travel App</h1>
         <div className="navigation-buttons">
           <Link to="/delete/:role"><button>User List</button></Link>
-          <Link to="/tour-guide/itineraryManager"><button>Itinerary Manager</button></Link>
+          <Link to="/tour-guide/itineraryAdd"><button>Itinerary Manager</button></Link>
           <Link to="/admin/profile"><button>Admin Profile</button></Link>
           <Link to="/admin/delete-options"><button>Delete Options</button></Link>
           <Link to="/admin/add"><button>Add Admin</button></Link>
